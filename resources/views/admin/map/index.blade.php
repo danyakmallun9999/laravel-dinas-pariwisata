@@ -54,7 +54,7 @@
             </div>
 
             <!-- Map Container with Sidebar -->
-            <div class="bg-white rounded-b-lg shadow-lg">
+            <div class="bg-white rounded-b-lg border border-gray-200 border-t-0">
                 <div class="flex h-[calc(100vh-200px)]">
                     <!-- Sidebar -->
                     <div class="w-80 border-r border-gray-200 bg-gray-50 flex flex-col">
@@ -252,7 +252,7 @@
                         <!-- Map Controls Overlay -->
                         <div class="absolute top-4 right-4 z-[1000] space-y-2">
                             <!-- Layer Control -->
-                            <div class="bg-white rounded-lg shadow-lg p-3 min-w-[200px]">
+                            <div class="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm p-3 min-w-[200px]">
                                 <h5 class="text-xs font-semibold text-gray-700 mb-2">Layer</h5>
                                 <div class="space-y-2">
                                     <label class="flex items-center space-x-2 cursor-pointer">
@@ -277,7 +277,7 @@
 
                         <!-- Info Panel -->
                         <div x-show="selectedFeature" x-cloak 
-                             class="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-4 min-w-[300px] z-[1000]">
+                             class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm p-4 min-w-[300px] z-[1000]">
                             <div class="flex items-start justify-between mb-2">
                                 <h4 class="font-semibold text-gray-900" x-text="selectedFeature?.name"></h4>
                                 <button @click="selectedFeature = null" class="text-gray-400 hover:text-gray-600">
