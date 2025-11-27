@@ -50,12 +50,12 @@
                     </nav>
                     <div class="hidden md:flex items-center space-x-3">
                         <a href="{{ route('login') }}" class="text-sm font-semibold text-slate-700 hover:text-blue-600 transition">Login Admin</a>
-                        <button onclick="document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' })" class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 hover:-translate-y-0.5 transition">
+                        <a href="{{ route('explore.map') }}" class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 hover:-translate-y-0.5 transition">
                             Jelajahi Peta
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                             </svg>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -84,14 +84,14 @@
                             Temukan potensi ekonomi, fasilitas umum, dan cerita warga desa melalui peta interaktif yang selalu diperbarui. Dibangun dengan data yang akurat dan visual yang imersif.
                         </p>
                         <div class="mt-10 flex flex-col sm:flex-row gap-4">
-                            <button onclick="document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' })" class="inline-flex items-center justify-center gap-3 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-blue-600/30 hover:bg-blue-400 transition">
+                            <a href="{{ route('explore.map') }}" class="inline-flex items-center justify-center gap-3 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-blue-600/30 hover:bg-blue-400 transition">
                                 Jelajahi Peta
                                 <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                     </svg>
                                 </span>
-                            </button>
+                            </a>
                             <a href="#about" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 px-8 py-4 text-lg font-semibold text-white hover:bg-white/10 transition">
                                 Lihat Profil Desa
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,38 +299,92 @@
             <div class="mt-16 grid lg:grid-cols-[0.9fr_1.1fr] gap-8">
                 <!-- Sidebar Filters -->
                 <div class="rounded-3xl border border-white/10 bg-white/5 p-6 text-white lg:sticky lg:top-24 self-start">
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <p class="text-xs uppercase tracking-[0.3em] text-slate-300">Filter Kategori</p>
-                            <p class="text-xl font-semibold">Layer Tematik</p>
+                    <!-- Search Bar -->
+                    <div class="mb-6">
+                        <p class="text-xs uppercase tracking-[0.3em] text-slate-300 mb-2">Pencarian Lokasi</p>
+                        <div class="relative">
+                            <input type="text" 
+                                   x-model="searchQuery" 
+                                   @input="performSearch()"
+                                   placeholder="Cari lokasi, kategori, atau alamat..."
+                                   class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         </div>
-                        <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">{{ $categories->count() }} layer</span>
+                        <div x-show="searchResults.length > 0" 
+                             x-cloak
+                             class="mt-2 max-h-48 overflow-y-auto rounded-xl border border-white/10 bg-white/10">
+                            <template x-for="result in searchResults" :key="result.id">
+                                <button @click="zoomToResult(result)" 
+                                        class="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition">
+                                    <p class="font-semibold" x-text="result.name"></p>
+                                    <p class="text-xs text-slate-300" x-text="result.type"></p>
+                                </button>
+                            </template>
+                        </div>
                     </div>
-                    <div class="space-y-3 max-h-[420px] overflow-y-auto pr-1 custom-scroll">
-                        <template x-for="category in categories" :key="category.id">
+
+                    <!-- Layer Controls -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.3em] text-slate-300">Layer Peta</p>
+                                <p class="text-xl font-semibold">Kontrol Layer</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
                             <label class="flex items-center space-x-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium transition hover:bg-white/10 cursor-pointer">
-                                <input type="checkbox" 
-                                       :value="category.id" 
-                                       x-model="selectedCategories" 
-                                       @change="updateMapMarkers()"
-                                       class="h-5 w-5 rounded border-white/30 text-blue-400 focus:ring-blue-300 bg-transparent">
-                                <span class="w-2.5 h-2.5 rounded-full" :style="`background-color: ${category.color}`"></span>
-                                <span class="flex-1" x-text="category.name"></span>
-                                <span class="text-xs rounded-full bg-white/10 px-2 py-0.5" x-text="category.places_count"></span>
+                                <input type="checkbox" x-model="showBoundaries" @change="updateLayers()" class="h-5 w-5 rounded border-white/30 text-blue-400 focus:ring-blue-300 bg-transparent">
+                                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                                <span class="flex-1">Batas Wilayah</span>
                             </label>
-                        </template>
+                            <label class="flex items-center space-x-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium transition hover:bg-white/10 cursor-pointer">
+                                <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()" class="h-5 w-5 rounded border-white/30 text-blue-400 focus:ring-blue-300 bg-transparent">
+                                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                                <span class="flex-1">Infrastruktur</span>
+                            </label>
+                            <label class="flex items-center space-x-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium transition hover:bg-white/10 cursor-pointer">
+                                <input type="checkbox" x-model="showLandUses" @change="updateLayers()" class="h-5 w-5 rounded border-white/30 text-blue-400 focus:ring-blue-300 bg-transparent">
+                                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                                <span class="flex-1">Penggunaan Lahan</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Category Filters -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.3em] text-slate-300">Filter Kategori</p>
+                                <p class="text-xl font-semibold">Titik Lokasi</p>
+                            </div>
+                            <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">{{ $categories->count() }} kategori</span>
+                        </div>
+                        <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scroll">
+                            <template x-for="category in categories" :key="category.id">
+                                <label class="flex items-center space-x-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium transition hover:bg-white/10 cursor-pointer">
+                                    <input type="checkbox" 
+                                           :value="category.id" 
+                                           x-model="selectedCategories" 
+                                           @change="updateMapMarkers()"
+                                           class="h-5 w-5 rounded border-white/30 text-blue-400 focus:ring-blue-300 bg-transparent">
+                                    <span class="w-2.5 h-2.5 rounded-full" :style="`background-color: ${category.color}`"></span>
+                                    <span class="flex-1" x-text="category.name"></span>
+                                    <span class="text-xs rounded-full bg-white/10 px-2 py-0.5" x-text="category.places_count"></span>
+                                </label>
+                            </template>
+                        </div>
                     </div>
                     <button @click="resetFilters()" class="mt-6 w-full rounded-2xl bg-white text-slate-900 py-3 text-sm font-semibold hover:bg-slate-100 transition">
                         Reset Filter
                     </button>
-                    <p class="mt-4 text-xs text-slate-300">Tip: klik marker untuk melihat foto, deskripsi, dan kategori.</p>
+                    <p class="mt-4 text-xs text-slate-300">Tip: klik marker/polygon/polyline untuk melihat detail.</p>
                 </div>
 
                 <!-- Map Container -->
                 <div class="rounded-[32px] border border-white/10 bg-slate-900/30 p-2 shadow-2xl shadow-blue-900/30">
                     <div class="relative rounded-[28px] overflow-hidden border border-white/10 bg-slate-950">
                         <div id="map" class="w-full h-[640px]"></div>
-                        <div class="absolute left-6 top-6 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-slate-900 shadow">
+                        <div class="absolute left-6 top-6 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-slate-900 shadow z-[1000]">
                             Live Map · Leaflet + GeoJSON
                         </div>
                     </div>
@@ -420,9 +474,24 @@
             return {
                 map: null,
                 markers: [],
+                boundaries: [],
+                boundariesLayer: null,
+                infrastructures: [],
+                infrastructuresLayer: null,
+                landUses: [],
+                landUsesLayer: null,
                 categories: @json($categories),
                 selectedCategories: [],
+                showBoundaries: true,
+                showInfrastructures: true,
+                showLandUses: true,
+                searchQuery: '',
+                searchResults: [],
+                allPlaces: [],
                 geoJsonUrl: '{{ route('places.geojson') }}',
+                boundariesUrl: '{{ route('boundaries.geojson') }}',
+                infrastructuresUrl: '{{ route('infrastructures.geojson') }}',
+                landUsesUrl: '{{ route('land_uses.geojson') }}',
                 geoFeatures: [],
 
                 init() {
@@ -430,7 +499,6 @@
                     this.selectedCategories = this.categories.map(c => c.id);
 
                     // Initialize Map
-                    // Coordinates for Mayong Lor (approximate, adjust as needed)
                     const center = [-6.7289, 110.7485]; 
                     
                     this.map = L.map('map').setView(center, 14);
@@ -439,18 +507,169 @@
                         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     }).addTo(this.map);
 
-                    this.fetchGeoJson();
+                    this.fetchAllData();
                 },
 
-                async fetchGeoJson() {
+                async fetchAllData() {
                     try {
-                        const response = await fetch(this.geoJsonUrl);
-                        const data = await response.json();
-                        this.geoFeatures = data.features || [];
+                        // Fetch places
+                        const placesResponse = await fetch(this.geoJsonUrl + '?t=' + Date.now());
+                        const placesData = await placesResponse.json();
+                        this.geoFeatures = placesData.features || [];
+                        this.allPlaces = placesData.features || [];
                         this.updateMapMarkers();
+
+                        // Fetch boundaries
+                        const boundariesResponse = await fetch(this.boundariesUrl + '?t=' + Date.now());
+                        const boundariesData = await boundariesResponse.json();
+                        this.loadBoundaries(boundariesData.features || []);
+
+                        // Fetch infrastructures
+                        const infrastructuresResponse = await fetch(this.infrastructuresUrl + '?t=' + Date.now());
+                        const infrastructuresData = await infrastructuresResponse.json();
+                        this.loadInfrastructures(infrastructuresData.features || []);
+
+                        // Fetch land uses
+                        const landUsesResponse = await fetch(this.landUsesUrl + '?t=' + Date.now());
+                        const landUsesData = await landUsesResponse.json();
+                        this.loadLandUses(landUsesData.features || []);
                     } catch (error) {
                         console.error('Gagal memuat data peta', error);
                     }
+                },
+
+                loadBoundaries(features) {
+                    // Clear existing boundaries
+                    if (this.boundariesLayer) {
+                        this.map.removeLayer(this.boundariesLayer);
+                    }
+                    this.boundaries = [];
+
+                    if (!this.showBoundaries) return;
+
+                    // Create new layer group
+                    this.boundariesLayer = L.layerGroup();
+                    
+                    features.forEach(feature => {
+                        const layer = L.geoJSON(feature, {
+                            style: {
+                                color: '#10b981',
+                                weight: 2,
+                                fillColor: '#10b981',
+                                fillOpacity: 0.2
+                            },
+                            onEachFeature: (feature, layer) => {
+                                const props = feature.properties;
+                                const popupContent = `
+                                    <div class="p-2">
+                                        <h3 class="font-bold text-gray-900 mb-1">${props.name}</h3>
+                                        <p class="text-xs text-gray-600 mb-1">Tipe: ${props.type}</p>
+                                        ${props.area_hectares ? `<p class="text-xs text-gray-600">Luas: ${props.area_hectares} ha</p>` : ''}
+                                        ${props.description ? `<p class="text-xs text-gray-600 mt-1">${props.description}</p>` : ''}
+                                    </div>
+                                `;
+                                layer.bindPopup(popupContent);
+                            }
+                        });
+                        this.boundariesLayer.addLayer(layer);
+                        this.boundaries.push(layer);
+                    });
+                    
+                    this.boundariesLayer.addTo(this.map);
+                },
+
+                loadInfrastructures(features) {
+                    // Clear existing infrastructures
+                    if (this.infrastructuresLayer) {
+                        this.map.removeLayer(this.infrastructuresLayer);
+                    }
+                    this.infrastructures = [];
+
+                    if (!this.showInfrastructures) return;
+
+                    // Create new layer group
+                    this.infrastructuresLayer = L.layerGroup();
+
+                    features.forEach(feature => {
+                        const props = feature.properties;
+                        const color = props.type === 'river' ? '#3b82f6' : 
+                                     props.type === 'road' ? '#6b7280' : 
+                                     props.type === 'irrigation' ? '#06b6d4' : '#8b5cf6';
+                        
+                        const layer = L.geoJSON(feature, {
+                            style: {
+                                color: color,
+                                weight: props.type === 'road' ? 4 : 3,
+                                opacity: 0.8
+                            },
+                            onEachFeature: (feature, layer) => {
+                                const popupContent = `
+                                    <div class="p-2">
+                                        <h3 class="font-bold text-gray-900 mb-1">${props.name}</h3>
+                                        <p class="text-xs text-gray-600 mb-1">Tipe: ${props.type}</p>
+                                        ${props.length_meters ? `<p class="text-xs text-gray-600">Panjang: ${props.length_meters} m</p>` : ''}
+                                        ${props.condition ? `<p class="text-xs text-gray-600">Kondisi: ${props.condition}</p>` : ''}
+                                        ${props.description ? `<p class="text-xs text-gray-600 mt-1">${props.description}</p>` : ''}
+                                    </div>
+                                `;
+                                layer.bindPopup(popupContent);
+                            }
+                        });
+                        this.infrastructuresLayer.addLayer(layer);
+                        this.infrastructures.push(layer);
+                    });
+                    
+                    this.infrastructuresLayer.addTo(this.map);
+                },
+
+                loadLandUses(features) {
+                    // Clear existing land uses
+                    if (this.landUsesLayer) {
+                        this.map.removeLayer(this.landUsesLayer);
+                    }
+                    this.landUses = [];
+
+                    if (!this.showLandUses) return;
+
+                    // Create new layer group
+                    this.landUsesLayer = L.layerGroup();
+
+                    features.forEach(feature => {
+                        const props = feature.properties;
+                        const color = props.type === 'rice_field' ? '#fbbf24' : 
+                                     props.type === 'plantation' ? '#84cc16' : 
+                                     props.type === 'forest' ? '#059669' : '#f59e0b';
+                        
+                        const layer = L.geoJSON(feature, {
+                            style: {
+                                color: color,
+                                weight: 2,
+                                fillColor: color,
+                                fillOpacity: 0.3
+                            },
+                            onEachFeature: (feature, layer) => {
+                                const popupContent = `
+                                    <div class="p-2">
+                                        <h3 class="font-bold text-gray-900 mb-1">${props.name}</h3>
+                                        <p class="text-xs text-gray-600 mb-1">Tipe: ${props.type}</p>
+                                        ${props.area_hectares ? `<p class="text-xs text-gray-600">Luas: ${props.area_hectares} ha</p>` : ''}
+                                        ${props.owner ? `<p class="text-xs text-gray-600">Pemilik: ${props.owner}</p>` : ''}
+                                        ${props.description ? `<p class="text-xs text-gray-600 mt-1">${props.description}</p>` : ''}
+                                    </div>
+                                `;
+                                layer.bindPopup(popupContent);
+                            }
+                        });
+                        this.landUsesLayer.addLayer(layer);
+                        this.landUses.push(layer);
+                    });
+                    
+                    this.landUsesLayer.addTo(this.map);
+                },
+
+                updateLayers() {
+                    // Reload all layers
+                    this.fetchAllData();
                 },
 
                 updateMapMarkers() {
@@ -469,7 +688,6 @@
                         const marker = L.marker([lat, lng]);
                         const place = feature.properties;
                         
-                        // Custom Popup Content
                         const popupContent = `
                             <div class="overflow-hidden">
                                 ${place.image_url ? `<img src="${place.image_url}" class="w-full h-32 object-cover mb-3">` : ''}
@@ -491,9 +709,56 @@
                     });
                 },
 
+                performSearch() {
+                    if (!this.searchQuery || this.searchQuery.length < 2) {
+                        this.searchResults = [];
+                        return;
+                    }
+
+                    const query = this.searchQuery.toLowerCase();
+                    this.searchResults = [];
+
+                    // Search in places
+                    this.allPlaces.forEach(place => {
+                        const name = (place.properties.name || '').toLowerCase();
+                        const desc = (place.properties.description || '').toLowerCase();
+                        const catName = (place.properties.category?.name || '').toLowerCase();
+                        
+                        if (name.includes(query) || desc.includes(query) || catName.includes(query)) {
+                            this.searchResults.push({
+                                id: place.properties.id,
+                                name: place.properties.name,
+                                type: place.properties.category?.name || 'Lokasi',
+                                coordinates: place.geometry.coordinates,
+                                feature: place
+                            });
+                        }
+                    });
+                },
+
+                zoomToResult(result) {
+                    const [lng, lat] = result.coordinates;
+                    this.map.setView([lat, lng], 16);
+                    
+                    // Open popup if it's a marker
+                    this.markers.forEach(marker => {
+                        const markerLatLng = marker.getLatLng();
+                        if (Math.abs(markerLatLng.lat - lat) < 0.0001 && Math.abs(markerLatLng.lng - lng) < 0.0001) {
+                            marker.openPopup();
+                        }
+                    });
+
+                    this.searchQuery = '';
+                    this.searchResults = [];
+                },
+
                 resetFilters() {
                     this.selectedCategories = this.categories.map(c => c.id);
+                    this.showBoundaries = true;
+                    this.showInfrastructures = true;
+                    this.showLandUses = true;
                     this.updateMapMarkers();
+                    this.updateLayers();
                 }
             }
         }
