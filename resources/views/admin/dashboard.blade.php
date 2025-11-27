@@ -126,19 +126,25 @@
                 <!-- Chart: Categories -->
                 <div class="bg-white shadow-sm sm:rounded-2xl p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribusi Lokasi per Kategori</h3>
-                    <canvas id="categoriesChart" height="200"></canvas>
+                    <div class="relative h-64">
+                        <canvas id="categoriesChart"></canvas>
+                    </div>
                 </div>
 
                 <!-- Chart: Infrastructure Types -->
                 <div class="bg-white shadow-sm sm:rounded-2xl p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Jenis Infrastruktur</h3>
-                    <canvas id="infrastructureChart" height="200"></canvas>
+                    <div class="relative h-64">
+                        <canvas id="infrastructureChart"></canvas>
+                    </div>
                 </div>
 
                 <!-- Chart: Land Use Types -->
                 <div class="bg-white shadow-sm sm:rounded-2xl p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Jenis Penggunaan Lahan</h3>
-                    <canvas id="landUseChart" height="200"></canvas>
+                    <div class="relative h-64">
+                        <canvas id="landUseChart"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -281,86 +287,210 @@
     </div>
 
     <script>
-        // Categories Chart
-        const categoriesCtx = document.getElementById('categoriesChart');
-        if (categoriesCtx) {
-            new Chart(categoriesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: @json($stats['categories']->pluck('name')),
-                    datasets: [{
-                        data: @json($stats['categories']->pluck('places_count')),
-                        backgroundColor: @json($stats['categories']->pluck('color')),
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                }
-            });
-        }
-
-        // Infrastructure Chart
-        const infrastructureCtx = document.getElementById('infrastructureChart');
-        if (infrastructureCtx) {
-            new Chart(infrastructureCtx, {
-                type: 'bar',
-                data: {
-                    labels: @json($stats['infrastructure_types']->pluck('type')->map(fn($t) => ucfirst($t))),
-                    datasets: [{
-                        label: 'Jumlah',
-                        data: @json($stats['infrastructure_types']->pluck('count')),
-                        backgroundColor: '#8b5cf6',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Categories Chart
+            const categoriesCtx = document.getElementById('categoriesChart');
+            if (categoriesCtx) {
+                new Chart(categoriesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: @json($stats['categories']->pluck('name')->values()),
+                        datasets: [{
+                            data: @json($stats['categories']->pluck('places_count')->values()),
+                            backgroundColor: @json($stats['categories']->pluck('color')->values()),
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                    }
+                });
+            }
+
+            // Infrastructure Chart
+            const infrastructureCtx = document.getElementById('infrastructureChart');
+            if (infrastructureCtx) {
+                new Chart(infrastructureCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: @json($stats['infrastructure_types']->pluck('type')->map(fn($t) => ucfirst($t))->values()),
+                        datasets: [{
+                            label: 'Jumlah',
+                            data: @json($stats['infrastructure_types']->pluck('count')->values()),
+                            backgroundColor: '#8b5cf6',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // Land Use Chart
-        const landUseCtx = document.getElementById('landUseChart');
-        if (landUseCtx) {
-            new Chart(landUseCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: @json($stats['land_use_types']->pluck('type')->map(fn($t) => ucfirst(str_replace('_', ' ', $t)))),
-                    datasets: [{
-                        data: @json($stats['land_use_types']->pluck('count')),
-                        backgroundColor: ['#fbbf24', '#84cc16', '#059669', '#f59e0b', '#10b981'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                }
-            });
-        }
+            // Land Use Chart
+            const landUseCtx = document.getElementById('landUseChart');
+            if (landUseCtx) {
+                new Chart(landUseCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: @json($stats['land_use_types']->pluck('type')->map(fn($t) => ucfirst(str_replace('_', ' ', $t)))->values()),
+                        datasets: [{
+                            data: @json($stats['land_use_types']->pluck('count')->values()),
+                            backgroundColor: ['#fbbf24', '#84cc16', '#059669', '#f59e0b', '#10b981'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                    }
+                });
+            }
 
-        // Mini Map
-        const miniMap = L.map('miniMap').setView([-6.7289, 110.7485], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(miniMap);
+            // Mini Map
+            const miniMapElement = document.getElementById('miniMap');
+            if (miniMapElement) {
+                const miniMap = L.map('miniMap').setView([-6.7289, 110.7485], 13);
+                
+                const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(miniMap);
 
-        // Add markers for places
-        @foreach($places->items() as $place)
-            L.marker([{{ $place->latitude }}, {{ $place->longitude }}])
-                .addTo(miniMap)
-                .bindPopup('{{ $place->name }}');
-        @endforeach
+                // Layer Groups
+                const boundariesLayer = L.geoJSON(null, {
+                    style: function(feature) {
+                        return {
+                            color: '#10b981', // green-500
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.1
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        if (feature.properties && feature.properties.name) {
+                            layer.bindPopup(`
+                                <div class="font-semibold">${feature.properties.name}</div>
+                                <div class="text-xs text-gray-500">${feature.properties.type}</div>
+                            `);
+                        }
+                    }
+                }).addTo(miniMap);
+
+                const infrastructuresLayer = L.geoJSON(null, {
+                    style: function(feature) {
+                        return {
+                            color: '#8b5cf6', // purple-500
+                            weight: 3,
+                            opacity: 0.8
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        if (feature.properties && feature.properties.name) {
+                            layer.bindPopup(`
+                                <div class="font-semibold">${feature.properties.name}</div>
+                                <div class="text-xs text-gray-500">${feature.properties.type}</div>
+                            `);
+                        }
+                    }
+                }).addTo(miniMap);
+
+                const landUsesLayer = L.geoJSON(null, {
+                    style: function(feature) {
+                        return {
+                            color: '#f59e0b', // amber-500
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.3
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        if (feature.properties && feature.properties.name) {
+                            layer.bindPopup(`
+                                <div class="font-semibold">${feature.properties.name}</div>
+                                <div class="text-xs text-gray-500">${feature.properties.type}</div>
+                            `);
+                        }
+                    }
+                }).addTo(miniMap);
+
+                const placesLayer = L.geoJSON(null, {
+                    pointToLayer: function(feature, latlng) {
+                        const color = feature.properties.category?.color || '#3b82f6';
+                        const iconClass = feature.properties.category?.icon_class || 'fa-solid fa-map-marker-alt';
+                        
+                        const iconHtml = `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <i class="${iconClass}" style="color: white; font-size: 12px;"></i>
+                        </div>`;
+
+                        return L.marker(latlng, {
+                            icon: L.divIcon({
+                                html: iconHtml,
+                                className: 'custom-div-icon',
+                                iconSize: [24, 24],
+                                iconAnchor: [12, 12]
+                            })
+                        });
+                    },
+                    onEachFeature: function(feature, layer) {
+                        if (feature.properties && feature.properties.name) {
+                            layer.bindPopup(`
+                                <div class="font-semibold">${feature.properties.name}</div>
+                                <div class="text-xs text-gray-500">${feature.properties.category?.name || 'Lokasi'}</div>
+                            `);
+                        }
+                    }
+                }).addTo(miniMap);
+
+                // Load Data
+                const fetchData = (url) => fetch(url).then(r => {
+                    if (!r.ok) throw new Error(`HTTP error! status: ${r.status}`);
+                    return r.json();
+                }).catch(e => {
+                    console.warn(`Failed to fetch ${url}:`, e);
+                    return { type: 'FeatureCollection', features: [] }; // Return empty collection on error
+                });
+
+                Promise.all([
+                    fetchData('{{ route('boundaries.geojson') }}'),
+                    fetchData('{{ route('infrastructures.geojson') }}'),
+                    fetchData('{{ route('land_uses.geojson') }}'),
+                    fetchData('{{ route('places.geojson') }}')
+                ]).then(([boundaries, infrastructures, landUses, places]) => {
+                    if (boundaries.features && boundaries.features.length) boundariesLayer.addData(boundaries);
+                    if (infrastructures.features && infrastructures.features.length) infrastructuresLayer.addData(infrastructures);
+                    if (landUses.features && landUses.features.length) landUsesLayer.addData(landUses);
+                    if (places.features && places.features.length) placesLayer.addData(places);
+
+                    // Fit bounds to all data
+                    const group = new L.FeatureGroup([boundariesLayer, infrastructuresLayer, landUsesLayer, placesLayer]);
+                    if (group.getLayers().length > 0) {
+                        try {
+                            miniMap.fitBounds(group.getBounds(), { padding: [20, 20] });
+                        } catch (e) {
+                            console.log('No bounds to fit');
+                        }
+                    }
+                });
+
+                // Layer Control
+                const overlays = {
+                    "Batas Wilayah": boundariesLayer,
+                    "Infrastruktur": infrastructuresLayer,
+                    "Penggunaan Lahan": landUsesLayer,
+                    "Lokasi": placesLayer
+                };
+                L.control.layers(null, overlays).addTo(miniMap);
+            }
+        });
     </script>
 </x-app-layout>
 
