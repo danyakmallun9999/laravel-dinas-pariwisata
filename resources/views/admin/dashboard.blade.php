@@ -361,8 +361,9 @@
             if (miniMapElement) {
                 const miniMap = L.map('miniMap').setView([-6.7289, 110.7485], 13);
                 
-                const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors'
+                const baseLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    attribution: '&copy; Google Maps'
                 }).addTo(miniMap);
 
                 // Layer Groups
