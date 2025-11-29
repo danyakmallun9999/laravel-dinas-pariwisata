@@ -461,13 +461,13 @@
                         keepBuffer: 2
                     });
 
-                    googleStreets.addTo(this.map);
+                    googleSatellite.addTo(this.map);
 
                     const baseLayers = {
-                        "Streets": googleStreets,
-                        "Hybrid": googleHybrid,
-                        "Satellite": googleSatellite,
-                        "Terrain": googleTerrain
+                        "Satelit (Hybrid)": googleHybrid,
+                        "Peta Jalan (Bersih)": googleStreets,
+                        "Satelit (Polos)": googleSatellite,
+                        "Topografi": googleTerrain
                     };
 
                     L.control.layers(baseLayers, null, { position: 'bottomright' }).addTo(this.map);
