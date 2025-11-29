@@ -560,7 +560,9 @@
                         marker.on('click', () => {
                             this.selectedFeature = {
                                 ...props,
-                                image_url: props.image_url ? props.image_url : null
+                                image_url: props.image_url ? props.image_url : null,
+                                latitude: lat,
+                                longitude: lng
                             };
                         });
 
@@ -571,7 +573,10 @@
 
                 bindFeaturePopup(feature, layer) {
                     layer.on('click', () => {
-                        this.selectedFeature = feature.properties;
+                        this.selectedFeature = {
+                            ...feature.properties,
+                            _geo: feature
+                        };
                         L.DomEvent.stop(event); // Prevent map click
                     });
                 },
@@ -600,7 +605,7 @@
                 selectPlace(place) {
                     this.selectedFeature = {
                         ...place,
-                        image_url: place.image_path ? '{{ asset("") }}/' + place.image_path : null
+                        image_url: place.image_url || (place.image_path ? '{{ asset("") }}/' + place.image_path : null)
                     };
                     this.zoomToFeature({
                         latitude: place.latitude,
