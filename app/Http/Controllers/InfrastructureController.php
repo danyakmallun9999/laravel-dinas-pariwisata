@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Infrastructure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -36,7 +37,7 @@ class InfrastructureController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -55,7 +56,14 @@ class InfrastructureController extends Controller
             return redirect()->back()->withErrors(['geometry' => 'Format geometry tidak valid.'])->withInput();
         }
 
-        Infrastructure::create($data);
+        $infrastructure = Infrastructure::create($data);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Infrastruktur berhasil ditambahkan.',
+                'infrastructure' => $infrastructure,
+            ]);
+        }
 
         return redirect()
             ->route('admin.infrastructures.index')
@@ -83,7 +91,7 @@ class InfrastructureController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Infrastructure $infrastructure): RedirectResponse
+    public function update(Request $request, Infrastructure $infrastructure): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',

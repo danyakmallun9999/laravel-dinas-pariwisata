@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Boundary;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -34,7 +35,7 @@ class BoundaryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -50,7 +51,14 @@ class BoundaryController extends Controller
             return redirect()->back()->withErrors(['geometry' => 'Format geometry tidak valid.'])->withInput();
         }
 
-        Boundary::create($data);
+        $boundary = Boundary::create($data);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Batas wilayah berhasil ditambahkan.',
+                'boundary' => $boundary,
+            ]);
+        }
 
         return redirect()
             ->route('admin.boundaries.index')
@@ -76,7 +84,7 @@ class BoundaryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Boundary $boundary): RedirectResponse
+    public function update(Request $request, Boundary $boundary): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',

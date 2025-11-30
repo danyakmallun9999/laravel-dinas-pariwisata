@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LandUse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -34,7 +35,7 @@ class LandUseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -51,7 +52,14 @@ class LandUseController extends Controller
             return redirect()->back()->withErrors(['geometry' => 'Format geometry tidak valid.'])->withInput();
         }
 
-        LandUse::create($data);
+        $landUse = LandUse::create($data);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Penggunaan lahan berhasil ditambahkan.',
+                'land_use' => $landUse,
+            ]);
+        }
 
         return redirect()
             ->route('admin.land-uses.index')
@@ -77,7 +85,7 @@ class LandUseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, LandUse $landUse): RedirectResponse
+    public function update(Request $request, LandUse $landUse): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',

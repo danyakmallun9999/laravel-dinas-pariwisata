@@ -42,50 +42,70 @@
 
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="{{ route('admin.places.index') }}" class="block bg-white shadow-sm sm:rounded-2xl p-6 border-l-4 border-blue-500 hover:shadow-md transition group">
-                    <div class="flex items-center justify-between">
+                <!-- Places Card -->
+                <a href="{{ route('admin.places.index') }}" class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 border border-slate-100">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-blue-50 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-500 group-hover:text-blue-600 transition">Titik Lokasi</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['places_count'] }}</p>
+                            <p class="text-sm font-medium text-slate-500">Titik Lokasi</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ $stats['places_count'] }}</h3>
+                            <p class="text-xs text-blue-600 font-medium mt-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                Lihat Data <i class="fa-solid fa-arrow-right"></i>
+                            </p>
                         </div>
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition">
-                            <i class="fa-solid fa-map-marker-alt text-blue-600 text-xl"></i>
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl shadow-sm group-hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-map-marker-alt"></i>
                         </div>
                     </div>
                 </a>
 
-                <a href="{{ route('admin.boundaries.index') }}" class="block bg-white shadow-sm sm:rounded-2xl p-6 border-l-4 border-green-500 hover:shadow-md transition group">
-                    <div class="flex items-center justify-between">
+                <!-- Boundaries Card -->
+                <a href="{{ route('admin.boundaries.index') }}" class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 border border-slate-100">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-green-50 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-500 group-hover:text-green-600 transition">Batas Wilayah</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['boundaries_count'] }}</p>
+                            <p class="text-sm font-medium text-slate-500">Batas Wilayah</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ $stats['boundaries_count'] }}</h3>
+                            <p class="text-xs text-green-600 font-medium mt-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                Lihat Data <i class="fa-solid fa-arrow-right"></i>
+                            </p>
                         </div>
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition">
-                            <i class="fa-solid fa-map text-green-600 text-xl"></i>
+                        <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-xl shadow-sm group-hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-map"></i>
                         </div>
                     </div>
                 </a>
 
-                <a href="{{ route('admin.infrastructures.index') }}" class="block bg-white shadow-sm sm:rounded-2xl p-6 border-l-4 border-purple-500 hover:shadow-md transition group">
-                    <div class="flex items-center justify-between">
+                <!-- Infrastructures Card -->
+                <a href="{{ route('admin.infrastructures.index') }}" class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 border border-slate-100">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-purple-50 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-500 group-hover:text-purple-600 transition">Infrastruktur</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['infrastructures_count'] }}</p>
+                            <p class="text-sm font-medium text-slate-500">Infrastruktur</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ $stats['infrastructures_count'] }}</h3>
+                            <p class="text-xs text-purple-600 font-medium mt-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                Lihat Data <i class="fa-solid fa-arrow-right"></i>
+                            </p>
                         </div>
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center group-hover:bg-purple-200 transition">
-                            <i class="fa-solid fa-road text-purple-600 text-xl"></i>
+                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl shadow-sm group-hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-road"></i>
                         </div>
                     </div>
                 </a>
 
-                <a href="{{ route('admin.land-uses.index') }}" class="block bg-white shadow-sm sm:rounded-2xl p-6 border-l-4 border-yellow-500 hover:shadow-md transition group">
-                    <div class="flex items-center justify-between">
+                <!-- Land Uses Card -->
+                <a href="{{ route('admin.land-uses.index') }}" class="relative overflow-hidden bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 border border-slate-100">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 rounded-full bg-amber-50 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-500 group-hover:text-yellow-600 transition">Penggunaan Lahan</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['land_uses_count'] }}</p>
+                            <p class="text-sm font-medium text-slate-500">Penggunaan Lahan</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ $stats['land_uses_count'] }}</h3>
+                            <p class="text-xs text-amber-600 font-medium mt-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                Lihat Data <i class="fa-solid fa-arrow-right"></i>
+                            </p>
                         </div>
-                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center group-hover:bg-yellow-200 transition">
-                            <i class="fa-solid fa-seedling text-yellow-600 text-xl"></i>
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-sm group-hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-seedling"></i>
                         </div>
                     </div>
                 </a>

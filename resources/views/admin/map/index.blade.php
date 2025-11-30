@@ -64,18 +64,18 @@
                             <div x-show="activeTab === 'boundary'" x-cloak class="space-y-4">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-lg font-semibold text-gray-900">Batas Wilayah</h3>
-                                    <a href="{{ route('admin.boundaries.create') }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
+                                    <button @click="startAdd('boundary')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
                                         <i class="fa-solid fa-plus mr-1"></i> Tambah
-                                    </a>
+                                    </button>
                                 </div>
                                 <div class="space-y-2">
                                     <template x-if="boundaries.length === 0">
                                         <div class="bg-white p-4 rounded-lg border border-gray-200 text-center text-gray-500 text-sm">
                                             <i class="fa-solid fa-inbox mb-2 text-2xl"></i>
                                             <p>Belum ada data batas wilayah</p>
-                                            <a href="{{ route('admin.boundaries.create') }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                                            <button @click="startAdd('boundary')" class="text-blue-600 hover:text-blue-800 mt-2 inline-block font-semibold">
                                                 Tambah sekarang
-                                            </a>
+                                            </button>
                                         </div>
                                     </template>
                                     <template x-for="item in boundaries" :key="item.id">
@@ -92,18 +92,18 @@
                             <div x-show="activeTab === 'infrastructure'" x-cloak class="space-y-4">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-lg font-semibold text-gray-900">Infrastruktur</h3>
-                                    <a href="{{ route('admin.infrastructures.create') }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
+                                    <button @click="startAdd('infrastructure')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
                                         <i class="fa-solid fa-plus mr-1"></i> Tambah
-                                    </a>
+                                    </button>
                                 </div>
                                 <div class="space-y-2">
                                     <template x-if="infrastructures.length === 0">
                                         <div class="bg-white p-4 rounded-lg border border-gray-200 text-center text-gray-500 text-sm">
                                             <i class="fa-solid fa-inbox mb-2 text-2xl"></i>
                                             <p>Belum ada data infrastruktur</p>
-                                            <a href="{{ route('admin.infrastructures.create') }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                                            <button @click="startAdd('infrastructure')" class="text-blue-600 hover:text-blue-800 mt-2 inline-block font-semibold">
                                                 Tambah sekarang
-                                            </a>
+                                            </button>
                                         </div>
                                     </template>
                                     <template x-for="item in infrastructures" :key="item.id">
@@ -120,18 +120,18 @@
                             <div x-show="activeTab === 'landuse'" x-cloak class="space-y-4">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-lg font-semibold text-gray-900">Penggunaan Lahan</h3>
-                                    <a href="{{ route('admin.land-uses.create') }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
+                                    <button @click="startAdd('landuse')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
                                         <i class="fa-solid fa-plus mr-1"></i> Tambah
-                                    </a>
+                                    </button>
                                 </div>
                                 <div class="space-y-2">
                                     <template x-if="landUses.length === 0">
                                         <div class="bg-white p-4 rounded-lg border border-gray-200 text-center text-gray-500 text-sm">
                                             <i class="fa-solid fa-inbox mb-2 text-2xl"></i>
                                             <p>Belum ada data penggunaan lahan</p>
-                                            <a href="{{ route('admin.land-uses.create') }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                                            <button @click="startAdd('landuse')" class="text-blue-600 hover:text-blue-800 mt-2 inline-block font-semibold">
                                                 Tambah sekarang
-                                            </a>
+                                            </button>
                                         </div>
                                     </template>
                                     <template x-for="item in landUses" :key="item.id">
@@ -148,18 +148,18 @@
                             <div x-show="activeTab === 'road'" x-cloak class="space-y-4">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-lg font-semibold text-gray-900">Jalan</h3>
-                                    <a href="{{ route('admin.infrastructures.create') }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
+                                    <button @click="startAdd('road')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
                                         <i class="fa-solid fa-plus mr-1"></i> Tambah
-                                    </a>
+                                    </button>
                                 </div>
                                 <div class="space-y-2">
                                     <template x-if="roads.length === 0">
                                         <div class="bg-white p-4 rounded-lg border border-gray-200 text-center text-gray-500 text-sm">
                                             <i class="fa-solid fa-inbox mb-2 text-2xl"></i>
                                             <p>Belum ada data jalan</p>
-                                            <a href="{{ route('admin.infrastructures.create') }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                                            <button @click="startAdd('road')" class="text-blue-600 hover:text-blue-800 mt-2 inline-block font-semibold">
                                                 Tambah sekarang
-                                            </a>
+                                            </button>
                                         </div>
                                     </template>
                                     <template x-for="item in roads" :key="item.id">
@@ -176,18 +176,18 @@
                             <div x-show="activeTab === 'place'" x-cloak class="space-y-4">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-lg font-semibold text-gray-900">Titik Lokasi</h3>
-                                    <a href="{{ route('admin.places.create') }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
+                                    <button @click="startAdd('place')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
                                         <i class="fa-solid fa-plus mr-1"></i> Tambah
-                                    </a>
+                                    </button>
                                 </div>
                                 <div class="space-y-2">
                                     <template x-if="places.length === 0">
                                         <div class="bg-white p-4 rounded-lg border border-gray-200 text-center text-gray-500 text-sm">
                                             <i class="fa-solid fa-inbox mb-2 text-2xl"></i>
                                             <p>Belum ada data titik lokasi</p>
-                                            <a href="{{ route('admin.places.create') }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                                            <button @click="startAdd('place')" class="text-blue-600 hover:text-blue-800 mt-2 inline-block font-semibold">
                                                 Tambah sekarang
-                                            </a>
+                                            </button>
                                         </div>
                                     </template>
                                     <template x-for="item in places" :key="item.id">
@@ -350,6 +350,30 @@
                 </div>
             </div>
 
+            <!-- Toast Notification -->
+            <div x-show="notification.show" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform translate-y-2"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform translate-y-2"
+                 class="absolute top-4 left-1/2 transform -translate-x-1/2 z-[2000] text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2"
+                 :class="{
+                    'bg-gray-800': notification.type === 'info',
+                    'bg-green-600': notification.type === 'success',
+                    'bg-red-600': notification.type === 'error'
+                 }"
+                 style="display: none;">
+                <i class="fa-solid" 
+                   :class="{
+                       'fa-info-circle text-blue-400': notification.type === 'info',
+                       'fa-check-circle text-white': notification.type === 'success',
+                       'fa-exclamation-circle text-white': notification.type === 'error'
+                   }"></i>
+                <span x-text="notification.message"></span>
+            </div>
+
 
         <!-- Delete Confirmation Modal -->
         <div x-show="showDeleteModal" x-cloak 
@@ -408,6 +432,173 @@
                 </div>
             </div>
         </div>
+        <!-- Quick Add Modal -->
+        <div x-show="showAddModal" x-cloak 
+             class="fixed inset-0 z-[2000] overflow-y-auto" 
+             aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="showAddModal" 
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+                     @click="showAddModal = false" aria-hidden="true"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="showAddModal" 
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                            Tambah <span x-text="getFeatureTypeName()"></span> Baru
+                        </h3>
+                        
+                        <div class="space-y-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                                <input type="text" x-model="newFeature.name" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                                <textarea x-model="newFeature.description" rows="3" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                            </div>
+                        </div>
+
+                      <!-- Boundary Fields -->
+                    <template x-if="activeTab === 'boundary'">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Batas</label>
+                                <select x-model="newFeature.type" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="village_boundary">Batas Desa</option>
+                                    <option value="hamlet">Dusun</option>
+                                    <option value="other">Lainnya</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Luas (Hektar)</label>
+                                <input type="number" step="0.0001" x-model="newFeature.area_hectares" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>
+                                <p class="text-xs text-gray-500 mt-1">Otomatis dihitung dari gambar.</p>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Infrastructure Fields -->
+                    <template x-if="activeTab === 'infrastructure' || activeTab === 'road'">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Infrastruktur</label>
+                                <select x-model="newFeature.type" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="road">Jalan</option>
+                                    <option value="river">Sungai</option>
+                                    <option value="irrigation">Irigasi</option>
+                                    <option value="electricity">Listrik</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Panjang (m)</label>
+                                    <input type="number" step="0.01" x-model="newFeature.length_meters" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Lebar (m)</label>
+                                    <input type="number" step="0.01" x-model="newFeature.width_meters" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kondisi</label>
+                                <select x-model="newFeature.condition" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="">Pilih kondisi</option>
+                                    <option value="good">Baik</option>
+                                    <option value="fair">Cukup</option>
+                                    <option value="poor">Buruk</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kategori (Opsional)</label>
+                                <select x-model="newFeature.category_id" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="">Tidak ada kategori</option>
+                                    <template x-for="category in categories" :key="category.id">
+                                        <option :value="category.id" x-text="category.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Land Use Fields -->
+                    <template x-if="activeTab === 'landuse'">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Penggunaan Lahan</label>
+                                <select x-model="newFeature.type" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="settlement">Permukiman</option>
+                                    <option value="rice_field">Persawahan</option>
+                                    <option value="plantation">Perkebunan</option>
+                                    <option value="forest">Hutan</option>
+                                    <option value="other">Lainnya</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Pemilik</label>
+                                <input type="text" x-model="newFeature.owner" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Nama pemilik lahan">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Luas (Hektar)</label>
+                                <input type="number" step="0.0001" x-model="newFeature.area_hectares" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>
+                                <p class="text-xs text-gray-500 mt-1">Otomatis dihitung dari gambar.</p>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Place Fields -->
+                    <template x-if="activeTab === 'place'">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                                <select x-model="newFeature.category_id" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="">Pilih kategori</option>
+                                    <template x-for="category in categories" :key="category.id">
+                                        <option :value="category.id" x-text="category.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Foto Lokasi</label>
+                                <input type="file" @change="newFeature.image = $event.target.files[0]" accept="image/*" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                <p class="text-xs text-gray-500 mt-1">JPG/PNG (Max. 2MB)</p>
+                            </div>
+                        </div>
+                    </template>
+                    </div>
+
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" 
+                                @click="saveFeature()"
+                                :disabled="isSaving"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                            <span x-show="!isSaving">Simpan</span>
+                            <span x-show="isSaving">Menyimpan...</span>
+                        </button>
+                        <button type="button" 
+                                @click="cancelAdd()"
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     @pushOnce('styles')
@@ -440,6 +631,14 @@
                     featureToDelete: null,
                     uploadedGeoJSON: null,
                     uploadedProperties: null,
+                    
+                    // Quick Add
+                    showAddModal: false,
+                    newFeature: { name: '', type: '', description: '', category_id: '' },
+                    tempLayer: null,
+                    isSaving: false,
+                    categories: @json(\App\Models\Category::select('id', 'name')->orderBy('name')->get()),
+                    notification: { show: false, message: '', type: 'info' },
                     
                     // Data
                     boundaries: @json($boundaries ?? []),
@@ -543,10 +742,69 @@
                             this.drawingMode = null;
                             this.map.getContainer().style.cursor = '';
                             
-                            // Show confirmation dialog
-                            if (confirm('Geometry berhasil dibuat. Simpan sebagai fitur baru?')) {
-                                this.handleNewFeature(layer);
+                        // Show confirmation dialog
+                        this.tempLayer = layer;
+                        
+                        // Reset form first
+                        this.newFeature = { 
+                            name: '', 
+                            description: '', 
+                            type: '', 
+                            category_id: '',
+                            area_hectares: '',
+                            length_meters: '',
+                            width_meters: '',
+                            condition: '',
+                            owner: '',
+                            image: null
+                        };
+                        
+                        // Auto-fill type if possible
+                        if (this.activeTab === 'boundary') this.newFeature.type = 'village_boundary';
+                        if (this.activeTab === 'infrastructure') this.newFeature.type = 'road';
+                        if (this.activeTab === 'road') this.newFeature.type = 'road';
+                        if (this.activeTab === 'landuse') this.newFeature.type = 'settlement';
+
+                        // Calculate area if polygon
+                        if (layer instanceof L.Polygon) {
+                            const latlngs = layer.getLatLngs()[0];
+                            let area = 0;
+                            if (L.GeometryUtil && L.GeometryUtil.geodesicArea) {
+                                area = L.GeometryUtil.geodesicArea(latlngs);
+                            } else {
+                                // Fallback area calculation (simple spherical)
+                                area = L.GeometryUtil ? L.GeometryUtil.geodesicArea(latlngs) : 0;
+                                // If still 0/undefined, try a basic implementation or rely on backend?
+                                // Let's try to use a simple approximation if needed, but Leaflet.draw usually has it.
+                                // If L.GeometryUtil is missing, we can't easily calc geodesic area without a lib.
+                                // Assuming it works or we use a simple planar approximation for small areas:
+                                // area = L.GeometryUtil.geodesicArea(latlngs); 
+                                // Let's check if we can access the draw control's utils
                             }
+                            
+                            // Try to use the one from Leaflet Draw if available
+                            try {
+                                area = L.GeometryUtil.geodesicArea(latlngs);
+                            } catch (e) {
+                                console.warn('L.GeometryUtil not found, using planar approximation');
+                                // Planar approximation (not accurate for large areas but ok for village)
+                                // area = ... 
+                            }
+                            
+                            this.newFeature.area_hectares = (area / 10000).toFixed(4); // Convert sq meters to hectares
+                        }
+                        
+                        // Calculate length if polyline
+                        if (layer instanceof L.Polyline && !(layer instanceof L.Polygon)) {
+                            let distance = 0;
+                            const latlngs = layer.getLatLngs();
+                            for (let i = 0; i < latlngs.length - 1; i++) {
+                                distance += latlngs[i].distanceTo(latlngs[i + 1]);
+                            }
+                            this.newFeature.length_meters = distance.toFixed(2);
+                        }
+
+                        this.showAddModal = true;
                         });
                         
                         this.map.on(L.Draw.Event.DRAWSTART, () => {
@@ -798,6 +1056,152 @@
                             console.log('Redo successful', latlng);
                         } else {
                             console.log('Redo failed: stack empty or no handler');
+                        }
+                    },
+
+                    startAdd(type) {
+                        let drawType = '';
+                        let message = '';
+
+                        if (type === 'boundary') {
+                            drawType = 'polygon';
+                            message = 'Mode menggambar Polygon aktif. Silakan gambar batas wilayah di peta.';
+                        } else if (type === 'infrastructure' || type === 'road') {
+                            drawType = 'line';
+                            message = 'Mode menggambar Garis aktif. Silakan gambar jalur/infrastruktur di peta.';
+                        } else if (type === 'landuse') {
+                            drawType = 'polygon';
+                            message = 'Mode menggambar Polygon aktif. Silakan gambar area penggunaan lahan di peta.';
+                        } else if (type === 'place') {
+                            drawType = 'point';
+                            message = 'Mode menggambar Titik aktif. Silakan klik lokasi di peta.';
+                        }
+
+                        if (drawType) {
+                            this.startDrawing(drawType);
+                            this.showNotification(message, 'info');
+                        }
+                    },
+
+                    showNotification(message, type = 'info', duration = 3000) {
+                        this.notification.message = message;
+                        this.notification.type = type;
+                        this.notification.show = true;
+                        setTimeout(() => {
+                            this.notification.show = false;
+                        }, duration);
+                    },
+
+                    getFeatureTypeName() {
+                        if (this.activeTab === 'boundary') return 'Batas Wilayah';
+                        if (this.activeTab === 'infrastructure') return 'Infrastruktur';
+                        if (this.activeTab === 'landuse') return 'Penggunaan Lahan';
+                        if (this.activeTab === 'place') return 'Titik Lokasi';
+                        return 'Fitur';
+                    },
+
+                    cancelAdd() {
+                        this.showAddModal = false;
+                        if (this.tempLayer) {
+                            this.drawnItems.removeLayer(this.tempLayer);
+                            this.tempLayer = null;
+                        }
+                    },
+
+                    async saveFeature() {
+                        if (!this.newFeature.name) {
+                            this.showNotification('Nama harus diisi', 'error');
+                            return;
+                        }
+
+                        this.isSaving = true;
+                        const geoJSON = this.tempLayer.toGeoJSON();
+                        const geometry = JSON.stringify(geoJSON.geometry);
+
+                        let url = '';
+                        // Use FormData for file upload support
+                        let formData = new FormData();
+                        formData.append('name', this.newFeature.name);
+                        formData.append('description', this.newFeature.description || '');
+                        formData.append('geometry', geometry);
+                        formData.append('_token', '{{ csrf_token() }}');
+
+                        if (this.activeTab === 'boundary') {
+                            url = '{{ route("admin.boundaries.store") }}';
+                            formData.append('type', this.newFeature.type || 'other');
+                            if (this.newFeature.area_hectares) formData.append('area_hectares', this.newFeature.area_hectares);
+                        } else if (this.activeTab === 'infrastructure' || this.activeTab === 'road') {
+                            url = '{{ route("admin.infrastructures.store") }}';
+                            formData.append('type', this.newFeature.type || 'road');
+                            if (this.newFeature.length_meters) formData.append('length_meters', this.newFeature.length_meters);
+                            if (this.newFeature.width_meters) formData.append('width_meters', this.newFeature.width_meters);
+                            if (this.newFeature.condition) formData.append('condition', this.newFeature.condition);
+                            if (this.newFeature.category_id) formData.append('category_id', this.newFeature.category_id);
+                        } else if (this.activeTab === 'landuse') {
+                            url = '{{ route("admin.land-uses.store") }}';
+                            formData.append('type', this.newFeature.type || 'other');
+                            if (this.newFeature.owner) formData.append('owner', this.newFeature.owner);
+                            if (this.newFeature.area_hectares) formData.append('area_hectares', this.newFeature.area_hectares);
+                        } else if (this.activeTab === 'place') {
+                            url = '{{ route("admin.places.store") }}';
+                            if (this.newFeature.category_id) formData.append('category_id', this.newFeature.category_id);
+                            if (this.newFeature.image) formData.append('image', this.newFeature.image);
+                            
+                            // For places, we also need lat/lng separately for some controllers, but AdminController handles geometry string
+                            // Extract lat/lng from geometry for safety if needed by backend validation
+                            if (geoJSON.geometry.type === 'Point') {
+                                formData.append('latitude', geoJSON.geometry.coordinates[1]);
+                                formData.append('longitude', geoJSON.geometry.coordinates[0]);
+                            }
+                        }
+
+                        try {
+                            const response = await fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    // 'Content-Type': 'multipart/form-data' // Do NOT set this manually when using FormData, browser does it
+                                },
+                                body: formData
+                            });
+
+                            if (!response.ok) {
+                                const errorData = await response.json();
+                                throw new Error(errorData.message || 'Gagal menyimpan data');
+                            }
+
+                            const result = await response.json();
+                            
+                            // Success
+                            this.showAddModal = false;
+                            this.tempLayer = null; 
+                            this.drawnItems.clearLayers(); 
+                            
+                            // Reload layers to show new data with correct style
+                            this.loadAllLayers();
+                            
+                            // Update sidebar list
+                            if (this.activeTab === 'boundary' && result.boundary) {
+                                this.boundaries.push(result.boundary);
+                            } else if ((this.activeTab === 'infrastructure' || this.activeTab === 'road') && result.infrastructure) {
+                                if (this.activeTab === 'road' && result.infrastructure.type === 'road') {
+                                    this.roads.push(result.infrastructure);
+                                } else {
+                                    this.infrastructures.push(result.infrastructure);
+                                }
+                            } else if (this.activeTab === 'landuse' && result.land_use) {
+                                this.landUses.push(result.land_use);
+                            } else if (this.activeTab === 'place' && result.place) {
+                                this.places.push(result.place);
+                            }
+
+                            this.showNotification(result.message || 'Data berhasil disimpan', 'success');
+
+                        } catch (error) {
+                            console.error('Error:', error);
+                            this.showNotification('Terjadi kesalahan: ' + error.message, 'error');
+                        } finally {
+                            this.isSaving = false;
                         }
                     },
 
@@ -1078,18 +1482,32 @@
                         })
                         .then(res => {
                             if (res.ok) {
+                                // Remove from list
+                                const id = this.featureToDelete.id;
+                                if (this.activeTab === 'boundary') {
+                                    this.boundaries = this.boundaries.filter(item => item.id !== id);
+                                } else if (this.activeTab === 'infrastructure') {
+                                    this.infrastructures = this.infrastructures.filter(item => item.id !== id);
+                                } else if (this.activeTab === 'road') {
+                                    this.roads = this.roads.filter(item => item.id !== id);
+                                } else if (this.activeTab === 'landuse') {
+                                    this.landUses = this.landUses.filter(item => item.id !== id);
+                                } else if (this.activeTab === 'place') {
+                                    this.places = this.places.filter(item => item.id !== id);
+                                }
+
                                 this.selectedFeature = null;
                                 this.showDeleteModal = false;
                                 this.featureToDelete = null;
                                 this.loadAllLayers();
-                                // Optional: Show success toast
+                                this.showNotification('Data berhasil dihapus', 'success');
                             } else {
-                                alert('Gagal menghapus fitur. Silakan coba lagi.');
+                                this.showNotification('Gagal menghapus fitur. Silakan coba lagi.', 'error');
                             }
                         })
                         .catch(err => {
                             console.error(err);
-                            alert('Terjadi kesalahan saat menghapus fitur.');
+                            this.showNotification('Terjadi kesalahan saat menghapus fitur.', 'error');
                         });
                     },
 

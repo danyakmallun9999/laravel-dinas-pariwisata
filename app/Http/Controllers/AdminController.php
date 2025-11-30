@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Infrastructure;
 use App\Models\LandUse;
 use App\Models\Place;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -63,7 +64,7 @@ class AdminController extends Controller
         return view('admin.places.create', compact('categories', 'place'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $data = $this->validatePlace($request);
 
@@ -82,7 +83,14 @@ class AdminController extends Controller
 
         unset($data['image']);
 
-        Place::create($data);
+        $place = Place::create($data);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Lokasi berhasil ditambahkan.',
+                'place' => $place->load('category'),
+            ]);
+        }
 
         return redirect()
             ->route('admin.places.index')
@@ -96,7 +104,7 @@ class AdminController extends Controller
         return view('admin.places.edit', compact('categories', 'place'));
     }
 
-    public function update(Request $request, Place $place): RedirectResponse
+    public function update(Request $request, Place $place): RedirectResponse|JsonResponse
     {
         $data = $this->validatePlace($request);
 

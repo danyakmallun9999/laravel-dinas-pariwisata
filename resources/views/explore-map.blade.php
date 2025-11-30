@@ -78,6 +78,20 @@
 
     <div x-data="mapExplorer()" class="relative h-screen w-full flex">
         
+        <!-- Toast Notification -->
+        <div x-show="showToast" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-4"
+             class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 backdrop-blur text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-3"
+             x-cloak>
+            <i class="fa-solid fa-info-circle text-blue-400"></i>
+            <span x-text="toastMessage" class="text-sm font-medium"></span>
+        </div>
+        
         <!-- Map Container -->
         <div class="absolute inset-0 z-0">
             <div id="map"></div>
@@ -188,7 +202,7 @@
                                 <h3 class="text-xs uppercase tracking-wider text-slate-500 font-bold mb-3">Filter Kategori Lokasi</h3>
                                 <div class="space-y-2">
                                     <template x-for="category in categories" :key="category.id">
-                                        <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+                                        <label x-show="category.places_count > 0" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 transition cursor-pointer">
                                             <input type="checkbox" :value="category.id" x-model="selectedCategories" @change="updateMapMarkers()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                                             <span class="w-2 h-2 rounded-full" :style="`background-color: ${category.color}`"></span>
                                             <span class="text-sm text-slate-600 flex-1" x-text="category.name"></span>
@@ -377,7 +391,10 @@
                 searchQuery: '',
                 searchResults: [],
                 selectedFeature: null,
+                selectedFeature: null,
                 initialCenterSet: false,
+                showToast: false,
+                toastMessage: '',
                 
                 // Data
                 categories: @json($categories),
@@ -414,7 +431,46 @@
                 init() {
                     this.selectedCategories = this.categories.map(c => c.id);
                     this.initMap();
-                    this.loadAllData();
+                    this.loadAllData().then(() => {
+                        this.checkUrlQuery();
+                    });
+                },
+
+                checkUrlQuery() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const query = urlParams.get('q');
+                    const categoryId = urlParams.get('category');
+
+                    if (categoryId) {
+                        // Filter by category
+                        const catId = parseInt(categoryId);
+                        if (this.categories.find(c => c.id === catId)) {
+                            this.selectedCategories = [catId];
+                            this.updateMapMarkers();
+                            const catName = this.categories.find(c => c.id === catId).name;
+                            this.showNotification(`Menampilkan kategori: "${catName}"`);
+                        }
+                    }
+
+                    if (query) {
+                        this.searchQuery = query;
+                        this.performSearch();
+                        
+                        if (this.searchResults.length > 0) {
+                            // Auto select first result
+                            const firstResult = this.searchResults[0];
+                            this.selectFeature(firstResult);
+                            this.showNotification(`Menampilkan hasil untuk: "${query}"`);
+                        } else {
+                            this.showNotification(`Tidak ditemukan hasil untuk: "${query}"`);
+                        }
+                    }
+                },
+
+                showNotification(message) {
+                    this.toastMessage = message;
+                    this.showToast = true;
+                    setTimeout(() => this.showToast = false, 3000);
                 },
 
                 initMap() {
