@@ -3,828 +3,816 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sistem Informasi Geografis Desa Mayong Lor</title>
+    <title>Sistem Informasi Geografis - Desa Mayong Lor</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700|plus-jakarta-sans:400,500,600,700,800" rel="stylesheet" />
 
-    <!-- Leaflet CSS -->
+    <!-- Leaflet & Icon -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Styles -->
+    
+    <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        body { font-family: 'Instrument Sans', sans-serif; }
+        body { font-family: 'Instrument Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        #map { height: 600px; z-index: 1; border-radius: 1.5rem; }
-        .leaflet-popup-content-wrapper { border-radius: 1rem; border: none; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .leaflet-popup-content { margin: 0; width: 300px !important; }
+        #map { height: 100%; width: 100%; z-index: 10; border-radius: 0.75rem; }
+        *:focus-visible { outline: 3px solid #3b82f6; outline-offset: 2px; }
         
-        /* Custom Scrollbar */
+        /* Custom Scroll */
         .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        .custom-marker { display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
-        .custom-marker:hover { transform: scale(1.1); }
 
-        /* Leaflet Control Customization */
-        .leaflet-control-zoom { border: none !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; border-radius: 0.75rem !important; overflow: hidden; }
-        .leaflet-control-zoom a { background: white !important; color: #1e293b !important; border-bottom: 1px solid #f1f5f9 !important; }
-        .leaflet-control-zoom a:hover { background: #f8fafc !important; }
+        /* Animations */
+        .custom-marker { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .custom-marker:hover { transform: scale(1.25); z-index: 1000 !important; }
+        
+        .marker-pulse { animation: pulse-blue 2s infinite; }
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        /* Map UI Controls */
+        .map-btn { 
+            width: 3rem; height: 3rem; 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            color: #475569;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .map-btn:hover { background: #eff6ff; color: #2563eb; }
     </style>
 </head>
-<body class="antialiased text-slate-600 bg-white">
+<body class="antialiased" x-data="mapComponent()">
 
-    <!-- Navigation -->
-    <!-- Navigation -->
-    <header class="absolute inset-x-0 top-0 z-50 transition-all duration-300">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 transition-all duration-300">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-24">
-                <!-- Logo -->
+            <div class="flex items-center justify-between h-20">
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-lg">
-                        <i class="fa-solid fa-leaf text-lg"></i>
-                    </div>
+                    <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" alt="Logo" class="h-10 w-auto drop-shadow-sm transition hover:scale-105">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-wider text-blue-300">Desa Mayong Lor</p>
-                        <p class="text-lg font-bold text-white leading-none">GIS Portal</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Pemerintah Desa</p>
+                        <h1 class="text-xl font-extrabold text-slate-900 leading-none tracking-tight">Mayong Lor</h1>
                     </div>
                 </div>
 
-                <!-- Desktop Nav -->
-                <nav class="hidden md:flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/20">
-                    <a href="#hero" class="px-5 py-2 text-sm font-medium text-white rounded-full hover:bg-white/20 transition">Beranda</a>
-                    <a href="#about" class="px-5 py-2 text-sm font-medium text-white/80 rounded-full hover:text-white hover:bg-white/20 transition">Profil</a>
-                    <a href="#stats" class="px-5 py-2 text-sm font-medium text-white/80 rounded-full hover:text-white hover:bg-white/20 transition">Statistik</a>
-                    <a href="#map-section" class="px-5 py-2 text-sm font-medium text-white/80 rounded-full hover:text-white hover:bg-white/20 transition">Peta Digital</a>
-                    <a href="#contact" class="px-5 py-2 text-sm font-medium text-white/80 rounded-full hover:text-white hover:bg-white/20 transition">Kontak</a>
+                <nav class="hidden md:flex items-center bg-slate-100/50 p-1 rounded-full border border-slate-200">
+                    <a href="#beranda" class="px-5 py-2 text-sm font-semibold text-slate-600 rounded-full hover:bg-white hover:text-blue-700 hover:shadow-sm transition">Beranda</a>
+                    <a href="#peta" class="px-5 py-2 text-sm font-semibold text-slate-600 rounded-full hover:bg-white hover:text-blue-700 hover:shadow-sm transition">Peta Desa</a>
+                    <a href="{{ route('explore.map') }}" class="px-5 py-2 text-sm font-semibold text-slate-600 rounded-full hover:bg-white hover:text-blue-700 hover:shadow-sm transition">Jelajahi</a>
+                    <a href="#statistik" class="px-5 py-2 text-sm font-semibold text-slate-600 rounded-full hover:bg-white hover:text-blue-700 hover:shadow-sm transition">Statistik</a>
                 </nav>
 
-                <!-- Action Buttons -->
-                <div class="hidden md:flex items-center gap-4">
-                    <a href="{{ route('login') }}" class="text-sm font-semibold text-white/90 hover:text-white transition">
-                        Masuk Admin
-                    </a>
-                    <a href="{{ route('explore.map') }}" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-slate-900 transition-all bg-white rounded-full hover:bg-blue-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent">
-                        Jelajahi Peta
-                        <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
+                <div>
+                    @if (Route::has('login'))
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="inline-flex items-center justify-center px-5 py-2.5 shadow-sm shadow-blue-500/30 text-sm font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition transform hover:-translate-y-0.5">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-5 py-2.5 border border-slate-200 shadow-sm text-sm font-bold rounded-xl text-slate-700 bg-white hover:bg-slate-50 transition transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-arrow-right-to-bracket mr-2"></i> Masuk
+                        </a>
+                    @endauth
+                    @endif
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <!-- Background Image -->
-        <div class="absolute inset-0 z-0">
-            <img src="/images/balaidesa.jpeg" alt="Desa Mayong Lor" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-b from-slate-900/95 via-slate-900/80 to-slate-900/90"></div>
-        </div>
-
-        <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            
-            <!-- Badge -->
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white text-xs sm:text-sm font-medium tracking-wide mb-6 sm:mb-8 animate-fade-in-up">
-                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                Sistem Informasi Geografis Desa Cerdas
-            </div>
-
-            <!-- Main Title -->
-            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-4 sm:mb-6 drop-shadow-lg">
-                Jelajahi Potensi <br class="hidden sm:block">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">
-                    Desa Mayong Lor
-                </span>
-            </h1>
-
-            <p class="mt-4 sm:mt-6 text-base sm:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed drop-shadow-md px-2">
-                Platform pemetaan digital terintegrasi untuk transparansi data, pembangunan infrastruktur, dan pelayanan publik yang lebih baik.
-            </p>
-
-            <!-- Search Bar -->
-            <div class="mt-8 sm:mt-12 max-w-3xl mx-auto" x-data="{ query: '' }">
-                <div class="relative group">
-                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-600 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                    <div class="relative flex flex-col sm:flex-row items-center bg-white rounded-3xl sm:rounded-full p-2 shadow-2xl gap-2 sm:gap-0">
-                        <div class="flex items-center w-full sm:flex-1">
-                            <div class="flex-shrink-0 pl-4 pr-2 text-slate-400">
-                                <i class="fa-solid fa-search text-lg"></i>
-                            </div>
-                            <input type="text" 
-                                   x-model="query"
-                                   @keydown.enter="window.location.href = '{{ route('explore.map') }}?q=' + query"
-                                   class="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 text-base sm:text-lg h-10 sm:h-12 w-full"
-                                   placeholder="Cari lokasi...">
-                        </div>
-                        <button @click="window.location.href = '{{ route('explore.map') }}?q=' + query" 
-                                class="w-full sm:w-auto flex-shrink-0 bg-blue-600 text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-full font-bold hover:bg-blue-700 transition shadow-lg hover:shadow-blue-600/30 text-sm sm:text-base">
-                            Cari
-                        </button>
-                    </div>
+    <!-- Hero -->
+    <section id="beranda" class="relative bg-gradient-to-b from-blue-50/50 to-white overflow-hidden">
+        <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+        <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-teal-100 rounded-full blur-3xl opacity-50"></div>
+        
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="text-center lg:text-left z-10">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-blue-100 text-blue-700 text-sm font-bold mb-8 shadow-sm animate-fade-in-up">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
+                    </span>
+                    Portal Informasi Geospasial
                 </div>
-                
-                <!-- Quick Tags -->
-                <div class="mt-6 flex flex-wrap justify-center gap-2 sm:gap-3 text-xs sm:text-sm text-white/80">
-                    <span>Pencarian Populer:</span>
-                    <a href="{{ route('explore.map') }}?q=Balai Desa" class="hover:text-white hover:underline decoration-blue-400 underline-offset-4 transition">Balai Desa</a>
-                    <span class="text-white/30">•</span>
-                    <a href="{{ route('explore.map') }}?q=Masjid" class="hover:text-white hover:underline decoration-blue-400 underline-offset-4 transition">Masjid</a>
-                    <span class="text-white/30">•</span>
-                    <a href="{{ route('explore.map') }}?q=Sekolah" class="hover:text-white hover:underline decoration-blue-400 underline-offset-4 transition">Sekolah</a>
-                </div>
-            </div>
-
-            <!-- Glass Stats -->
-            <div class="mt-12 sm:mt-20 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
-                <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 text-center hover:bg-white/20 transition cursor-default">
-                    <p class="text-2xl sm:text-3xl font-bold text-white">{{ $totalPlaces }}+</p>
-                    <p class="text-[10px] sm:text-xs text-blue-200 uppercase tracking-wider mt-1">Lokasi</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 text-center hover:bg-white/20 transition cursor-default">
-                    <p class="text-2xl sm:text-3xl font-bold text-white">{{ $totalCategories }}</p>
-                    <p class="text-[10px] sm:text-xs text-blue-200 uppercase tracking-wider mt-1">Kategori</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 text-center hover:bg-white/20 transition cursor-default">
-                    <p class="text-2xl sm:text-3xl font-bold text-white">100%</p>
-                    <p class="text-[10px] sm:text-xs text-blue-200 uppercase tracking-wider mt-1">Akurat</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-3 sm:p-4 text-center hover:bg-white/20 transition cursor-default flex flex-col justify-center items-center">
-                    <p class="text-2xl sm:text-3xl font-bold text-white">24/7</p>
-                    <p class="text-[10px] sm:text-xs text-blue-200 uppercase tracking-wider mt-1 leading-tight">Akses Data Online</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Scroll Down Indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-white/50">
-            <i class="fa-solid fa-chevron-down"></i>
-        </div>
-    </section>
-
-    <!-- Demography Section -->
-    <section id="demography" class="py-16 bg-white border-b border-slate-100">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <p class="text-blue-600 font-bold uppercase tracking-wider text-sm mb-3">Demografi Desa</p>
-                <h2 class="text-3xl font-bold text-slate-900">Data Kependudukan Terkini</h2>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100 hover:shadow-lg transition">
-                    <div class="w-12 h-12 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4">
-                        <i class="fa-solid fa-users text-xl"></i>
-                    </div>
-                    <p class="text-3xl font-bold text-slate-900 mb-1">{{ number_format($population->total_population ?? 0) }}</p>
-                    <p class="text-sm text-slate-500 font-medium">Total Penduduk</p>
-                </div>
-                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100 hover:shadow-lg transition">
-                    <div class="w-12 h-12 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4">
-                        <i class="fa-solid fa-house-user text-xl"></i>
-                    </div>
-                    <p class="text-3xl font-bold text-slate-900 mb-1">{{ number_format($population->total_families ?? 0) }}</p>
-                    <p class="text-sm text-slate-500 font-medium">Kepala Keluarga</p>
-                </div>
-                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100 hover:shadow-lg transition">
-                    <div class="w-12 h-12 mx-auto bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mb-4">
-                        <i class="fa-solid fa-male text-xl"></i>
-                    </div>
-                    <p class="text-3xl font-bold text-slate-900 mb-1">{{ number_format($population->total_male ?? 0) }}</p>
-                    <p class="text-sm text-slate-500 font-medium">Laki-laki</p>
-                </div>
-                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100 hover:shadow-lg transition">
-                    <div class="w-12 h-12 mx-auto bg-pink-100 rounded-full flex items-center justify-center text-pink-600 mb-4">
-                        <i class="fa-solid fa-female text-xl"></i>
-                    </div>
-                    <p class="text-3xl font-bold text-slate-900 mb-1">{{ number_format($population->total_female ?? 0) }}</p>
-                    <p class="text-sm text-slate-500 font-medium">Perempuan</p>
-                </div>
-            </div>
-
-            <!-- Charts Removed -->
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-24 bg-slate-50">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="order-2 lg:order-1 relative">
-                    <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 border-4 border-white">
-                        <img src="/images/balaidesa.jpeg" alt="Profil Desa" class="w-full h-[500px] object-cover">
-                    </div>
-                    <!-- Experience Badge -->
-                    <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:-right-6 bg-white p-6 rounded-[2rem] shadow-xl max-w-xs w-[90%] sm:w-auto text-center sm:text-left">
-                        <p class="text-4xl font-bold text-blue-600 mb-1">24/7</p>
-                        <p class="text-slate-600 font-medium leading-tight">Akses data informasi publik secara online.</p>
-                    </div>
-                </div>
-                
-                <div class="order-1 lg:order-2">
-                    <p class="text-blue-600 font-bold uppercase tracking-wider text-sm mb-3">Tentang Kami</p>
-                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">Mewujudkan Desa Cerdas Berbasis Data</h2>
-                    <p class="text-slate-600 text-lg mb-6 leading-relaxed">
-                        Sistem Informasi Geografis (SIG) Desa Mayong Lor hadir sebagai wujud transparansi dan modernisasi pelayanan publik. Kami memetakan setiap potensi dan aset desa untuk memudahkan perencanaan pembangunan dan akses informasi bagi warga.
-                    </p>
-                    
-                    <div class="space-y-6">
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
-                                <i class="fa-solid fa-layer-group text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-900">Data Terintegrasi</h3>
-                                <p class="text-slate-600 mt-2">Menyatukan data kependudukan, infrastruktur, dan pertanahan dalam satu peta digital.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center text-yellow-600">
-                                <i class="fa-solid fa-chart-pie text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-900">Analisis Wilayah</h3>
-                                <p class="text-slate-600 mt-2">Membantu pengambilan keputusan berbasis bukti untuk pembangunan desa yang tepat sasaran.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats / Categories Section -->
-    <section id="stats" class="py-24 bg-white">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <p class="text-blue-600 font-bold uppercase tracking-wider text-sm mb-3">Statistik & Data</p>
-                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Sebaran Fasilitas Desa</h2>
-                <p class="mt-4 text-lg text-slate-600">
-                    Gambaran umum jumlah fasilitas dan infrastruktur yang telah terpetakan dalam sistem kami.
+                <h2 class="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
+                    Satu Peta, <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Sejuta Potensi.</span>
+                </h2>
+                <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    Akses data lokasi infrastruktur, demografi, dan fasilitas publik Desa Mayong Lor dengan mudah, transparan, dan akurat.
                 </p>
+
+                <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-xl shadow-blue-900/5 max-w-lg mx-auto lg:mx-0 flex items-center transition-all focus-within:ring-4 focus-within:ring-blue-500/20 focus-within:border-blue-400">
+                    <div class="pl-4 pr-3 text-slate-400"><i class="fa-solid fa-magnifying-glass text-lg"></i></div>
+                    <input type="text" 
+                           x-model="searchQuery"
+                           placeholder="Cari lokasi (cth: Balai Desa)..." 
+                           class="flex-1 border-none focus:ring-0 text-lg px-0 text-slate-800 placeholder:text-slate-400 font-medium"
+                           @keydown.enter="scrollToMap(); performSearch()">
+                    <button @click="scrollToMap(); performSearch()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-base transition shadow-md shadow-blue-600/20">
+                        Cari
+                    </button>
+                </div>
             </div>
 
-            <div class="flex flex-wrap justify-center gap-8">
-                @foreach($categories as $category)
-                @if($category->places_count > 0)
-                <div class="group relative bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 w-full md:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)] min-w-[280px]">
-                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <i class="{{ $category->icon_class ?? 'fa-solid fa-map-marker-alt' }} text-6xl" style="color: {{ $category->color }}"></i>
+            <div class="relative group">
+                <div class="absolute inset-0 bg-blue-600 rounded-3xl rotate-3 opacity-10 group-hover:rotate-6 transition duration-500"></div>
+                <div class="absolute inset-0 bg-teal-500 rounded-3xl -rotate-2 opacity-10 group-hover:-rotate-4 transition duration-500"></div>
+                <img src="/images/balaidesa.jpeg" alt="Balai Desa" class="relative rounded-3xl shadow-2xl w-full object-cover h-[450px] border-4 border-white transform transition hover:scale-[1.01] duration-500">
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="statistik" class="py-20 bg-white">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-blue-600 text-2xl mb-4 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-users"></i>
                     </div>
-                    
-                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-lg" style="background-color: {{ $category->color }}">
-                        <i class="{{ $category->icon_class ?? 'fa-solid fa-map-marker-alt' }}"></i>
-                    </div>
-                    
-                    <h3 class="text-4xl font-bold text-slate-900 mb-2">{{ $category->places_count }}</h3>
-                    <p class="text-lg font-bold text-slate-800 mb-2">{{ $category->name }}</p>
-                    <p class="text-sm text-slate-500">Titik lokasi terverifikasi</p>
-                    
-                    <a href="{{ route('explore.map', ['category' => $category->id]) }}" class="mt-6 pt-6 border-t border-slate-100 flex items-center text-sm font-semibold text-slate-400 group-hover:text-blue-600 transition-colors">
-                        Lihat Detail <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
+                    <p class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-1">Total Penduduk</p>
+                    <p class="text-4xl font-extrabold text-slate-900">{{ number_format($population->total_population ?? 0) }}</p>
                 </div>
-                @endif
-                @endforeach
+                
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-indigo-600 text-2xl mb-4 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-person"></i>
+                    </div>
+                    <p class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-1">Laki-laki</p>
+                    <p class="text-4xl font-extrabold text-slate-900">{{ number_format($population->total_male ?? 0) }}</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-pink-200 hover:bg-pink-50/30 transition duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-pink-600 text-2xl mb-4 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-person-dress"></i>
+                    </div>
+                    <p class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-1">Perempuan</p>
+                    <p class="text-4xl font-extrabold text-slate-900">{{ number_format($population->total_female ?? 0) }}</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-teal-200 hover:bg-teal-50/30 transition duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-teal-600 text-2xl mb-4 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </div>
+                    <p class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-1">Fasilitas Desa</p>
+                    <p class="text-4xl font-extrabold text-slate-900">{{ $totalPlaces }}</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Map Section -->
-    <section id="map-section" class="py-24 bg-slate-50 relative overflow-hidden" x-data="mapComponent()">
-        <!-- Background Blobs -->
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div class="absolute top-1/4 left-0 w-[500px] h-[500px] bg-blue-200/20 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-200/20 rounded-full blur-3xl"></div>
-        </div>
-
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center max-w-3xl mx-auto mb-12">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm border border-slate-100 text-blue-700 text-sm font-bold mb-6">
-                    <i class="fa-solid fa-satellite-dish"></i> Live GIS Data
+    <section id="peta" class="bg-slate-50 py-16">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+                <div>
+                    <h3 class="text-3xl font-bold text-slate-900">Peta Digital Interaktif</h3>
+                    <p class="text-slate-600 mt-2 text-lg">Eksplorasi wilayah desa melalui peta detail di bawah ini.</p>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Peta Digital Interaktif</h2>
-                <p class="mt-4 text-lg text-slate-600">
-                    Gunakan fitur filter dan pencarian untuk menemukan lokasi spesifik di Desa Mayong Lor.
-                </p>
+                <div class="flex gap-2">
+                    <button @click="resetFilters()" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition">
+                        <i class="fa-solid fa-rotate-left mr-2"></i> Reset Filter
+                    </button>
+                </div>
             </div>
-            <div class="grid lg:grid-cols-[350px_1fr] gap-8 items-start">
+
+            <!-- Dashboard Map Layout -->
+            <div class="flex flex-col lg:flex-row gap-6 h-[750px] relative overflow-hidden rounded-3xl border border-slate-200 shadow-sm bg-white">
+                
                 <!-- Sidebar Controls -->
-                <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 h-full flex flex-col lg:sticky lg:top-24">
-                    <!-- Search -->
-                    <div class="mb-8">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Pencarian</label>
-                        <div class="relative">
-                            <input type="text" 
-                                   x-model="searchQuery" 
-                                   @input="performSearch()"
-                                   placeholder="Cari lokasi..."
-                                   class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-400">
-                            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <div class="w-full lg:w-96 flex-shrink-0 flex flex-col h-[500px] lg:h-full border-b lg:border-b-0 lg:border-r border-slate-200 bg-white z-10">
+                    <!-- Search Sticky -->
+                    <div class="p-4 border-b border-slate-100">
+                         <div class="relative">
+                            <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                            <input type="text" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 text-slate-700 font-medium placeholder:text-slate-400 bg-slate-50 transition" placeholder="Cari desa, jalan, atau lokasi..." x-model="searchQuery" @input.debounce.300ms="performSearch()">
                         </div>
-                        
                         <!-- Search Results -->
-                        <div x-show="searchResults.length > 0" 
-                             x-cloak
-                             class="mt-2 max-h-60 overflow-y-auto custom-scroll bg-white border border-slate-100 rounded-xl shadow-lg absolute w-full z-20 left-0">
-                            <template x-for="result in searchResults" :key="result.id">
-                                <button @click="zoomToResult(result)" 
-                                        class="w-full text-left px-4 py-3 hover:bg-green-50 transition border-b border-slate-50 last:border-0 group">
-                                    <p class="font-bold text-slate-800 text-sm group-hover:text-blue-700" x-text="result.name"></p>
-                                    <p class="text-xs text-slate-500" x-text="result.type"></p>
+                        <div x-show="searchResults.length > 0" class="absolute left-4 right-4 mt-2 bg-white border border-slate-100 rounded-xl shadow-xl z-50 max-h-80 overflow-y-auto custom-scroll" x-cloak>
+                            <template x-for="result in searchResults" :key="result.id || result.name">
+                                <button @click="selectFeature(result)" class="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                                        <i class="fa-solid" :class="getIconForFeature(result)"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-800 text-sm group-hover:text-blue-600 truncate" x-text="result.name"></p>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-slate-500 truncate" x-text="result.type || 'Lokasi'"></span>
+                                            <span x-show="result.distance" class="text-[10px] bg-slate-100 px-1.5 rounded text-slate-400" x-text="result.distance + ' km'"></span>
+                                        </div>
+                                    </div>
                                 </button>
                             </template>
                         </div>
                     </div>
 
-                    <!-- Layers -->
-                    <div class="mb-8">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Layer Peta</label>
-                        <div class="space-y-3">
-                            <label class="flex items-center p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
-                                <input type="checkbox" x-model="showBoundaries" @change="updateLayers()" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
-                                <span class="ml-3 text-sm font-medium text-slate-700">Batas Wilayah</span>
-                            </label>
-                            <label class="flex items-center p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
-                                <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
-                                <span class="ml-3 text-sm font-medium text-slate-700">Jaringan Jalan & Sungai</span>
-                            </label>
-                            <label class="flex items-center p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
-                                <input type="checkbox" x-model="showLandUses" @change="updateLayers()" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
-                                <span class="ml-3 text-sm font-medium text-slate-700">Penggunaan Lahan</span>
-                            </label>
+                    <!-- Sidebar Tabs -->
+                    <div class="px-4 pt-4 pb-2">
+                        <div class="flex p-1.5 bg-slate-100/80 rounded-xl">
+                            <button @click="activeTab = 'layers'" :class="activeTab === 'layers' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all duration-200">
+                                <i class="fa-solid fa-layer-group mr-1.5"></i> Layers
+                            </button>
+                            <button @click="activeTab = 'places'" :class="activeTab === 'places' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all duration-200">
+                                <i class="fa-solid fa-map-marker-alt mr-1.5"></i> Lokasi
+                            </button>
+                            <button @click="activeTab = 'info'" :class="activeTab === 'info' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all duration-200">
+                                <i class="fa-solid fa-chart-pie mr-1.5"></i> Info
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Categories -->
-                    <div class="flex-1 flex flex-col min-h-0">
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Filter Kategori</label>
-                            <button @click="resetFilters()" class="text-xs font-bold text-blue-600 hover:text-blue-700">Reset</button>
+                    <!-- Content Area -->
+                    <div class="flex-1 overflow-y-auto custom-scroll p-4">
+                        
+                        <!-- LAYERS TAB -->
+                        <div x-show="activeTab === 'layers'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+                            <div class="space-y-6">
+                                <div class="space-y-3">
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">Peta Dasar</h4>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button @click="setBaseLayer('streets')" :class="currentBaseLayer === 'streets' ? 'ring-2 ring-blue-500 border-transparent bg-blue-50/50' : 'border-slate-200 hover:bg-slate-50'" class="p-3 rounded-xl border text-left transition relative overflow-hidden group">
+                                            <div class="flex gap-2 items-center mb-1">
+                                                <i class="fa-solid fa-map text-blue-500"></i>
+                                                <span class="text-xs font-bold text-slate-700">Jalan</span>
+                                            </div>
+                                            <div class="h-1 w-full bg-slate-100 rounded-full mt-2 overflow-hidden">
+                                                <div class="h-full bg-blue-500 w-3/4"></div>
+                                            </div>
+                                        </button>
+                                        <button @click="setBaseLayer('satellite')" :class="currentBaseLayer === 'satellite' ? 'ring-2 ring-blue-500 border-transparent bg-blue-50/50' : 'border-slate-200 hover:bg-slate-50'" class="p-3 rounded-xl border text-left transition relative overflow-hidden group">
+                                            <div class="flex gap-2 items-center mb-1">
+                                                <i class="fa-solid fa-satellite text-purple-500"></i>
+                                                <span class="text-xs font-bold text-slate-700">Satelit</span>
+                                            </div>
+                                            <div class="h-1 w-full bg-slate-100 rounded-full mt-2 overflow-hidden">
+                                                <div class="h-full bg-slate-700 w-3/4"></div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="h-px bg-slate-100"></div>
+
+                                <div class="space-y-3">
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">Data Spasial</h4>
+                                    
+                                    <div class="space-y-2">
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer group select-none">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition">
+                                                    <i class="fa-solid fa-draw-polygon"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-700">Batas Wilayah</p>
+                                                    <p class="text-[10px] text-slate-500">Area administratif desa</p>
+                                                </div>
+                                            </div>
+                                            <div class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" x-model="showBoundaries" @change="updateLayers()" class="sr-only peer">
+                                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </div>
+                                        </label>
+
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer group select-none">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-9 h-9 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600 group-hover:scale-110 transition">
+                                                    <i class="fa-solid fa-water"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-700">Infrastruktur</p>
+                                                    <p class="text-[10px] text-slate-500">Jalan & Sungai</p>
+                                                </div>
+                                            </div>
+                                            <div class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()" class="sr-only peer">
+                                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </div>
+                                        </label>
+
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer group select-none">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 group-hover:scale-110 transition">
+                                                    <i class="fa-solid fa-wheat"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-700">Penggunaan Lahan</p>
+                                                    <p class="text-[10px] text-slate-500">Pertanian & Pemukiman</p>
+                                                </div>
+                                            </div>
+                                            <div class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" x-model="showLandUses" @change="updateLayers()" class="sr-only peer">
+                                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-2 flex-1 overflow-y-auto custom-scroll pr-2">
-                            <template x-for="category in categories" :key="category.id">
-                                <label x-show="category.places_count > 0" class="flex items-center p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition group">
-                                    <input type="checkbox" 
-                                           :value="category.id" 
-                                           x-model="selectedCategories" 
-                                           class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
-                                    <span class="w-3 h-3 rounded-full ml-3" :style="`background-color: ${category.color}`"></span>
-                                    <span class="ml-2 flex-1 text-sm font-medium text-slate-600 group-hover:text-slate-900" x-text="category.name"></span>
-                                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md" x-text="category.places_count"></span>
-                                </label>
+
+                        <!-- LOCATIONS TAB -->
+                        <div x-show="activeTab === 'places'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+                            <div class="space-y-4">
+                                <div x-data="{ open: true }" class="border rounded-xl border-slate-200 overflow-hidden">
+                                    <button @click="open = !open" class="flex items-center justify-between w-full p-3 bg-slate-50 hover:bg-slate-100 transition">
+                                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Filter Kategori</h4>
+                                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300" :class="{ 'rotate-180': !open }" ></i>
+                                    </button>
+                                    <div x-show="open" x-collapse class="p-3 space-y-2 bg-white">
+                                        @foreach($categories as $category)
+                                        <label class="flex items-center group cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition">
+                                            <div class="relative flex items-center">
+                                                <input type="checkbox" value="{{ $category->id }}" x-model="selectedCategories" @change="updateMapMarkers()" class="peer sr-only">
+                                                <div class="w-4 h-4 rounded border border-slate-300 peer-checked:bg-[{{ $category->color }}] peer-checked:border-[{{ $category->color }}] transition flex items-center justify-center">
+                                                    <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100"></i>
+                                                </div>
+                                            </div>
+                                            <span class="ml-3 text-sm text-slate-600 font-medium group-hover:text-slate-900">{{ $category->name }}</span>
+                                            <span class="ml-auto text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ $category->places_count }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <template x-for="place in visiblePlaces" :key="place.id">
+                                        <div @click="selectPlace(place)" class="group bg-white border border-slate-200 rounded-xl p-3 hover:border-blue-300 hover:shadow-md transition cursor-pointer flex gap-3 items-start">
+                                            <div class="flex-shrink-0">
+                                                <template x-if="place.image_path">
+                                                    <img :src="'{{ url('/') }}/' + place.image_path" class="w-12 h-12 rounded-lg object-cover bg-slate-100">
+                                                </template>
+                                                <template x-if="!place.image_path">
+                                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center text-lg bg-slate-100 text-slate-400">
+                                                        <i class="fa-solid fa-map-marker-alt"></i>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <h4 class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition truncate" x-text="place.name"></h4>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="w-2 h-2 rounded-full" :style="`background-color: ${place.category.color}`"></span>
+                                                    <p class="text-xs text-slate-500" x-text="place.category.name"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <div x-show="visiblePlaces.length === 0" class="text-center py-8 text-slate-400">
+                                        <i class="fa-solid fa-map-location-dot text-3xl mb-3 text-slate-300"></i>
+                                        <p class="text-sm">Tidak ada lokasi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INFO TAB -->
+                        <div x-show="activeTab === 'info'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+                            <div class="space-y-6">
+                                <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
+                                    <div class="flex items-start gap-4">
+                                        <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                                            <i class="fa-solid fa-circle-info text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-base font-bold text-blue-800 mb-1">Statistik Desa</h3>
+                                            <p class="text-xs text-blue-700/80 leading-relaxed">
+                                                Rekapitulasi data geospasial yang tercatat dalam sistem Desa Mayong Lor.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalPlaces }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Titik Lokasi</p>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalInfrastructures }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Infrastruktur</p>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalBoundaries }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Wilayah RT/RW</p>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalLandUses }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Area Lahan</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Canvas & Controls -->
+                <div class="flex-1 relative bg-slate-100">
+                    <div id="map" class="absolute inset-0 z-0"></div>
+                    
+                    <!-- Floating Controls Dock (Bottom Right) -->
+                    <div class="absolute bottom-6 right-6 z-[400] flex flex-col gap-2">
+                        <button @click="locateUser()" class="w-10 h-10 bg-white rounded-xl shadow-lg text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center" title="Lokasi Saya">
+                            <i class="fa-solid fa-crosshairs"></i>
+                        </button>
+                        <div class="flex flex-col bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
+                            <button onclick="mapComponent().map.zoomIn()" class="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 border-b border-slate-100 transition">
+                                <i class="fa-solid fa-plus text-sm"></i>
+                            </button>
+                            <button onclick="mapComponent().map.zoomOut()" class="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+                                <i class="fa-solid fa-minus text-sm"></i>
+                            </button>
+                        </div>
+                        <button onclick="document.getElementById('map').requestFullscreen()" class="w-10 h-10 bg-white rounded-xl shadow-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center" title="Fullscreen">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </div>
+
+                    <!-- Slide-over Detail Panel -->
+                    <div x-show="selectedFeature" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="translate-x-full"
+                         x-transition:enter-end="translate-x-0"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="translate-x-0"
+                         x-transition:leave-end="translate-x-full"
+                         class="absolute top-4 right-4 bottom-4 w-80 bg-white/95 backdrop-blur rounded-2xl shadow-2xl z-[500] border border-slate-100 flex flex-col overflow-hidden"
+                         x-cloak>
+                        
+                        <!-- Header Image -->
+                        <div class="h-40 bg-slate-200 relative shrink-0">
+                            <template x-if="selectedFeature?.image_url">
+                                <img :src="selectedFeature.image_url" class="w-full h-full object-cover">
                             </template>
+                            <template x-if="!selectedFeature?.image_url">
+                                <div class="w-full h-full flex items-center justify-center text-slate-400">
+                                    <i class="fa-solid fa-image text-3xl"></i>
+                                </div>
+                            </template>
+                            <button @click="selectedFeature = null" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur flex items-center justify-center transition">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                                <h3 class="text-white font-bold text-lg leading-tight text-shadow" x-text="selectedFeature?.name"></h3>
+                                <p class="text-white/80 text-xs" x-text="selectedFeature?.type"></p>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-4">
+                            <p class="text-sm text-slate-600 leading-relaxed" x-text="selectedFeature?.description || 'Tidak ada deskripsi tersedia.'"></p>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <template x-if="selectedFeature?.area">
+                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                        <p class="text-[10px] uppercase text-slate-400 font-bold">Luas</p>
+                                        <p class="font-bold text-slate-700"><span x-text="selectedFeature.area"></span> ha</p>
+                                    </div>
+                                </template>
+                                <template x-if="selectedFeature?.owner">
+                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                                        <p class="text-[10px] uppercase text-slate-400 font-bold">Pemilik</p>
+                                        <p class="font-bold text-slate-700" x-text="selectedFeature.owner"></p>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <button @click="zoomToFeature(selectedFeature)" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-500/30 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-location-dot"></i> Lihat di Peta
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading Overlay -->
+                    <div x-show="loading" class="absolute inset-0 bg-white/80 backdrop-blur-[2px] z-[1000] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest animate-pulse">Memuat Data...</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Map Container -->
-                <div class="bg-white p-2 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100">
-                    <div id="map" class="w-full h-[600px] sm:h-[700px] rounded-[1.5rem] z-0"></div>
-                </div>
             </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section id="contact" class="py-24 bg-white">
-        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div class="relative bg-blue-600 rounded-[3rem] overflow-hidden px-8 py-16 md:px-16 md:py-20 text-center">
-                <!-- Decor -->
-                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
-                    <div class="absolute -top-24 -left-24 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-                    <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-yellow-300 rounded-full blur-3xl"></div>
-                </div>
-
-                <div class="relative z-10">
-                    <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">Butuh Informasi Lebih Lanjut?</h2>
-                    <p class="text-blue-100 text-lg mb-10 max-w-2xl mx-auto">
-                        Silakan hubungi perangkat desa atau datang langsung ke Balai Desa Mayong Lor untuk pelayanan administrasi dan informasi lainnya.
-                    </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <a href="mailto:desa@mayonglor.id" class="w-full sm:w-auto px-8 py-4 bg-white text-blue-700 font-bold rounded-full hover:bg-blue-50 transition shadow-lg">
-                            Hubungi Kami
-                        </a>
-                        <a href="https://goo.gl/maps/..." target="_blank" class="w-full sm:w-auto px-8 py-4 bg-blue-700 text-white font-bold rounded-full hover:bg-blue-800 transition border border-blue-500">
-                            Lokasi Kantor
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-300 py-16">
+    <footer class="bg-white border-t border-slate-200 py-12">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white">
-                            <i class="fa-solid fa-leaf"></i>
-                        </div>
-                        <span class="text-xl font-bold text-white">Desa Mayong Lor</span>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-500">
+                        <i class="fa-solid fa-layer-group"></i>
                     </div>
-                    <p class="text-slate-400 leading-relaxed max-w-sm">
-                        Sistem Informasi Geografis untuk pemetaan potensi, infrastruktur, dan fasilitas publik Desa Mayong Lor secara digital dan transparan.
-                    </p>
+                    <div>
+                        <p class="text-sm font-bold text-slate-900">Sistem Informasi Geografis</p>
+                        <p class="text-xs text-slate-500">Desa Mayong Lor &copy; {{ date('Y') }}</p>
+                    </div>
                 </div>
-                
-                <div>
-                    <h4 class="text-white font-bold mb-6">Navigasi</h4>
-                    <ul class="space-y-3">
-                        <li><a href="#hero" class="hover:text-blue-400 transition">Beranda</a></li>
-                        <li><a href="#about" class="hover:text-blue-400 transition">Profil Desa</a></li>
-                        <li><a href="#stats" class="hover:text-blue-400 transition">Data Statistik</a></li>
-                        <li><a href="#map-section" class="hover:text-blue-400 transition">Peta Digital</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-white font-bold mb-6">Kontak</h4>
-                    <ul class="space-y-3">
-                        <li class="flex items-start gap-3">
-                            <i class="fa-solid fa-location-dot mt-1 text-blue-500"></i>
-                            <span>Jl. Raya Mayong - Jepara, Mayong Lor, Kec. Mayong, Kabupaten Jepara, Jawa Tengah</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fa-solid fa-envelope text-blue-500"></i>
-                            <span>admin@mayonglor.desa.id</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-sm text-slate-500">&copy; {{ date('Y') }} Pemerintah Desa Mayong Lor. All rights reserved.</p>
-                <div class="flex gap-4 text-lg text-slate-500">
-                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-youtube"></i></a>
+                <div class="flex gap-6">
+                    <a href="#" class="text-slate-400 hover:text-blue-600 transition"><i class="fa-brands fa-facebook text-xl"></i></a>
+                    <a href="#" class="text-slate-400 hover:text-pink-600 transition"><i class="fa-brands fa-instagram text-xl"></i></a>
+                    <a href="#" class="text-slate-400 hover:text-red-600 transition"><i class="fa-brands fa-youtube text-xl"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <!-- Alpine.js -->
+    <!-- JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-
-
+    
     <script>
         function mapComponent() {
             return {
                 map: null,
-                markers: [],
-                boundaries: [],
-                boundariesLayer: null,
-                infrastructures: [],
-                infrastructuresLayer: null,
-                landUses: [],
-                landUsesLayer: null,
+                loading: true,
+                activeTab: 'layers',
+                currentBaseLayer: 'streets',
+                baseLayers: {},
+                
+                // Data
                 categories: @json($categories),
                 selectedCategories: [],
+                
+                // Toggles
                 showBoundaries: true,
                 showInfrastructures: true,
                 showLandUses: true,
+
+                // Computed Data
+                allPlaces: [],
+                geoFeatures: [],
+                
+                // Search & Selection
                 searchQuery: '',
                 searchResults: [],
-                allPlaces: [],
-                geoJsonUrl: '{{ route('places.geojson') }}',
-                boundariesUrl: '{{ route('boundaries.geojson') }}',
-                infrastructuresUrl: '{{ route('infrastructures.geojson') }}',
-                landUsesUrl: '{{ route('land_uses.geojson') }}',
-                geoFeatures: [],
+                selectedFeature: null,
+                userMarker: null,
+
+                // Layers References
+                markers: [],
+                boundariesLayer: null,
+                infrastructuresLayer: null,
+                landUsesLayer: null,
+
+                get visiblePlaces() {
+                    const selectedIds = this.selectedCategories.map(Number);
+                    return this.allPlaces.filter(p => selectedIds.includes(p.properties.category?.id))
+                        .map(p => ({
+                            ...p.properties,
+                            image_path: p.properties.image_path,
+                            category: p.properties.category,
+                            latitude: p.geometry.coordinates[1],
+                            longitude: p.geometry.coordinates[0]
+                        }));
+                },
 
                 init() {
-                    // Initialize selected categories (all selected by default)
                     this.selectedCategories = this.categories.map(c => c.id);
-
-                    // Watch for changes in selectedCategories
-                    this.$watch('selectedCategories', () => {
-                        this.updateMapMarkers();
-                    });
-
-                    // Initialize Map
-                    const center = [-6.7289, 110.7485]; 
+                    this.initMap();
+                    this.fetchAllData();
                     
-                    this.map = L.map('map', {
-                        zoomControl: false,
-                        attributionControl: false
-                    }).setView(center, 14);
+                    this.$watch('selectedCategories', () => this.updateMapMarkers());
+                },
 
-                    // Custom Zoom Control
-                    L.control.zoom({
-                        position: 'bottomright'
-                    }).addTo(this.map);
-
-                    // Google Maps Layers
-                    const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-                    });
-                    const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                initMap() {
+                    this.map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-6.7289, 110.7485], 14);
+                    
+                    // Define Base Layers
+                    const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
                     });
                     const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-                    });
-                    const googleTerrain = L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                        maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
                     });
 
-                    googleStreets.addTo(this.map);
-
-                    const baseLayers = {
-                        "Streets": googleStreets,
-                        "Hybrid": googleHybrid,
-                        "Satellite": googleSatellite,
-                        "Terrain": googleTerrain
+                    this.baseLayers = {
+                        'streets': googleStreets,
+                        'satellite': googleSatellite
                     };
 
-                    L.control.layers(baseLayers, null, { position: 'bottomright' }).addTo(this.map);
+                    this.baseLayers['streets'].addTo(this.map);
+                },
 
-                    this.fetchAllData();
+                setBaseLayer(type) {
+                    if (this.currentBaseLayer === type) return;
+                    this.map.removeLayer(this.baseLayers[this.currentBaseLayer]);
+                    this.currentBaseLayer = type;
+                    this.baseLayers[type].addTo(this.map);
                 },
 
                 async fetchAllData() {
                     try {
-                        // Fetch places
-                        const placesResponse = await fetch(this.geoJsonUrl + '?t=' + Date.now());
-                        const placesData = await placesResponse.json();
-                        this.geoFeatures = placesData.features || [];
-                        this.allPlaces = placesData.features || [];
+                        this.loading = true;
+                        
+                        const [places, boundaries, infrastructures, landUses] = await Promise.all([
+                            fetch('{{ route('places.geojson') }}').then(r => r.json()),
+                            fetch('{{ route('boundaries.geojson') }}').then(r => r.json()),
+                            fetch('{{ route('infrastructures.geojson') }}').then(r => r.json()),
+                            fetch('{{ route('land_uses.geojson') }}').then(r => r.json())
+                        ]);
+
+                        // Store raw features
+                        this.geoFeatures = places.features || []; // Places with geometry
+                        this.allPlaces = places.features || [];
+                        
+                        // Load Layers
+                        this.loadBoundaries(boundaries.features || []);
+                        this.loadInfrastructures(infrastructures.features || []);
+                        this.loadLandUses(landUses.features || []);
+                        
+                        // Initial Markers Render
                         this.updateMapMarkers();
 
-                        // Fetch boundaries
-                        const boundariesResponse = await fetch(this.boundariesUrl + '?t=' + Date.now());
-                        const boundariesData = await boundariesResponse.json();
-                        this.loadBoundaries(boundariesData.features || []);
-
-                        // Fetch infrastructures
-                        const infrastructuresResponse = await fetch(this.infrastructuresUrl + '?t=' + Date.now());
-                        const infrastructuresData = await infrastructuresResponse.json();
-                        this.loadInfrastructures(infrastructuresData.features || []);
-
-                        // Fetch land uses
-                        const landUsesResponse = await fetch(this.landUsesUrl + '?t=' + Date.now());
-                        const landUsesData = await landUsesResponse.json();
-                        this.loadLandUses(landUsesData.features || []);
-                    } catch (error) {
-                        console.error('Gagal memuat data peta', error);
+                    } catch (e) {
+                        console.error('Error loading data:', e);
+                    } finally {
+                        this.loading = false;
                     }
                 },
 
+                // --- Layer Rendering ---
+
+                updateLayers() {
+                    // Logic to re-render based on toggles is handled by individual load functions interacting with map
+                    // But here we need to re-fetch or re-toggle?
+                    // Actually, if data is already loaded, we just toggle visibility.
+                    // But our current architecture re-fetches in the old code. 
+                    // Let's improve: we should store the data and just toggle layers.
+                    // For now, to be safe and simple, let's re-fetch which ensures sync.
+                    this.fetchAllData(); 
+                },
+
                 loadBoundaries(features) {
-                    // Clear existing boundaries
-                    if (this.boundariesLayer) {
-                        this.map.removeLayer(this.boundariesLayer);
-                    }
-                    this.boundaries = [];
-
+                    if (this.boundariesLayer) this.map.removeLayer(this.boundariesLayer);
                     if (!this.showBoundaries) return;
-
-                    // Create new layer group
-                    this.boundariesLayer = L.featureGroup();
                     
-                    features.forEach(feature => {
-                        const layer = L.geoJSON(feature, {
-                            style: {
-                                color: '#16a34a', // green-600
-                                weight: 2,
-                                fillColor: '#16a34a',
-                                fillOpacity: 0.1
-                            },
-                            onEachFeature: (feature, layer) => {
-                                const props = feature.properties;
-                                const popupContent = `
-                                    <div class="p-4">
-                                        <h3 class="font-bold text-slate-900 mb-1 text-lg">${props.name}</h3>
-                                        <div class="inline-block px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded mb-2">Batas Wilayah</div>
-                                        <p class="text-sm text-slate-600 mb-1"><span class="font-semibold">Tipe:</span> ${props.type}</p>
-                                        ${props.area_hectares ? `<p class="text-sm text-slate-600"><span class="font-semibold">Luas:</span> ${props.area_hectares} ha</p>` : ''}
-                                        ${props.description ? `<p class="text-sm text-slate-600 mt-2 pt-2 border-t border-slate-100">${props.description}</p>` : ''}
-                                    </div>
-                                `;
-                                layer.bindPopup(popupContent);
-                            }
-                        });
-                        this.boundariesLayer.addLayer(layer);
-                        this.boundaries.push(layer);
-                    });
-                    
-                    this.boundariesLayer.addTo(this.map);
+                    this.boundariesLayer = L.geoJSON(features, {
+                        style: { color: '#059669', weight: 2, fillColor: '#10b981', fillOpacity: 0.1, dashArray: '5, 5' },
+                        onEachFeature: (f, l) => {
+                            l.on('click', (e) => {
+                                L.DomEvent.stop(e);
+                                this.selectFeature({...f.properties, type: 'Batas Wilayah'});
+                            });
+                        }
+                    }).addTo(this.map);
 
-                    // Fit bounds if boundaries exist
-                    if (this.boundaries.length > 0) {
+                    // Center map on village boundaries
+                    if (features.length > 0) {
                         this.map.fitBounds(this.boundariesLayer.getBounds(), { padding: [50, 50] });
                     }
                 },
 
                 loadInfrastructures(features) {
-                    // Clear existing infrastructures
-                    if (this.infrastructuresLayer) {
-                        this.map.removeLayer(this.infrastructuresLayer);
-                    }
-                    this.infrastructures = [];
-
+                    if (this.infrastructuresLayer) this.map.removeLayer(this.infrastructuresLayer);
                     if (!this.showInfrastructures) return;
 
-                    // Create new layer group
-                    this.infrastructuresLayer = L.layerGroup();
-
-                    features.forEach(feature => {
-                        const props = feature.properties;
-                        const color = props.type === 'river' ? '#3b82f6' : 
-                                     props.type === 'road' ? '#475569' : 
-                                     props.type === 'irrigation' ? '#06b6d4' : '#8b5cf6';
-                        
-                        const layer = L.geoJSON(feature, {
-                            style: {
-                                color: color,
-                                weight: props.type === 'road' ? 4 : 3,
-                                opacity: 0.8
-                            },
-                            onEachFeature: (feature, layer) => {
-                                const popupContent = `
-                                    <div class="p-4">
-                                        <h3 class="font-bold text-slate-900 mb-1 text-lg">${props.name}</h3>
-                                        <div class="inline-block px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded mb-2">Infrastruktur</div>
-                                        <p class="text-sm text-slate-600 mb-1"><span class="font-semibold">Tipe:</span> ${props.type}</p>
-                                        ${props.length_meters ? `<p class="text-sm text-slate-600"><span class="font-semibold">Panjang:</span> ${props.length_meters} m</p>` : ''}
-                                        ${props.condition ? `<p class="text-sm text-slate-600"><span class="font-semibold">Kondisi:</span> ${props.condition}</p>` : ''}
-                                        ${props.description ? `<p class="text-sm text-slate-600 mt-2 pt-2 border-t border-slate-100">${props.description}</p>` : ''}
-                                    </div>
-                                `;
-                                layer.bindPopup(popupContent);
-                            }
-                        });
-                        this.infrastructuresLayer.addLayer(layer);
-                        this.infrastructures.push(layer);
-                    });
-                    
-                    this.infrastructuresLayer.addTo(this.map);
+                    this.infrastructuresLayer = L.geoJSON(features, {
+                        style: f => {
+                            const type = f.properties.type;
+                            const color = type === 'river' ? '#3b82f6' : '#64748b'; // Blue for river, gray for road
+                            return { color: color, weight: type === 'river' ? 4 : 3, opacity: 0.8 };
+                        },
+                        onEachFeature: (f, l) => {
+                            l.on('click', (e) => {
+                                L.DomEvent.stop(e);
+                                this.selectFeature({...f.properties, type: 'Infrastruktur'});
+                            });
+                        }
+                    }).addTo(this.map);
                 },
 
                 loadLandUses(features) {
-                    // Clear existing land uses
-                    if (this.landUsesLayer) {
-                        this.map.removeLayer(this.landUsesLayer);
-                    }
-                    this.landUses = [];
-
+                    if (this.landUsesLayer) this.map.removeLayer(this.landUsesLayer);
                     if (!this.showLandUses) return;
 
-                    // Create new layer group
-                    this.landUsesLayer = L.layerGroup();
-
-                    features.forEach(feature => {
-                        const props = feature.properties;
-                        const color = props.type === 'rice_field' ? '#fbbf24' : 
-                                     props.type === 'plantation' ? '#84cc16' : 
-                                     props.type === 'forest' ? '#059669' : '#f59e0b';
-                        
-                        const layer = L.geoJSON(feature, {
-                            style: {
-                                color: color,
-                                weight: 2,
-                                fillColor: color,
-                                fillOpacity: 0.3
-                            },
-                            onEachFeature: (feature, layer) => {
-                                const popupContent = `
-                                    <div class="p-4">
-                                        <h3 class="font-bold text-slate-900 mb-1 text-lg">${props.name}</h3>
-                                        <div class="inline-block px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded mb-2">Penggunaan Lahan</div>
-                                        <p class="text-sm text-slate-600 mb-1"><span class="font-semibold">Tipe:</span> ${props.type}</p>
-                                        ${props.area_hectares ? `<p class="text-sm text-slate-600"><span class="font-semibold">Luas:</span> ${props.area_hectares} ha</p>` : ''}
-                                        ${props.owner ? `<p class="text-sm text-slate-600"><span class="font-semibold">Pemilik:</span> ${props.owner}</p>` : ''}
-                                        ${props.description ? `<p class="text-sm text-slate-600 mt-2 pt-2 border-t border-slate-100">${props.description}</p>` : ''}
-                                    </div>
-                                `;
-                                layer.bindPopup(popupContent);
-                            }
-                        });
-                        this.landUsesLayer.addLayer(layer);
-                        this.landUses.push(layer);
-                    });
-                    
-                    this.landUsesLayer.addTo(this.map);
-                },
-
-                updateLayers() {
-                    // Reload all layers
-                    this.fetchAllData();
+                    this.landUsesLayer = L.geoJSON(features, {
+                        style: f => {
+                            const colors = { rice_field: '#fbbf24', forest: '#15803d', settlement: '#f97316', plantation: '#84cc16' };
+                            return { color: colors[f.properties.type] || '#94a3b8', weight: 1, fillOpacity: 0.3, fillColor: colors[f.properties.type] };
+                        },
+                        onEachFeature: (f, l) => {
+                            l.on('click', (e) => {
+                                L.DomEvent.stop(e);
+                                this.selectFeature({...f.properties, type: 'Penggunaan Lahan'});
+                            });
+                        }
+                    }).addTo(this.map);
                 },
 
                 updateMapMarkers() {
-                    // Clear existing markers
-                    this.markers.forEach(marker => this.map.removeLayer(marker));
+                    this.markers.forEach(m => this.map.removeLayer(m));
                     this.markers = [];
-
-                    const filteredFeatures = this.geoFeatures.filter(feature => {
-                        const category = feature.properties && feature.properties.category;
-                        const categoryId = category ? category.id : null;
-                        return this.selectedCategories.some(id => id == categoryId);
-                    });
-
-                    filteredFeatures.forEach(feature => {
+                    
+                    const filtered = this.geoFeatures.filter(f => this.selectedCategories.includes(f.properties.category?.id));
+                    
+                    filtered.forEach(feature => {
                         const [lng, lat] = feature.geometry.coordinates;
-                        const place = feature.properties;
+                        const p = feature.properties;
+                        const color = p.category ? p.category.color : '#3b82f6';
                         
                         const iconHtml = `
-                            <div class="w-10 h-10 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white text-sm" style="background-color: ${place.category ? place.category.color : '#3b82f6'}">
-                                <i class="${place.category && place.category.icon_class ? place.category.icon_class : 'fa-solid fa-map-marker-alt'}"></i>
+                            <div class="w-9 h-9 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-sm custom-marker bg-gradient-to-br from-[${color}] to-slate-600" style="background-color: ${color}">
+                                <i class="${p.category?.icon_class ?? 'fa-solid fa-map-marker-alt'}"></i>
                             </div>
                         `;
                         
-                        const icon = L.divIcon({
-                            html: iconHtml,
-                            className: 'custom-marker',
-                            iconSize: [40, 40],
-                            iconAnchor: [20, 20]
+                        const marker = L.marker([lat, lng], {
+                            icon: L.divIcon({ html: iconHtml, className: '', iconSize: [36, 36], iconAnchor: [18, 18] })
                         });
-
-                        const marker = L.marker([lat, lng], { icon: icon });
                         
-                        const popupContent = `
-                            <div class="overflow-hidden rounded-xl">
-                                ${place.image_url ? `<img src="${place.image_url}" class="w-full h-40 object-cover">` : ''}
-                                <div class="p-4 bg-white">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-1 block">${place.category ? place.category.name : ''}</span>
-                                    <h3 class="text-lg font-bold text-slate-900 mb-2 leading-tight">${place.name}</h3>
-                                    <p class="text-sm text-slate-600 mb-0 line-clamp-3">${place.description || 'Tidak ada deskripsi.'}</p>
-                                </div>
-                            </div>
-                        `;
-
-                        marker.bindPopup(popupContent, {
-                            maxWidth: 300,
-                            className: 'custom-popup'
+                        marker.on('click', () => {
+                            this.selectPlace({...p, latitude: lat, longitude: lng});
                         });
-
+                        
                         marker.addTo(this.map);
                         this.markers.push(marker);
                     });
                 },
 
+                // --- Interaction ---
+
                 performSearch() {
-                    if (!this.searchQuery || this.searchQuery.length < 2) {
-                        this.searchResults = [];
-                        return;
-                    }
-
-                    const query = this.searchQuery.toLowerCase();
-                    this.searchResults = [];
-
-                    // Search in places
-                    this.allPlaces.forEach(place => {
-                        const name = (place.properties.name || '').toLowerCase();
-                        const desc = (place.properties.description || '').toLowerCase();
-                        const catName = (place.properties.category?.name || '').toLowerCase();
+                    if (this.searchQuery.length < 2) { this.searchResults = []; return; }
+                    const q = this.searchQuery.toLowerCase();
+                    
+                    // Search across all loaded data (we'd need to store boundaries/infra raw data to search them perfectly, but currently we only stored places features in allPlaces)
+                    // Let's rely on what we have. Ideally we should store all boundaries/infras in arrays too.
+                    // For now, let's just search places as that's safe.
+                    // Ideally:
+                    // this.searchResults = [...placesMatches, ...boundaryMatches, ...infraMatches];
+                    
+                    const matches = this.allPlaces.filter(p => p.properties.name.toLowerCase().includes(q))
+                        .map(p => ({ 
+                            ...p.properties, 
+                            coords: [...p.geometry.coordinates].reverse(),
+                            type: 'Lokasi',
+                            feature: p
+                        }));
                         
-                        if (name.includes(query) || desc.includes(query) || catName.includes(query)) {
-                            this.searchResults.push({
-                                id: place.properties.id,
-                                name: place.properties.name,
-                                type: place.properties.category?.name || 'Lokasi',
-                                coordinates: place.geometry.coordinates,
-                                feature: place
-                            });
-                        }
-                    });
+                    this.searchResults = matches.slice(0, 5);
                 },
 
-                zoomToResult(result) {
-                    const [lng, lat] = result.coordinates;
-                    this.map.flyTo([lat, lng], 18, {
-                        duration: 1.5
-                    });
+                selectFeature(result) {
+                    this.selectedFeature = result;
+                    this.zoomToFeature(result);
                     this.searchResults = [];
-                    this.searchQuery = result.name;
-                    
-                    // Find and open popup
-                    // Note: This is a bit simplified, ideally we'd track markers by ID
+                },
+
+                selectPlace(place) {
+                     this.selectedFeature = {
+                        ...place,
+                        type: 'Lokasi',
+                        image_url: place.image_url || (place.image_path ? '{{ url('/') }}/' + place.image_path : null)
+                    };
+                    this.zoomToFeature(place);
+                },
+
+                zoomToFeature(feature) {
+                    if (feature.coords) {
+                        this.map.flyTo(feature.coords, 18);
+                    } else if (feature.latitude && feature.longitude) {
+                        this.map.flyTo([feature.latitude, feature.longitude], 18);
+                    } else if (feature.geometry) {
+                         // Simplify: if polygon, get bounds
+                         const layer = L.geoJSON(feature);
+                         this.map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+                    }
+                },
+
+                locateUser() {
+                    if (!navigator.geolocation) { alert('Browser tidak mendukung geolokasi'); return; }
+                    this.loading = true;
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            const { latitude, longitude } = pos.coords;
+                            this.map.flyTo([latitude, longitude], 17);
+                            
+                            if (this.userMarker) this.map.removeLayer(this.userMarker);
+                            this.userMarker = L.marker([latitude, longitude], {
+                                icon: L.divIcon({ html: '<div class="w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg marker-pulse"></div>', iconSize: [16, 16] })
+                            }).addTo(this.map).bindPopup('Lokasi Anda').openPopup();
+                            
+                            this.loading = false;
+                        },
+                        () => { this.loading = false; alert('Gagal mendeteksi lokasi'); }
+                    );
+                },
+                
+                getIconForFeature(result) {
+                    if (result.type === 'Lokasi') return result.category?.icon_class || 'fa-map-marker-alt';
+                    if (result.type === 'Batas Wilayah') return 'fa-draw-polygon';
+                    if (result.type === 'Infrastruktur') return 'fa-road';
+                    return 'fa-map-pin';
                 }
-            }
+            };
         }
     </script>
 </body>

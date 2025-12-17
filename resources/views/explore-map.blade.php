@@ -7,316 +7,306 @@
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700|plus-jakarta-sans:400,500,600,700,800" rel="stylesheet" />
 
-    <!-- Leaflet CSS -->
+    <!-- Leaflet & Icon -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Styles -->
+    
+    <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        #map { height: 100vh; width: 100%; z-index: 0; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 999px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+        body { font-family: 'Instrument Sans', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        /* Leaflet Customization */
-        .leaflet-control-layers {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: 1px solid rgba(0, 0, 0, 0.1) !important;
-            color: #1e293b !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-        }
-        .leaflet-control-zoom {
-            border: none !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-        }
-        .leaflet-control-zoom a {
-            background: rgba(255, 255, 255, 0.95) !important;
-            color: #1e293b !important;
-            border: 1px solid rgba(0, 0, 0, 0.1) !important;
-        }
-        .leaflet-control-zoom a:first-child {
-            border-top-left-radius: 8px !important;
-            border-top-right-radius: 8px !important;
-        }
-        .leaflet-control-zoom a:last-child {
-            border-bottom-left-radius: 8px !important;
-            border-bottom-right-radius: 8px !important;
-        }
-        .leaflet-popup-content-wrapper {
-            background: rgba(255, 255, 255, 0.95);
-            color: #1e293b;
-            border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .leaflet-popup-tip {
-            background: rgba(255, 255, 255, 0.95);
-        }
-        .leaflet-container a.leaflet-popup-close-button {
-            color: #64748b;
-        }
+        #map { height: 100%; width: 100%; z-index: 0; }
         [x-cloak] { display: none !important; }
-        .custom-marker {
-            background: transparent;
-            border: none;
+        
+        /* Custom Scroll */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animations */
+        .custom-marker { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .custom-marker:hover { transform: scale(1.25); z-index: 1000 !important; }
+        
+        .marker-pulse { animation: pulse-blue 2s infinite; }
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
     </style>
 </head>
-<body class="antialiased font-sans text-slate-600 bg-slate-50 overflow-hidden">
+<body class="antialiased overflow-hidden bg-slate-50" x-data="mapComponent()">
 
-    <div x-data="mapExplorer()" class="relative h-screen w-full flex">
+    <!-- Main Container -->
+    <div class="relative h-screen w-full flex">
         
-        <!-- Toast Notification -->
-        <div x-show="showToast" 
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 translate-y-4"
-             class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 backdrop-blur text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-3"
-             x-cloak>
-            <i class="fa-solid fa-info-circle text-blue-400"></i>
-            <span x-text="toastMessage" class="text-sm font-medium"></span>
-        </div>
-        
-        <!-- Map Container -->
-        <div class="absolute inset-0 z-0">
-            <div id="map"></div>
+        <!-- Back Button (Floating Top Left) -->
+        <div class="absolute top-4 left-4 z-[500]">
+            <a href="{{ route('welcome') }}" class="flex items-center gap-2 px-4 py-2.5 bg-white/90 backdrop-blur shadow-lg border border-slate-200 rounded-xl text-slate-700 font-bold text-sm hover:bg-white hover:text-blue-600 transition group">
+                <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                <span>Kembali</span>
+            </a>
         </div>
 
-        <!-- Mobile Sidebar Toggle (Open) -->
-        <button @click="sidebarOpen = true" 
-                x-show="!sidebarOpen"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="-translate-x-full opacity-0"
-                x-transition:enter-end="translate-x-0 opacity-100"
-                class="absolute top-4 left-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-slate-600 hover:text-blue-600 transition md:hidden">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-
-        <!-- Floating Sidebar -->
-        <div class="absolute top-0 left-0 h-full w-full md:w-[420px] z-10 p-4 md:p-6 pointer-events-none flex flex-col transition-transform duration-300 ease-in-out"
-             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
-            <!-- Header & Search -->
-            <div class="glass-panel rounded-3xl p-5 shadow-2xl shadow-slate-200/50 pointer-events-auto flex flex-col max-h-full">
+        <!-- Floating Sidebar (Left) -->
+        <div class="absolute top-20 left-4 bottom-4 w-96 z-[400] flex flex-col gap-4 pointer-events-none">
+            <!-- Search & Content Container -->
+            <div class="flex flex-col h-full pointer-events-auto">
                 
-                <!-- Top Bar -->
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <a href="{{ route('welcome') }}" class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition text-slate-700">
-                            <i class="fa-solid fa-arrow-left"></i>
-                        </a>
-                        <div>
-                            <h1 class="text-lg font-bold text-slate-800 leading-tight">Peta Desa</h1>
-                            <p class="text-xs text-slate-500">Mayong Lor</p>
+                <!-- Search Box -->
+                <div class="bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/20 p-3 mb-4">
+                    <div class="relative group">
+                        <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400 group-focus-within:text-blue-500 transition"></i>
+                        <input type="text" 
+                               class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 text-slate-700 font-medium placeholder:text-slate-400 bg-white/50 focus:bg-white transition" 
+                               placeholder="Cari lokasi, jalan, wilayah..." 
+                               x-model="searchQuery" 
+                               @input.debounce.300ms="performSearch()">
+                        
+                        <!-- Search Results -->
+                        <div x-show="searchResults.length > 0" 
+                             class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-100 max-h-60 overflow-y-auto custom-scroll overflow-hidden" 
+                             x-cloak>
+                            <template x-for="result in searchResults" :key="result.id">
+                                <button @click="selectFeature(result)" class="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                                        <i class="fa-solid" :class="getIconForFeature(result)"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-800 text-sm truncate" x-text="result.name"></p>
+                                        <p class="text-[10px] text-slate-500 truncate" x-text="result.type"></p>
+                                    </div>
+                                </button>
+                            </template>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <!-- Mobile Close Button -->
-                        <button @click="sidebarOpen = false" class="p-2 text-slate-400 hover:text-red-500 transition md:hidden" title="Tutup Menu">
-                            <i class="fa-solid fa-times text-lg"></i>
+                </div>
+
+                <!-- Tabbed Panel -->
+                <div class="flex-1 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/20 overflow-hidden flex flex-col min-h-0">
+                    <!-- Tabs -->
+                    <div class="flex p-2 bg-slate-100/50 border-b border-slate-200/50">
+                        <button @click="activeTab = 'layers'" :class="activeTab === 'layers' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-1 py-2.5 text-xs font-bold rounded-xl transition-all duration-200">
+                            <i class="fa-solid fa-layer-group mr-1.5"></i> Layers
                         </button>
-                        <button @click="resetView()" class="p-2 text-slate-400 hover:text-slate-600 transition" title="Reset View">
-                            <i class="fa-solid fa-compress"></i>
+                        <button @click="activeTab = 'places'" :class="activeTab === 'places' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-1 py-2.5 text-xs font-bold rounded-xl transition-all duration-200">
+                            <i class="fa-solid fa-map-marker-alt mr-1.5"></i> Lokasi
+                        </button>
+                        <button @click="activeTab = 'info'" :class="activeTab === 'info' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'" class="flex-1 py-2.5 text-xs font-bold rounded-xl transition-all duration-200">
+                            <i class="fa-solid fa-chart-pie mr-1.5"></i> Info
                         </button>
                     </div>
-                </div>
 
-                <!-- Search -->
-                <div class="relative mb-6">
-                    <input 
-                        type="text" 
-                        x-model="searchQuery"
-                        @input="performSearch()"
-                        placeholder="Cari lokasi, kategori, atau infrastruktur..."
-                        class="w-full rounded-xl bg-slate-50 border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition"
-                    >
-                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    
-                    <!-- Search Results Dropdown -->
-                    <div x-show="searchQuery.length > 1 && searchResults.length > 0" 
-                         x-transition
-                         class="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden z-50 max-h-60 overflow-y-auto custom-scroll">
-                        <template x-for="result in searchResults" :key="result.id">
-                            <button @click="selectFeature(result)" class="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition flex items-center gap-3">
-                                <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                                    <i class="fa-solid fa-location-dot text-xs"></i>
+                    <!-- Content -->
+                    <div class="flex-1 overflow-y-auto custom-scroll p-4">
+                        
+                        <!-- LAYERS -->
+                        <div x-show="activeTab === 'layers'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                            <div class="space-y-6">
+                                <!-- Base Maps -->
+                                <div class="space-y-3">
+                                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Peta Dasar</h4>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button @click="setBaseLayer('streets')" :class="currentBaseLayer === 'streets' ? 'ring-2 ring-blue-500 bg-blue-50/50' : 'border-slate-200 hover:bg-slate-50'" class="p-3 rounded-xl border text-left transition relative overflow-hidden group">
+                                            <div class="flex gap-2 items-center mb-2">
+                                                <i class="fa-solid fa-map text-blue-500"></i>
+                                                <span class="text-xs font-bold text-slate-700">Jalan</span>
+                                            </div>
+                                            <div class="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                                                <div class="h-full bg-blue-500 w-3/4"></div>
+                                            </div>
+                                        </button>
+                                        <button @click="setBaseLayer('satellite')" :class="currentBaseLayer === 'satellite' ? 'ring-2 ring-blue-500 bg-blue-50/50' : 'border-slate-200 hover:bg-slate-50'" class="p-3 rounded-xl border text-left transition relative overflow-hidden group">
+                                            <div class="flex gap-2 items-center mb-2">
+                                                <i class="fa-solid fa-satellite text-purple-500"></i>
+                                                <span class="text-xs font-bold text-slate-700">Satelit</span>
+                                            </div>
+                                            <div class="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                                                <div class="h-full bg-slate-700 w-3/4"></div>
+                                            </div>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-medium text-slate-800" x-text="result.name"></p>
-                                    <p class="text-xs text-slate-500" x-text="result.type || 'Lokasi'"></p>
-                                </div>
-                            </button>
-                        </template>
-                    </div>
-                </div>
 
-                <!-- Filter Tabs -->
-                <div class="flex p-1 bg-slate-100 rounded-xl mb-4 border border-slate-200">
-                    <button @click="activeTab = 'layers'" :class="activeTab === 'layers' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2 text-xs font-semibold rounded-lg transition">Layers</button>
-                    <button @click="activeTab = 'places'" :class="activeTab === 'places' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2 text-xs font-semibold rounded-lg transition">Lokasi</button>
-                    <button @click="activeTab = 'info'" :class="activeTab === 'info' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2 text-xs font-semibold rounded-lg transition">Info</button>
-                </div>
+                                <div class="h-px bg-slate-100"></div>
 
-                <!-- Content Area -->
-                <div class="flex-1 overflow-y-auto custom-scroll pr-2 -mr-2">
-                    
-                    <!-- Layers Tab -->
-                    <div x-show="activeTab === 'layers'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
-                        <div class="space-y-4">
-                            <!-- Main Toggles -->
-                            <div class="space-y-2">
-                                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition cursor-pointer group">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
-                                            <i class="fa-solid fa-map"></i>
-                                        </div>
-                                        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">Batas Wilayah</span>
-                                    </div>
-                                    <input type="checkbox" x-model="showBoundaries" @change="updateLayers()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                </label>
-
-                                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition cursor-pointer group">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
-                                            <i class="fa-solid fa-road"></i>
-                                        </div>
-                                        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">Infrastruktur</span>
-                                    </div>
-                                    <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                </label>
-
-                                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition cursor-pointer group">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
-                                            <i class="fa-solid fa-seedling"></i>
-                                        </div>
-                                        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900">Penggunaan Lahan</span>
-                                    </div>
-                                    <input type="checkbox" x-model="showLandUses" @change="updateLayers()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                </label>
-                            </div>
-
-                            <div class="h-px bg-slate-200 my-4"></div>
-
-                            <!-- Categories Filter -->
-                            <div>
-                                <h3 class="text-xs uppercase tracking-wider text-slate-500 font-bold mb-3">Filter Kategori Lokasi</h3>
-                                <div class="space-y-2">
-                                    <template x-for="category in categories" :key="category.id">
-                                        <label x-show="category.places_count > 0" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 transition cursor-pointer">
-                                            <input type="checkbox" :value="category.id" x-model="selectedCategories" @change="updateMapMarkers()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                            <span class="w-2 h-2 rounded-full" :style="`background-color: ${category.color}`"></span>
-                                            <span class="text-sm text-slate-600 flex-1" x-text="category.name"></span>
-                                            <span class="text-xs bg-slate-100 px-2 py-0.5 rounded-full text-slate-500" x-text="category.places_count"></span>
+                                <!-- Data Layers -->
+                                <div class="space-y-3">
+                                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Data Spasial</h4>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer select-none">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                                    <i class="fa-solid fa-draw-polygon text-xs"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-700">Batas Wilayah</p>
+                                                    <p class="text-[10px] text-slate-500">RT/RW & Dusun</p>
+                                                </div>
+                                            </div>
+                                            <div class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" x-model="showBoundaries" @change="updateLayers()" class="sr-only peer">
+                                                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </div>
                                         </label>
+
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer select-none">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
+                                                    <i class="fa-solid fa-road text-xs"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-700">Infrastruktur</p>
+                                                    <p class="text-[10px] text-slate-500">Jalan & Sungai</p>
+                                                </div>
+                                            </div>
+                                            <div class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()" class="sr-only peer">
+                                                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </div>
+                                        </label>
+
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer select-none">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
+                                                    <i class="fa-solid fa-wheat text-xs"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-700">Lahan</p>
+                                                    <p class="text-[10px] text-slate-500">Pertanian & Pemukiman</p>
+                                                </div>
+                                            </div>
+                                            <div class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" x-model="showLandUses" @change="updateLayers()" class="sr-only peer">
+                                                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PLACES -->
+                        <div x-show="activeTab === 'places'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                            <div class="space-y-4">
+                                <div x-data="{ open: true }" class="border rounded-xl border-slate-200 overflow-hidden">
+                                    <button @click="open = !open" class="flex items-center justify-between w-full p-3 bg-slate-50 hover:bg-slate-100 transition">
+                                        <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Filter Kategori</h4>
+                                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300" :class="{ 'rotate-180': !open }" ></i>
+                                    </button>
+                                    <div x-show="open" x-collapse class="p-3 space-y-2 bg-white">
+                                        @foreach($categories as $category)
+                                        <label class="flex items-center group cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition">
+                                            <div class="relative flex items-center">
+                                                <input type="checkbox" value="{{ $category->id }}" x-model="selectedCategories" @change="updateMapMarkers()" class="peer sr-only">
+                                                <div class="w-4 h-4 rounded border border-slate-300 peer-checked:bg-[{{ $category->color }}] peer-checked:border-[{{ $category->color }}] transition flex items-center justify-center">
+                                                    <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100"></i>
+                                                </div>
+                                            </div>
+                                            <span class="ml-3 text-sm text-slate-600 font-medium group-hover:text-slate-900">{{ $category->name }}</span>
+                                            <span class="ml-auto text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ $category->places_count }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <template x-for="place in visiblePlaces" :key="place.id">
+                                        <div @click="selectPlace(place)" class="group bg-slate-50 border border-slate-200 rounded-xl p-3 hover:bg-white hover:border-blue-300 hover:shadow-md transition cursor-pointer flex gap-3 items-start">
+                                            <div class="flex-shrink-0">
+                                                <template x-if="place.image_path">
+                                                    <img :src="'{{ url('/') }}/' + place.image_path" class="w-12 h-12 rounded-lg object-cover bg-white">
+                                                </template>
+                                                <template x-if="!place.image_path">
+                                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center text-lg bg-white text-slate-400">
+                                                        <i class="fa-solid fa-map-marker-alt"></i>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <h4 class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition truncate" x-text="place.name"></h4>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="w-2 h-2 rounded-full" :style="`background-color: ${place.category.color}`"></span>
+                                                    <p class="text-xs text-slate-500" x-text="place.category.name"></p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Places Tab -->
-                    <div x-show="activeTab === 'places'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
-                        <div class="space-y-3">
-                            <template x-for="place in visiblePlaces" :key="place.id">
-                                <div @click="selectPlace(place)" class="group bg-white border border-slate-200 rounded-xl p-3 hover:border-blue-300 hover:shadow-md transition cursor-pointer">
-                                    <div class="flex items-start gap-3">
-                                        <div class="flex-shrink-0">
-                                            <template x-if="place.image_path">
-                                                <img :src="'{{ url('/') }}/' + place.image_path" class="w-12 h-12 rounded-lg object-cover bg-slate-100">
-                                            </template>
-                                            <template x-if="!place.image_path">
-                                                <div class="w-12 h-12 rounded-lg flex items-center justify-center text-lg" :style="`background-color: ${place.category.color}20; color: ${place.category.color}`">
-                                                    <i :class="place.category.icon_class || 'fa-solid fa-map-marker-alt'"></i>
-                                                </div>
-                                            </template>
+                        <!-- INFO -->
+                        <div x-show="activeTab === 'info'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                            <div class="space-y-6">
+                                <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
+                                    <div class="flex items-start gap-4">
+                                        <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                                            <i class="fa-solid fa-circle-info text-xl"></i>
                                         </div>
-                                        <div class="flex-1 min-w-0">
-                                            <h4 class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition truncate" x-text="place.name"></h4>
-                                            <p class="text-xs text-slate-500 mt-0.5" x-text="place.category.name"></p>
-                                            <p class="text-xs text-slate-500 mt-1 line-clamp-2" x-text="place.description"></p>
+                                        <div>
+                                            <h3 class="text-base font-bold text-blue-800 mb-1">Statistik Desa</h3>
+                                            <p class="text-xs text-blue-700/80 leading-relaxed">
+                                                Tinjauan umum data geospasial Desa Mayong Lor.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                            </template>
-                            <div x-show="visiblePlaces.length === 0" class="text-center py-8 text-slate-500">
-                                <p>Tidak ada lokasi yang sesuai filter.</p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Info Tab -->
-                    <div x-show="activeTab === 'info'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
-                        <div class="space-y-6">
-                            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4">
-                                <h3 class="text-sm font-bold text-blue-700 mb-2">Tentang Peta Ini</h3>
-                                <p class="text-sm text-slate-600 leading-relaxed">
-                                    Peta digital Desa Mayong Lor menyajikan data geospasial yang terintegrasi, mencakup batas wilayah, infrastruktur, penggunaan lahan, dan fasilitas publik.
-                                </p>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                    <p class="text-xs text-slate-500 uppercase tracking-wider">Total Lokasi</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $places->count() }}</p>
-                                </div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                    <p class="text-xs text-slate-500 uppercase tracking-wider">Infrastruktur</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $infrastructures->count() }}</p>
-                                </div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                    <p class="text-xs text-slate-500 uppercase tracking-wider">Wilayah</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $boundaries->count() }}</p>
-                                </div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                    <p class="text-xs text-slate-500 uppercase tracking-wider">Lahan</p>
-                                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $landUses->count() }}</p>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Legenda</h4>
-                                <div class="space-y-2 text-sm text-slate-600">
-                                    <div class="flex items-center gap-3">
-                                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                                        <span>Batas Wilayah (Polygon)</span>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalPlaces }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Lokasi</p>
                                     </div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                                        <span>Sungai / Irigasi (Line)</span>
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalInfrastructures }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Infrastruktur</p>
                                     </div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="w-3 h-3 rounded-full bg-slate-500"></span>
-                                        <span>Jalan (Line)</span>
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalBoundaries }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Area Admin</p>
                                     </div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-                                        <span>Penggunaan Lahan (Polygon)</span>
+                                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center hover:bg-slate-100 transition duration-300">
+                                        <p class="text-2xl font-black text-slate-800">{{ $totalLandUses }}</p>
+                                        <p class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mt-1">Guna Lahan</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Detail Panel (Slide Over) -->
+        <!-- Map Canvas -->
+        <div id="map" class="w-full h-full bg-slate-200"></div>
+
+        <!-- Floating Map Controls (Right Bottom) -->
+        <div class="absolute bottom-6 right-6 z-[400] flex flex-col gap-3">
+             <button @click="locateUser()" class="w-12 h-12 bg-white rounded-xl shadow-lg border border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center group" title="Lokasi Saya">
+                <i class="fa-solid fa-crosshairs text-lg group-hover:scale-110 transition-transform"></i>
+            </button>
+            <div class="flex flex-col bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <button onclick="mapComponent().map.zoomIn()" class="w-12 h-12 flex items-center justify-center text-slate-600 hover:bg-slate-50 border-b border-slate-100 transition">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button onclick="mapComponent().map.zoomOut()" class="w-12 h-12 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+            </div>
+            <button onclick="document.getElementById('map').requestFullscreen()" class="w-12 h-12 bg-white rounded-xl shadow-lg border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition flex items-center justify-center group" title="Fullscreen">
+                <i class="fa-solid fa-expand group-hover:scale-110 transition-transform"></i>
+            </button>
+        </div>
+
+        <!-- Detail Slide-Over (Right) -->
         <div x-show="selectedFeature" 
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="translate-x-full"
@@ -324,400 +314,297 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="translate-x-0"
              x-transition:leave-end="translate-x-full"
-             class="absolute top-0 right-0 h-full w-full md:w-[400px] z-20 p-4 md:p-6 pointer-events-none flex flex-col"
+             class="absolute top-4 right-4 bottom-4 w-96 bg-white/95 backdrop-blur rounded-2xl shadow-2xl z-[500] border border-slate-100 flex flex-col overflow-hidden"
              x-cloak>
             
-            <div class="glass-panel rounded-3xl h-full shadow-2xl shadow-slate-200/50 pointer-events-auto flex flex-col overflow-hidden">
-                <!-- Header Image -->
-                <div class="relative h-48 bg-slate-100 flex-shrink-0">
-                    <template x-if="selectedFeature?.image_url">
-                        <img :src="selectedFeature.image_url" class="w-full h-full object-cover">
-                    </template>
-                    <template x-if="!selectedFeature?.image_url">
-                        <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
-                            <i class="fa-solid fa-image text-4xl"></i>
+            <!-- Header Image -->
+            <div class="h-48 bg-slate-200 relative shrink-0">
+                <template x-if="selectedFeature?.image_url">
+                    <img :src="selectedFeature.image_url" class="w-full h-full object-cover">
+                </template>
+                <template x-if="!selectedFeature?.image_url">
+                    <div class="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
+                        <i class="fa-solid fa-image text-4xl"></i>
+                    </div>
+                </template>
+                <button @click="selectedFeature = null" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur flex items-center justify-center transition">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+                <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-white/20 text-white backdrop-blur uppercase tracking-wider" x-text="selectedFeature?.type || 'LOKASI'"></span>
+                    </div>
+                    <h3 class="text-white font-bold text-xl leading-tight text-shadow-sm" x-text="selectedFeature?.name"></h3>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
+                <!-- Description -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Deskripsi</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed" x-text="selectedFeature?.description || 'Tidak ada deskripsi tersedia.'"></p>
+                </div>
+                
+                <!-- Metadata Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <template x-if="selectedFeature?.area">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <p class="text-[10px] uppercase text-slate-400 font-bold mb-1">Luas Area</p>
+                            <p class="font-bold text-slate-700 text-lg"><span x-text="selectedFeature.area"></span> <span class="text-xs text-slate-500 font-normal">ha</span></p>
                         </div>
                     </template>
-                    <button @click="selectedFeature = null" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white text-slate-500 shadow-md flex items-center justify-center hover:bg-slate-50 hover:text-slate-700 transition">
-                        <i class="fa-solid fa-times"></i>
-                    </button>
-                    <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white to-transparent">
-                        <span class="inline-block px-2 py-1 rounded bg-blue-600 text-white text-xs font-bold uppercase tracking-wider mb-1" x-text="selectedFeature?.category?.name || selectedFeature?.type || 'Detail'"></span>
-                        <h2 class="text-xl font-bold text-slate-900 leading-tight" x-text="selectedFeature?.name"></h2>
-                    </div>
+                    <template x-if="selectedFeature?.owner">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <p class="text-[10px] uppercase text-slate-400 font-bold mb-1">Pemilik</p>
+                            <p class="font-bold text-slate-700 text-lg" x-text="selectedFeature.owner"></p>
+                        </div>
+                    </template>
+                    <template x-if="selectedFeature?.length">
+                         <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <p class="text-[10px] uppercase text-slate-400 font-bold mb-1">Panjang</p>
+                            <p class="font-bold text-slate-700 text-lg"><span x-text="selectedFeature.length"></span> <span class="text-xs text-slate-500 font-normal">km</span></p>
+                        </div>
+                    </template>
                 </div>
 
-                <!-- Content -->
-                <div class="flex-1 overflow-y-auto custom-scroll p-6 space-y-6">
-                    
-                    <div x-show="selectedFeature?.description">
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Deskripsi</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed" x-text="selectedFeature?.description"></p>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <template x-if="selectedFeature?.area_hectares">
-                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                <p class="text-xs text-slate-500 uppercase tracking-wider">Luas Area</p>
-                                <p class="text-lg font-bold text-slate-800 mt-1"><span x-text="selectedFeature.area_hectares"></span> ha</p>
-                            </div>
-                        </template>
-                        <template x-if="selectedFeature?.length_meters">
-                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                <p class="text-xs text-slate-500 uppercase tracking-wider">Panjang</p>
-                                <p class="text-lg font-bold text-slate-800 mt-1"><span x-text="selectedFeature.length_meters"></span> m</p>
-                            </div>
-                        </template>
-                        <template x-if="selectedFeature?.condition">
-                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                <p class="text-xs text-slate-500 uppercase tracking-wider">Kondisi</p>
-                                <p class="text-lg font-bold text-slate-800 mt-1" x-text="selectedFeature.condition"></p>
-                            </div>
-                        </template>
-                        <template x-if="selectedFeature?.owner">
-                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                <p class="text-xs text-slate-500 uppercase tracking-wider">Pemilik</p>
-                                <p class="text-lg font-bold text-slate-800 mt-1" x-text="selectedFeature.owner"></p>
-                            </div>
-                        </template>
-                    </div>
-
-                    <div class="pt-6 border-t border-slate-100">
-                        <button @click="zoomToFeature(selectedFeature)" class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-500 transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-crosshairs"></i>
-                            Fokus di Peta
-                        </button>
-                    </div>
-                </div>
+                <!-- Actions -->
+                <button @click="zoomToFeature(selectedFeature)" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-500/30 transition flex items-center justify-center gap-2 transform active:scale-95">
+                    <i class="fa-solid fa-location-dot"></i> Zoom ke Lokasi
+                </button>
             </div>
         </div>
 
+        <!-- Loading Overlay -->
+        <div x-show="loading" class="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-[1000] flex items-center justify-center" x-transition.opacity>
+            <div class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4 border border-slate-100">
+                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div class="text-center">
+                    <p class="text-sm font-bold text-slate-800">Memuat Peta...</p>
+                    <p class="text-xs text-slate-500">Mohon tunggu sebentar</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
+    
     <script>
-        function mapExplorer() {
+        function mapComponent() {
             return {
                 map: null,
+                loading: true,
                 activeTab: 'layers',
-                searchQuery: '',
-                searchResults: [],
-                selectedFeature: null,
-                selectedFeature: null,
-                initialCenterSet: false,
-                showToast: false,
-                toastMessage: '',
-                
-                // Data
+                currentBaseLayer: 'streets',
+                baseLayers: {},
                 categories: @json($categories),
                 selectedCategories: [],
-                
-                // Toggles
-                sidebarOpen: window.innerWidth >= 768,
                 showBoundaries: true,
                 showInfrastructures: true,
                 showLandUses: true,
-
-                // Raw Data
                 allPlaces: [],
-                allBoundaries: [],
-                allInfrastructures: [],
-                allLandUses: [],
-
-                // Layers
+                geoFeatures: [],
+                searchQuery: '',
+                searchResults: [],
+                selectedFeature: null,
+                userMarker: null,
                 markers: [],
                 boundariesLayer: null,
                 infrastructuresLayer: null,
                 landUsesLayer: null,
 
                 get visiblePlaces() {
-                    if (!this.allPlaces.length) return [];
-                    return this.allPlaces
-                        .map(f => ({
-                            ...f.properties,
-                            latitude: f.geometry.coordinates[1],
-                            longitude: f.geometry.coordinates[0]
-                        }))
-                        .filter(p => this.selectedCategories.includes(p.category.id));
+                    const selectedIds = this.selectedCategories.map(Number);
+                    return this.allPlaces.filter(p => selectedIds.includes(p.properties.category?.id))
+                        .map(p => ({
+                            ...p.properties,
+                            image_path: p.properties.image_path,
+                            category: p.properties.category,
+                            latitude: p.geometry.coordinates[1],
+                            longitude: p.geometry.coordinates[0]
+                        }));
                 },
 
                 init() {
                     this.selectedCategories = this.categories.map(c => c.id);
                     this.initMap();
-                    this.loadAllData().then(() => {
-                        this.checkUrlQuery();
-                    });
-                },
-
-                checkUrlQuery() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const query = urlParams.get('q');
-                    const categoryId = urlParams.get('category');
-
-                    if (categoryId) {
-                        // Filter by category
-                        const catId = parseInt(categoryId);
-                        if (this.categories.find(c => c.id === catId)) {
-                            this.selectedCategories = [catId];
-                            this.updateMapMarkers();
-                            const catName = this.categories.find(c => c.id === catId).name;
-                            this.showNotification(`Menampilkan kategori: "${catName}"`);
-                        }
-                    }
-
-                    if (query) {
-                        this.searchQuery = query;
-                        this.performSearch();
-                        
-                        if (this.searchResults.length > 0) {
-                            // Auto select first result
-                            const firstResult = this.searchResults[0];
-                            this.selectFeature(firstResult);
-                            this.showNotification(`Menampilkan hasil untuk: "${query}"`);
-                        } else {
-                            this.showNotification(`Tidak ditemukan hasil untuk: "${query}"`);
-                        }
-                    }
-                },
-
-                showNotification(message) {
-                    this.toastMessage = message;
-                    this.showToast = true;
-                    setTimeout(() => this.showToast = false, 3000);
+                    this.fetchAllData();
+                    this.$watch('selectedCategories', () => this.updateMapMarkers());
                 },
 
                 initMap() {
-                    this.map = L.map('map', {
-                        zoomControl: false,
-                        attributionControl: false,
-                        maxZoom: 22
-                    }).setView([-6.7289, 110.7485], 14);
+                    this.map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-6.7289, 110.7485], 14);
+                    
+                    const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'] });
+                    const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'] });
 
-                    // Custom Zoom Control
-                    L.control.zoom({
-                        position: 'bottomright'
-                    }).addTo(this.map);
-
-                    // Google Maps Layers
-                    // CartoDB Voyager (Clean Streets)
-                    const googleStreets = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                        subdomains: 'abcd',
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        updateWhenIdle: true,
-                        keepBuffer: 2
-                    });
-                    const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                        updateWhenIdle: true,
-                        keepBuffer: 2
-                    });
-                    const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                        updateWhenIdle: true,
-                        keepBuffer: 2
-                    });
-                    const googleTerrain = L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
-                        maxNativeZoom: 20,
-                        maxZoom: 22,
-                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                        updateWhenIdle: true,
-                        keepBuffer: 2
-                    });
-
-                    googleSatellite.addTo(this.map);
-
-                    const baseLayers = {
-                        "Satelit (Hybrid)": googleHybrid,
-                        "Peta Jalan (Bersih)": googleStreets,
-                        "Satelit (Polos)": googleSatellite,
-                        "Topografi": googleTerrain
-                    };
-
-                    L.control.layers(baseLayers, null, { position: 'bottomright' }).addTo(this.map);
+                    this.baseLayers = { 'streets': googleStreets, 'satellite': googleSatellite };
+                    this.baseLayers['streets'].addTo(this.map);
                 },
 
-                async loadAllData() {
+                setBaseLayer(type) {
+                    if (this.currentBaseLayer === type) return;
+                    this.map.removeLayer(this.baseLayers[this.currentBaseLayer]);
+                    this.currentBaseLayer = type;
+                    this.baseLayers[type].addTo(this.map);
+                },
+
+                async fetchAllData() {
                     try {
+                        this.loading = true;
                         const [places, boundaries, infrastructures, landUses] = await Promise.all([
-                            fetch('{{ route("places.geojson") }}').then(r => r.json()),
-                            fetch('{{ route("boundaries.geojson") }}').then(r => r.json()),
-                            fetch('{{ route("infrastructures.geojson") }}').then(r => r.json()),
-                            fetch('{{ route("land_uses.geojson") }}').then(r => r.json())
+                            fetch('{{ route('places.geojson') }}').then(r => r.json()),
+                            fetch('{{ route('boundaries.geojson') }}').then(r => r.json()),
+                            fetch('{{ route('infrastructures.geojson') }}').then(r => r.json()),
+                            fetch('{{ route('land_uses.geojson') }}').then(r => r.json())
                         ]);
 
+                        this.geoFeatures = places.features || [];
                         this.allPlaces = places.features || [];
-                        this.allBoundaries = boundaries.features || [];
-                        this.allInfrastructures = infrastructures.features || [];
-                        this.allLandUses = landUses.features || [];
-
-                        this.updateLayers();
+                        
+                        this.loadBoundaries(boundaries.features || []);
+                        this.loadInfrastructures(infrastructures.features || []);
+                        this.loadLandUses(landUses.features || []);
                         this.updateMapMarkers();
 
                     } catch (e) {
-                        console.error("Failed to load map data", e);
+                        console.error('Error loading data:', e);
+                    } finally {
+                        this.loading = false;
                     }
                 },
 
-                updateLayers() {
-                    // Boundaries
+                updateLayers() { this.fetchAllData(); },
+
+                loadBoundaries(features) {
                     if (this.boundariesLayer) this.map.removeLayer(this.boundariesLayer);
-                    if (this.showBoundaries && this.allBoundaries.length) {
-                        this.boundariesLayer = L.geoJSON(this.allBoundaries, {
-                            style: { color: '#10b981', weight: 2, fillOpacity: 0.1 },
-                            onEachFeature: (f, l) => this.bindFeaturePopup(f, l)
-                        }).addTo(this.map);
-
-                        // Fit bounds on initial load
-                        if (!this.initialCenterSet) {
-                            this.map.fitBounds(this.boundariesLayer.getBounds(), { padding: [50, 50] });
-                            this.initialCenterSet = true;
+                    if (!this.showBoundaries) return;
+                    this.boundariesLayer = L.geoJSON(features, {
+                        style: { color: '#059669', weight: 2, fillColor: '#10b981', fillOpacity: 0.1, dashArray: '5, 5' },
+                        onEachFeature: (f, l) => {
+                            l.on('click', (e) => {
+                                L.DomEvent.stop(e);
+                                this.selectFeature({...f.properties, type: 'Batas Wilayah'});
+                            });
                         }
-                    }
+                    }).addTo(this.map);
 
-                    // Infrastructures
+                    // Center map on village boundaries
+                    if (features.length > 0) {
+                        this.map.fitBounds(this.boundariesLayer.getBounds(), { padding: [50, 50] });
+                    }
+                },
+
+                loadInfrastructures(features) {
                     if (this.infrastructuresLayer) this.map.removeLayer(this.infrastructuresLayer);
-                    if (this.showInfrastructures && this.allInfrastructures.length) {
-                        this.infrastructuresLayer = L.geoJSON(this.allInfrastructures, {
-                            style: (f) => {
-                                const type = f.properties.type;
-                                const color = type === 'river' ? '#3b82f6' : 
-                                             type === 'road' ? '#94a3b8' : 
-                                             type === 'irrigation' ? '#06b6d4' : '#8b5cf6';
-                                return { color: color, weight: type === 'road' ? 4 : 3, opacity: 0.9 };
-                            },
-                            onEachFeature: (f, l) => this.bindFeaturePopup(f, l)
-                        }).addTo(this.map);
-                    }
+                    if (!this.showInfrastructures) return;
+                    this.infrastructuresLayer = L.geoJSON(features, {
+                        style: f => ({ color: f.properties.type === 'river' ? '#3b82f6' : '#64748b', weight: f.properties.type === 'river' ? 4 : 3, opacity: 0.8 }),
+                        onEachFeature: (f, l) => {
+                            l.on('click', (e) => { L.DomEvent.stop(e); this.selectFeature({...f.properties, type: 'Infrastruktur'}); });
+                        }
+                    }).addTo(this.map);
+                },
 
-                    // Land Uses
+                loadLandUses(features) {
                     if (this.landUsesLayer) this.map.removeLayer(this.landUsesLayer);
-                    if (this.showLandUses && this.allLandUses.length) {
-                        this.landUsesLayer = L.geoJSON(this.allLandUses, {
-                            style: (f) => {
-                                const type = f.properties.type;
-                                const color = type === 'rice_field' ? '#fbbf24' : 
-                                             type === 'plantation' ? '#84cc16' : 
-                                             type === 'forest' ? '#059669' : '#f59e0b';
-                                return { color: color, weight: 1, fillOpacity: 0.4, fillColor: color };
-                            },
-                            onEachFeature: (f, l) => this.bindFeaturePopup(f, l)
-                        }).addTo(this.map);
-                    }
+                    if (!this.showLandUses) return;
+                    this.landUsesLayer = L.geoJSON(features, {
+                        style: f => {
+                            const colors = { rice_field: '#fbbf24', forest: '#15803d', settlement: '#f97316', plantation: '#84cc16' };
+                            return { color: colors[f.properties.type] || '#94a3b8', weight: 1, fillOpacity: 0.3, fillColor: colors[f.properties.type] };
+                        },
+                        onEachFeature: (f, l) => {
+                            l.on('click', (e) => { L.DomEvent.stop(e); this.selectFeature({...f.properties, type: 'Penggunaan Lahan'}); });
+                        }
+                    }).addTo(this.map);
                 },
 
                 updateMapMarkers() {
                     this.markers.forEach(m => this.map.removeLayer(m));
                     this.markers = [];
-
-                    this.allPlaces.forEach(feature => {
-                        const props = feature.properties;
-                        if (!this.selectedCategories.includes(props.category.id)) return;
-
+                    const filtered = this.geoFeatures.filter(f => this.selectedCategories.includes(f.properties.category?.id));
+                    
+                    filtered.forEach(feature => {
                         const [lng, lat] = feature.geometry.coordinates;
+                        const p = feature.properties;
+                        const color = p.category ? p.category.color : '#3b82f6';
                         
                         const iconHtml = `
-                            <div class="rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-xs" style="background-color: ${props.category.color}; width: 32px; height: 32px;">
-                                <i class="${props.category.icon_class || 'fa-solid fa-map-marker-alt'}"></i>
+                            <div class="w-9 h-9 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-sm custom-marker bg-gradient-to-br from-[${color}] to-slate-600" style="background-color: ${color}">
+                                <i class="${p.category?.icon_class ?? 'fa-solid fa-map-marker-alt'}"></i>
                             </div>
                         `;
                         
-                        const icon = L.divIcon({
-                            html: iconHtml,
-                            className: 'custom-marker',
-                            iconSize: [32, 32],
-                            iconAnchor: [16, 16]
+                        const marker = L.marker([lat, lng], {
+                            icon: L.divIcon({ html: iconHtml, className: '', iconSize: [36, 36], iconAnchor: [18, 18] })
                         });
-
-                        const marker = L.marker([lat, lng], { icon: icon });
                         
-                        marker.on('click', () => {
-                            this.selectedFeature = {
-                                ...props,
-                                image_url: props.image_url ? props.image_url : null,
-                                latitude: lat,
-                                longitude: lng
-                            };
-                        });
-
+                        marker.on('click', () => { this.selectPlace({...p, latitude: lat, longitude: lng}); });
                         marker.addTo(this.map);
                         this.markers.push(marker);
                     });
                 },
 
-                bindFeaturePopup(feature, layer) {
-                    layer.on('click', () => {
-                        this.selectedFeature = {
-                            ...feature.properties,
-                            _geo: feature
-                        };
-                        L.DomEvent.stop(event); // Prevent map click
-                    });
-                },
-
                 performSearch() {
-                    if (this.searchQuery.length < 2) {
-                        this.searchResults = [];
-                        return;
-                    }
+                    if (this.searchQuery.length < 2) { this.searchResults = []; return; }
                     const q = this.searchQuery.toLowerCase();
-                    
-                    const places = this.allPlaces.filter(f => f.properties.name.toLowerCase().includes(q)).map(f => ({...f.properties, type: 'Lokasi', _geo: f}));
-                    const bounds = this.allBoundaries.filter(f => f.properties.name.toLowerCase().includes(q)).map(f => ({...f.properties, type: 'Wilayah', _geo: f}));
-                    const infras = this.allInfrastructures.filter(f => f.properties.name.toLowerCase().includes(q)).map(f => ({...f.properties, type: 'Infrastruktur', _geo: f}));
-                    
-                    this.searchResults = [...places, ...bounds, ...infras].slice(0, 5);
+                    const matches = this.allPlaces.filter(p => p.properties.name.toLowerCase().includes(q))
+                        .map(p => ({ ...p.properties, coords: [...p.geometry.coordinates].reverse(), type: 'Lokasi', feature: p }));
+                    this.searchResults = matches.slice(0, 5);
                 },
 
                 selectFeature(result) {
                     this.selectedFeature = result;
-                    this.searchQuery = '';
-                    this.searchResults = [];
                     this.zoomToFeature(result);
+                    this.searchResults = [];
                 },
 
                 selectPlace(place) {
-                    this.selectedFeature = {
+                     this.selectedFeature = {
                         ...place,
-                        image_url: place.image_url || (place.image_path ? '{{ asset("") }}/' + place.image_path : null)
+                        type: 'Lokasi',
+                        image_url: place.image_url || (place.image_path ? '{{ url('/') }}/' + place.image_path : null)
                     };
-                    this.zoomToFeature({
-                        latitude: place.latitude,
-                        longitude: place.longitude,
-                        _geo: { geometry: { type: 'Point', coordinates: [place.longitude, place.latitude] } }
-                    });
+                    this.zoomToFeature(place);
                 },
 
                 zoomToFeature(feature) {
-                    // Handle both raw feature objects and processed result objects
-                    const geo = feature._geo || (feature.geometry ? feature : null);
-                    
-                    if (geo) {
-                        if (geo.geometry.type === 'Point') {
-                            const [lng, lat] = geo.geometry.coordinates;
-                            this.map.setView([lat, lng], 18, { animate: true, duration: 1.5 });
-                        } else {
-                            const bounds = L.geoJSON(geo).getBounds();
-                            this.map.fitBounds(bounds, { padding: [50, 50], animate: true, duration: 1.5 });
-                        }
+                    if (feature.coords) {
+                        this.map.flyTo(feature.coords, 18);
                     } else if (feature.latitude && feature.longitude) {
-                         this.map.setView([feature.latitude, feature.longitude], 18, { animate: true, duration: 1.5 });
+                        this.map.flyTo([feature.latitude, feature.longitude], 18);
+                    } else if (feature.geometry) {
+                         const layer = L.geoJSON(feature);
+                         this.map.fitBounds(layer.getBounds(), { padding: [100, 100] });
                     }
                 },
 
-                resetView() {
-                    this.map.setView([-6.7289, 110.7485], 14, { animate: true, duration: 1 });
-                    this.selectedFeature = null;
+                locateUser() {
+                    if (!navigator.geolocation) { alert('Browser tidak mendukung geolokasi'); return; }
+                    this.loading = true;
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            const { latitude, longitude } = pos.coords;
+                            this.map.flyTo([latitude, longitude], 17);
+                            if (this.userMarker) this.map.removeLayer(this.userMarker);
+                            this.userMarker = L.marker([latitude, longitude], {
+                                icon: L.divIcon({ html: '<div class="w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg marker-pulse"></div>', iconSize: [16, 16] })
+                            }).addTo(this.map).bindPopup('Lokasi Anda').openPopup();
+                            this.loading = false;
+                        },
+                        () => { this.loading = false; alert('Gagal mendeteksi lokasi'); }
+                    );
+                },
+                getIconForFeature(result) {
+                    if (result.type === 'Lokasi') return result.category?.icon_class || 'fa-map-marker-alt';
+                    if (result.type === 'Batas Wilayah') return 'fa-draw-polygon';
+                    if (result.type === 'Infrastruktur') return 'fa-road';
+                    return 'fa-map-pin';
                 }
-            }
+            };
         }
     </script>
 </body>

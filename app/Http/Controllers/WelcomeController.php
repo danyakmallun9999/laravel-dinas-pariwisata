@@ -16,10 +16,22 @@ class WelcomeController extends Controller
         $categories = Category::withCount('places')->get();
         $totalPlaces = Place::count();
         $totalCategories = $categories->count();
+        $totalBoundaries = Boundary::count();
+        $totalInfrastructures = Infrastructure::count();
+        $totalLandUses = LandUse::count();
         $lastUpdate = Place::latest('updated_at')->first()?->updated_at;
         $population = \App\Models\Population::first();
 
-        return view('welcome', compact('categories', 'totalPlaces', 'totalCategories', 'lastUpdate', 'population'));
+        return view('welcome', compact(
+            'categories', 
+            'totalPlaces', 
+            'totalCategories', 
+            'totalBoundaries', 
+            'totalInfrastructures', 
+            'totalLandUses', 
+            'lastUpdate', 
+            'population'
+        ));
     }
 
     public function geoJson(): JsonResponse
@@ -138,11 +150,17 @@ class WelcomeController extends Controller
     public function exploreMap()
     {
         $categories = Category::withCount('places')->get();
-        $places = Place::with('category')->latest()->take(10)->get();
-        $boundaries = Boundary::all();
-        $infrastructures = Infrastructure::all();
-        $landUses = LandUse::all();
+        $totalPlaces = Place::count();
+        $totalBoundaries = Boundary::count();
+        $totalInfrastructures = Infrastructure::count();
+        $totalLandUses = LandUse::count();
 
-        return view('explore-map', compact('categories', 'places', 'boundaries', 'infrastructures', 'landUses'));
+        return view('explore-map', compact(
+            'categories', 
+            'totalPlaces', 
+            'totalBoundaries', 
+            'totalInfrastructures', 
+            'totalLandUses'
+        ));
     }
 }
