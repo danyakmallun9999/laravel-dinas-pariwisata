@@ -39,8 +39,14 @@ class PlaceController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('places', 'public');
-            $validated['image_path'] = '/storage/' . $path;
+            $disk = env('FILESYSTEM_DISK', 'public');
+            $path = $request->file('image')->store('places', $disk);
+            
+            if ($disk === 'supabase') {
+                 $validated['image_path'] = \Illuminate\Support\Facades\Storage::disk('supabase')->url($path);
+            } else {
+                 $validated['image_path'] = 'storage/' . $path;
+            }
         }
 
         \App\Models\Place::create($validated);
@@ -83,8 +89,14 @@ class PlaceController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('places', 'public');
-            $validated['image_path'] = '/storage/' . $path;
+            $disk = env('FILESYSTEM_DISK', 'public');
+            $path = $request->file('image')->store('places', $disk);
+            
+            if ($disk === 'supabase') {
+                 $validated['image_path'] = \Illuminate\Support\Facades\Storage::disk('supabase')->url($path);
+            } else {
+                 $validated['image_path'] = 'storage/' . $path;
+            }
         }
 
         $place->update($validated);

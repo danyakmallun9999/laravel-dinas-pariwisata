@@ -169,7 +169,12 @@ class AdminController extends Controller
 
     protected function storeImage(Request $request): string
     {
-        $path = $request->file('image')->store('places', 'public');
+        $disk = env('FILESYSTEM_DISK', 'public');
+        $path = $request->file('image')->store('places', $disk);
+
+        if ($disk === 'supabase') {
+             return Storage::disk('supabase')->url($path);
+        }
 
         return 'storage/' . $path;
     }
@@ -180,10 +185,20 @@ class AdminController extends Controller
             return;
         }
 
-        $cleanPath = str_replace('storage/', '', $path);
+        $disk = env('FILESYSTEM_DISK', 'public');
 
-        if (Storage::disk('public')->exists($cleanPath)) {
-            Storage::disk('public')->delete($cleanPath);
+        // Handle Supabase URL format
+        if ($disk === 'supabase') {
+            $path = parse_url($path, PHP_URL_PATH);
+             // Remove the bucket prefix if it exists in the path
+             $path = ltrim($path, '/');
+             $path = str_replace('storage/v1/object/public/' . env('SUPABASE_BUCKET') . '/', '', $path);
+        } else {
+             $path = str_replace('storage/', '', $path);
+        }
+
+        if (Storage::disk($disk)->exists($path)) {
+            Storage::disk($disk)->delete($path);
         }
     }
 }

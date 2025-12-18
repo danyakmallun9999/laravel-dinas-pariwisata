@@ -68,11 +68,12 @@
     <div class="flex-1 bg-gray-100 relative">
         <div class="absolute inset-0 p-4">
             <!-- Map Drawing Component for Polygon -->
-            @include('admin.components.map-drawer', [
-                'drawType' => 'polygon',
-                'initialGeometry' => old('geometry', $boundary->geometry),
-                'height' => 'h-full',
-            ])
+            <!-- Map Drawing Component for Polygon -->
+            <x-admin.components.map-drawer 
+                draw-type="polygon"
+                :initial-geometry="old('geometry', $boundary->geometry)"
+                height="h-full"
+            />
             @include('admin.components.load-geometry')
             <x-input-error :messages="$errors->get('geometry')" class="mt-2" />
         </div>
