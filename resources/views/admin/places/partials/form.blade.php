@@ -137,14 +137,13 @@
     <div class="flex-1 bg-gray-100 relative">
         <div class="absolute inset-0 p-4">
             <!-- Map Drawing Component for Point -->
-            <!-- Map Drawing Component for Point -->
-            <x-admin.components.map-drawer 
-                draw-type="point"
-                :initial-geometry="old('geometry', $initialGeometry)"
-                :center="[$initialCoordinates['lat'], $initialCoordinates['lng']]"
-                :zoom="15"
-                height="h-full"
-            />
+            @include('admin.components.map-drawer', [
+                'drawType' => 'point',
+                'initialGeometry' => old('geometry', $initialGeometry),
+                'center' => [$initialCoordinates['lat'], $initialCoordinates['lng']],
+                'zoom' => 15,
+                'height' => 'h-full',
+            ])
             @include('admin.components.load-geometry')
         </div>
     </div>

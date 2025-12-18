@@ -102,12 +102,11 @@
     <div class="flex-1 bg-gray-100 relative">
         <div class="absolute inset-0 p-4">
             <!-- Map Drawing Component for Line -->
-            <!-- Map Drawing Component for Line -->
-            <x-admin.components.map-drawer 
-                draw-type="line"
-                :initial-geometry="old('geometry', $infrastructure->geometry)"
-                height="h-full"
-            />
+            @include('admin.components.map-drawer', [
+                'drawType' => 'line',
+                'initialGeometry' => old('geometry', $infrastructure->geometry),
+                'height' => 'h-full',
+            ])
             @include('admin.components.load-geometry')
             <x-input-error :messages="$errors->get('geometry')" class="mt-2" />
         </div>

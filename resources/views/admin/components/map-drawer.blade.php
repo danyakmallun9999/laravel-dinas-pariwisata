@@ -166,7 +166,9 @@
             hasGeometry: false,
             uploadedItems: null,
             uploadedFeatures: [],
+            uploadedFeatures: [],
             currentIndex: 0,
+            currentDrawHandler: null, // Track active draw handler
 
             init() {
                 this.$nextTick(() => {
@@ -281,9 +283,15 @@
             },
 
             startDrawing(type) {
-                // Remove previous click handler
+                // Remove previous click handler if it was 'point' mode
                 this.map.off('click', this.handleMapClick);
                 
+                // Disable valid existing draw handler if exists
+                if (this.currentDrawHandler) {
+                    this.currentDrawHandler.disable();
+                    this.currentDrawHandler = null;
+                }
+
                 this.drawingMode = type;
 
                 // Enable drawing for the selected type
@@ -291,14 +299,14 @@
                     this.map.on('click', this.handleMapClick.bind(this));
                 } else {
                     // For line and polygon, use Leaflet Draw
-                    let drawHandler;
                     if (type === 'line') {
-                        drawHandler = new L.Draw.Polyline(this.map, this.drawControl.options.draw.polyline);
+                        this.currentDrawHandler = new L.Draw.Polyline(this.map, this.drawControl.options.draw.polyline);
                     } else if (type === 'polygon') {
-                        drawHandler = new L.Draw.Polygon(this.map, this.drawControl.options.draw.polygon);
+                        this.currentDrawHandler = new L.Draw.Polygon(this.map, this.drawControl.options.draw.polygon);
                     }
-                    if (drawHandler) {
-                        drawHandler.enable();
+                    
+                    if (this.currentDrawHandler) {
+                        this.currentDrawHandler.enable();
                     }
                 }
             },
