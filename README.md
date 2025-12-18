@@ -1,7 +1,7 @@
 
 # 🗺️ Sistem Informasi Geografis Desa Mayong Lor
 
-![Banner Project](/public/images/balaidesa.jpeg)
+![Banner Project](/public/images/landing-page.png)
 
 > **Platform pemetaan digital terintegrasi untuk transparansi data, pembangunan infrastruktur, dan pelayanan publik Desa Mayong Lor.**
 
