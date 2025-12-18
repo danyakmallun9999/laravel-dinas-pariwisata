@@ -36,7 +36,7 @@
         
         <!-- Mobile Header / Toggle -->
         <div class="lg:hidden p-4 bg-white dark:bg-surface-dark border-b border-surface-light flex items-center justify-between z-30">
-            <h1 class="text-xl font-bold font-display">Mayong Lor GIS</h1>
+            <a href="{{ route('welcome') }}" class="text-xl font-bold font-display hover:text-primary transition-colors">Mayong Lor GIS</a>
             <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg bg-surface-light text-text-light">
                 <span class="material-symbols-outlined">menu</span>
             </button>
@@ -533,7 +533,7 @@
                         image_url: place.image_url || (place.image_path ? '{{ url('/') }}/' + place.image_path : null)
                     };
                     this.zoomToFeature(place);
-                    if (window.innerWidth < 1024 && !this.sidebarOpen) { this.sidebarOpen = true; } 
+                    // if (window.innerWidth < 1024 && !this.sidebarOpen) { this.sidebarOpen = true; } 
                 },
 
                 zoomToFeature(feature) {

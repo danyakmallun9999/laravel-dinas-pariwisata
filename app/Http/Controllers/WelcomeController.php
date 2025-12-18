@@ -16,7 +16,8 @@ class WelcomeController extends Controller
         $categories = Category::withCount('places')->get();
         $totalPlaces = Place::count();
         $totalCategories = $categories->count();
-        $totalBoundaries = Boundary::count();
+        $totalBoundaries = Boundary::count(); // Represents Dukuh/Wilayah count
+        $totalArea = Boundary::sum('area_hectares');
         $totalInfrastructures = Infrastructure::count();
         $totalLandUses = LandUse::count();
         $lastUpdate = Place::latest('updated_at')->first()?->updated_at;
@@ -27,6 +28,7 @@ class WelcomeController extends Controller
             'totalPlaces', 
             'totalCategories', 
             'totalBoundaries', 
+            'totalArea',
             'totalInfrastructures', 
             'totalLandUses', 
             'lastUpdate', 

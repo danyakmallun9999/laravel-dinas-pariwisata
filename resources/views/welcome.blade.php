@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="light scroll-smooth" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="light scroll-smooth overflow-x-hidden" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -42,12 +42,12 @@
         }
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display antialiased transition-colors duration-200" x-data="mapComponent()">
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display antialiased transition-colors duration-200 overflow-x-hidden" x-data="mapComponent()">
 
 <!-- Top Navigation -->
 <div class="sticky top-0 z-[10000] w-full border-b border-surface-light dark:border-surface-dark bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header class="flex h-20 items-center justify-between gap-8">
+        <header class="flex h-20 items-center justify-between gap-8" x-data="{ mobileMenuOpen: false }">
             <div class="flex items-center gap-8">
                 <a class="flex items-center gap-3 text-text-light dark:text-text-dark group" href="#">
                     <div class="flex items-center justify-center size-10 rounded-full bg-primary/20 text-primary-dark dark:text-primary transition-colors group-hover:bg-primary/30">
@@ -96,49 +96,91 @@
                     </div>
                 </label>
 
-                <!-- Auth Buttons -->
-                @if (Route::has('login'))
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
-                            <span class="truncate">Login</span>
-                        </a>
-                    @endauth
-                @endif
+                <!-- Auth Buttons (Desktop) -->
+                <div class="hidden lg:flex">
+                    @if (Route::has('login'))
+                        @auth
+                            <a href="{{ url('/dashboard') }}" class="flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
+                                Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
+                                <span class="truncate">Login</span>
+                            </a>
+                        @endauth
+                    @endif
+                </div>
                 
                 <!-- Mobile Menu Button -->
-                <button class="lg:hidden p-2 rounded-full hover:bg-surface-light dark:hover:bg-surface-dark">
-                    <span class="material-symbols-outlined">menu</span>
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 rounded-full hover:bg-surface-light dark:hover:bg-surface-dark">
+                    <span class="material-symbols-outlined" x-text="mobileMenuOpen ? 'close' : 'menu'">menu</span>
                 </button>
+            </div>
+
+            <!-- Mobile Menu Dropdown -->
+            <div x-show="mobileMenuOpen" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-2"
+                 @click.outside="mobileMenuOpen = false"
+                 x-cloak
+                 class="absolute top-20 left-0 w-full bg-background-light dark:bg-background-dark border-b border-surface-light dark:border-surface-dark shadow-xl lg:hidden z-50 p-4 flex flex-col gap-4">
+                
+                <nav class="flex flex-col gap-4">
+                    <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#">Beranda</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#gis-map">Peta GIS</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#profile">Profil</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#potency">Potensi</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#news">Berita</a>
+                </nav>
+
+                <div class="border-t border-surface-light dark:border-surface-dark pt-4">
+                    @if (Route::has('login'))
+                        @auth
+                            <a href="{{ url('/dashboard') }}" class="flex items-center justify-center rounded-xl h-12 w-full bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
+                                Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="flex items-center justify-center rounded-xl h-12 w-full bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
+                                Login
+                            </a>
+                        @endauth
+                    @endif
+                </div>
             </div>
         </header>
     </div>
 </div>
 
-<!-- Hero Section -->
 <div class="relative w-full">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div class="relative overflow-hidden rounded-xl bg-cover bg-center h-[500px] lg:h-[600px] group" 
-             style="background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%), url('https://lh3.googleusercontent.com/aida-public/AB6AXuBUzMVBQRSSUZkMlQwav98rOWGcfb2D7JypX_GsUqDe-67oKmSJ9Gn7scMij-J5m6OKQGyqZgJXZaLCin2htC9Q-tHKWAyelfgjWeouV_THkWoqG2SMGwxzXDfbwk21ZmAA2NHHvMhegC2rNhgBuC5trbeEFzNOf_zQbQ8JmBya5mDbqEcvIE-8_IFKJEREUWnboBZ5fwNj6SKS1Q2oEeY2UBE8jjYrkYANhSmdr3MKOS22lkYaVfTaQOUzrFlHJIs87Ef9k7AqNyDl');">
-            <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                <div class="max-w-4xl space-y-6">
-                    <span class="inline-block px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider">
+        <div class="relative overflow-hidden rounded-xl h-[500px] lg:h-[600px] group bg-gray-900 border border-white/10 shadow-2xl">
+            <!-- 3D Map Container -->
+            <div id="hero-map" class="absolute inset-0 z-0 opacity-0 transition-opacity duration-[2000ms]"></div>
+            
+            <!-- Overlay Gradient for Readability -->
+            <div class="absolute inset-0 z-10 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent pointer-events-none"></div>
+
+            <!-- Content -->
+            <div class="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center pointer-events-none">
+                <div class="max-w-4xl space-y-6 pointer-events-auto">
+                    <span class="hidden md:inline-block px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider animate-fade-in-down">
                         Selamat Datang di Sistem Informasi Desa
                     </span>
-                    <h1 class="text-white text-4xl sm:text-5xl lg:text-7xl font-black leading-tight tracking-tight drop-shadow-sm">
+                    <h1 class="text-white text-3xl sm:text-5xl lg:text-7xl font-black leading-tight tracking-tight drop-shadow-sm animate-fade-in-up">
                         Desa Mayong Lor<br/>Pusat Gerabah & Sejarah
                     </h1>
-                    <p class="text-gray-100 text-lg sm:text-xl font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
+                    <p class="text-gray-100 text-lg sm:text-xl font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-sm animate-fade-in-up delay-100">
                         Menjelajahi potensi warisan budaya, ekonomi kreatif, dan transparansi data spasial untuk kemajuan bersama.
                     </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-in-up delay-200">
                         <a class="flex items-center justify-center h-12 px-8 rounded-full bg-primary hover:bg-primary-dark text-white text-base font-bold shadow-lg shadow-black/20 transition-all hover:-translate-y-0.5" href="{{ route('explore.map') }}">
                             Jelajahi Peta GIS
                         </a>
-                        <a href="#profile" class="flex items-center justify-center h-12 px-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white text-base font-bold transition-all">
+                        <a href="#profile" class="hidden sm:flex items-center justify-center h-12 px-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white text-base font-bold transition-all">
                             Profil Desa
                         </a>
                     </div>
@@ -148,45 +190,163 @@
     </div>
 </div>
 
+<!-- MapLibre Logic -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Ensure maplibregl is loaded
+        if (typeof maplibregl === 'undefined') {
+            console.error('MapLibre GL JS not loaded');
+            return;
+        }
+
+        const map = new maplibregl.Map({
+            container: 'hero-map',
+            style: {
+                version: 8,
+                sources: {
+                    'satellite': {
+                        type: 'raster',
+                        tiles: [
+                            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                        ],
+                        tileSize: 256,
+                        attribution: '&copy; Esri'
+                    }
+                },
+                layers: [{
+                    id: 'satellite-layer',
+                    type: 'raster',
+                    source: 'satellite',
+                    paint: { 'raster-opacity': 1 }
+                }]
+            },
+            center: [110.75611, -6.75611], // Mayong Lor (Corrected)
+            zoom: 1.5, // Start from space
+            pitch: 0,
+            attributionControl: false,
+            interactive: false // Disable interaction for background effect
+        });
+
+        map.on('load', () => {
+            // Reveal map smoothly
+            document.getElementById('hero-map').classList.remove('opacity-0');
+            document.getElementById('hero-map').classList.add('opacity-80');
+
+            // Add Boundary Source
+            map.addSource('boundaries', {
+                type: 'geojson',
+                data: '/boundaries.geojson'
+            });
+
+            // 3D Extrusion Layer (Volume)
+            map.addLayer({
+                'id': 'boundary-extrusion',
+                'type': 'fill-extrusion',
+                'source': 'boundaries',
+                'paint': {
+                    'fill-extrusion-color': '#fbbf24', // Amber/Gold
+                    'fill-extrusion-height': 50, // Reduced from 500m to 50m
+                    'fill-extrusion-base': 0,
+                    'fill-extrusion-opacity': 0.3
+                }
+            });
+
+            // Boundary Outline (Line)
+            map.addLayer({
+                'id': 'boundary-line',
+                'type': 'line',
+                'source': 'boundaries',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#ffffff',
+                    'line-width': 3,
+                    'line-opacity': 0.8
+                }
+            });
+
+            // "Fly To" Animation when map loads
+            setTimeout(() => {
+                const isMobile = window.innerWidth < 768;
+                map.flyTo({
+                    center: [110.75611, -6.75611],
+                    zoom: isMobile ? 13.5 : 14.8, 
+                    pitch: isMobile ? 45 : 60,
+                    bearing: 0,
+                    speed: 0.5,
+                    curve: 1.2,
+                    essential: true
+                });
+            }, 2000); // Increased delay to ensure tiles are ready
+
+            // Wait for flyTo to likely finish
+            map.once('moveend', () => {
+                window.requestAnimationFrame(rotateCamera);
+            });
+        });
+
+        let startTime;
+        const rotationsPerMinute = 0.5; // Slow rotation
+
+        function rotateCamera(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            
+            // Calculate bearing based on relative time to ensure smooth start from 0
+            // 360 degrees / (60s / RPM * 1000ms) 
+            const bearing = (progress / (60000 / rotationsPerMinute)) * 360;
+            
+            map.rotateTo(bearing % 360, { duration: 0 });
+            window.requestAnimationFrame(rotateCamera);
+        }
+    });
+</script>
+
 <!-- Stats Section -->
 <div class="w-full bg-background-light dark:bg-background-dark py-8">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
             <!-- Population -->
-            <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
+            <!-- Population -->
+            <div class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
                 <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
                     <span class="material-symbols-outlined">groups</span>
                 </div>
                 <div>
                     <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide">Penduduk</p>
-                    <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">12,476+</p>
-                    <p class="text-xs text-text-light/50">Jiwa (2023)</p>
+                    <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">{{ number_format($population?->total_population ?? 0) }}</p>
+                    <p class="text-xs text-text-light/50">Jiwa ({{ $population?->updated_at?->format('Y') ?? date('Y') }})</p>
                 </div>
             </div>
             <!-- Area -->
-            <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
+            <!-- Area -->
+            <div class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
                 <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
                     <span class="material-symbols-outlined">square_foot</span>
                 </div>
                 <div>
                     <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide">Luas Wilayah</p>
-                    <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">290.2</p>
+                    <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">{{ number_format($totalArea ?? 0, 1) }}</p>
                     <p class="text-xs text-text-light/50">Hektar</p>
                 </div>
             </div>
             <!-- Dukuh -->
-            <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
+            <!-- Dukuh -->
+            <div class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
                 <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
                     <span class="material-symbols-outlined">holiday_village</span>
                 </div>
                 <div>
                     <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide">Dukuh</p>
-                    <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">4</p>
+                    <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">{{ $totalBoundaries ?? 0 }}</p>
                     <p class="text-xs text-text-light/50">Wilayah</p>
                 </div>
             </div>
             <!-- Industry -->
-            <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
+            <!-- Industry -->
+            <div class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
                 <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
                     <span class="material-symbols-outlined">palette</span>
                 </div>
@@ -203,22 +363,22 @@
 <!-- GIS Map Section -->
 <div class="w-full py-12 lg:py-20 scroll-mt-20" id="gis-map">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div class="max-w-2xl">
                 <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark tracking-tight">Interactive GIS Map</h2>
-                <p class="mt-2 text-text-light/70 dark:text-text-dark/70 text-lg">Navigate our village geography, check land use, and find public facilities.</p>
+                <p class="mt-2 text-text-light/70 dark:text-text-dark/70 text-base md:text-lg">Navigate our village geography, check land use, and find public facilities.</p>
             </div>
-            <div class="relative z-[2000] flex gap-3" x-data="{ showLayers: false, showFilters: false }">
+            <div class="relative z-[500] flex flex-wrap gap-3" x-data="{ showLayers: false, showFilters: false }">
                 <!-- Layers Toggle -->
                 <div class="relative">
                     <button @click="showLayers = !showLayers" 
-                            class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark font-medium hover:bg-primary/20 transition-colors">
+                            class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark font-medium hover:bg-primary/20 transition-colors text-sm md:text-base border border-surface-light dark:border-white/10">
                         <span class="material-symbols-outlined text-lg">layers</span>
                         Layers
                     </button>
                     <!-- Layers Dropdown -->
                     <div x-show="showLayers" @click.outside="showLayers = false" 
-                         class="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-surface-light dark:border-surface-dark p-4 z-[1000]" x-cloak x-transition>
+                         class="absolute top-full right-auto left-0 md:left-auto md:right-0 mt-2 w-72 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-surface-light dark:border-surface-dark p-4 z-[1000]" x-cloak x-transition>
                          
                          <!-- Base Maps Section -->
                          <h4 class="text-xs font-bold uppercase tracking-wider text-text-light mb-3">Tipe Peta</h4>
@@ -245,37 +405,37 @@
 
                          <h4 class="text-xs font-bold uppercase tracking-wider text-text-light mb-3">Layer Data</h4>
                          <div class="space-y-3">
-                            <label class="flex items-center justify-between cursor-pointer">
+                            <label class="flex items-center justify-between cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
                                 <span class="text-sm">Batas Wilayah</span>
-                                <input type="checkbox" x-model="showBoundaries" @change="updateLayers()" class="rounded text-primary focus:ring-primary">
+                                <input type="checkbox" x-model="showBoundaries" @change="updateLayers()" class="rounded text-primary focus:ring-primary bg-transparent">
                             </label>
-                            <label class="flex items-center justify-between cursor-pointer">
+                            <label class="flex items-center justify-between cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
                                 <span class="text-sm">Infrastruktur</span>
-                                <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()" class="rounded text-primary focus:ring-primary">
+                                <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()" class="rounded text-primary focus:ring-primary bg-transparent">
                             </label>
-                            <label class="flex items-center justify-between cursor-pointer">
+                            <label class="flex items-center justify-between cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
                                 <span class="text-sm">Penggunaan Lahan</span>
-                                <input type="checkbox" x-model="showLandUses" @change="updateLayers()" class="rounded text-primary focus:ring-primary">
+                                <input type="checkbox" x-model="showLandUses" @change="updateLayers()" class="rounded text-primary focus:ring-primary bg-transparent">
                             </label>
                          </div>
                     </div>
                 </div>
 
                 <!-- Filters Toggle -->
-                <div class="relative">
+                <div>
                     <button @click="showFilters = !showFilters" 
-                            class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark font-medium hover:bg-primary/20 transition-colors">
+                            class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark font-medium hover:bg-primary/20 transition-colors text-sm md:text-base border border-surface-light dark:border-white/10">
                         <span class="material-symbols-outlined text-lg">filter_alt</span>
                         Filters
                     </button>
-                    <!-- Filters Dropdown (Categories) -->
+                    <!-- Filters Dropdown -->
                     <div x-show="showFilters" @click.outside="showFilters = false" 
-                         class="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-surface-light dark:border-surface-dark p-4 z-[1000]" x-cloak x-transition>
+                         class="absolute top-full right-auto left-0 md:left-auto md:right-0 mt-2 w-64 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-surface-light dark:border-surface-dark p-4 z-[1000]" x-cloak x-transition>
                          <h4 class="text-xs font-bold uppercase tracking-wider text-text-light mb-3">Filter Places</h4>
                          <div class="space-y-2 max-h-60 overflow-y-auto custom-scroll">
                             @foreach($categories as $category)
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" value="{{ $category->id }}" x-model="selectedCategories" @change="updateMapMarkers()" class="rounded text-primary focus:ring-primary">
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
+                                <input type="checkbox" value="{{ $category->id }}" x-model="selectedCategories" @change="updateMapMarkers()" class="rounded text-primary focus:ring-primary bg-transparent">
                                 <span class="text-sm" style="color: {{ $category->color }}">{{ $category->name }}</span>
                             </label>
                             @endforeach
@@ -286,13 +446,13 @@
         </div>
 
         <!-- MAP CONTAINER -->
-        <div class="relative w-full aspect-[16/9] lg:aspect-[21/9] bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg border border-surface-light dark:border-surface-dark group">
+        <div class="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg border border-surface-light dark:border-surface-dark group">
             
             <!-- Real Leaflet Map -->
             <div id="leaflet-map" class="w-full h-full z-0"></div>
 
             <!-- Floating Map Controls -->
-            <div class="absolute top-6 right-6 flex flex-col gap-2 z-[400]">
+            <div class="absolute top-4 right-4 md:top-6 md:right-6 flex flex-col gap-2 z-[400]">
                 <button @click="map.zoomIn()" class="size-10 flex items-center justify-center bg-white dark:bg-surface-dark rounded-full shadow-md hover:bg-gray-50 dark:hover:bg-black/40 text-text-light dark:text-text-dark transition-colors" title="Zoom In">
                     <span class="material-symbols-outlined">add</span>
                 </button>
@@ -305,7 +465,7 @@
             </div>
 
             <!-- Floating Legend (Static for demo visuals, effectively shows what IS possible) -->
-            <div class="absolute bottom-6 left-6 p-4 bg-white/90 dark:bg-black/80 backdrop-blur-sm rounded-lg shadow-md max-w-[200px] z-[400]">
+            <div class="hidden md:block absolute bottom-6 left-6 p-4 bg-white/90 dark:bg-black/80 backdrop-blur-sm rounded-lg shadow-md max-w-[200px] z-[400]">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-text-light dark:text-text-dark mb-3">Map Legend (Samples)</h4>
                 <div class="space-y-2 text-sm">
                     <div class="flex items-center gap-2">
@@ -374,7 +534,7 @@
 </div>
 
 <!-- Profile Section -->
-<div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-16 scroll-mt-20" id="profile">
+<div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-10 lg:py-16 scroll-mt-20" id="profile">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div class="space-y-6">
@@ -390,7 +550,7 @@
                     <p>
                         Secara administratif, wilayah desa terbagi menjadi 4 dukuh utama:
                     </p>
-                    <ul class="grid grid-cols-2 gap-2 not-prose mt-4">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 not-prose mt-4">
                         <li class="flex items-center gap-2 p-3 rounded-lg bg-white dark:bg-surface-dark shadow-sm border border-surface-light dark:border-white/5">
                             <span class="material-symbols-outlined text-primary">location_on</span> Bendowangin
                         </li>
@@ -407,12 +567,12 @@
                 </div>
             </div>
             <!-- Right Column: Map & Boundaries -->
-            <div class="relative">
+            <div class="relative overflow-hidden p-0 md:p-4 mt-8 md:mt-0 md:-m-4">
                 <!-- Decorative Elements -->
                 <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
                 <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
-                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-surface-dark bg-surface-light dark:bg-surface-dark group">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-surface-dark bg-surface-light dark:bg-surface-dark group flex flex-col items-center">
                     <!-- Main Map Image -->
                     <div class="aspect-[4/3] w-full overflow-hidden bg-gray-200 dark:bg-gray-800 relative">
                         <img src="https://images.unsplash.com/photo-1572099606223-6e29045d7de3?q=80&w=2070&auto=format&fit=crop" 
@@ -421,31 +581,31 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     </div>
 
-                    <!-- Floating Info Card -->
-                    <div class="absolute bottom-6 left-6 right-6">
-                        <div class="bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md rounded-xl p-5 shadow-lg border border-white/20">
+                    <!-- Floating Info Card (Responsive Position) -->
+                    <div class="relative w-full p-4 md:absolute md:bottom-6 md:left-6 md:right-6 md:w-auto md:p-0 z-10">
+                        <div class="bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md rounded-xl p-4 md:p-5 shadow-lg border border-white/20">
                             <div class="flex items-center gap-3 mb-4">
-                                <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                                <div class="p-2 bg-primary/10 rounded-lg text-primary shrink-0">
                                     <span class="material-symbols-outlined">share_location</span>
                                 </div>
-                                <div>
-                                    <h4 class="font-bold text-text-light dark:text-text-dark text-lg leading-none">Batas Wilayah</h4>
-                                    <span class="text-xs text-text-light/60 dark:text-text-dark/60">Tapal Batas Administratif</span>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-text-light dark:text-text-dark text-lg leading-none truncate">Batas Wilayah</h4>
+                                    <span class="text-xs text-text-light/60 dark:text-text-dark/60 block truncate">Tapal Batas Administratif</span>
                                 </div>
                             </div>
                             
                             <div class="grid grid-cols-1 gap-3">
                                 <div class="flex items-center justify-between text-sm py-2 border-b border-dashed border-gray-200 dark:border-gray-700">
                                     <span class="text-text-light/60 dark:text-text-dark/60">Utara</span>
-                                    <span class="font-bold text-text-light dark:text-text-dark">Desa Pelemkerep</span>
+                                    <span class="font-bold text-text-light dark:text-text-dark text-right truncate ml-2">Desa Pelemkerep</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm py-2 border-b border-dashed border-gray-200 dark:border-gray-700">
                                     <span class="text-text-light/60 dark:text-text-dark/60">Selatan</span>
-                                    <span class="font-bold text-text-light dark:text-text-dark">Desa Mayong Kidul</span>
+                                    <span class="font-bold text-text-light dark:text-text-dark text-right truncate ml-2">Desa Mayong Kidul</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm py-2">
                                     <span class="text-text-light/60 dark:text-text-dark/60">Barat</span>
-                                    <span class="font-bold text-text-light dark:text-text-dark">Desa Tigajuru</span>
+                                    <span class="font-bold text-text-light dark:text-text-dark text-right truncate ml-2">Desa Tigajuru</span>
                                 </div>
                             </div>
                         </div>
@@ -453,9 +613,9 @@
                 </div>
 
                 <!-- Floating Badge -->
-                <div class="absolute top-6 right-6 bg-white dark:bg-surface-dark px-4 py-2 rounded-full shadow-lg border border-surface-light dark:border-white/10 flex items-center gap-2 transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-xs font-bold text-text-light dark:text-text-dark">Zona Dataran Rendah</span>
+                <div class="absolute top-3 right-3 md:top-6 md:right-6 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full shadow-lg border border-surface-light dark:border-white/10 flex items-center gap-2 transform translate-x-0 translate-y-0 hover:scale-105 transition-all z-20 max-w-[calc(100%-2rem)]">
+                    <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-green-500 animate-pulse shrink-0"></span>
+                    <span class="text-[10px] md:text-xs font-bold text-text-light dark:text-text-dark truncate">Zona Dataran Rendah</span>
                 </div>
             </div>
         </div>
@@ -483,7 +643,7 @@
 </div>
 
 <!-- Potency Section (Economy) -->
-<div class="w-full py-16 scroll-mt-20" id="potency" x-data="{
+<div class="w-full py-10 lg:py-16 scroll-mt-20" id="potency" x-data="{
     scrollLeft() { $refs.container.scrollBy({ left: -300, behavior: 'smooth' }) },
     scrollRight() { $refs.container.scrollBy({ left: 300, behavior: 'smooth' }) },
     checkScroll() {
@@ -510,7 +670,7 @@
         </div>
 
         <!-- Carousel Container -->
-        <div class="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div class="relative w-full">
             <div class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide" x-ref="container">
                 
                 <!-- Gallery Item 1: Kendi Maling -->
@@ -559,7 +719,7 @@
 </div>
 
 <!-- Social & Facilities -->
-<div class="w-full bg-background-light dark:bg-background-dark py-16 border-t border-surface-light dark:border-surface-dark">
+<div class="w-full bg-background-light dark:bg-background-dark py-10 lg:py-16 border-t border-surface-light dark:border-surface-dark">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
             <!-- Social -->
@@ -607,11 +767,11 @@
 </div>
 
 <!-- Berita & Pengumuman -->
-<div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-16 scroll-mt-20 border-t border-surface-light dark:border-surface-dark transition-colors duration-200" id="news">
+<div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-10 lg:py-16 scroll-mt-20 border-t border-surface-light dark:border-surface-dark transition-colors duration-200" id="news">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 mb-8">
             <h2 class="text-2xl md:text-3xl font-bold text-text-light dark:text-text-dark">Berita & Pengumuman</h2>
-            <a class="text-primary font-bold hover:underline flex items-center gap-1" href="#">
+            <a class="text-primary font-bold hover:underline flex items-center gap-1 self-start md:self-auto" href="#">
                 Lihat Semua <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </a>
         </div>
@@ -675,7 +835,7 @@
 </div>
 
 <!-- Footer -->
-<footer class="bg-surface-light dark:bg-surface-dark pt-16 pb-8 border-t border-surface-light dark:border-surface-dark">
+<footer class="bg-surface-light dark:bg-surface-dark pt-10 md:pt-16 pb-8 border-t border-surface-light dark:border-surface-dark">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             <div class="space-y-4">
