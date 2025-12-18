@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Sistem Informasi Geografis - {{ config('app.name', 'Desa Mayong Lor') }}</title>
+    <title>Sistem Informasi Geografis - {{ config('app.name', 'Mayong Lor') }}</title>
     
     <!-- Leaflet & Icon -->
     <!-- Local assets handled by Vite -->
@@ -50,10 +50,8 @@
         <header class="flex h-20 items-center justify-between gap-8" x-data="{ mobileMenuOpen: false }">
             <div class="flex items-center gap-8">
                 <a class="flex items-center gap-3 text-text-light dark:text-text-dark group" href="#">
-                    <div class="flex items-center justify-center size-10 rounded-full bg-primary/20 text-primary-dark dark:text-primary transition-colors group-hover:bg-primary/30">
-                        <span class="material-symbols-outlined">terrain</span>
-                    </div>
-                    <h2 class="text-xl font-bold leading-tight tracking-tight">Desa Mayong Lor</h2>
+                    <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" alt="Logo Kabupaten Jepara" class="w-10 h-auto object-contain">
+                    <h2 class="text-xl font-bold leading-tight tracking-tight">Mayong Lor</h2>
                 </a>
                 <nav class="hidden lg:flex items-center gap-8">
                     <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Beranda</a>
@@ -245,7 +243,7 @@
                 'source': 'boundaries',
                 'paint': {
                     'fill-extrusion-color': '#fbbf24', // Amber/Gold
-                    'fill-extrusion-height': 50, // Reduced from 500m to 50m
+                    'fill-extrusion-height': 20, // Reduced from 500m to 50m
                     'fill-extrusion-base': 0,
                     'fill-extrusion-opacity': 0.3
                 }
