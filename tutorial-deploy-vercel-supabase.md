@@ -195,6 +195,10 @@ Karena Vercel tidak bisa menjalankan command `php artisan` secara langsung via t
     *   Penyebab: Vercel bingung folder outputnya dimana.
     *   Solusi: Tambahkan `"outputDirectory": "public"` di `vercel.json`.
 
+5.  **Error "prepared statement ... does not exist"**:
+    *   Penyebab: Konflik mode Transaction Pooler Supabase dengan Laravel Prepared Statements.
+    *   Solusi: Tambahkan `PDO::ATTR_EMULATE_PREPARES => true` pada config `pgsql` di `config/database.php`.
+
 ---
 
 ## Bagian 5: Konfigurasi Image Storage (Supabase Storage)
