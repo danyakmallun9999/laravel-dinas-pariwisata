@@ -362,8 +362,8 @@
                 boundariesLayer: null,
                 infrastructuresLayer: null,
                 landUsesLayer: null,
-                defaultCenter: [-6.7289, 110.7485],
-                defaultZoom: 14,
+                defaultCenter: [-6.59, 110.68],
+                defaultZoom: 10,
                 userMarker: null,
 
                 get visiblePlaces() {

@@ -221,7 +221,7 @@
                         </h1>
                         <p
                             class="text-gray-100 text-lg sm:text-xl font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-sm animate-fade-in-up delay-100">
-                            Temukan keindahan pantai tropis, kekayaan sejarah Ratu Kalinyamat, dan mahakarya seni ukir kelas dunia.
+                            Temukan keindahan pantai tropis, kekayaan sejarah, dan mahakarya seni ukir kelas dunia.
                         </p>
                         <div
                             class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-in-up delay-200">
@@ -323,8 +323,8 @@
                 setTimeout(() => {
                     const isMobile = window.innerWidth < 768;
                     map.flyTo({
-                        center: [110.75611, -6.75611],
-                        zoom: isMobile ? 13.5 : 14.8,
+                        center: [110.68, -6.59],
+                        zoom: isMobile ? 10 : 11,
                         pitch: isMobile ? 45 : 60,
                         bearing: 0,
                         speed: 0.5,
@@ -1099,8 +1099,9 @@
                 initMap() {
                     this.map = L.map('leaflet-map', {
                         zoomControl: false,
-                        attributionControl: false
-                    }).setView([-6.7289, 110.7485], 14);
+                        attributionControl: false,
+                        scrollWheelZoom: false
+                    }).setView([-6.59, 110.68], 10);
 
                     // Define Base Layers
                     const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
@@ -1186,9 +1187,8 @@
                         }
                     }).addTo(this.map);
 
-                    if (features.length > 0) this.map.fitBounds(this.boundariesLayer.getBounds(), {
-                        padding: [50, 50]
-                    });
+                    // Removed fitBounds to keep regional view
+                    // if (features.length > 0) this.map.fitBounds(this.boundariesLayer.getBounds(), { padding: [50, 50] });
                 },
 
                 loadInfrastructures(features) {
