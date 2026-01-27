@@ -846,15 +846,23 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
                 <div class="max-w-2xl">
-                    <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4">
+                    <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4 leading-tight">
                         Wisata Unggulan Jepara
                     </h2>
                     <p class="text-text-light/70 dark:text-text-dark/70 text-lg leading-relaxed">
                         Jelajahi keindahan alam, kekayaan budaya, dan sejarah yang memukau di Bumi Kartini.
                     </p>
                 </div>
-                <!-- Navigation Buttons -->
-                <div class="flex gap-2 shrink-0">
+                
+                <!-- View All & Navigation Buttons -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <!-- View All Button -->
+                    <a href="{{ route('explore.map') }}" 
+                        class="text-primary font-bold hover:underline flex items-center gap-1">
+                        Lihat Semua <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                    
+                    <!-- Navigation Buttons -->
                     <button @click="scrollLeft()"
                         class="size-10 rounded-full border border-surface-light dark:border-white/10 flex items-center justify-center hover:bg-surface-light dark:hover:bg-white/5 text-text-light dark:text-text-dark transition-colors">
                         <span class="material-symbols-outlined">chevron_left</span>
