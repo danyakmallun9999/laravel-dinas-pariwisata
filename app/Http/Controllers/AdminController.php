@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -77,6 +78,17 @@ class AdminController extends Controller
             }
         }
 
+        // Generate Slug
+        $slug = Str::slug($data['name']);
+        $originalSlug = $slug;
+        $count = 1;
+        while (Place::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+        $data['slug'] = $slug;
+
+
         if ($request->hasFile('image')) {
             $data['image_path'] = $this->storeImage($request);
         }
@@ -132,6 +144,18 @@ class AdminController extends Controller
                 $data['latitude'] = $geometry['coordinates'][1];
                 $data['longitude'] = $geometry['coordinates'][0];
             }
+        }
+
+        // Update Slug if name changed or slug is missing
+        if ($request->name !== $place->name || !$place->slug) {
+            $slug = Str::slug($data['name']);
+            $originalSlug = $slug;
+            $count = 1;
+            while (Place::where('slug', $slug)->where('id', '!=', $place->id)->exists()) {
+                $slug = $originalSlug . '-' . $count;
+                $count++;
+            }
+            $data['slug'] = $slug;
         }
 
         if ($request->hasFile('image')) {
