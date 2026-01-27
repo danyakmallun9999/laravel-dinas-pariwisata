@@ -1,52 +1,157 @@
 <x-public-layout>
-    <!-- Hero Section -->
-    <div class="relative h-[50vh] min-h-[400px] w-full overflow-hidden -mt-20">
-        <img src="{{ $post->image_path }}" alt="{{ $post->title }}" class="absolute inset-0 w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-        <div class="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-            <div class="max-w-4xl mx-auto">
-                <span class="inline-block px-3 py-1 mb-4 text-xs font-bold text-white uppercase tracking-wider rounded-full {{ $post->type == 'event' ? 'bg-purple-600' : 'bg-blue-600' }}">
-                    {{ $post->type == 'event' ? 'Agenda & Event' : 'Berita Terkini' }}
-                </span>
-                <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight shadow-sm">{{ $post->title }}</h1>
-                <div class="flex items-center gap-4 text-white/80 text-sm">
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-base">calendar_today</span>
-                        {{ $post->published_at ? $post->published_at->format('d F Y') : '-' }}
-                    </span>
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-base">person</span>
-                        Admin Wisata
-                    </span>
+    <div class="bg-white dark:bg-background-dark min-h-screen -mt-20 pt-24">
+        <!-- Main Container -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            
+            <!-- Breadcrumb -->
+            <nav class="flex justify-center text-xs md:text-sm text-gray-500 mb-6 space-x-2">
+                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Home</a>
+                <span>/</span>
+                <span class="text-gray-400">News</span>
+                <span>/</span>
+                <span class="text-gray-800 dark:text-gray-200 truncate max-w-[200px]">{{ $post->title }}</span>
+            </nav>
+
+            <!-- Header Section -->
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-black text-gray-900 dark:text-white leading-tight mb-6 tracking-tight font-serif">
+                    {{ $post->title }}
+                </h1>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6 border-b border-gray-100 dark:border-gray-800 pb-8 mb-8">
+                    <!-- Author Info -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" class="w-6 h-6 object-contain" alt="Admin">
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Dinas Pariwisata Jepara</p>
+                            <p class="text-xs text-gray-500">
+                                Published {{ $post->published_at ? $post->published_at->format('M d, Y') : '-' }} • 5 min read
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="hidden md:block w-px h-8 bg-gray-200 dark:bg-gray-700"></div>
+
+                    <!-- Share Buttons -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm text-gray-500 mr-2 hidden md:inline">Share:</span>
+                        <button class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
+                        <button class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                            <i class="fa-regular fa-bookmark"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Content Section -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <div class="bg-white rounded-2xl p-8 md:p-12 shadow-xl border border-gray-100 -mt-20 relative z-10">
-            <article class="prose prose-lg prose-slate max-w-none">
-                {!! nl2br(e($post->content)) !!}
-            </article>
+            <!-- Hero Image -->
+            <div class="relative w-full aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden mb-12 shadow-2xl">
+                <img src="{{ $post->image_path }}" alt="{{ $post->title }}" class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+                <!-- Image Credit -->
+                <div class="absolute bottom-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-[10px] text-white/80">
+                    Photo: Dinas Pariwisata
+                </div>
+            </div>
 
-            <div class="mt-12 pt-8 border-t border-gray-100 flex justify-between items-center">
-                <a href="{{ route('welcome') }}#news" class="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 font-bold transition-colors">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                    Kembali ke Beranda
-                </a>
-                
-                <!-- Share Buttons (Mockup) -->
-                <div class="flex gap-2">
-                    <button class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors">
-                        <i class="fa-brands fa-facebook-f"></i>
-                    </button>
-                    <button class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition-colors">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </button>
-                    <button class="w-10 h-10 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center hover:bg-sky-100 transition-colors">
-                        <i class="fa-brands fa-twitter"></i>
-                    </button>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <!-- Main Content (Left) -->
+                <div class="lg:col-span-8">
+                    <!-- Intro Blockquote -->
+                    <blockquote class="text-xl md:text-2xl font-serif italic leading-relaxed text-gray-700 dark:text-gray-300 border-l-4 border-primary pl-6 mb-10">
+                        "{{ Str::limit(strip_tags($post->content), 150) }}"
+                    </blockquote>
+
+                    <!-- Article Body -->
+                    <article class="prose prose-lg prose-slate dark:prose-invert max-w-none 
+                        prose-headings:font-serif prose-headings:font-bold 
+                        prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-p:leading-loose
+                        prose-img:rounded-xl prose-img:shadow-lg">
+                        {!! nl2br(e($post->content)) !!}
+                    </article>
+
+                    <!-- Tags -->
+                    <div class="mt-12 flex flex-wrap gap-2">
+                        <span class="text-sm font-bold text-gray-400 mr-2">Tags:</span>
+                        <a href="#" class="px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-colors">#Jepara</a>
+                        <a href="#" class="px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-colors">#Pariwisata</a>
+                        <a href="#" class="px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full hover:bg-primary hover:text-white transition-colors">#{{ $post->type }}</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar (Right) -->
+                <div class="lg:col-span-4 space-y-12">
+                    
+                    <!-- Related News Widget -->
+                    <div class="bg-white dark:bg-surface-dark rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">feed</span>
+                            Related News
+                        </h3>
+                        <div class="space-y-6">
+                            @foreach($relatedPosts as $related)
+                            <a href="{{ route('posts.show', $related) }}" class="group flex gap-4 items-start">
+                                <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                                    <img src="{{ $related->image_path }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block mb-1">
+                                        {{ $related->published_at ? $related->published_at->format('M d, Y') : '' }}
+                                    </span>
+                                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-primary transition-colors line-clamp-2">
+                                        {{ $related->title }}
+                                    </h4>
+                                </div>
+                            </a>
+                            @endforeach
+                            @if($relatedPosts->isEmpty())
+                                <p class="text-sm text-gray-500 italic">Belum ada berita terkait lainnya.</p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Must Visit Widget -->
+                    <div class="bg-blue-50 dark:bg-blue-900/10 rounded-2xl p-6 border border-blue-100 dark:border-blue-900/20">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-blue-500">explore</span>
+                            Must Visit
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            @foreach($recommendedPlaces as $place)
+                            <div class="relative group rounded-xl overflow-hidden aspect-[16/9] shadow-md">
+                                <img src="{{ $place->image_path }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h4 class="text-white font-bold text-lg leading-tight mb-0.5">{{ $place->name }}</h4>
+                                    <p class="text-white/80 text-xs">{{ $place->category?->name }}</p>
+                                </div>
+                                <a href="{{ route('places.show', $place) }}" class="absolute inset-0 z-10"></a>
+                            </div>
+                            @endforeach
+                        </div>
+                        
+                        <a href="{{ route('explore.map') }}" class="mt-6 block w-full py-3 text-center text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-100/50 rounded-xl transition-colors">
+                            View Full Map
+                        </a>
+                    </div>
+
+                    <!-- Newsletter / Ad Mockup -->
+                    <div class="rounded-2xl overflow-hidden relative aspect-square bg-gray-900 flex items-center justify-center text-center p-6 group">
+                         <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
+                         <div class="relative z-10">
+                             <h4 class="text-white font-serif text-2xl font-bold mb-2">Explore Jepara</h4>
+                             <p class="text-white/80 text-sm mb-4">Discover hidden gems and local culture.</p>
+                             <button class="px-6 py-2 bg-white text-gray-900 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-primary hover:text-white transition-colors">
+                                 Start Journey
+                             </button>
+                         </div>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -18,6 +18,7 @@ Route::get('/boundaries.geojson', [WelcomeController::class, 'boundariesGeoJson'
 Route::get('/infrastructures.geojson', [WelcomeController::class, 'infrastructuresGeoJson'])->name('infrastructures.geojson');
 Route::get('/land-uses.geojson', [WelcomeController::class, 'landUsesGeoJson'])->name('land_uses.geojson');
 
+Route::get('/berita', [WelcomeController::class, 'posts'])->name('posts.index');
 Route::get('/berita/{post:slug}', [WelcomeController::class, 'showPost'])->name('posts.show');
 Route::get('/produk/{product:slug}', [WelcomeController::class, 'showProduct'])->name('products.show');
 Route::get('/destinasi/{place:slug}', [WelcomeController::class, 'showPlace'])->name('places.show');

@@ -175,12 +175,37 @@ class WelcomeController extends Controller
         ));
     }
 
+    public function posts()
+    {
+        $featuredPost = \App\Models\Post::where('is_published', true)
+            ->latest('published_at')
+            ->first();
+
+        $posts = \App\Models\Post::where('is_published', true)
+            ->where('id', '!=', $featuredPost?->id)
+            ->latest('published_at')
+            ->paginate(9);
+
+        return view('public.posts.index', compact('featuredPost', 'posts'));
+    }
+
     public function showPost(\App\Models\Post $post)
     {
         if (!$post->is_published) {
             abort(404);
         }
-        return view('public.posts.show', compact('post'));
+
+        $relatedPosts = \App\Models\Post::where('id', '!=', $post->id)
+            ->where('is_published', true)
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+
+        $recommendedPlaces = \App\Models\Place::inRandomOrder()
+            ->take(3)
+            ->get();
+
+        return view('public.posts.show', compact('post', 'relatedPosts', 'recommendedPlaces'));
     }
 
     public function showProduct(\App\Models\Product $product)

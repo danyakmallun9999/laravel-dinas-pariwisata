@@ -87,11 +87,11 @@
                         <h2 class="text-xl font-bold leading-tight tracking-tight">Pesona Jepara</h2>
                     </a>
                     <nav class="hidden lg:flex items-center gap-8">
-                        <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Beranda</a>
+                        <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('welcome') }}">Beranda</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors" href="#gis-map">Peta GIS</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors" href="#profile">Profil</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors" href="#potency">Potensi</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors" href="#news">Berita</a>
+                        <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('posts.index') }}">Berita</a>
                     </nav>
                 </div>
 
@@ -164,7 +164,7 @@
 
                     <nav class="flex flex-col gap-4">
                         <a class="text-sm font-medium hover:text-primary transition-colors p-2"
-                            href="#">Beranda</a>
+                            href="{{ route('welcome') }}">Beranda</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#gis-map">Peta
                             GIS</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors p-2"
@@ -172,7 +172,7 @@
                         <a class="text-sm font-medium hover:text-primary transition-colors p-2"
                             href="#potency">Potensi</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors p-2"
-                            href="#news">Berita</a>
+                            href="{{ route('posts.index') }}">Berita</a>
                     </nav>
 
                     <div class="border-t border-surface-light dark:border-surface-dark pt-4">
@@ -981,7 +981,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 mb-8">
                 <h2 class="text-2xl md:text-3xl font-bold text-text-light dark:text-text-dark">Berita & Pengumuman</h2>
                 <a class="text-primary font-bold hover:underline flex items-center gap-1 self-start md:self-auto"
-                    href="#">
+                    href="{{ route('posts.index') }}">
                     Lihat Semua <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </a>
             </div>

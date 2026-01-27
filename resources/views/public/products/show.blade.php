@@ -1,5 +1,5 @@
 <x-public-layout>
-    <div class="bg-gray-50 min-h-screen py-12 md:py-20">
+    <div class="bg-gray-50 min-h-screen pb-12 pt-4 md:pt-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Breadcrumb -->
