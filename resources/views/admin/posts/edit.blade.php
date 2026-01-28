@@ -92,21 +92,7 @@
                         </script>
 
                         <!-- SEO / Meta (Optional, can be expanded later) -->
-                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                            <h3 class="font-bold text-gray-800 mb-4">Informasi Tambahan</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <x-input-label for="author" :value="__('Penulis (Opsional)')" />
-                                    <x-text-input id="author" class="block mt-1 w-full" type="text" name="author" :value="old('author', $post->author)" placeholder="Default: Dinas Pariwisata Jepara" />
-                                    <x-input-error :messages="$errors->get('author')" class="mt-2" />
-                                </div>
-                                <div>
-                                    <x-input-label for="image_credit" :value="__('Kredit Gambar (Opsional)')" />
-                                    <x-text-input id="image_credit" class="block mt-1 w-full" type="text" name="image_credit" :value="old('image_credit', $post->image_credit)" placeholder="Contoh: Dok. Pribadi / Unsplash" />
-                                    <x-input-error :messages="$errors->get('image_credit')" class="mt-2" />
-                                </div>
-                            </div>
-                         </div>
+
                     </div>
 
                     <!-- Right Column: Sidebar settings -->
@@ -186,7 +172,24 @@
                                                 reader.onload = (e) => preview = e.target.result; 
                                                 reader.readAsDataURL(file)">
                                 
-                                <x-input-error :messages="$errors->get('image')" />
+                            <x-input-error :messages="$errors->get('image')" />
+                            </div>
+                        </div>
+
+                        <!-- Informasi Tambahan (Moved here) -->
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                            <h3 class="font-bold text-gray-800 mb-4">Informasi Tambahan</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <x-input-label for="author" :value="__('Penulis (Opsional)')" />
+                                    <x-text-input id="author" class="block mt-1 w-full" type="text" name="author" :value="old('author', $post->author)" placeholder="Default: Dinas Pariwisata Jepara" />
+                                    <x-input-error :messages="$errors->get('author')" class="mt-2" />
+                                </div>
+                                <div>
+                                    <x-input-label for="image_credit" :value="__('Kredit Gambar (Opsional)')" />
+                                    <x-text-input id="image_credit" class="block mt-1 w-full" type="text" name="image_credit" :value="old('image_credit', $post->image_credit)" placeholder="Contoh: Dok. Pribadi / Unsplash" />
+                                    <x-input-error :messages="$errors->get('image_credit')" class="mt-2" />
+                                </div>
                             </div>
                         </div>
                     </div>
