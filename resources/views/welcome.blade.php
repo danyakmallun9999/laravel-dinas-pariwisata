@@ -12,6 +12,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
@@ -720,113 +721,100 @@
         </div>
     </div>
 
-    <!-- Profile Section -->
-    <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-10 lg:py-16 scroll-mt-20" id="profile">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
-                    <div
-                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
-                        <span class="material-symbols-outlined text-lg">map</span>
-                        <span>Profil Wilayah</span>
+    <!-- Profile Section (Redesigned - Layered Editorial Style) -->
+    <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-20 lg:py-24 scroll-mt-20 relative overflow-hidden" id="profile">
+        <!-- Soft Gradient Spot -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                
+                <!-- Left Column: Content -->
+                <div class="space-y-10 order-2 lg:order-1" x-data="{ shown: false }" x-intersect.threshold.0.5="shown = true">
+                    <div class="opacity-0 translate-y-8 transition-all duration-1000 ease-out" :class="shown ? 'opacity-100 translate-y-0' : ''">
+                        <div class="flex items-center gap-4 mb-6">
+                            <span class="h-px w-12 bg-primary"></span>
+                            <span class="text-primary font-bold uppercase tracking-widest text-xs">Profil Wilayah</span>
+                        </div>
+                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 dark:text-white leading-tight mb-6">
+                            Posisi Strategis <br>
+                            <span class="font-serif italic font-normal text-gray-500 dark:text-gray-400">di Utara Jawa</span>
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed font-light">
+                            Terletak di ujung utara Jawa Tengah, Jepara adalah perpaduan harmonis antara daratan subur dan lautan luas. 
+                            Dikenal sebagai <strong>"Bumi Kartini"</strong>, wilayah ini memiliki garis pantai 83 km yang menyajikan panorama tropis eksotis.
+                        </p>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark leading-tight">
-                        Geografis & Administrasi</h2>
-                    <div class="prose prose-lg text-text-light/80 dark:text-text-dark/80">
-                        <p>
-                            Kabupaten Jepara terletak di bagian utara Provinsi Jawa Tengah, dikenal sebagai kota kelahiran
-                            <strong>R.A. Kartini</strong> dan pusat kerajinan ukir kelas dunia. Dengan luas wilayah daratan
-                            sekitar <strong>1.004 km²</strong> dan garis pantai yang panjang, Jepara menawarkan pesona wisata bahari yang memukau, termasuk kepulauan Karimunjawa.
-                        </p>
-                        <p>
-                            Secara administratif, Kabupaten Jepara berbatasan langsung dengan:
-                        </p>
-                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 not-prose mt-4">
-                            <li
-                                class="flex items-center gap-2 p-3 rounded-lg bg-white dark:bg-surface-dark shadow-sm border border-surface-light dark:border-white/5">
-                                <span class="material-symbols-outlined text-primary">north</span> Laut Jawa (Utara)
-                            </li>
-                            <li
-                                class="flex items-center gap-2 p-3 rounded-lg bg-white dark:bg-surface-dark shadow-sm border border-surface-light dark:border-white/5">
-                                <span class="material-symbols-outlined text-primary">east</span> Kab. Pati & Kudus (Timur)
-                            </li>
-                            <li
-                                class="flex items-center gap-2 p-3 rounded-lg bg-white dark:bg-surface-dark shadow-sm border border-surface-light dark:border-white/5">
-                                <span class="material-symbols-outlined text-primary">south</span> Kab. Demak (Selatan)
-                            </li>
-                            <li
-                                class="flex items-center gap-2 p-3 rounded-lg bg-white dark:bg-surface-dark shadow-sm border border-surface-light dark:border-white/5">
-                                <span class="material-symbols-outlined text-primary">west</span> Laut Jawa (Barat)
-                            </li>
-                        </ul>
+
+                    <!-- Minimalist Boundaries List -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 border-t border-gray-200 dark:border-gray-700 pt-8 opacity-0 transition-all duration-1000 delay-300" :class="shown ? 'opacity-100' : ''">
+                        <div class="group flex items-center justify-between py-2 border-b border-dashed border-gray-200 dark:border-gray-800">
+                            <span class="text-sm font-medium text-gray-400 uppercase tracking-wider group-hover:text-primary transition-colors">Utara</span>
+                            <span class="font-bold text-gray-800 dark:text-gray-200">Laut Jawa</span>
+                        </div>
+                        <div class="group flex items-center justify-between py-2 border-b border-dashed border-gray-200 dark:border-gray-800">
+                            <span class="text-sm font-medium text-gray-400 uppercase tracking-wider group-hover:text-primary transition-colors">Timur</span>
+                            <span class="font-bold text-gray-800 dark:text-gray-200">Kudus & Pati</span>
+                        </div>
+                        <div class="group flex items-center justify-between py-2 border-b border-dashed border-gray-200 dark:border-gray-800">
+                            <span class="text-sm font-medium text-gray-400 uppercase tracking-wider group-hover:text-primary transition-colors">Selatan</span>
+                            <span class="font-bold text-gray-800 dark:text-gray-200">Kab. Demak</span>
+                        </div>
+                        <div class="group flex items-center justify-between py-2 border-b border-dashed border-gray-200 dark:border-gray-800">
+                            <span class="text-sm font-medium text-gray-400 uppercase tracking-wider group-hover:text-primary transition-colors">Barat</span>
+                            <span class="font-bold text-gray-800 dark:text-gray-200">Laut Jawa</span>
+                        </div>
                     </div>
                 </div>
-                <!-- Right Column: Map & Boundaries -->
-                <div class="relative overflow-hidden p-0 md:p-4 mt-8 md:mt-0 md:-m-4">
-                    <!-- Decorative Elements -->
-                    <div
-                        class="absolute -top-10 -right-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none">
-                    </div>
-                    <div
-                        class="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl opacity-50 pointer-events-none">
-                    </div>
 
-                    <div
-                        class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-surface-dark bg-surface-light dark:bg-surface-dark group flex flex-col items-center">
-                        <!-- Main Map Image -->
-                        <div class="aspect-[4/3] w-full overflow-hidden bg-gray-200 dark:bg-gray-800 relative">
-                            <img src="https://images.unsplash.com/photo-1572099606223-6e29045d7de3?q=80&w=2070&auto=format&fit=crop"
-                                alt="Peta Wilayah Jepara"
-                                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
-                            </div>
+                <!-- Right Column: Visual Composition (Editorial) -->
+                <div class="relative order-1 lg:order-2 group cursor-none" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                    <!-- Main Image Layout -->
+                    <div class="relative z-10 w-full aspect-[4/5] md:aspect-square lg:aspect-[4/5]">
+                        <div class="absolute top-0 right-0 w-[85%] h-[90%] rounded-[3rem] overflow-hidden shadow-2xl transition-all duration-700 ease-out transform"
+                             :class="hover ? 'scale-[1.02] -translate-y-2' : ''">
+                            <img src="https://images.unsplash.com/photo-1596401057633-565652ca65a0?q=80&w=1964&auto=format&fit=crop" 
+                                 alt="Aerial Jepara" 
+                                 class="w-full h-full object-cover">
+                            <!-- Overlay Gradient -->
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
                         </div>
 
-                        <!-- Floating Info Card (Responsive Position) -->
-                        <div
-                            class="relative w-full p-4 md:absolute md:bottom-6 md:left-6 md:right-6 md:w-auto md:p-0 z-10">
-                            <div
-                                class="bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md rounded-xl p-4 md:p-5 shadow-lg border border-white/20">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <div class="p-2 bg-primary/10 rounded-lg text-primary shrink-0">
-                                        <span class="material-symbols-outlined">share_location</span>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <h4
-                                            class="font-bold text-text-light dark:text-text-dark text-lg leading-none truncate">
-                                            Batas Wilayah</h4>
-                                        <span
-                                            class="text-xs text-text-light/60 dark:text-text-dark/60 block truncate">Tapal
-                                            Batas Administratif</span>
-                                    </div>
-                                </div>
+                        <!-- Secondary Image (Overlapping) -->
+                        <div class="absolute bottom-0 left-0 w-[55%] h-[40%] rounded-[2rem] overflow-hidden shadow-xl border-4 border-white dark:border-gray-900 transition-all duration-700 delay-100 ease-out transform"
+                             :class="hover ? 'scale-105 translate-x-2' : ''">
+                             <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop" 
+                                  alt="Coastline" 
+                                  class="w-full h-full object-cover filter brightness-110">
+                        </div>
 
-                                <div class="grid grid-cols-1 gap-3">
-                                    <div
-                                        class="flex items-center justify-between text-sm py-2 border-b border-dashed border-gray-200 dark:border-gray-700">
-                                        <span class="text-text-light/60 dark:text-text-dark/60">Ibukota</span>
-                                        <span
-                                            class="font-bold text-text-light dark:text-text-dark text-right truncate ml-2">Kecamatan Jepara</span>
-                                    </div>
-                                    <div class="flex items-center justify-between text-sm py-2">
-                                        <span class="text-text-light/60 dark:text-text-dark/60">Provinsi</span>
-                                        <span
-                                            class="font-bold text-text-light dark:text-text-dark text-right truncate ml-2">Jawa Tengah</span>
-                                    </div>
-                                </div>
+                        <!-- Floating Badge Circle -->
+                        <div class="absolute top-[10%] left-[5%] z-20 transition-all duration-500 delay-200 transform"
+                             :class="hover ? 'rotate-12 scale-110' : ''">
+                            <div class="size-24 rounded-full bg-primary text-white flex flex-col items-center justify-center shadow-lg shadow-primary/30 border-4 border-white dark:border-gray-800">
+                                <span class="text-2xl font-black">16</span>
+                                <span class="text-[0.6rem] font-bold uppercase tracking-wider">Kecamatan</span>
                             </div>
+                        </div>
+                        
+                        <!-- Decorative Pattern -->
+                        <div class="absolute -bottom-6 -right-6 z-0 pointer-events-none">
+                            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" class="text-gray-200 dark:text-gray-800">
+                                <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <circle cx="2" cy="2" r="2" fill="currentColor"/>
+                                </pattern>
+                                <rect width="100" height="100" fill="url(#dots)"/>
+                            </svg>
                         </div>
                     </div>
 
-                    <!-- Floating Badge -->
-                    <div
-                        class="absolute top-3 right-3 md:top-6 md:right-6 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-sm px-3 py-1 md:px-4 md:py-2 rounded-full shadow-lg border border-surface-light dark:border-white/10 flex items-center gap-2 transform translate-x-0 translate-y-0 hover:scale-105 transition-all z-20 max-w-[calc(100%-2rem)]">
-                        <span
-                            class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500 animate-pulse shrink-0"></span>
-                        <span
-                            class="text-[10px] md:text-xs font-bold text-text-light dark:text-text-dark truncate">Wisata Bahari & Budaya</span>
-                    </div>
+                    <!-- Custom Cursor Follower (Optional - requires JS, but here just static CSS effect on hover) -->
+                    <!-- <div class="hidden lg:block absolute pointer-events-none bg-white/90 backdrop-blur px-4 py-2 rounded-full text-xs font-bold shadow-lg transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-50 mix-blend-hard-light"
+                         x-bind:style="'left: ' + $event.offsetX + 'px; top: ' + $event.offsetY + 'px'">
+                        Jelajahi
+                    </div> -->
                 </div>
+
             </div>
         </div>
     </div>
@@ -841,11 +829,11 @@
             <div class="text-center mb-20" 
                  x-data="{ shown: false }" 
                  x-intersect.threshold.0.5="shown = true">
-                <span class="block text-primary font-bold tracking-[0.2em] uppercase text-xs mb-3 opacity-0 translate-y-4 transition-all duration-700"
+                <span class="block text-primary font-bold tracking-[0.3em] uppercase text-xs mb-4 opacity-0 translate-y-4 transition-all duration-700"
                       :class="shown ? 'opacity-100 translate-y-0' : ''">
                     Warisan Leluhur
                 </span>
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 dark:text-white mb-6 uppercase tracking-tight opacity-0 translate-y-4 transition-all duration-700 delay-100"
+                <h2 class="text-5xl md:text-6xl lg:text-7xl font-['Pinyon_Script'] text-gray-900 dark:text-gray-100 mb-6 opacity-0 translate-y-4 transition-all duration-700 delay-100 drop-shadow-sm"
                     :class="shown ? 'opacity-100 translate-y-0' : ''">
                     Sejarah & Legenda
                 </h2>
@@ -875,8 +863,8 @@
                     <!-- Content Overlay -->
                     <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
                         <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                        <h3 class="text-3xl md:text-5xl font-black mb-3 leading-tight tracking-tight">R.A. Kartini</h3>
-                        <p class="text-lg md:text-xl font-serif italic text-white/90 mb-6 font-light">
+                        <h3 class="text-3xl md:text-5xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">R.A. Kartini</h3>
+                        <p class="text-xl md:text-2xl font-['Pinyon_Script'] text-white/90 mb-6">
                             "Habis Gelap Terbitlah Terang"
                         </p>
                         <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
@@ -904,8 +892,8 @@
                     <!-- Content Overlay -->
                     <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
                         <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                        <h3 class="text-3xl md:text-5xl font-black mb-3 leading-tight tracking-tight">Ratu Kalinyamat</h3>
-                        <p class="text-lg md:text-xl font-serif italic text-white/90 mb-6 font-light">
+                        <h3 class="text-3xl md:text-5xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Kalinyamat</h3>
+                        <p class="text-xl md:text-2xl font-['Pinyon_Script'] text-white/90 mb-6">
                             "Sang Ratu Laut yang Gagah Berani"
                         </p>
                         <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
