@@ -1,5 +1,5 @@
 <x-public-layout>
-    <div class="bg-white dark:bg-background-dark min-h-screen -mt-20 pt-24">
+    <div class="bg-white dark:bg-background-dark min-h-screen -mt-20 pt-36">
         <!-- Main Container -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
             

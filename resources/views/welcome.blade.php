@@ -9,6 +9,14 @@
     <!-- Leaflet & Icon -->
     <!-- Local assets handled by Vite -->
 
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -91,6 +99,7 @@
                         <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('explore.map') }}">Peta GIS</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors" href="#profile">Profil</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('places.index') }}">Destinasi</a>
+                        <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('events.public.index') }}">Agenda</a>
                         <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('posts.index') }}">Berita</a>
                     </nav>
                 </div>
