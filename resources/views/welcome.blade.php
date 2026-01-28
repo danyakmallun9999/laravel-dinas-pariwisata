@@ -852,15 +852,12 @@
                     <p class="text-text-light/70 dark:text-text-dark/70 text-lg leading-relaxed">
                         Jelajahi keindahan alam, kekayaan budaya, dan sejarah yang memukau di Bumi Kartini.
                     </p>
-                    <a href="{{ route('places.index') }}" class="inline-flex items-center gap-1 text-primary font-bold mt-4 hover:underline">
-                        Lihat Semua Destinasi <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                    </a>
                 </div>
                 
                 <!-- View All & Navigation Buttons -->
                 <div class="flex items-center gap-3 shrink-0">
                     <!-- View All Button -->
-                    <a href="{{ route('explore.map') }}" 
+                    <a href="{{ route('places.index') }}" 
                         class="text-primary font-bold hover:underline flex items-center gap-1">
                         Lihat Semua <span class="material-symbols-outlined text-sm">arrow_forward</span>
                     </a>
