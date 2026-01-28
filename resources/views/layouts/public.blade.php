@@ -27,11 +27,20 @@
                         <h2 class="text-xl font-bold leading-tight tracking-tight">Pesona Jepara</h2>
                     </a>
                     <nav class="hidden lg:flex items-center gap-8">
-                        <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('welcome') }}">Beranda</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('explore.map') }}">Peta GIS</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('places.index') }}">Destinasi</a>
-                        <a class="text-sm font-medium text-primary font-bold transition-colors" href="{{ route('events.public.index') }}">Agenda</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors" href="{{ route('posts.index') }}">Berita</a>
+                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('welcome') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                           href="{{ route('welcome') }}">Beranda</a>
+                           
+                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('explore.map') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                           href="{{ route('explore.map') }}">Peta GIS</a>
+                           
+                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('places.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                           href="{{ route('places.index') }}">Destinasi</a>
+                           
+                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('events.public.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                           href="{{ route('events.public.index') }}">Agenda</a>
+                           
+                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('posts.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                           href="{{ route('posts.index') }}">Berita</a>
                     </nav>
                 </div>
 
