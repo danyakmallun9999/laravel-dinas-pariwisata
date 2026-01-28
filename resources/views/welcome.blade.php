@@ -852,15 +852,12 @@
                     <p class="text-text-light/70 dark:text-text-dark/70 text-lg leading-relaxed">
                         Jelajahi keindahan alam, kekayaan budaya, dan sejarah yang memukau di Bumi Kartini.
                     </p>
-                    <a href="{{ route('places.index') }}" class="inline-flex items-center gap-1 text-primary font-bold mt-4 hover:underline">
-                        Lihat Semua Destinasi <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                    </a>
                 </div>
                 
                 <!-- View All & Navigation Buttons -->
                 <div class="flex items-center gap-3 shrink-0">
                     <!-- View All Button -->
-                    <a href="{{ route('explore.map') }}" 
+                    <a href="{{ route('places.index') }}" 
                         class="text-primary font-bold hover:underline flex items-center gap-1">
                         Lihat Semua <span class="material-symbols-outlined text-sm">arrow_forward</span>
                     </a>
@@ -934,52 +931,254 @@
         </div>
     </div>
 
-    <!-- Social & Facilities -->
-    <div
-        class="w-full bg-background-light dark:bg-background-dark py-10 lg:py-16 border-t border-surface-light dark:border-surface-dark">
+    <!-- Makanan Khas Jepara -->
+    <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-10 lg:py-16 border-t border-surface-light dark:border-surface-dark" x-data="{
+        scrollLeft() { 
+            const c = $refs.foodContainer;
+            const w = c.children[0].clientWidth; // lebar 1 item
+            c.scrollBy({ left: -w, behavior: 'smooth' });
+        },
+        scrollRight() { 
+            const c = $refs.foodContainer;
+            const w = c.children[0].clientWidth;
+            c.scrollBy({ left: w, behavior: 'smooth' });
+        },
+        updateActive() {
+            const container = $refs.foodContainer;
+            if (!container) return;
+            
+            const center = container.scrollLeft + (container.clientWidth / 2);
+            
+            Array.from(container.children).forEach(child => {
+                const childCenter = child.offsetLeft + (child.clientWidth / 2);
+                const distance = Math.abs(center - childCenter);
+                
+                // Jika jarak ke tengah kurang dari setengah lebar card, anggap aktif
+                if (distance < child.clientWidth / 2) {
+                    child.setAttribute('data-snapped', 'true');
+                } else {
+                    child.setAttribute('data-snapped', 'false');
+                }
+            });
+        },
+        init() {
+            const container = $refs.foodContainer;
+            
+            // Simpan original items
+            const originals = Array.from(container.children);
+            
+            // Clone sets untuk infinite loop (Total 3 set: A-B-A)
+            // Append clone set (Set C)
+            originals.forEach(item => {
+                const clone = item.cloneNode(true);
+                clone.setAttribute('data-clone', 'true');
+                container.appendChild(clone);
+            });
+            
+            // Prepend clone set (Set A) - Agar bisa scroll kiri dari awal
+            // Note: Prepend mengubah scroll position, harus kita fix nanti
+            originals.reverse().forEach(item => {
+                const clone = item.cloneNode(true);
+                clone.setAttribute('data-clone', 'true');
+                container.insertBefore(clone, container.firstChild);
+            });
+            
+            // Set scroll position ke Set B (Originals)
+            // Tunggu render selesai
+            this.$nextTick(() => {
+                const itemWidth = container.children[0].clientWidth; // asumsikan sama
+                const gap = 32; // gap-8 = 2rem = 32px (lg)
+                // Total width 1 set (8 items) approx
+                // Kita cari elemen original pertama (index ke-8, karena ada 8 clone di depan)
+                const startItem = container.children[originals.length];
+                
+                // Scroll ke posisi startItem
+                container.scrollLeft = startItem.offsetLeft - (container.clientWidth - startItem.clientWidth) / 2;
+                
+                this.updateActive();
+                
+                // Infinite Loop Listener
+                container.addEventListener('scroll', () => {
+                    this.updateActive();
+                    
+                    const oneSetWidth = (originals.length * (container.children[0].clientWidth + 32)); // Estimasi rough width
+                    // Atau lebih akurat: startItem.offsetLeft
+                    
+                    const scroll = container.scrollLeft;
+                    const max = container.scrollWidth;
+                    
+                    // Logic Jump
+                    // Ambil posisi Set B start dan Set B end
+                    const setB_Start = container.children[originals.length].offsetLeft;
+                    const setB_End = container.children[originals.length * 2].offsetLeft;
+                    
+                    // Jika scroll terlalu ke kiri (masuk Set A), lompat ke Set B
+                    // if (scroll < 100) ... logic ini butuh presisi tinggi agar seamless.
+                    
+                    // Metode simple: Jika sampai ujung, reset.
+                    // Jika scroll mencapai hampir ujung kanan (Set C end), lompat ke Set B end.
+                    if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 50) {
+                        container.scrollLeft = setB_End - container.clientWidth;
+                    }
+                    // Jika scroll mencapai ujung kiri (Set A start), lompat ke Set B start
+                    else if (container.scrollLeft <= 50) {
+                        container.scrollLeft = setB_Start;
+                    }
+                });
+            });
+        }
+    }">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
-                <!-- Social -->
-                <div class="flex gap-6 items-start">
-                    <div
-                        class="size-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-3xl">travel_explore</span>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">Desa Wisata Unggulan</h3>
-                        <p class="text-text-light/70 dark:text-text-dark/70 leading-relaxed mb-4">
-                            Jepara memiliki puluhan <strong>Desa Wisata</strong> yang menawarkan pengalaman otentik, mulai dari wisata budaya, alam, hingga kerajinan tangan yang mendunia.
-                        </p>
-                        <div class="h-1.5 w-full bg-surface-light dark:bg-surface-dark rounded-full overflow-hidden">
-                            <div class="h-full bg-blue-500 w-3/4 rounded-full"></div>
-                        </div>
-                        <span class="text-xs text-text-light/50 mt-1 block">Potensi Wisata Terus Berkembang</span>
-                    </div>
+            <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4 leading-tight">
+                        Kuliner Khas Jepara
+                    </h2>
+                    <p class="text-text-light/70 dark:text-text-dark/70 text-lg leading-relaxed">
+                        Nikmati cita rasa autentik kuliner tradisional Jepara yang kaya akan rempah dan warisan budaya.
+                    </p>
                 </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex gap-2 shrink-0">
+                    <button @click="scrollLeft()"
+                        class="size-10 rounded-full border border-surface-light dark:border-white/10 flex items-center justify-center hover:bg-surface-light dark:hover:bg-white/5 text-text-light dark:text-text-dark transition-colors">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button @click="scrollRight()"
+                        class="size-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
 
-                <!-- Education/Facilities -->
-                <div class="flex gap-6 items-start">
-                    <div
-                        class="size-14 rounded-2xl bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-3xl">hotel</span>
+            <!-- Food Carousel -->
+            <div class="relative w-full group">
+                <!-- Carousel Container with Mask Image for Perfect Fade -->
+                <div class="flex gap-4 lg:gap-8 overflow-x-auto pb-12 pt-4 px-4 lg:px-0 snap-x snap-mandatory scrollbar-hide" 
+                     x-ref="foodContainer">
+                
+                
+                    <!-- 1. Pindang Serani -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Pindang Serani" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <!-- Inactive Background Fade -->
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <!-- Text Readability Gradient -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <!-- Content -->
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Pindang Serani</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Sup ikan laut dengan kuah bening segar berbumbu belimbing wuluh dan rempah khas Jepara.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">Akomodasi & Fasilitas</h3>
-                        <p class="text-text-light/70 dark:text-text-dark/70 leading-relaxed mb-4">
-                            Tersedia berbagai pilihan akomodasi mulai dari hotel berbintang, resort tepi pantai, hingga homestay nyaman untuk menunjang pengalaman liburan Anda di Jepara.
-                        </p>
-                        <ul class="flex gap-4">
-                            <li class="flex items-center gap-1 text-sm font-bold text-text-light dark:text-text-dark">
-                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Hotel
-                            </li>
-                            <li class="flex items-center gap-1 text-sm font-bold text-text-light dark:text-text-dark">
-                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Resort
-                            </li>
-                            <li class="flex items-center gap-1 text-sm font-bold text-text-light dark:text-text-dark">
-                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Homestay
-                            </li>
-                        </ul>
+
+                    <!-- 2. Durian Jepara -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1588610565251-e372ded744b8?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Durian Jepara" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Durian Jepara</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Raja buah lokal Petruk dari Jepara dengan daging tebal manis dan aroma menggoda.</p>
+                        </div>
                     </div>
+
+                    <!-- 3. Adon-adon Coro -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1596450529940-f8d83965913e?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Adon-adon Coro" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Adon-adon Coro</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Minuman jamu tradisional hangat berbahan santan, jahe, gula merah, dan rempah pilihan.</p>
+                        </div>
+                    </div>
+
+                    <!-- 4. Horog-horog -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1605626566276-88053c907914?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Horog-horog" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Horog-horog</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Pengganti nasi unik bertekstur butiran kenyal, terbuat dari tepung pohon aren.</p>
+                        </div>
+                    </div>
+
+                    <!-- 5. Carang Madu -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1616035091764-5080b063febc?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Carang Madu" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Carang Madu</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kue oleh-oleh renyah berbentuk sarang madu dengan siraman gula merah manis.</p>
+                        </div>
+                    </div>
+
+                    <!-- 6. Es Gempol Pleret -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1563200958-3725b73d9370?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Es Gempol Pleret" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Es Gempol Pleret</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Minuman es segar berisi gempol beras dan pleret tepung, disiram kuah santan dan sirup.</p>
+                        </div>
+                    </div>
+
+                    <!-- 7. Kopi Jeparanan -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Kopi Jeparanan" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Kopi Jeparanan</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kopi robusta khas pegunungan Muria Jepara dengan aroma kuat dan cita rasa otentik.</p>
+                        </div>
+                    </div>
+
+                    <!-- 8. Kacang Listrik -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1525055376178-83b6f2b378ea?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Kacang Listrik" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Kacang Listrik</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kacang tanah sangrai unik yang dimatangkan dengan bantuan oven, gurih dan renyah.</p>
+                        </div>
+                    </div>
+
+                    <!-- 9. Krupuk Ikan Tengiri -->
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                        <img src="https://images.unsplash.com/photo-1599638424887-1422eb845112?auto=format&fit=crop&w=1200&h=675" 
+                             alt="Krupuk Ikan Tengiri" 
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
+                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Krupuk Ikan Tengiri</h3>
+                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kerupuk gurih dengan rasa ikan tengiri asli yang kuat, oleh-oleh wajib khas pesisir.</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
