@@ -452,273 +452,7 @@
         </div>
     </div>
 
-    <!-- GIS Map Section -->
-    <div class="w-full py-12 lg:py-20 scroll-mt-20" id="gis-map">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-                <div class="max-w-2xl">
-                    <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark tracking-tight">
-                        Interactive GIS Map</h2>
-                    <p class="mt-2 text-text-light/70 dark:text-text-dark/70 text-base md:text-lg">Navigate our village
-                        geography, check land use, and find public facilities.</p>
-                </div>
-                <div class="relative z-[500] flex flex-wrap gap-3" x-data="{ showLayers: false, showFilters: false }">
-                    <!-- Layers Toggle -->
-                    <div class="relative">
-                        <button @click="showLayers = !showLayers"
-                            class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark font-medium hover:bg-primary/20 transition-colors text-sm md:text-base border border-surface-light dark:border-white/10">
-                            <span class="material-symbols-outlined text-lg">layers</span>
-                            Layers
-                        </button>
-                        <!-- Layers Dropdown -->
-                        <div x-show="showLayers" @click.outside="showLayers = false"
-                            class="absolute top-full right-auto left-0 md:left-auto md:right-0 mt-2 w-72 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-surface-light dark:border-surface-dark p-4 z-[1000]"
-                            x-cloak x-transition>
-
-                            <!-- Base Maps Section -->
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-text-light mb-3">Tipe Peta</h4>
-                            <div class="grid grid-cols-2 gap-2 mb-4">
-                                <button @click="setBaseLayer('satellite')"
-                                    :class="currentBaseLayer === 'satellite' ? 'ring-2 ring-primary border-transparent' :
-                                        'border-surface-light hover:border-primary/50'"
-                                    class="relative h-16 rounded-lg border overflow-hidden group transition-all">
-                                    <img src="https://mt1.google.com/vt/lyrs=s&x=1325&y=3145&z=13"
-                                        class="absolute inset-0 w-full h-full object-cover">
-                                    <div
-                                        class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                        <span class="text-white text-xs font-bold text-shadow">Satelit</span>
-                                    </div>
-                                </button>
-                                <button @click="setBaseLayer('streets')"
-                                    :class="currentBaseLayer === 'streets' ? 'ring-2 ring-primary border-transparent' :
-                                        'border-surface-light hover:border-primary/50'"
-                                    class="relative h-16 rounded-lg border overflow-hidden group transition-all">
-                                    <img src="https://mt1.google.com/vt/lyrs=m&x=1325&y=3145&z=13"
-                                        class="absolute inset-0 w-full h-full object-cover">
-                                    <div
-                                        class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                        <span class="text-white text-xs font-bold text-shadow">Jalan</span>
-                                    </div>
-                                </button>
-                            </div>
-
-                            <div class="h-px bg-surface-light dark:bg-gray-700 my-3"></div>
-
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-text-light mb-3">Layer Data</h4>
-                            <div class="space-y-3">
-                                <label
-                                    class="flex items-center justify-between cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
-                                    <span class="text-sm">Batas Wilayah</span>
-                                    <input type="checkbox" x-model="showBoundaries" @change="updateLayers()"
-                                        class="rounded text-primary focus:ring-primary bg-transparent">
-                                </label>
-                                <label
-                                    class="flex items-center justify-between cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
-                                    <span class="text-sm">Infrastruktur</span>
-                                    <input type="checkbox" x-model="showInfrastructures" @change="updateLayers()"
-                                        class="rounded text-primary focus:ring-primary bg-transparent">
-                                </label>
-                                <label
-                                    class="flex items-center justify-between cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
-                                    <span class="text-sm">Penggunaan Lahan</span>
-                                    <input type="checkbox" x-model="showLandUses" @change="updateLayers()"
-                                        class="rounded text-primary focus:ring-primary bg-transparent">
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filters Toggle -->
-                    <div>
-                        <button @click="showFilters = !showFilters"
-                            class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark font-medium hover:bg-primary/20 transition-colors text-sm md:text-base border border-surface-light dark:border-white/10">
-                            <span class="material-symbols-outlined text-lg">filter_alt</span>
-                            Filters
-                        </button>
-                        <!-- Filters Dropdown -->
-                        <div x-show="showFilters" @click.outside="showFilters = false"
-                            class="absolute top-full right-auto left-0 md:left-auto md:right-0 mt-2 w-64 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-surface-light dark:border-surface-dark p-4 z-[1000]"
-                            x-cloak x-transition>
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-text-light mb-3">Filter Places
-                            </h4>
-                            <div class="space-y-2 max-h-60 overflow-y-auto custom-scroll">
-                                @foreach ($categories as $category)
-                                    <label
-                                        class="flex items-center gap-2 cursor-pointer hover:bg-surface-light dark:hover:bg-white/5 p-1 rounded transition">
-                                        <input type="checkbox" value="{{ $category->id }}"
-                                            x-model="selectedCategories" @change="updateMapMarkers()"
-                                            class="rounded text-primary focus:ring-primary bg-transparent">
-                                        <span class="text-sm"
-                                            style="color: {{ $category->color }}">{{ $category->name }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MAP CONTAINER -->
-            <div
-                class="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] bg-surface-light dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg border border-surface-light dark:border-surface-dark group">
-
-                <!-- Real Leaflet Map -->
-                <div id="leaflet-map" class="w-full h-full z-0"></div>
-
-                <!-- Floating Map Controls -->
-                <div class="absolute top-4 right-4 md:top-6 md:right-6 flex flex-col gap-2 z-[400]">
-                    <button @click="map.zoomIn()"
-                        class="size-10 flex items-center justify-center bg-white dark:bg-surface-dark rounded-full shadow-md hover:bg-gray-50 dark:hover:bg-black/40 text-text-light dark:text-text-dark transition-colors"
-                        title="Zoom In">
-                        <span class="material-symbols-outlined">add</span>
-                    </button>
-                    <button @click="map.zoomOut()"
-                        class="size-10 flex items-center justify-center bg-white dark:bg-surface-dark rounded-full shadow-md hover:bg-gray-50 dark:hover:bg-black/40 text-text-light dark:text-text-dark transition-colors"
-                        title="Zoom Out">
-                        <span class="material-symbols-outlined">remove</span>
-                    </button>
-                    <button @click="locateUser()"
-                        class="size-10 flex items-center justify-center bg-white dark:bg-surface-dark rounded-full shadow-md hover:bg-gray-50 dark:hover:bg-black/40 text-text-light dark:text-text-dark transition-colors mt-2"
-                        title="My Location">
-                        <span class="material-symbols-outlined">my_location</span>
-                    </button>
-                </div>
-
-                <!-- Floating Legend (Static for demo visuals, effectively shows what IS possible) -->
-                <div
-                    class="hidden md:block absolute bottom-6 left-6 p-4 bg-white/90 dark:bg-black/80 backdrop-blur-sm rounded-lg shadow-md max-w-[200px] z-[400]">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-text-light dark:text-text-dark mb-3">Map
-                        Legend (Samples)</h4>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-center gap-2">
-                            <span class="size-3 rounded-full bg-green-500"></span>
-                            <span class="text-text-light dark:text-text-dark">Agriculture</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="size-3 rounded-full bg-blue-500"></span>
-                            <span class="text-text-light dark:text-text-dark">Water Source</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="size-3 rounded-full bg-orange-400"></span>
-                            <span class="text-text-light dark:text-text-dark">Residential</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Selected Feature Modal (Slide-over) -->
-                <div x-show="selectedFeature" @click.outside="selectedFeature = null"
-                    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full"
-                    x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-                    class="absolute top-4 right-4 bottom-4 w-80 bg-white/95 dark:bg-surface-dark/95 backdrop-blur rounded-2xl shadow-2xl z-[500] border border-surface-light dark:border-black/20 flex flex-col overflow-hidden"
-                    x-cloak>
-
-                    <!-- Header Image -->
-                    <div class="h-40 bg-slate-200 relative shrink-0">
-                        <template x-if="selectedFeature?.image_url">
-                            <img :src="selectedFeature.image_url" class="w-full h-full object-cover">
-                        </template>
-                        <template x-if="!selectedFeature?.image_url">
-                            <div class="w-full h-full flex items-center justify-center text-slate-400">
-                                <span class="material-symbols-outlined text-4xl">image</span>
-                            </div>
-                        </template>
-                        <button @click="selectedFeature = null"
-                            class="absolute top-2 right-2 size-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur flex items-center justify-center transition">
-                            <span class="material-symbols-outlined text-sm">close</span>
-                        </button>
-                        <div
-                            class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-                            <h3 class="text-white font-bold text-lg leading-tight text-shadow"
-                                x-text="selectedFeature?.name"></h3>
-                            <p class="text-white/80 text-xs" x-text="selectedFeature?.type"></p>
-                        </div>
-                    </div>
-
-                    <!-- Content -->
-                    <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-4">
-                        <p class="text-sm text-text-light/80 dark:text-text-dark/80 leading-relaxed mb-4"
-                            x-text="selectedFeature?.description || 'No description available.'"></p>
-
-                        <!-- Tourism Details -->
-                        <div class="space-y-3 border-t border-dashed border-gray-200 dark:border-white/10 pt-4">
-                            <template x-if="selectedFeature?.ticket_price">
-                                <div class="flex items-start gap-3">
-                                    <span class="material-symbols-outlined text-primary text-lg mt-0.5">payments</span>
-                                    <div>
-                                        <p class="text-xs text-slate-500 uppercase font-bold">Tiket Masuk</p>
-                                        <p class="text-sm font-medium text-text-light dark:text-text-dark" x-text="selectedFeature.ticket_price"></p>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template x-if="selectedFeature?.opening_hours">
-                                <div class="flex items-start gap-3">
-                                    <span class="material-symbols-outlined text-primary text-lg mt-0.5">schedule</span>
-                                    <div>
-                                        <p class="text-xs text-slate-500 uppercase font-bold">Jam Buka</p>
-                                        <p class="text-sm font-medium text-text-light dark:text-text-dark" x-text="selectedFeature.opening_hours"></p>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template x-if="selectedFeature?.rating">
-                                <div class="flex items-start gap-3">
-                                    <span class="material-symbols-outlined text-yellow-500 text-lg mt-0.5">star</span>
-                                    <div>
-                                        <p class="text-xs text-slate-500 uppercase font-bold">Rating</p>
-                                        <div class="flex items-center gap-1">
-                                            <p class="text-sm font-medium text-text-light dark:text-text-dark" x-text="selectedFeature.rating + ' / 5.0'"></p>
-                                            <span class="text-xs text-slate-400">(Ulasan Google)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template x-if="selectedFeature?.contact_info">
-                                <div class="flex items-start gap-3">
-                                    <span class="material-symbols-outlined text-primary text-lg mt-0.5">call</span>
-                                    <div>
-                                        <p class="text-xs text-slate-500 uppercase font-bold">Kontak</p>
-                                        <p class="text-sm font-medium text-text-light dark:text-text-dark" x-text="selectedFeature.contact_info"></p>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template x-if="selectedFeature?.website">
-                                <div class="flex items-start gap-3">
-                                    <span class="material-symbols-outlined text-primary text-lg mt-0.5">language</span>
-                                    <div>
-                                        <p class="text-xs text-slate-500 uppercase font-bold">Website</p>
-                                        <a :href="selectedFeature.website" target="_blank" class="text-sm font-medium text-blue-600 hover:underline break-all" x-text="selectedFeature.website"></a>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-
-                        <button @click="zoomToFeature(selectedFeature)"
-                            class="w-full py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-sm">location_on</span> View on Map
-                        </button>
-
-                        <template x-if="getDirectionsUrl(selectedFeature)">
-                            <a :href="getDirectionsUrl(selectedFeature)" target="_blank"
-                                class="w-full py-2.5 mt-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-sm">directions</span> Petunjuk Arah
-                            </a>
-                        </template>
-                    </div>
-                </div>
-
-                <!-- Loading Overlay -->
-                <div x-show="loading"
-                    class="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-[1000] flex items-center justify-center">
-                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-                </div>
-
-            </div>
-        </div>
-    </div>
+ 
 
     <!-- Profile Section -->
     <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-10 lg:py-16 scroll-mt-20" id="profile">
@@ -1078,9 +812,9 @@
                 
                     <!-- 1. Pindang Serani -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/srani.png') }}" 
                              alt="Pindang Serani" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <!-- Inactive Background Fade -->
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <!-- Text Readability Gradient -->
@@ -1094,9 +828,9 @@
 
                     <!-- 2. Durian Jepara -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1588610565251-e372ded744b8?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/duren.png') }}" 
                              alt="Durian Jepara" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
@@ -1107,9 +841,9 @@
 
                     <!-- 3. Adon-adon Coro -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1596450529940-f8d83965913e?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/adon-coro.png') }}" 
                              alt="Adon-adon Coro" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
@@ -1120,9 +854,9 @@
 
                     <!-- 4. Horog-horog -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1605626566276-88053c907914?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/horog.png') }}" 
                              alt="Horog-horog" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
@@ -1133,9 +867,9 @@
 
                     <!-- 5. Carang Madu -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1616035091764-5080b063febc?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/carang-madu.png') }}" 
                              alt="Carang Madu" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
@@ -1146,9 +880,9 @@
 
                     <!-- 6. Es Gempol Pleret -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1563200958-3725b73d9370?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/gempol.png') }}" 
                              alt="Es Gempol Pleret" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
@@ -1159,9 +893,9 @@
 
                     <!-- 7. Kopi Jeparanan -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/kopi.png') }}" 
                              alt="Kopi Jeparanan" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
@@ -1172,9 +906,9 @@
 
                     <!-- 8. Kacang Listrik -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1525055376178-83b6f2b378ea?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/kcang.png') }}" 
                              alt="Kacang Listrik" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
@@ -1185,9 +919,9 @@
 
                     <!-- 9. Krupuk Ikan Tengiri -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="https://images.unsplash.com/photo-1599638424887-1422eb845112?auto=format&fit=crop&w=1200&h=675" 
+                        <img src="{{ asset('images/kuliner-jppr/krpktgr.png') }}" 
                              alt="Krupuk Ikan Tengiri" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110">
+                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
