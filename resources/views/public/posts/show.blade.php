@@ -5,9 +5,9 @@
             
             <!-- Breadcrumb -->
             <nav class="flex justify-center text-xs md:text-sm text-gray-500 mb-6 space-x-2">
-                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Home</a>
+                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Beranda</a>
                 <span>/</span>
-                <span class="text-gray-400">News</span>
+                <a href="{{ route('posts.index') }}" class="text-gray-400 hover:text-primary transition-colors">Berita</a>
                 <span>/</span>
                 <span class="text-gray-800 dark:text-gray-200 truncate max-w-[200px]">{{ $post->title }}</span>
             </nav>
