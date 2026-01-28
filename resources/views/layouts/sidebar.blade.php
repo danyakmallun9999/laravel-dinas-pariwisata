@@ -116,6 +116,17 @@
                 </div>
             </a>
 
+            <a href="{{ route('admin.events.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.events.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+               :class="sidebarMinimized ? 'justify-center' : ''">
+                <i class="fa-solid fa-calendar-days w-5 text-center {{ request()->routeIs('admin.events.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
+                <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Calendar of Events</span>
+                 <!-- Tooltip -->
+                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                    Calendar of Events
+                </div>
+            </a>
+
             <a href="{{ route('admin.categories.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.categories.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
                :class="sidebarMinimized ? 'justify-center' : ''">

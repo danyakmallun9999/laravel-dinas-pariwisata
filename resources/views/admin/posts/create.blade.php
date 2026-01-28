@@ -42,6 +42,11 @@
                                     // Fix: Ensure content fits width and images are responsive
                                     content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
                                     
+                                    // URL Configuration
+                                    relative_urls: false,
+                                    remove_script_host: false,
+                                    document_base_url: '{{ url('/') }}',
+                                    
                                     // Image Upload Handler
                                     images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
                                         const xhr = new XMLHttpRequest();
