@@ -6,7 +6,7 @@
             <!-- Header -->
             <div class="text-center mb-16">
                 <span class="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Dinas Pariwisata Jepara</span>
-                <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white font-serif mb-4">
+                <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4">
                     Berita & Artikel Terkini
                 </h1>
                 <p class="text-gray-500 max-w-2xl mx-auto text-lg">
@@ -26,7 +26,7 @@
                             <span class="inline-block px-3 py-1 mb-4 text-xs font-bold text-white uppercase tracking-wider rounded-full bg-primary/90 backdrop-blur-sm">
                                 Feature Story
                             </span>
-                            <h2 class="text-3xl md:text-5xl font-black text-white font-serif leading-tight mb-4 group-hover:text-primary transition-colors duration-300">
+                            <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-4 group-hover:text-primary transition-colors duration-300">
                                 {{ $featuredPost->title }}
                             </h2>
                             <p class="text-gray-200 text-lg md:text-xl line-clamp-2 mb-6 max-w-2xl">
@@ -70,7 +70,7 @@
                             </span>
                         </div>
                         
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white font-serif leading-tight mb-3 group-hover:text-primary transition-colors">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white leading-tight mb-3 group-hover:text-primary transition-colors">
                             <a href="{{ route('posts.show', $post) }}">
                                 {{ $post->title }}
                             </a>

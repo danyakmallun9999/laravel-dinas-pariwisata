@@ -6,7 +6,7 @@
             <!-- Header -->
             <div class="text-center mb-12">
                 <span class="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Jelajahi Jepara</span>
-                <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white font-serif mb-4">
+                <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4">
                     Destinasi Wisata Unggulan
                 </h1>
                 <p class="text-gray-500 max-w-2xl mx-auto text-lg">
