@@ -65,10 +65,7 @@ class PariwisataSeeder extends Seeder
                     ['name' => $item['nama_wisata']], // Use name as unique identifier
                     [
                         'category_id' => $category->id,
-<<<<<<< HEAD
-=======
                         'slug' => \Illuminate\Support\Str::slug($item['nama_wisata']) . '-' . \Illuminate\Support\Str::random(5),
->>>>>>> fix-map
                         'description' => $description,
                         'address' => $item['lokasi'] !== '-' ? $item['lokasi'] : 'Jepara', // Assuming 'lokasi' maps to address roughly
                         'ticket_price' => $item['harga_tiket'] !== '-' ? $item['harga_tiket'] : null,
