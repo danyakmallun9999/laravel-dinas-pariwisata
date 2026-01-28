@@ -214,7 +214,7 @@ class WelcomeController extends Controller
     public function places()
     {
         $categories = \App\Models\Category::withCount('places')->get();
-        $places = \App\Models\Place::with('category')->latest()->paginate(9);
+        $places = \App\Models\Place::with('category')->latest()->get();
 
         return view('public.places.index', compact('places', 'categories'));
     }
