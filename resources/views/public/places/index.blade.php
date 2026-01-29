@@ -1,62 +1,172 @@
 <x-public-layout>
-    <div class="bg-background-light dark:bg-background-dark min-h-screen -mt-20 relative overflow-hidden">
-        <!-- Decoration Pattern (Batik/Wood Motif style abstract) -->
-        <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none z-0"></div>
-        <div class="absolute -top-20 -right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none z-0"></div>
-        <div class="absolute top-40 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+    <div class="bg-gray-50 dark:bg-background-dark min-h-screen py-10 lg:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            @php
+                // Extract unique locations from addresses (e.g., "Keling, Jepara" -> "Keling")
+                $allPlaces = $places;
+                $locations = $allPlaces->map(function($place) {
+                    return $place->address ? trim(explode(',', $place->address)[0]) : null;
+                })->filter()->unique()->values();
+            @endphp
 
-        <div class="pt-32 pb-20 relative z-10">
-            <!-- Main Content Container -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{
-                activeCategory: 'Semua',
+            <div x-data="{
+                search: '',
+                selectedCategory: '',
+                selectedLocation: '',
                 places: {{ Js::from($places) }},
                 get filteredPlaces() {
-                    if (this.activeCategory === 'Semua') return this.places;
-                    return this.places.filter(place => place.category && place.category.name === this.activeCategory);
+                    return this.places.filter(place => {
+                        const matchesSearch = this.search === '' || place.name.toLowerCase().includes(this.search.toLowerCase());
+                        const matchesCategory = this.selectedCategory === '' || (place.category && place.category.name === this.selectedCategory);
+                        
+                        // Location matching (safe check)
+                        let placeLoc = '';
+                        if (place.address) {
+                            placeLoc = place.address.split(',')[0].trim();
+                        }
+                        const matchesLocation = this.selectedLocation === '' || placeLoc === this.selectedLocation;
+
+                        return matchesSearch && matchesCategory && matchesLocation;
+                    });
                 }
             }">
                 
-                <!-- Hero Header -->
-                <div class="text-center mb-16 relative">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/50 dark:bg-white/5 border border-primary/20 backdrop-blur-sm mb-6 animate-fade-in-up">
-                        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                        <span class="text-primary font-bold tracking-widest uppercase text-xs">Wonderful Jepara</span>
+                <!-- Simple Header -->
+                <div class="mb-10 border-b border-gray-100 dark:border-white/10 pb-8">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
+                                Jelajahi Destinasi
+                            </h1>
+                            <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl">
+                                Temukan keindahan alam, sejarah, dan budaya di setiap sudut Jepara.
+                            </p>
+                        </div>
                     </div>
-                    
-                    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 dark:text-white mb-6 leading-tight tracking-tight">
-                        Jelajahi Pesona <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dark">Bumi Kartini</span>
-                    </h1>
-                    
-                    <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed font-light">
-                        Temukan keindahan alam yang memukau, jejak sejarah yang agung, dan kekayaan budaya yang tak ternilai di setiap sudut Jepara.
-                    </p>
                 </div>
 
-                <!-- Elegant Filter Tabs -->
-                <div class="flex flex-wrap justify-center gap-3 mb-16 px-4">
-                    <button @click="activeCategory = 'Semua'" 
-                            class="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border"
-                            :class="activeCategory === 'Semua' 
-                                ? 'bg-slate-800 text-white border-slate-800 shadow-lg shadow-slate-800/20 transform scale-105' 
-                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'">
-                        Semua
+                <!-- Advanced Filter Bar -->
+                <div class="bg-white dark:bg-slate-800/50 backdrop-blur-xl p-4 rounded-3xl border border-slate-200 dark:border-white/5 flex flex-col lg:flex-row gap-4 mb-16 relative z-20">
+                    
+                    <!-- Search -->
+                    <div class="flex-1 relative group">
+                        <i class="fa-solid fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"></i>
+                        <input 
+                            x-model="search"
+                            type="text" 
+                            placeholder="Cari destinasi wisata..." 
+                            class="w-full pl-12 pr-4 py-3.5 rounded-2xl border-none bg-slate-50 dark:bg-black/20 focus:bg-white dark:focus:bg-black/40 ring-1 ring-slate-200 dark:ring-white/10 focus:ring-2 focus:ring-primary text-slate-700 dark:text-white font-medium transition-all placeholder:text-slate-400"
+                        >
+                    </div>
+
+                    <!-- Category Dropdown (Custom) -->
+                    <div class="relative min-w-[220px]" x-data="{ open: false }">
+                        <i class="fa-solid fa-layer-group absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 z-10 pointer-events-none"></i>
+                        
+                        <button 
+                            @click="open = !open"
+                            @click.outside="open = false"
+                            class="w-full pl-12 pr-10 py-3.5 text-left rounded-2xl ring-1 ring-slate-200 dark:ring-white/10 bg-slate-50 dark:bg-black/20 hover:bg-white dark:hover:bg-black/40 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between transition-all text-slate-700 dark:text-white"
+                        >
+                            <span x-text="selectedCategory === '' ? 'Semua Kategori' : selectedCategory" class="truncate"></span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                        </button>
+
+                        <div 
+                            x-show="open" 
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="transform opacity-0 translate-y-2"
+                            x-transition:enter-end="transform opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="transform opacity-100 translate-y-0"
+                            x-transition:leave-end="transform opacity-0 translate-y-2"
+                            class="absolute z-50 mt-2 w-full bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 max-h-80 overflow-y-auto no-scrollbar p-1.5"
+                            style="display: none;"
+                        >
+                            <button 
+                                @click="selectedCategory = ''; open = false"
+                                class="w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
+                                :class="selectedCategory === '' ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'"
+                            >
+                                <span>Semua Kategori</span>
+                                <i class="fa-solid fa-check text-primary" x-show="selectedCategory === ''"></i>
+                            </button>
+                            @foreach($categories as $category)
+                                <button 
+                                    @click="selectedCategory = '{{ $category->name }}'; open = false"
+                                    class="w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
+                                    :class="selectedCategory === '{{ $category->name }}' ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'"
+                                >
+                                    <span>{{ $category->name }}</span>
+                                    <i class="fa-solid fa-check text-primary" x-show="selectedCategory === '{{ $category->name }}'"></i>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Location Dropdown (Custom) -->
+                    <div class="relative min-w-[220px]" x-data="{ open: false }">
+                        <i class="fa-solid fa-location-dot absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 z-10 pointer-events-none"></i>
+                        
+                        <button 
+                            @click="open = !open"
+                            @click.outside="open = false"
+                            class="w-full pl-12 pr-10 py-3.5 text-left rounded-2xl ring-1 ring-slate-200 dark:ring-white/10 bg-slate-50 dark:bg-black/20 hover:bg-white dark:hover:bg-black/40 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between transition-all text-slate-700 dark:text-white"
+                        >
+                            <span x-text="selectedLocation === '' ? 'Semua Lokasi' : selectedLocation" class="truncate"></span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                        </button>
+
+                        <div 
+                            x-show="open" 
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="transform opacity-0 translate-y-2"
+                            x-transition:enter-end="transform opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="transform opacity-100 translate-y-0"
+                            x-transition:leave-end="transform opacity-0 translate-y-2"
+                            class="absolute z-50 mt-2 w-full bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 max-h-80 overflow-y-auto no-scrollbar p-1.5"
+                            style="display: none;"
+                        >
+                            <button 
+                                @click="selectedLocation = ''; open = false"
+                                class="w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
+                                :class="selectedLocation === '' ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'"
+                            >
+                                <span>Semua Lokasi</span>
+                                <i class="fa-solid fa-check text-primary" x-show="selectedLocation === ''"></i>
+                            </button>
+                            @foreach($locations as $loc)
+                                <button 
+                                    @click="selectedLocation = '{{ $loc }}'; open = false"
+                                    class="w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
+                                    :class="selectedLocation === '{{ $loc }}' ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'"
+                                >
+                                    <span>{{ $loc }}</span>
+                                    <i class="fa-solid fa-check text-primary" x-show="selectedLocation === '{{ $loc }}'"></i>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Reset Button -->
+                    <button 
+                        @click="search = ''; selectedCategory = ''; selectedLocation = ''"
+                        class="px-6 py-3.5 rounded-2xl bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 font-bold text-sm ring-1 ring-slate-200 dark:ring-white/10 hover:bg-slate-50 dark:hover:bg-white/10 transition-all"
+                        x-show="search || selectedCategory || selectedLocation"
+                        x-transition
+                    >
+                        Reset
                     </button>
-                    @foreach($categories as $category)
-                    <button @click="activeCategory = '{{ $category->name }}'" 
-                            class="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border"
-                            :class="activeCategory === '{{ $category->name }}' 
-                                ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30 transform scale-105' 
-                                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'">
-                        {{ $category->name }}
-                    </button>
-                    @endforeach
                 </div>
 
                 <!-- Modern Grid Layout -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[50vh]">
                     <template x-for="place in filteredPlaces" :key="place.id">
-                        <a :href="`/destinasi/${place.slug}`" class="group relative bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700 hover:-translate-y-2 flex flex-col h-full">
+                        <a :href="`/destinasi/${place.slug}`" class="group relative bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700 hover:-translate-y-2 flex flex-col h-full"
+                           x-transition:enter="transition ease-out duration-300"
+                           x-transition:enter-start="opacity-0 scale-95"
+                           x-transition:enter-end="opacity-100 scale-100">
                             
                             <!-- Image Section -->
                             <div class="relative h-64 overflow-hidden">
@@ -113,12 +223,13 @@
                     </template>
                     
                     <!-- Empty State -->
-                    <div x-show="filteredPlaces.length === 0" class="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-24">
+                    <div x-show="filteredPlaces.length === 0" class="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-24" style="display: none;">
                         <div class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
                             <span class="material-symbols-outlined text-4xl">travel_explore</span>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Tidak ditemukan</h3>
-                        <p class="text-slate-500">Coba pilih kategori yang lain.</p>
+                        <p class="text-slate-500">Coba kata kunci atau filter lain.</p>
+                        <button @click="search = ''; selectedCategory = ''; selectedLocation = ''" class="mt-4 text-primary font-bold hover:underline">Reset Filter</button>
                     </div>
                 </div>
             </div>
