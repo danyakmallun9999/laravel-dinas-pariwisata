@@ -118,7 +118,7 @@
                                 </div>
                                 <div>
                                     <p class="text-xs text-text-light/50 font-bold uppercase tracking-wider mb-1">Kontak</p>
-                                    <p class="text-text-light dark:text-text-dark font-medium">{{ $place->contact_info ?? '-' }}</p>
+                                    <p class="text-text-light dark:text-text-dark font-medium">{{ $place->contact_info ?: '-' }}</p>
                                 </div>
                             </div>
 
@@ -136,15 +136,21 @@
                             @endif
 
                             <!-- Action Button -->
-                            @if($place->website)
-                            <a href="{{ $place->website }}" target="_blank" class="block w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary-dark text-white text-center font-bold transition-colors shadow-lg shadow-primary/20">
-                                Kunjungi Website
-                            </a>
-                            @endif
-                            
-                            <a href="{{ $place->google_maps_link ?? 'https://www.google.com/maps/dir/?api=1&destination=' . $place->latitude . ',' . $place->longitude }}" target="_blank" class="block w-full py-3 px-4 rounded-xl border-2 border-primary text-primary hover:bg-primary hover:text-white text-center font-bold transition-colors">
-                                Petunjuk Arah
-                            </a>
+                            <!-- Action Buttons -->
+                            <div class="flex items-center gap-3 pt-4 border-t border-surface-light dark:border-white/5">
+                                @if($place->website)
+                                <a href="{{ $place->website }}" target="_blank" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold transition-all shadow-lg shadow-primary/20 group">
+                                    <span class="material-symbols-outlined">language</span>
+                                    <span>Website</span>
+                                </a>
+                                @endif
+                                
+                                <a href="{{ $place->google_maps_link ?? 'https://www.google.com/maps/dir/?api=1&destination=' . $place->latitude . ',' . $place->longitude }}" target="_blank" 
+                                   class="flex items-center justify-center size-12 rounded-xl bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all shadow-md hover:shadow-lg"
+                                   title="Buka di Google Maps">
+                                    <img src="https://www.google.com/images/branding/product/2x/maps_96in128dp.png" alt="Google Maps" class="w-6 h-6 object-contain">
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

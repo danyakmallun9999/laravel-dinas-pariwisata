@@ -72,7 +72,8 @@ class PariwisataSeeder extends Seeder
                         'opening_hours' => $item['jam_operasional'] !== '-' ? $item['jam_operasional'] : null,
                         'latitude' => $lat,
                         'longitude' => $lng,
-                        'contact_info' => $item['titi_koordinat'] // Save the google maps link here for reference
+                        'google_maps_link' => $item['titi_koordinat'],
+                        'contact_info' => null
                     ]
                 );
             } catch (\Throwable $e) {

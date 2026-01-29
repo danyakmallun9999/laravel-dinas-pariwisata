@@ -214,6 +214,7 @@ class AdminController extends Controller
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
+            'address' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
             'geometry' => ['nullable', 'string'],
@@ -222,6 +223,7 @@ class AdminController extends Controller
             'opening_hours' => ['nullable', 'string', 'max:255'],
             'contact_info' => ['nullable', 'string', 'max:255'],
             'website' => ['nullable', 'url', 'max:255'],
+            'google_maps_link' => ['nullable', 'url', 'max:255'],
             'gallery_images.*' => ['nullable', 'image', 'max:2048'],
         ];
 

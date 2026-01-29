@@ -30,6 +30,7 @@ class Place extends Model
     protected $fillable = [
         'category_id',
         'name',
+        'address',
         'slug',
         'description',
         'image_path',
@@ -40,6 +41,7 @@ class Place extends Model
         'contact_info',
         'rating',
         'website',
+        'google_maps_link',
     ];
 
     public function category()

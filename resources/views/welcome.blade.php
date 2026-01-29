@@ -222,7 +222,7 @@
 
                 <!-- Overlay Gradient for Readability -->
                 <div
-                    class="absolute inset-0 z-10 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent pointer-events-none">
+                    class="absolute inset-0 z-10 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent pointer-events-none">
                 </div>
 
                 <!-- Content -->

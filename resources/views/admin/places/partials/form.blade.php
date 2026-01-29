@@ -52,6 +52,14 @@
             </div>
 
             <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Lengkap</label>
+                <input type="text" name="address" value="{{ old('address', $place->address) }}"
+                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Alamat lengkap lokasi...">
+                <x-input-error :messages="$errors->get('address')" class="mt-2" />
+            </div>
+
+            <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
                 <textarea name="description" rows="4"
                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -85,6 +93,14 @@
                 <input type="text" name="contact_info" value="{{ old('contact_info', $place->contact_info) }}"
                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Masukkan nomor telepon">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Link Google Maps</label>
+                <input type="url" name="google_maps_link" value="{{ old('google_maps_link', $place->google_maps_link) }}"
+                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="https://maps.app.goo.gl/...">
+                <p class="text-xs text-gray-500 mt-1">Opsional: Jika kosong, akan menggunakan koordinat otomatis.</p>
             </div>
 
             <div>
