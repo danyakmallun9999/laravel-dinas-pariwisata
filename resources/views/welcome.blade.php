@@ -573,38 +573,38 @@
             </div>
 
             <!-- Full Image Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
-                <!-- Kartini Card -->
+                <!-- Shima Card (Kalingga - Oldest) -->
                 <div class="group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none"
                      x-data="{ shown: false }" 
                      x-intersect.threshold.0.2="shown = true"
                      :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 transition-all duration-1000'">
                     
                     <!-- Full Background Image -->
-                    <img src="{{ asset('images/kartini.jpg') }}" 
-                         alt="R.A. Kartini" 
+                    <img src="{{ asset('images/shima.jpg') }}" 
+                         alt="Ratu Shima" 
                          class="absolute inset-0 w-full h-full object-cover object-top filter grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1500ms] ease-out">
                     
-                    <!-- Gradient Overlay (Subtle) -->
+                    <!-- Gradient Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
 
                     <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
                         <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                        <h3 class="text-3xl md:text-5xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">R.A. Kartini</h3>
-                        <p class="text-xl md:text-2xl font-['Pinyon_Script'] text-white/90 mb-6">
-                            "Habis Gelap Terbitlah Terang"
+                        <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Shima</h3>
+                        <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
+                            "Keadilan Tanpa Pandang Bulu"
                         </p>
                         <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
-                            <p class="text-white/80 text-sm md:text-base leading-relaxed max-w-md">
-                                Pahlawan emansipasi yang memperjuangkan hak pendidikan wanita. Sosoknya menginspirasi perubahan besar dari Jepara untuk Indonesia.
+                            <p class="text-white/80 text-sm leading-relaxed">
+                                Penguasa Kerajaan Kalingga yang termasyhur akan ketegasan hukumnya. Simbol integritas dan keadilan sejati dari masa lampau.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Kalinyamat Card -->
+                <!-- Kalinyamat Card (16th Century) -->
                 <div class="group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-200"
                      x-data="{ shown: false }" 
                      x-intersect.threshold.0.2="shown = true"
@@ -619,15 +619,44 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
 
                     <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
                         <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                        <h3 class="text-3xl md:text-5xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Kalinyamat</h3>
-                        <p class="text-xl md:text-2xl font-['Pinyon_Script'] text-white/90 mb-6">
+                        <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Kalinyamat</h3>
+                        <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
                             "Sang Ratu Laut yang Gagah Berani"
                         </p>
                         <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
-                            <p class="text-white/80 text-sm md:text-base leading-relaxed max-w-md">
+                            <p class="text-white/80 text-sm leading-relaxed">
                                 Penguasa maritim Nusantara yang disegani. Membangun Jepara menjadi pusat niaga dan kekuatan laut yang tak tertandingi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kartini Card (19th Century - Youngest) -->
+                <div class="group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-400"
+                     x-data="{ shown: false }" 
+                     x-intersect.threshold.0.2="shown = true"
+                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                    
+                    <!-- Full Background Image -->
+                    <img src="{{ asset('images/kartini.jpg') }}" 
+                         alt="R.A. Kartini" 
+                         class="absolute inset-0 w-full h-full object-cover object-top filter grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1500ms] ease-out">
+                    
+                    <!-- Gradient Overlay (Subtle) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
+
+                    <!-- Content Overlay -->
+                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
+                        <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">R.A. Kartini</h3>
+                        <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
+                            "Habis Gelap Terbitlah Terang"
+                        </p>
+                        <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
+                            <p class="text-white/80 text-sm leading-relaxed">
+                                Pahlawan emansipasi yang memperjuangkan hak pendidikan wanita. Sosoknya menginspirasi perubahan besar dari Jepara untuk Indonesia.
                             </p>
                         </div>
                     </div>
