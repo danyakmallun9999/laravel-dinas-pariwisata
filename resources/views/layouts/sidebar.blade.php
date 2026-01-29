@@ -65,11 +65,10 @@
                 
                 <!-- Tooltip -->
                 <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Dashboard
                 </div>
             </a>
@@ -86,11 +85,10 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Destinasi Wisata</span>
                  <!-- Tooltip -->
                  <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Destinasi Wisata
                 </div>
             </a>
@@ -104,11 +102,10 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Berita & Agenda</span>
                  <!-- Tooltip -->
                  <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Berita & Agenda
                 </div>
             </a>
@@ -120,11 +117,10 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Calendar of Events</span>
                  <!-- Tooltip -->
                  <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Calendar of Events
                 </div>
             </a>
@@ -136,11 +132,10 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Kategori</span>
                  <!-- Tooltip -->
                  <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Kategori
                 </div>
             </a>
@@ -155,11 +150,10 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Batas Wilayah</span>
                  <!-- Tooltip -->
                  <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Batas Wilayah
                 </div>
             </a>
@@ -178,11 +172,10 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Laporan</span>
                  <!-- Tooltip -->
                  <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Laporan
                 </div>
             </a>
@@ -193,11 +186,10 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Import Data</span>
                  <!-- Tooltip -->
                  <!-- Tooltip -->
-                <div x-data="{ top: 0 }"
-                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
                      x-show="sidebarMinimized" 
                      class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     :style="`top: ${top}px`">
+                     style="display: none;">
                     Import Data
                 </div>
             </a>
