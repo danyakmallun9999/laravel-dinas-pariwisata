@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Boundary;
 use App\Models\Category;
+use App\Models\Event;
 use App\Models\Infrastructure;
 use App\Models\LandUse;
 use App\Models\Place;
+use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +45,10 @@ class AdminController extends Controller
             'recent_boundaries' => Boundary::latest()->take(5)->get(),
             'recent_infrastructures' => Infrastructure::latest()->take(5)->get(),
             'recent_land_uses' => LandUse::latest()->take(5)->get(),
+            'posts_count' => Post::count(),
+            'events_count' => Event::count(),
+            'recent_posts' => Post::latest('published_at')->take(5)->get(),
+            'upcoming_events' => Event::where('start_date', '>=', now())->orderBy('start_date')->take(5)->get(),
         ];
 
         return view('admin.dashboard', compact('places', 'stats'));
