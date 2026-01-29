@@ -148,7 +148,7 @@
                     </label>
 
                     <!-- Auth Buttons (Desktop) -->
-                    <div class="hidden lg:flex">
+                    <div class="hidden">
                         @if (Route::has('login'))
                             @auth
                                 <a href="{{ url('/dashboard') }}"
@@ -193,7 +193,7 @@
                             href="{{ route('posts.index') }}">Berita</a>
                     </nav>
 
-                    <div class="border-t border-surface-light dark:border-surface-dark pt-4">
+                    <div class="hidden border-t border-surface-light dark:border-surface-dark pt-4">
                         @if (Route::has('login'))
                             @auth
                                 <a href="{{ url('/dashboard') }}"
@@ -961,7 +961,8 @@
             <div class="relative w-full group">
                 <!-- Carousel Container with Mask Image for Perfect Fade -->
                 <div class="flex gap-4 lg:gap-8 overflow-x-auto pb-12 pt-4 px-4 lg:px-0 snap-x snap-mandatory scrollbar-hide" 
-                     x-ref="foodContainer">
+                     x-ref="foodContainer"
+                     style="-webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%); padding-left: 3rem; padding-right: 5rem;">
                 
                 
                     <!-- 1. Pindang Serani -->
@@ -1167,9 +1168,11 @@
                 <span>P</span><span>A</span><span>R</span><span>I</span><span>W</span><span>I</span><span>S</span><span>A</span><span>T</span><span>A</span>
             </div>
 
-            <!-- Baris 2: KABUPATEN JEPARA -->
-            <div class="flex justify-between w-full text-center text-[7.8vw] font-[900] text-white drop-shadow-lg uppercase tracking-tighter mb-10 leading-[0.8] select-none">
-                <span>K</span><span>A</span><span>B</span><span>U</span><span>P</span><span>A</span><span>T</span><span>E</span><span>N</span>
+            <!-- Baris 2: DAN KEBUDAYAAN JEPARA -->
+            <div class="flex justify-between w-full text-center text-[5.5vw] font-[900] text-white drop-shadow-lg uppercase tracking-tighter mb-10 leading-[0.8] select-none">
+                <span>D</span><span>A</span><span>N</span>
+                <span class="invisible text-[1vw]">_</span>
+                <span>K</span><span>E</span><span>B</span><span>U</span><span>D</span><span>A</span><span>Y</span><span>A</span><span>A</span><span>N</span>
                 <span class="invisible text-[1vw]">_</span>
                 <span class="text-white">J</span><span class="text-white">E</span><span class="text-white">P</span><span class="text-white">A</span><span class="text-white">R</span><span class="text-white">A</span>
             </div>

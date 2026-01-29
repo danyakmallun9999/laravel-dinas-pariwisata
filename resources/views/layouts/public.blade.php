@@ -46,7 +46,7 @@
 
                 <div class="flex flex-1 items-center justify-end gap-4">
                     <!-- Auth Buttons (Desktop) -->
-                    <div class="hidden lg:flex">
+                    <div class="hidden">
                         @if (Route::has('login'))
                             @auth
                                 <a href="{{ url('/dashboard') }}" class="flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
@@ -102,9 +102,11 @@
                 <span>P</span><span>A</span><span>R</span><span>I</span><span>W</span><span>I</span><span>S</span><span>A</span><span>T</span><span>A</span>
             </div>
 
-            <!-- Baris 2: KABUPATEN JEPARA -->
-            <div class="flex justify-between w-full text-center text-[7.8vw] font-[900] text-white drop-shadow-lg uppercase tracking-tighter mb-10 leading-[0.8] select-none">
-                <span>K</span><span>A</span><span>B</span><span>U</span><span>P</span><span>A</span><span>T</span><span>E</span><span>N</span>
+            <!-- Baris 2: DAN KEBUDAYAAN JEPARA -->
+            <div class="flex justify-between w-full text-center text-[5.5vw] font-[900] text-white drop-shadow-lg uppercase tracking-tighter mb-10 leading-[0.8] select-none">
+                <span>D</span><span>A</span><span>N</span>
+                <span class="invisible text-[1vw]">_</span>
+                <span>K</span><span>E</span><span>B</span><span>U</span><span>D</span><span>A</span><span>Y</span><span>A</span><span>A</span><span>N</span>
                 <span class="invisible text-[1vw]">_</span>
                 <span class="text-white">J</span><span class="text-white">E</span><span class="text-white">P</span><span class="text-white">A</span><span class="text-white">R</span><span class="text-white">A</span>
             </div>
