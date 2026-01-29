@@ -83,19 +83,34 @@
                             </div>
                             
                             <!-- List -->
-                            <div class="p-6">
-                                <ul class="space-y-3">
+                            <div class="p-6 relative">
+                                <ul class="space-y-1">
                                     @foreach($place->rides as $ride)
                                         @if(is_array($ride))
-                                            <li class="flex items-start justify-between gap-4 text-sm">
-                                                <span class="font-medium text-slate-700 dark:text-slate-300 leading-snug">{{ $ride['name'] }}</span>
-                                                @if(!empty($ride['price']))
-                                                    <span class="shrink-0 font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded text-xs">{{ $ride['price'] }}</span>
-                                                @endif
-                                            </li>
+                                            @php
+                                                // Detect Header: Ends with ':' or has no price/contact info
+                                                $isHeader = str_ends_with(trim($ride['name']), ':') || empty($ride['price']);
+                                                $cleanName = str_replace(':', '', $ride['name']);
+                                            @endphp
+
+                                            @if($isHeader)
+                                                <li class="pt-4 pb-2 first:pt-0">
+                                                    <h4 class="font-bold text-slate-800 dark:text-white text-base flex items-center gap-2">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                                        {{ $cleanName }}
+                                                    </h4>
+                                                </li>
+                                            @else
+                                                <li class="flex items-start justify-between gap-4 text-sm py-1.5 pl-6 border-l-2 border-slate-100 dark:border-slate-700 ml-0.5 hover:bg-slate-50 dark:hover:bg-white/5 pr-2 rounded-r-lg transition-colors">
+                                                    <span class="font-medium text-slate-600 dark:text-slate-300 leading-snug">{{ $ride['name'] }}</span>
+                                                    @if(!empty($ride['price']))
+                                                        <span class="shrink-0 font-bold text-blue-600 dark:text-blue-400 text-xs">{{ $ride['price'] }}</span>
+                                                    @endif
+                                                </li>
+                                            @endif
                                         @else
-                                            {{-- Fallback for legacy string data if any --}}
-                                            <li class="text-sm text-slate-600 dark:text-slate-400">{{ $ride }}</li>
+                                            {{-- Fallback --}}
+                                            <li class="text-sm text-slate-600 dark:text-slate-400 py-1">{{ $ride }}</li>
                                         @endif
                                     @endforeach
                                 </ul>
