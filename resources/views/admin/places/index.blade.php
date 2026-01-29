@@ -24,12 +24,6 @@
 
     <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            @if(session('status'))
-                <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-                    {{ session('status') }}
-                </div>
-            @endif
-
             <!-- Places Table -->
             <div class="bg-white shadow-sm sm:rounded-2xl p-6">
                 <div class="flex items-center justify-between mb-4">
