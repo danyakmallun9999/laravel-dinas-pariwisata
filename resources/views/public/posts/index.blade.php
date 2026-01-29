@@ -5,7 +5,7 @@
             
             <!-- Header -->
             <div class="text-center mb-16">
-                <span class="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Dinas Pariwisata Jepara</span>
+                <span class="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Dinas Pariwisata dan Kebudayaan Jepara</span>
                 <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4">
                     Berita & Artikel Terkini
                 </h1>

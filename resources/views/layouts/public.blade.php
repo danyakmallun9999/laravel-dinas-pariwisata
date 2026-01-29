@@ -26,6 +26,7 @@
                         <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" alt="Logo Kabupaten Jepara" class="w-10 h-auto object-contain">
                         <h2 class="text-xl font-bold leading-tight tracking-tight">Pesona Jepara</h2>
                     </a>
+
                     <nav class="hidden lg:flex items-center gap-8">
                         <a class="text-sm font-medium transition-colors {{ request()->routeIs('welcome') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
                            href="{{ route('welcome') }}">Beranda</a>
@@ -143,7 +144,7 @@
                     </div>
 
                     <p class="text-xs text-white/70 font-bold uppercase tracking-widest mb-2 drop-shadow-md">Pemerintah Kabupaten Jepara</p>
-                    <p class="text-sm text-white font-medium drop-shadow-md">© 2024 Dinas Pariwisata. Seluruh hak cipta dilindungi undang-undang.</p>
+                    <p class="text-sm text-white font-medium drop-shadow-md">© 2024 Dinas Pariwisata dan Kebudayaan. Seluruh hak cipta dilindungi undang-undang.</p>
                 </div>
 
             </div>

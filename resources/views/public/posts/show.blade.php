@@ -25,7 +25,7 @@
                             <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" class="w-6 h-6 object-contain" alt="Admin">
                         </div>
                         <div class="text-left">
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $post->author ?? 'Dinas Pariwisata Jepara' }}</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $post->author ?? 'Dinas Pariwisata dan Kebudayaan Jepara' }}</p>
                             <p class="text-xs text-gray-500">
                                 Published {{ $post->published_at ? $post->published_at->format('M d, Y') : '-' }} • {{ ceil(str_word_count(strip_tags($post->content)) / 200) }} min read
                             </p>

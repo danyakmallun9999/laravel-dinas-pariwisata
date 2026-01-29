@@ -187,7 +187,7 @@
                             <div class="space-y-4">
                                 <div>
                                     <x-input-label for="author" :value="__('Penulis (Opsional)')" />
-                                    <x-text-input id="author" class="block mt-1 w-full" type="text" name="author" :value="old('author', $post->author)" placeholder="Default: Dinas Pariwisata Jepara" />
+                                    <x-text-input id="author" class="block mt-1 w-full" type="text" name="author" :value="old('author', $post->author)" placeholder="Default: Dinas Pariwisata dan Kebudayaan Jepara" />
                                     <x-input-error :messages="$errors->get('author')" class="mt-2" />
                                 </div>
                                 <div>

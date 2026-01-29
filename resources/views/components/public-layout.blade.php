@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Dinas Pariwisata Jepara') }}</title>
+    <title>{{ config('app.name', 'Dinas Pariwisata dan Kebudayaan Jepara') }}</title>
 
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -119,7 +119,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                 <div class="space-y-4">
                     <h2 class="text-lg font-bold flex items-center gap-2 text-white">
-                        <span class="material-symbols-outlined text-blue-500">terrain</span> Dinas Pariwisata Jepara
+                        <span class="material-symbols-outlined text-blue-500">terrain</span> Dinas Pariwisata dan Kebudayaan Jepara
                     </h2>
                     <p class="text-slate-400 text-sm leading-relaxed">Portal resmi informasi pariwisata, budaya, dan ekonomi kreatif Kabupaten Jepara.</p>
                 </div>

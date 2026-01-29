@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Portal Wisata - {{ config('app.name', 'Jepara') }}</title>
+    <title>Portal Wisata - {{ config('app.name', 'Dinas Pariwisata dan Kebudayaan Jepara') }}</title>
 
     <!-- Leaflet & Icon -->
     <!-- Local assets handled by Vite -->
@@ -1203,7 +1203,7 @@
                     </div>
 
                     <p class="text-xs text-white/70 font-bold uppercase tracking-widest mb-2 drop-shadow-md">Pemerintah Kabupaten Jepara</p>
-                    <p class="text-sm text-white font-medium drop-shadow-md">© 2024 Dinas Pariwisata. Seluruh hak cipta dilindungi undang-undang.</p>
+                    <p class="text-sm text-white font-medium drop-shadow-md">© 2024 Dinas Pariwisata dan Kebudayaan. Seluruh hak cipta dilindungi undang-undang.</p>
                 </div>
 
             </div>
