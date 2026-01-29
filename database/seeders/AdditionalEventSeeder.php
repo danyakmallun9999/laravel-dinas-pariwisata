@@ -13,12 +13,14 @@ class AdditionalEventSeeder extends Seeder
      */
     public function run(): void
     {
+        $now = Carbon::now();
+
         // Event 2 in April (Same month as Kartini)
         Event::create([
             'title' => 'Lomba Melukis Pantai',
             'description' => '<p>Perlombaan melukis pemandangan pantai bagi pelajar SD dan SMP se-Jepara.</p>',
             'location' => 'Pantai Kartini',
-            'start_date' => Carbon::create(date('Y'), 4, 25, 9, 0, 0),
+            'start_date' => $now->copy()->addMonth()->setDay(25)->setTime(9, 0),
             'image' => null,
             'is_published' => true,
         ]);
@@ -28,7 +30,7 @@ class AdditionalEventSeeder extends Seeder
             'title' => 'Seminar Budaya Jepara',
             'description' => '<p>Diskusi publik mengenai pelestarian seni ukir dan tenun ikat Troso.</p>',
             'location' => 'Pendopo Kabupaten',
-            'start_date' => Carbon::create(date('Y'), 4, 28, 13, 0, 0),
+            'start_date' => $now->copy()->addMonth()->setDay(28)->setTime(13, 0),
             'image' => null,
             'is_published' => true,
         ]);

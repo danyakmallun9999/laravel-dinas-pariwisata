@@ -13,44 +13,46 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        // Event 1: April (Kartini Day)
+        $now = Carbon::now();
+
+        // Event 1: Next Month
         Event::create([
             'title' => 'Festival Hari Kartini',
             'description' => '<p>Peringatan hari kelahiran pahlawan emansipasi wanita R.A. Kartini dengan berbagai lomba tradisional dan kirab budaya yang meriah di pusat kota Jepara.</p>',
             'location' => 'Alun-alun Jepara',
-            'start_date' => Carbon::create(date('Y'), 4, 21, 8, 0, 0),
-            'end_date' => Carbon::create(date('Y'), 4, 21, 16, 0, 0),
-            'image' => null, // Placeholder or null
+            'start_date' => $now->copy()->addMonth()->setDay(21)->setTime(8, 0),
+            'end_date' => $now->copy()->addMonth()->setDay(21)->setTime(16, 0),
+            'image' => null,
             'is_published' => true,
         ]);
 
-        // Event 2: May (Pesta Baratan)
+        // Event 2: +2 Months
         Event::create([
             'title' => 'Pesta Baratan Ratu Kalinyamat',
             'description' => '<p>Tradisi arak-arakan obor dan lampion yang mengisahkan Ratu Kalinyamat saat membawa jenazah Sultan Hadlirin. Diadakan setiap malam Nisfu Sya\'ban.</p>',
             'location' => 'Desa Kriyan, Kalinyamatan',
-            'start_date' => Carbon::create(date('Y'), 5, 15, 19, 0, 0), // Adjust date dynamically if needed, set to mid-May for demo
+            'start_date' => $now->copy()->addMonths(2)->setDay(15)->setTime(19, 0),
             'image' => null,
             'is_published' => true,
         ]);
 
-        // Event 3: June (Perang Obor)
+        // Event 3: +3 Months
         Event::create([
             'title' => 'Perang Obor Tegalsambi',
-            'description' => '<p>Upacara sedekah bumi yang unik dimana para pemuda desa saling memukulkan obor dari pelepah kelapa kering. Simbol pembersihan diri dan penolak bala.</p>',
+            'description' => '<p>Upacara sedekah bumi yang unik dimana para pemuda desa saling memukulkan obor dari pelepah kelapa kering.</p>',
             'location' => 'Desa Tegalsambi',
-            'start_date' => Carbon::create(date('Y'), 6, 20, 20, 0, 0),
+            'start_date' => $now->copy()->addMonths(3)->setDay(20)->setTime(20, 0),
             'image' => null,
             'is_published' => true,
         ]);
         
-        // Event 4: October (Perang Obor - another month example)
+        // Event 4: +5 Months
         Event::create([
             'title' => 'Festival Ukir Internasional',
             'description' => '<p>Pameran mahakarya seni ukir Jepara yang mendunia, diikuti oleh pengrajin lokal dan mancanegara.</p>',
             'location' => 'Jepara International Exhibition Center',
-            'start_date' => Carbon::create(date('Y'), 10, 10, 9, 0, 0),
-            'end_date' => Carbon::create(date('Y'), 10, 15, 21, 0, 0),
+            'start_date' => $now->copy()->addMonths(5)->setDay(10)->setTime(9, 0),
+            'end_date' => $now->copy()->addMonths(5)->setDay(15)->setTime(21, 0),
             'image' => null,
             'is_published' => true,
         ]);

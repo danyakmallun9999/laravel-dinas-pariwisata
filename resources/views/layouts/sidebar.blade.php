@@ -53,7 +53,7 @@
         </div>
 
         <!-- Navigation -->
-        <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scroll">
+        <div class="flex-1 overflow-y-auto overflow-x-hidden py-4 px-3 space-y-1 custom-scroll">
             <p x-show="!sidebarMinimized" class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 transition-opacity duration-300">Menu Utama</p>
             <div x-show="sidebarMinimized" class="h-4"></div>
             
@@ -64,7 +64,12 @@
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Dashboard</span>
                 
                 <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Dashboard
                 </div>
             </a>
@@ -80,7 +85,12 @@
                 <i class="fa-solid fa-map-location-dot w-5 text-center {{ request()->routeIs('admin.places.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Destinasi Wisata</span>
                  <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                 <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Destinasi Wisata
                 </div>
             </a>
@@ -93,7 +103,12 @@
                 <i class="fa-solid fa-newspaper w-5 text-center {{ request()->routeIs('admin.posts.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Berita & Agenda</span>
                  <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                 <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Berita & Agenda
                 </div>
             </a>
@@ -104,7 +119,12 @@
                 <i class="fa-solid fa-calendar-days w-5 text-center {{ request()->routeIs('admin.events.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Calendar of Events</span>
                  <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                 <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Calendar of Events
                 </div>
             </a>
@@ -115,7 +135,12 @@
                 <i class="fa-solid fa-tags w-5 text-center {{ request()->routeIs('admin.categories.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Kategori</span>
                  <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                 <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Kategori
                 </div>
             </a>
@@ -129,7 +154,12 @@
                 <i class="fa-solid fa-draw-polygon w-5 text-center {{ request()->routeIs('admin.boundaries.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Batas Wilayah</span>
                  <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                 <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Batas Wilayah
                 </div>
             </a>
@@ -147,7 +177,12 @@
                 <i class="fa-solid fa-file-alt w-5 text-center {{ request()->routeIs('admin.reports.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Laporan</span>
                  <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                 <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Laporan
                 </div>
             </a>
@@ -157,7 +192,12 @@
                 <i class="fa-solid fa-file-import w-5 text-center {{ request()->routeIs('admin.import.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">Import Data</span>
                  <!-- Tooltip -->
-                <div x-show="sidebarMinimized" class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                 <!-- Tooltip -->
+                <div x-data="{ top: 0 }"
+                     x-init="$el.parentElement.addEventListener('mouseenter', () => { top = $el.parentElement.getBoundingClientRect().top + 10 })"
+                     x-show="sidebarMinimized" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     :style="`top: ${top}px`">
                     Import Data
                 </div>
             </a>
