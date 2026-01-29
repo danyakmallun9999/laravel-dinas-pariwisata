@@ -1,95 +1,233 @@
 <x-public-layout>
-    <div class="bg-background-light dark:bg-background-dark min-h-screen py-12 lg:py-20">
+    <div class="bg-white dark:bg-background-dark min-h-screen py-10 lg:py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             
-            <!-- Header -->
-            <div class="text-center mb-12">
-                <h1 class="text-4xl md:text-5xl font-black text-text-light dark:text-text-dark tracking-tight mb-4">
-                    Calendar of Events <span class="text-primary">#{{ date('Y') }}</span>
-                </h1>
-                <p class="text-lg text-text-light/70 dark:text-text-dark/70 max-w-2xl mx-auto">
-                    Temukan dan ramaikan berbagai agenda wisata, budaya, dan festival menarik di Kabupaten Jepara sepanjang tahun ini.
-                </p>
-            </div>
+            @php
+                $allEvents = $groupedEvents->flatten();
+                $locations = $allEvents->pluck('location')->unique()->values();
+                $months = $groupedEvents->keys();
+            @endphp
 
-            <!-- Events Grid -->
-            @if($groupedEvents->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 masonry-grid">
-                    @foreach($groupedEvents as $monthYear => $events)
-                        <div class="bg-white dark:bg-surface-dark rounded-2xl shadow-xl overflow-hidden border border-surface-light dark:border-white/5 break-inside-avoid mb-6 relative group hover:-translate-y-1 transition-transform duration-300">
-                            <!-- Decorative Month Header -->
-                            <div class="bg-gradient-to-r from-primary to-blue-600 p-4 text-center relative overflow-hidden">
-                                <div class="absolute top-0 right-0 p-4 opacity-10">
-                                    <i class="fa-regular fa-calendar text-6xl text-white transform rotate-12"></i>
+            <div x-data="{ 
+                search: '', 
+                selectedMonth: '', 
+                selectedLocation: '',
+                get filteredEvents() {
+                    return true; // Logic handled in x-show for simplicity/SEO
+                }
+            }">
+
+                <!-- Header & Filters -->
+                <div class="mb-10 border-b border-gray-100 dark:border-white/10 pb-8">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
+                                Calendar of Events <span class="text-slate-400 font-light">{{ date('Y') }}</span>
+                            </h1>
+                            <p class="text-slate-500 dark:text-slate-400 text-lg">
+                                Temukan {{ $allEvents->count() }} agenda wisata dan budaya menarik di Jepara.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filter Bar -->
+                    <div class="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl flex flex-col lg:flex-row gap-4">
+                        
+                        <!-- Search -->
+                        <div class="flex-1 relative">
+                            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input 
+                                x-model="search"
+                                type="text" 
+                                placeholder="Cari nama event..." 
+                                class="w-full pl-11 pr-4 py-3 rounded-xl border-none ring-1 ring-gray-200 dark:ring-white/10 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary text-sm font-medium"
+                            >
+                        </div>
+
+                        <!-- Month Dropdown (Custom) -->
+                        <div class="relative min-w-[220px]" x-data="{ open: false }">
+                            <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
+                            
+                            <button 
+                                @click="open = !open"
+                                @click.outside="open = false"
+                                class="w-full pl-11 pr-10 py-3 text-left rounded-xl ring-1 ring-gray-200 dark:ring-white/10 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between"
+                            >
+                                <span x-text="selectedMonth === '' ? 'Semua Bulan' : selectedMonth" class="truncate"></span>
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                            </button>
+
+                            <div 
+                                x-show="open" 
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95"
+                                class="absolute z-50 mt-2 w-full bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-gray-100 dark:border-white/10 max-h-60 overflow-y-auto no-scrollbar"
+                                style="display: none;"
+                            >
+                                <div class="p-1">
+                                    <button 
+                                        @click="selectedMonth = ''; open = false"
+                                        class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                                        :class="selectedMonth === '' ? 'text-primary font-bold bg-primary/5' : 'text-slate-600 dark:text-slate-300'"
+                                    >
+                                        Semua Bulan
+                                    </button>
+                                    @foreach($months as $month)
+                                        <button 
+                                            @click="selectedMonth = '{{ $month }}'; open = false"
+                                            class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                                            :class="selectedMonth === '{{ $month }}' ? 'text-primary font-bold bg-primary/5' : 'text-slate-600 dark:text-slate-300'"
+                                        >
+                                            {{ $month }}
+                                        </button>
+                                    @endforeach
                                 </div>
-                                <h2 class="text-2xl font-black text-white uppercase tracking-wider relative z-10">{{ $monthYear }}</h2>
-                            </div>
-
-                            <!-- Events List -->
-                            <div class="p-5 space-y-6">
-                                @foreach($events as $event)
-                                    <div class="relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
-                                        
-                                        <!-- Event Image (if any) -->
-                                        @if($event->image)
-                                            <div class="mb-3 rounded-lg overflow-hidden h-32 w-full">
-                                                <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500">
-                                            </div>
-                                        @endif
-
-                                        <h3 class="text-lg font-bold text-text-light dark:text-text-dark leading-tight mb-1">
-                                            {{ $event->title }}
-                                        </h3>
-                                        
-                                        <div class="flex items-center gap-2 text-sm text-text-light/70 dark:text-text-dark/70 mb-2">
-                                            <i class="fa-solid fa-location-dot text-primary text-xs"></i>
-                                            <span class="truncate">{{ $event->location }}</span>
-                                        </div>
-
-                                        @if($event->description)
-                                            <div class="text-xs text-text-light/60 dark:text-text-dark/60 line-clamp-2 mb-2 prose prose-sm dark:prose-invert">
-                                                {!! Str::limit(strip_tags($event->description), 80) !!}
-                                            </div>
-                                        @endif
-
-                                        <div class="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full text-xs font-semibold text-text-light dark:text-text-dark">
-                                            <i class="fa-regular fa-clock text-primary"></i>
-                                            @if($event->end_date)
-                                                {{ $event->start_date->format('d') }} - {{ $event->end_date->format('d M') }}
-                                            @else
-                                                {{ $event->start_date->format('d F Y') }}
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-20">
-                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 dark:bg-white/5 mb-6">
-                        <i class="fa-regular fa-calendar-xmark text-4xl text-gray-400"></i>
+
+                        <!-- Location Dropdown (Custom) -->
+                        <div class="relative min-w-[220px]" x-data="{ open: false }">
+                            <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
+                            
+                            <button 
+                                @click="open = !open"
+                                @click.outside="open = false"
+                                class="w-full pl-11 pr-10 py-3 text-left rounded-xl ring-1 ring-gray-200 dark:ring-white/10 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between"
+                            >
+                                <span x-text="selectedLocation === '' ? 'Semua Lokasi' : selectedLocation" class="truncate"></span>
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                            </button>
+
+                            <div 
+                                x-show="open" 
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95"
+                                class="absolute z-50 mt-2 w-full bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-gray-100 dark:border-white/10 max-h-60 overflow-y-auto no-scrollbar"
+                                style="display: none;"
+                            >
+                                <div class="p-1">
+                                    <button 
+                                        @click="selectedLocation = ''; open = false"
+                                        class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                                        :class="selectedLocation === '' ? 'text-primary font-bold bg-primary/5' : 'text-slate-600 dark:text-slate-300'"
+                                    >
+                                        Semua Lokasi
+                                    </button>
+                                    @foreach($locations as $loc)
+                                        <button 
+                                            @click="selectedLocation = '{{ $loc }}'; open = false"
+                                            class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                                            :class="selectedLocation === '{{ $loc }}' ? 'text-primary font-bold bg-primary/5' : 'text-slate-600 dark:text-slate-300'"
+                                        >
+                                            {{ $loc }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <button 
+                            @click="search = ''; selectedMonth = ''; selectedLocation = ''"
+                            class="px-6 py-3 rounded-xl bg-white dark:bg-white/10 text-slate-600 dark:text-slate-300 font-bold text-sm ring-1 ring-gray-200 dark:ring-white/10 hover:bg-gray-100 dark:hover:bg-white/20 transition-colors"
+                            x-show="search || selectedMonth || selectedLocation"
+                            x-transition
+                        >
+                            Reset
+                        </button>
                     </div>
-                    <h3 class="text-xl font-bold text-text-light dark:text-text-dark mb-2">Belum Ada Event</h3>
-                    <p class="text-text-light/60 dark:text-text-dark/60">Saat ini belum ada jadwal event yang dipublikasikan.</p>
                 </div>
-            @endif
+
+                <!-- Events Grid -->
+                @if($allEvents->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
+                        @foreach($allEvents as $event)
+                        <a href="{{ route('events.public.show', $event) }}" 
+                           class="group block h-full transition-all duration-300"
+                           x-show="(selectedMonth === '' || '{{ $event->start_date->translatedFormat('F Y') }}' === selectedMonth) && 
+                                   (selectedLocation === '' || '{{ $event->location }}' === selectedLocation) && 
+                                   (search === '' || '{{ strtolower($event->title) }}'.toLowerCase().includes(search.toLowerCase()))"
+                           x-transition:enter="transition ease-out duration-300"
+                           x-transition:enter-start="opacity-0 scale-95"
+                           x-transition:enter-end="opacity-100 scale-100"
+                        >
+                            <div class="h-full flex flex-col bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden hover:border-primary/50 dark:hover:border-primary/50 transition-colors duration-300 shadow-sm hover:shadow-lg">
+                                
+                                <!-- Image 16:9 -->
+                                <div class="aspect-video w-full relative overflow-hidden bg-gray-100 dark:bg-white/5">
+                                    @if($event->image)
+                                        <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                    @else
+                                        <div class="flex items-center justify-center h-full text-gray-300">
+                                            <i class="fa-regular fa-image text-3xl"></i>
+                                        </div>
+                                    @endif
+                                    
+                                    <!-- Simple Date Badge -->
+                                    <div class="absolute top-3 right-3 bg-white dark:bg-black/80 px-3 py-1.5 rounded shadow-sm text-center border border-gray-100 dark:border-white/10">
+                                        <div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ $event->start_date->format('M') }}</div>
+                                        <div class="text-xl font-bold text-gray-800 dark:text-white leading-none">{{ $event->start_date->format('d') }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="p-5 flex flex-col flex-1">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded">Event</span>
+                                        <div class="text-xs text-gray-400 flex items-center gap-1">
+                                                <i class="fa-regular fa-clock"></i>
+                                                {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('H:i') : '-' }}
+                                        </div>
+                                    </div>
+
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                                        {{ $event->title }}
+                                    </h3>
+
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex items-start gap-1.5">
+                                        <i class="fa-solid fa-location-dot text-gray-400 mt-0.5"></i>
+                                        <span class="line-clamp-1">{{ $event->location }}</span>
+                                    </div>
+
+                                    <div class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-sm">
+                                        <span class="text-gray-400 group-hover:text-primary transition-colors">Lihat Detail</span>
+                                        <i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-primary transition-colors -translate-x-1 group-hover:translate-x-0 duration-300"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </a>
+                        @endforeach
+                        
+                        <!-- No Results Message (Pure Alpine) -->
+                        <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 hidden" 
+                             :class="{ '!block': !document.querySelectorAll('a[x-show]:not([style*=\'display: none\'])').length && (search || selectedMonth || selectedLocation) }">
+                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 dark:bg-white/5 mb-4 text-gray-400">
+                                <i class="fa-solid fa-magnifying-glass text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Tidak ditemukan</h3>
+                            <p class="text-gray-500">Coba kata kunci atau filter lain.</p>
+                        </div>
+                    </div>
+                @else
+                    <div class="py-20 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-xl">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 dark:bg-white/5 mb-4 text-gray-400">
+                            <i class="fa-regular fa-calendar-xmark text-3xl"></i>
+                        </div>
+                        <p class="text-gray-500 dark:text-gray-400 font-medium">Belum ada event jadwal event.</p>
+                    </div>
+                @endif
+
+            </div>
 
         </div>
     </div>
-
-    <style>
-        /* Simple CSS Masonry/Column layout for masonry effect */
-        @media (min-width: 768px) {
-            .masonry-grid {
-                column-count: 2;
-            }
-        }
-        @media (min-width: 1024px) {
-            .masonry-grid {
-                column-count: 3;
-            }
-        }
-    </style>
 </x-public-layout>

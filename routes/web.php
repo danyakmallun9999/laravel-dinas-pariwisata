@@ -22,6 +22,7 @@ Route::get('/berita/{post:slug}', [WelcomeController::class, 'showPost'])->name(
 Route::get('/destinasi', [WelcomeController::class, 'places'])->name('places.index');
 Route::get('/destinasi/{place:slug}', [WelcomeController::class, 'showPlace'])->name('places.show');
 Route::get('/calendar-of-events', [App\Http\Controllers\Public\EventController::class, 'index'])->name('events.public.index');
+Route::get('/calendar-of-events/{event:slug}', [App\Http\Controllers\Public\EventController::class, 'show'])->name('events.public.show');
 
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
