@@ -25,6 +25,7 @@
         "@fortawesome/fontawesome-free": "^7.1.0",
         "leaflet": "^1.9.4",
         "leaflet-draw": "^1.0.4",
+        "leaflet-routing-machine": "^3.2.12",
         "maplibre-gl": "^5.15.0",
         "material-symbols": "^0.40.2"
     }
