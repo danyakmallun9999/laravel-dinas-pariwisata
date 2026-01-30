@@ -30,7 +30,7 @@
                     <a class="flex items-center gap-3 text-slate-900 group" href="{{ route('welcome') }}">
                         <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" alt="Logo Kabupaten Jepara"
                             class="w-10 h-auto object-contain">
-                        <h2 class="text-xl font-bold leading-tight tracking-tight">Pesona Jepara</h2>
+                        <h2 class="text-xl font-bold leading-tight tracking-tight">Blusukan Jepara</h2>
                     </a>
                     <nav class="hidden lg:flex items-center gap-8">
                         <a class="text-sm font-medium text-slate-900 hover:text-primary transition-colors" href="{{ route('welcome') }}">Beranda</a>

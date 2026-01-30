@@ -14,7 +14,24 @@ class WelcomeController extends Controller
     public function index()
     {
         $categories = Category::withCount('places')->get();
+        
+        // Detailed Statistics
         $totalPlaces = Place::count();
+        
+        // Destinasi: Exclude Kuliner/Hotel to get true "Tourist Spots"
+        $countDestinasi = Place::whereHas('category', function($q) {
+            $q->whereNotIn('name', ['Kuliner', 'Hotel', 'Penginapan', 'Hotel & Penginapan']);
+        })->count();
+
+        // Kuliner Count
+        $countKuliner = $categories->first(fn($c) => \Illuminate\Support\Str::contains($c->name, 'Kuliner', true))?->places_count ?? 0;
+
+        // Event Count
+        $countEvent = \App\Models\Event::count();
+
+        // Desa Wisata / Wilayah
+        $countDesa = Boundary::count();
+
         $totalCategories = $categories->count();
         $totalBoundaries = Boundary::count(); // Represents Dukuh/Wilayah count
         $totalArea = Boundary::sum('area_hectares');
@@ -27,7 +44,11 @@ class WelcomeController extends Controller
 
         return view('welcome', compact(
             'categories', 
-            'totalPlaces', 
+            'totalPlaces',
+            'countDestinasi',
+            'countKuliner',
+            'countEvent',
+            'countDesa',
             'totalCategories', 
             'totalBoundaries', 
             'totalArea',

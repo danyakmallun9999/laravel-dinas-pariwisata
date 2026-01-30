@@ -377,71 +377,64 @@
     </script>
 
     <!-- Stats Section -->
-    <div class="w-full bg-background-light dark:bg-background-dark py-8">
+    <div class="w-full bg-background-light dark:bg-background-dark py-8 transition-colors duration-300">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
-                <div class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
-                    <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
-                        <span class="material-symbols-outlined">groups</span>
+            <!-- Responsive Grid: 1 col mobile, 2 cols tablet, 4 cols desktop -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
+                <!-- Destinasi Wisata -->
+                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
+                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                        <span class="material-symbols-outlined text-2xl">photo_camera</span>
                     </div>
                     <div>
-                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide">
-                            Jumlah Penduduk</p>
+                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
+                            Destinasi Wisata</p>
+                        <!-- Using $countDestinasi passed from controller -->
                         <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">
-                            1.250.000++</p>
-                        <p class="text-xs text-text-light/50">Jiwa</p>
+                            {{ $countDestinasi }}+</p>
+                        <p class="text-xs text-text-light/50 mt-1">Objek Wisata</p>
                     </div>
                 </div>
 
-                <!-- Area -->
-                <!-- Area -->
-                <div
-                    class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
-                    <div
-                        class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
-                        <span class="material-symbols-outlined">square_foot</span>
+                <!-- Kuliner Khas -->
+                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
+                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                        <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
                     </div>
                     <div>
-                        <p
-                            class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide">
-                             Wilayah Administratif</p>
+                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
+                             Kuliner Khas</p>
                         <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">
-                            {{ number_format($totalArea ?? 0, 1) }}</p>
-                        <p class="text-xs text-text-light/50">Hektar</p>
+                            {{ $countKuliner }}+</p>
+                        <p class="text-xs text-text-light/50 mt-1">Menu Favorit</p>
                     </div>
                 </div>
-                <!-- Dukuh -->
-                <!-- Dukuh -->
-                <div
-                    class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
-                    <div
-                        class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
-                        <span class="material-symbols-outlined">holiday_village</span>
+
+                <!-- Agenda Event -->
+                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
+                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                        <span class="material-symbols-outlined text-2xl">event_available</span>
                     </div>
                     <div>
-                        <p
-                            class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide">
-                            Kecamatan</p>
+                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
+                            Agenda Event</p>
                         <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">
-                            16</p>
-                        <p class="text-xs text-text-light/50">Wilayah</p>
+                            {{ $countEvent }}</p>
+                        <p class="text-xs text-text-light/50 mt-1">Acara Tahunan</p>
                     </div>
                 </div>
-                <!-- Industry -->
-                <!-- Industry -->
-                <div
-                    class="flex flex-col gap-3 rounded-xl p-4 md:p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-colors shadow-sm border border-transparent hover:border-primary/20">
-                    <div
-                        class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
-                        <span class="material-symbols-outlined">palette</span>
+
+                <!-- Desa Wisata -->
+                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
+                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                        <span class="material-symbols-outlined text-2xl">holiday_village</span>
                     </div>
                     <div>
-                        <p
-                            class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide">
-                            Potensi</p>
-                        <p class="text-text-light dark:text-text-dark text-xl font-bold tracking-tight">The World Carving Center
-                        </p>
-                        <p class="text-xs text-text-light/50">Nasional</p>
+                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
+                            Desa Wisata</p>
+                        <p class="text-text-light dark:text-text-dark text-xl font-bold tracking-tight leading-tight">
+                            {{ $countDesa }}</p>
+                        <p class="text-xs text-text-light/50 mt-1">Desa Potensial</p>
                     </div>
                 </div>
             </div>
@@ -573,10 +566,10 @@
             </div>
 
             <!-- Full Image Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-8 md:pb-0 px-4 md:px-0 -mx-4 md:mx-0 scrollbar-hide">
                 
                 <!-- Shima Card (Kalingga - Oldest) -->
-                <div class="group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none"
+                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none"
                      x-data="{ shown: false }" 
                      x-intersect.threshold.0.2="shown = true"
                      :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 transition-all duration-1000'">
@@ -605,7 +598,7 @@
                 </div>
 
                 <!-- Kalinyamat Card (16th Century) -->
-                <div class="group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-200"
+                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-200"
                      x-data="{ shown: false }" 
                      x-intersect.threshold.0.2="shown = true"
                      :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
@@ -634,7 +627,7 @@
                 </div>
 
                 <!-- Kartini Card (19th Century - Youngest) -->
-                <div class="group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-400"
+                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-400"
                      x-data="{ shown: false }" 
                      x-intersect.threshold.0.2="shown = true"
                      :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
@@ -987,7 +980,7 @@
                 
                 
                     <!-- 1. Pindang Serani -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/srani.png') }}" 
                              alt="Pindang Serani" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
@@ -996,113 +989,113 @@
                         <!-- Text Readability Gradient -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <!-- Content -->
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Pindang Serani</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Sup ikan laut dengan kuah bening segar berbumbu belimbing wuluh dan rempah khas Jepara.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Pindang Serani</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Sup ikan laut dengan kuah bening segar berbumbu belimbing wuluh dan rempah khas Jepara.</p>
                         </div>
                     </div>
 
                     <!-- 2. Durian Jepara -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/duren.png') }}" 
                              alt="Durian Jepara" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Durian Jepara</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Raja buah lokal Petruk dari Jepara dengan daging tebal manis dan aroma menggoda.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Durian Jepara</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Raja buah lokal Petruk dari Jepara dengan daging tebal manis dan aroma menggoda.</p>
                         </div>
                     </div>
 
                     <!-- 3. Adon-adon Coro -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/adon-coro.png') }}" 
                              alt="Adon-adon Coro" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Adon-adon Coro</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Minuman jamu tradisional hangat berbahan santan, jahe, gula merah, dan rempah pilihan.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Adon-adon Coro</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Minuman jamu tradisional hangat berbahan santan, jahe, gula merah, dan rempah pilihan.</p>
                         </div>
                     </div>
 
                     <!-- 4. Horog-horog -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/horog.png') }}" 
                              alt="Horog-horog" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Horog-horog</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Pengganti nasi unik bertekstur butiran kenyal, terbuat dari tepung pohon aren.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Horog-horog</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Pengganti nasi unik bertekstur butiran kenyal, terbuat dari tepung pohon aren.</p>
                         </div>
                     </div>
 
                     <!-- 5. Carang Madu -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/carang-madu.png') }}" 
                              alt="Carang Madu" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Carang Madu</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kue oleh-oleh renyah berbentuk sarang madu dengan siraman gula merah manis.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Carang Madu</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kue oleh-oleh renyah berbentuk sarang madu dengan siraman gula merah manis.</p>
                         </div>
                     </div>
 
                     <!-- 6. Es Gempol Pleret -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/gempol.png') }}" 
                              alt="Es Gempol Pleret" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Es Gempol Pleret</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Minuman es segar berisi gempol beras dan pleret tepung, disiram kuah santan dan sirup.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Es Gempol Pleret</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Minuman es segar berisi gempol beras dan pleret tepung, disiram kuah santan dan sirup.</p>
                         </div>
                     </div>
 
                     <!-- 7. Kopi Jeparanan -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/kopi.png') }}" 
                              alt="Kopi Jeparanan" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Kopi Jeparanan</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kopi robusta khas pegunungan Muria Jepara dengan aroma kuat dan cita rasa otentik.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Kopi Jeparanan</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kopi robusta khas pegunungan Muria Jepara dengan aroma kuat dan cita rasa otentik.</p>
                         </div>
                     </div>
 
                     <!-- 8. Kacang Listrik -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/kcang.png') }}" 
                              alt="Kacang Listrik" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Kacang Listrik</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kacang tanah sangrai unik yang dimatangkan dengan bantuan oven, gurih dan renyah.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Kacang Listrik</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kacang tanah sangrai unik yang dimatangkan dengan bantuan oven, gurih dan renyah.</p>
                         </div>
                     </div>
 
                     <!-- 9. Krupuk Ikan Tengiri -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset('images/kuliner-jppr/krpktgr.png') }}" 
                              alt="Krupuk Ikan Tengiri" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                            <h3 class="text-white font-bold text-4xl lg:text-5xl mb-3 drop-shadow-2xl">Krupuk Ikan Tengiri</h3>
-                            <p class="text-white/95 text-lg lg:text-xl max-w-xl mb-6 leading-relaxed drop-shadow-lg">Kerupuk gurih dengan rasa ikan tengiri asli yang kuat, oleh-oleh wajib khas pesisir.</p>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Krupuk Ikan Tengiri</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kerupuk gurih dengan rasa ikan tengiri asli yang kuat, oleh-oleh wajib khas pesisir.</p>
                         </div>
                     </div>
 

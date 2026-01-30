@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Jelajahi Peta - Desa Mayong Lor</title>
+    <title>Jelajahi Destinasi</title>
     
     
     <!-- Local assets handled by Vite -->
