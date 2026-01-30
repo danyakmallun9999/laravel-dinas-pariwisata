@@ -66,6 +66,7 @@ class WelcomeController extends Controller
                         'address' => $place->address,
                         'google_maps_link' => $place->google_maps_link,
                         'notes' => $place->notes,
+                        'slug' => $place->slug,
                     ],
                     'geometry' => [
                         'type' => 'Point',
@@ -221,5 +222,31 @@ class WelcomeController extends Controller
     public function showPlace(\App\Models\Place $place)
     {
         return view('public.places.show', compact('place'));
+    }
+
+    public function searchPlaces(\Illuminate\Http\Request $request)
+    {
+        $query = $request->get('q');
+        
+        if (!$query) {
+            return response()->json([]);
+        }
+
+        $places = Place::where('name', 'like', "%{$query}%")
+            ->select('id', 'name', 'slug', 'description', 'image_path')
+            ->take(5)
+            ->get()
+            ->map(function ($place) {
+                return [
+                    'id' => $place->id,
+                    'name' => $place->name,
+                    'slug' => $place->slug,
+                    'description' => \Illuminate\Support\Str::limit($place->description, 50),
+                    'image_url' => $place->image_path ? asset($place->image_path) : null,
+                    'type' => 'Lokasi'
+                ];
+            });
+
+        return response()->json($places);
     }
 }

@@ -93,7 +93,7 @@
                     <a class="flex items-center gap-3 text-text-light dark:text-text-dark group" href="#">
                         <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" alt="Logo Kabupaten Jepara"
                             class="w-10 h-auto object-contain">
-                        <h2 class="text-xl font-bold leading-tight tracking-tight">Pesona Jepara</h2>
+                        <h2 class="text-xl font-bold leading-tight tracking-tight">Blusukan Jepara</h2>
                     </a>
                     <nav class="hidden lg:flex items-center gap-8">
                         <a class="text-sm font-medium transition-colors {{ request()->routeIs('welcome') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
@@ -122,7 +122,7 @@
                             <input
                                 class="w-full bg-transparent border-none text-sm px-3 text-text-light dark:text-text-dark placeholder-gray-500 focus:ring-0"
                                 placeholder="Cari lokasi, data..." type="text" x-model="searchQuery"
-                                @input.debounce.300ms="performSearch()" @keydown.enter="scrollToMap()" />
+                                @input.debounce.50ms="performSearch()" @keydown.enter="scrollToMap()" />
                         </div>
 
                         <!-- Search Results Dropdown -->
@@ -235,7 +235,7 @@
                         </span>
                         <h1
                             class="text-white text-3xl sm:text-5xl lg:text-7xl font-black leading-tight tracking-tight drop-shadow-sm animate-fade-in-up">
-                            Jepara<br /> The World Carving Center
+                            Blusukan Jepara.<br /> Ukir Cerita Serumu Disini
                         </h1>
                         <p
                             class="text-gray-100 text-lg sm:text-xl font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-sm animate-fade-in-up delay-100">
@@ -245,7 +245,7 @@
                             class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-in-up delay-200">
                             <a class="flex items-center justify-center h-12 px-8 rounded-full bg-primary hover:bg-primary-dark text-white text-base font-bold shadow-lg shadow-black/20 transition-all hover:-translate-y-0.5"
                                 href="{{ route('explore.map') }}">
-                                Jelajahi Peta GIS
+                                Jelajahi Destinasi
                             </a>
                             <a href="#profile"
                                 class="hidden sm:flex items-center justify-center h-12 px-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white text-base font-bold transition-all">
@@ -1361,30 +1361,55 @@
                 },
 
                 async fetchAllData() {
+                    this.loading = true;
                     try {
-                        this.loading = true;
+                        // Fetch Places (Critical for Search)
+                        const placesUrl = '{{ route('places.geojson') }}';
+                        console.log('Fetching:', placesUrl);
+                        
+                        const placesResponse = await fetch(placesUrl);
+                        console.log('Places Response Status:', placesResponse.status);
 
-                        const [places, boundaries, infrastructures, landUses] = await Promise.all([
-                            fetch('{{ route('places.geojson') }}').then(r => r.json()),
+                        if (!placesResponse.ok) {
+                            throw new Error(`HTTP Error ${placesResponse.status}`);
+                        }
+
+                        const placesData = await placesResponse.json();
+                        
+                        // Validation
+                        if (!placesData.features) {
+                            console.error('Invalid GeoJSON format:', placesData);
+                            alert('Error: Data peta tidak valid (Format GeoJSON salah).');
+                        }
+
+                        this.geoFeatures = placesData.features || [];
+                        this.allPlaces = placesData.features || [];
+                        console.log('Loaded Places:', this.allPlaces.length);
+
+                        if (this.allPlaces.length === 0) {
+                             console.warn('Warning: No places received from server.');
+                        }
+
+                        this.updateMapMarkers();
+
+                    } catch (e) {
+                         console.error('PLACES FETCH ERROR:', e);
+                         alert('Gagal memuat data destinasi: ' + e.message);
+                    }
+
+                    // Background load for other layers (non-critical)
+                    try {
+                        const [boundaries, infrastructures, landUses] = await Promise.all([
                             fetch('{{ route('boundaries.geojson') }}').then(r => r.json()),
                             fetch('{{ route('infrastructures.geojson') }}').then(r => r.json()),
                             fetch('{{ route('land_uses.geojson') }}').then(r => r.json())
                         ]);
 
-                        // Store raw features
-                        this.geoFeatures = places.features || []; // Places with geometry
-                        this.allPlaces = places.features || [];
-
-                        // Load Layers
                         this.loadBoundaries(boundaries.features || []);
                         this.loadInfrastructures(infrastructures.features || []);
                         this.loadLandUses(landUses.features || []);
-
-                        // Initial Markers Render
-                        this.updateMapMarkers();
-
                     } catch (e) {
-                        console.error('Error loading data:', e);
+                        console.error('Layer load error:', e);
                     } finally {
                         this.loading = false;
                     }
@@ -1519,22 +1544,35 @@
                 },
 
                 performSearch() {
-                    if (this.searchQuery.length < 2) {
+                    console.log('Searching for:', this.searchQuery); // DEBUG
+                    const q = this.searchQuery;
+                    
+                    if (!q) {
                         this.searchResults = [];
                         return;
                     }
-                    const q = this.searchQuery.toLowerCase();
-                    const matches = this.allPlaces.filter(p => p.properties.name.toLowerCase().includes(q))
-                        .map(p => ({
-                            ...p.properties,
-                            coords: [...p.geometry.coordinates].reverse(),
-                            type: 'Lokasi',
-                            feature: p
-                        }));
-                    this.searchResults = matches.slice(0, 5);
+
+                    // Server-side Search
+                    fetch(`/search/places?q=${encodeURIComponent(q)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log('Server Search Results:', data); // DEBUG
+                            this.searchResults = data;
+                        })
+                        .catch(err => {
+                            console.error('Search Error:', err);
+                        });
                 },
 
                 selectFeature(result) {
+                    console.log('Selected feature:', result); // DEBUG
+                    // If result has a slug (is a Place), redirect to detail page
+                    if (result.slug) {
+                        console.log('Redirecting to:', `/destinasi/${result.slug}`); // DEBUG
+                        window.location.href = `/destinasi/${result.slug}`;
+                        return;
+                    }
+
                     this.selectedFeature = result;
                     this.zoomToFeature(result);
                     this.searchResults = [];

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/explore-map', [WelcomeController::class, 'exploreMap'])->name('explore.map');
 Route::get('/places.geojson', [WelcomeController::class, 'geoJson'])->name('places.geojson');
+Route::get('/search/places', [WelcomeController::class, 'searchPlaces'])->name('search.places');
 Route::get('/boundaries.geojson', [WelcomeController::class, 'boundariesGeoJson'])->name('boundaries.geojson');
 Route::get('/infrastructures.geojson', [WelcomeController::class, 'infrastructuresGeoJson'])->name('infrastructures.geojson');
 Route::get('/land_uses.geojson', [WelcomeController::class, 'landUsesGeoJson'])->name('land_uses.geojson');
