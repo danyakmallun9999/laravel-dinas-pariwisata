@@ -4,7 +4,7 @@
         <!-- Immersive Hero Section -->
         <div class="relative h-[85vh] w-full overflow-hidden group">
             @if($place->image_path)
-                <img src="{{ $place->image_path }}" alt="{{ $place->name }}" class="w-full h-full object-cover attachment-fixed transform scale-105 group-hover:scale-100 transition-transform duration-[3s] ease-out">
+                <img src="{{ asset($place->image_path) }}" alt="{{ $place->name }}" class="w-full h-full object-cover attachment-fixed transform scale-105 group-hover:scale-100 transition-transform duration-[3s] ease-out">
             @else
                 <div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
                     <span class="material-symbols-outlined text-8xl text-slate-300">image</span>
@@ -149,26 +149,117 @@
                     </div>
                     @endif
 
-                    <!-- Gallery Section -->
+                    <!-- Gallery Section with Lightbox -->
                     @if($place->images->count() > 0 || $place->image_path)
-                    <div>
+                    <div x-data="{ 
+                        lightboxOpen: false, 
+                        activeImage: '', 
+                        images: {{ json_encode(
+                            collect([$place->image_path])
+                                ->concat($place->images->pluck('image_path'))
+                                ->filter()
+                                ->unique()
+                                ->map(fn($path) => asset($path))
+                                ->values()
+                        ) }},
+                        get activeIndex() { return this.images.indexOf(this.activeImage); },
+                        prev() {
+                            let index = this.activeIndex;
+                            this.activeImage = this.images[index - 1 < 0 ? this.images.length - 1 : index - 1];
+                        },
+                        next() {
+                            let index = this.activeIndex;
+                            this.activeImage = this.images[index + 1 >= this.images.length ? 0 : index + 1];
+                        },
+                        openLightbox(img) {
+                            this.activeImage = img;
+                            this.lightboxOpen = true;
+                        }
+                    }">
                         <div class="flex items-center gap-3 mb-8">
                              <div class="h-1 w-10 bg-primary rounded-full"></div>
                              <h2 class="text-2xl font-display font-bold text-slate-800 dark:text-white">Galeri Foto</h2>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[200px]">
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px]">
                             @if($place->image_path)
-                            <div class="md:col-span-2 row-span-2 rounded-2xl overflow-hidden shadow-lg group">
-                                <img src="{{ $place->image_path }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <div class="md:col-span-2 row-span-2 rounded-2xl overflow-hidden shadow-lg group cursor-pointer relative" @click="openLightbox('{{ asset($place->image_path) }}')">
+                                <img src="{{ asset($place->image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
                             </div>
                             @endif
                             
                             @foreach($place->images as $image)
-                            <div class="rounded-2xl overflow-hidden shadow-lg group">
-                                <img src="{{ $image->image_path }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <div class="rounded-2xl overflow-hidden shadow-lg group cursor-pointer relative" @click="openLightbox('{{ asset($image->image_path) }}')">
+                                <img src="{{ asset($image->image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
                             </div>
                             @endforeach
                         </div>
+
+                        <!-- Lightbox Modal (Teleported to Body) -->
+                        <template x-teleport="body">
+                            <template x-if="lightboxOpen">
+                                <div 
+                                    x-show="lightboxOpen" 
+                                    style="display: none;"
+                                    class="fixed inset-0 z-[10001] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4"
+                                    x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0"
+                                    x-transition:enter-end="opacity-100"
+                                    x-transition:leave="transition ease-in duration-200"
+                                    x-transition:leave-start="opacity-100"
+                                    x-transition:leave-end="opacity-0"
+                                    @keydown.escape.window="lightboxOpen = false"
+                                    @keydown.arrow-left.window="if(lightboxOpen) prev()"
+                                    @keydown.arrow-right.window="if(lightboxOpen) next()"
+                                    @click="lightboxOpen = false"
+                                >
+                                    <!-- Close Button -->
+                                    <button @click.stop="lightboxOpen = false" class="absolute top-6 right-6 text-white/50 hover:text-white transition-colors z-[10002] p-2 hover:bg-white/10 rounded-full">
+                                        <span class="material-symbols-outlined text-3xl">close</span>
+                                    </button>
+                                    
+                                    <!-- Prev Button -->
+                                    <button @click.stop="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-[10002] p-4 hover:bg-white/10 rounded-full transition-all hidden md:block">
+                                        <span class="material-symbols-outlined text-4xl">chevron_left</span>
+                                    </button>
+                                    
+                                    <!-- Next Button -->
+                                    <button @click.stop="next()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-[10002] p-4 hover:bg-white/10 rounded-full transition-all hidden md:block">
+                                        <span class="material-symbols-outlined text-4xl">chevron_right</span>
+                                    </button>
+
+                                    <!-- Content Wrapper (Allow propagation to backdrop) -->
+                                    <div class="relative flex flex-col items-center justify-center max-h-screen w-full select-none">
+                                         
+                                         <!-- Image Counter -->
+                                         <div class="absolute -top-12 left-1/2 -translate-x-1/2 text-white/80 font-medium text-sm tracking-widest bg-black/50 px-4 py-1 rounded-full backdrop-blur-sm" @click.stop>
+                                            <span x-text="activeIndex + 1"></span> / <span x-text="images.length"></span>
+                                         </div>
+
+                                         <!-- Image -->
+                                         <img 
+                                            :src="activeImage" 
+                                            class="max-h-[80vh] max-w-full rounded-lg shadow-2xl object-contain transition-all duration-300"
+                                            x-transition:enter="transition ease-out duration-300"
+                                            x-transition:enter-start="opacity-50 scale-95"
+                                            x-transition:enter-end="opacity-100 scale-100"
+                                            @click.stop
+                                         >
+                                         
+                                         <!-- Gallery Navigation -->
+                                         <div class="mt-6 flex gap-2 overflow-x-auto max-w-[90vw] p-2 scrollbar-hide" @click.stop>
+                                             <template x-for="(img, index) in images">
+                                                 <button @click="activeImage = img" class="w-16 h-16 rounded-lg overflow-hidden border-2 transition-all shrink-0 relative group" :class="activeImage === img ? 'border-primary opacity-100 scale-105' : 'border-transparent opacity-50 hover:opacity-80'">
+                                                     <img :src="img" class="w-full h-full object-cover">
+                                                 </button>
+                                             </template>
+                                         </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
                     </div>
                     @endif
                 </div>

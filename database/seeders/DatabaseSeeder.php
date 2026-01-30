@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductSeeder::class);
         $this->call(PostSeeder::class);
         $this->call(BoundarySeeder::class);
+        $this->call(DestinasiImageSeeder::class);
 
 
         // Fetch Categories
