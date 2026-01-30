@@ -22,7 +22,21 @@ class WelcomeController extends Controller
         // $totalLandUses = LandUse::count();
         $lastUpdate = Place::latest('updated_at')->first()?->updated_at;
         // $population = \App\Models\Population::first();
-        $places = \App\Models\Place::with('category')->latest()->take(6)->get();
+        $places = \App\Models\Place::with('category')
+            ->whereDoesntHave('category', function ($query) {
+                $query->whereIn('slug', ['wisata-kuliner', 'kebudayaan']);
+            })
+            ->latest()
+            ->take(6)
+            ->get();
+
+        $cultures = \App\Models\Place::with('category')
+            ->whereHas('category', function ($query) {
+                $query->where('slug', 'kebudayaan');
+            })
+            ->latest()
+            ->get();
+
         $posts = \App\Models\Post::where('is_published', true)->latest('published_at')->take(3)->get();
 
         return view('welcome', compact(
@@ -36,7 +50,8 @@ class WelcomeController extends Controller
             'lastUpdate', 
             // 'population',
             'places',
-            'posts'
+            'posts',
+            'cultures'
         ));
     }
 
@@ -208,7 +223,12 @@ class WelcomeController extends Controller
     public function places()
     {
         $categories = \App\Models\Category::withCount('places')->get();
-        $places = \App\Models\Place::with('category')->latest()->get();
+        $places = \App\Models\Place::with('category')
+            ->whereDoesntHave('category', function ($query) {
+                $query->whereIn('slug', ['wisata-kuliner', 'kebudayaan']);
+            })
+            ->latest()
+            ->get();
 
         return view('public.places.index', compact('places', 'categories'));
     }
@@ -221,5 +241,15 @@ class WelcomeController extends Controller
     public function showPlace(\App\Models\Place $place)
     {
         return view('public.places.show', compact('place'));
+    }
+
+    public function showCulinary(\App\Models\Place $place)
+    {
+        return view('public.culinary.show', compact('place'));
+    }
+
+    public function showCulture(\App\Models\Place $place)
+    {
+        return view('public.culture.show', compact('place'));
     }
 }

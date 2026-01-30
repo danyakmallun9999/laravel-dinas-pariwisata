@@ -21,6 +21,8 @@ Route::get('/berita', [WelcomeController::class, 'posts'])->name('posts.index');
 Route::get('/berita/{post:slug}', [WelcomeController::class, 'showPost'])->name('posts.show');
 Route::get('/destinasi', [WelcomeController::class, 'places'])->name('places.index');
 Route::get('/destinasi/{place:slug}', [WelcomeController::class, 'showPlace'])->name('places.show');
+Route::get('/kuliner/{place:slug}', [WelcomeController::class, 'showCulinary'])->name('culinary.show');
+Route::get('/kebudayaan/{place:slug}', [WelcomeController::class, 'showCulture'])->name('culture.show');
 Route::get('/calendar-of-events', [App\Http\Controllers\Public\EventController::class, 'index'])->name('events.public.index');
 
 Route::get('/dashboard', function () {
