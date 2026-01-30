@@ -1153,7 +1153,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;900&display=swap');
     </style>
-    <footer class="bg-gray-900/50 bg-cover bg-center bg-no-repeat bg-blend-multiply border-t border-white/10 pt-32 pb-8 px-4 md:px-10" style="font-family: 'Poppins', sans-serif; background-image: url('{{ asset('images/footer/image.png') }}');">
+    <footer class="bg-gray-900/90 bg-cover bg-[60%_top] md:bg-[center_35%] bg-no-repeat bg-blend-multiply border-t border-white/10 pt-16 md:pt-32 pb-8 px-8 md:px-10" style="font-family: 'Poppins', sans-serif; background-image: url('{{ asset('images/footer/image.png') }}');">
         <div class="w-full mx-auto max-w-7xl">
             
             <!-- Baris 1: DINAS PARIWISATA DAN KEBUDAYAAN -->
@@ -1170,8 +1170,48 @@
             <!-- Baris 2: KABUPATEN JEPARA -->
             <div class="flex justify-between w-full text-center text-[7.5vw] font-[900] text-white drop-shadow-lg uppercase tracking-tighter mb-10 leading-[0.8] select-none">
                 <span>K</span><span>A</span><span>B</span><span>U</span><span>P</span><span>A</span><span>T</span><span>E</span><span>N</span>
-                <span class="invisible inline-block w-[3vw]">_</span>
+                <span class="invisible inline-block w-[4vw] md:w-[1.5vw]">_</span>
                 <span class="text-white">J</span><span class="text-white">E</span><span class="text-white">P</span><span class="text-white">A</span><span class="text-white">R</span><span class="text-white">A</span>
+            </div>
+
+            <!-- Links Section -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-10 mb-12 text-left">
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4 uppercase tracking-wider drop-shadow-md">Jelajahi</h3>
+                    <ul class="space-y-2 text-white/80">
+                        <li><a href="{{ route('welcome') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Beranda</a></li>
+                        <li><a href="{{ route('places.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Destinasi</a></li>
+                        <li><a href="{{ route('explore.map') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Peta Wisata</a></li>
+                        <li><a href="{{ route('events.public.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Agenda</a></li>
+                        <li><a href="{{ route('posts.index') }}" class="hover:text-white hover:translate-x-1 transition-all inline-block">Berita</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4 uppercase tracking-wider drop-shadow-md">Kategori</h3>
+                     <ul class="space-y-2 text-white/80">
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 transition-all inline-block">Wisata Alam</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 transition-all inline-block">Wisata Budaya</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 transition-all inline-block">Wisata Kuliner</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 transition-all inline-block">Wisata Religi</a></li>
+                    </ul>
+                </div>
+                <div class="col-span-2 md:col-span-1 text-center md:text-left">
+                    <h3 class="text-white text-lg font-bold mb-4 uppercase tracking-wider drop-shadow-md">Hubungi Kami</h3>
+                    <ul class="space-y-3 text-white/80">
+                        <li class="flex justify-center md:justify-start items-start gap-3">
+                            <i class="fa-solid fa-location-dot mt-1 text-white"></i>
+                            <span>Jl. Kartini No.1, Panggang I, Panggang, Kec. Jepara, Kabupaten Jepara, Jawa Tengah 59411</span>
+                        </li>
+                        <li class="flex justify-center md:justify-start items-center gap-3">
+                            <i class="fa-solid fa-phone text-white"></i>
+                            <span>(0291) 591148</span>
+                        </li>
+                        <li class="flex justify-center md:justify-start items-center gap-3">
+                            <i class="fa-solid fa-envelope text-white"></i>
+                            <span>disparbud@jepara.go.id</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <!-- Divider -->
@@ -1180,13 +1220,13 @@
             <!-- Info Icons & Copyright -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-10">
                 
-                <div class="flex items-center gap-10 opacity-80 hover:opacity-100 transition-opacity duration-300 -translate-y-4">
+                <div class="flex items-center gap-6 md:gap-10 opacity-80 hover:opacity-100 transition-opacity duration-300 -translate-y-4">
                     <div class="flex items-center drop-shadow-md">
-                        <img src="{{ asset('images/footer/wndrfl-indonesia.png') }}" alt="Wonderful Indonesia" class="h-20 w-auto object-contain contrast-150 drop-shadow-[0_0_1px_rgba(255,255,255,0.8)]">
+                        <img src="{{ asset('images/footer/wndrfl-indonesia2.png') }}" alt="Wonderful Indonesia" class="h-16 w-auto object-contain contrast-150 drop-shadow-[0_0_1px_rgba(255,255,255,0.8)]">
                     </div>
                     
                     <div class="flex items-center drop-shadow-md">
-                        <img src="{{ asset('images/footer/logo-jpr-psn.png') }}" alt="Jepara Mempesona" class="h-20 w-auto object-contain">
+                        <img src="{{ asset('images/footer/logo-jpr-psn.png') }}" alt="Jepara Mempesona" class="h-28 w-auto object-contain">
                     </div>
                 </div>
 
