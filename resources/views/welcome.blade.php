@@ -785,9 +785,6 @@
                                     <span class="material-symbols-outlined text-sm text-yellow-400">star</span>
                                     <span class="text-sm font-bold">{{ $place->rating }}</span>
                                 </div>
-                                <span class="text-white/90 text-sm font-medium">
-                                    {{ $place->ticket_price == 'Gratis' ? 'Gratis' : $place->ticket_price }}
-                                </span>
                             </div>
                         </div>
                     </a>
