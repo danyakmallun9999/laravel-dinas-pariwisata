@@ -820,7 +820,7 @@
                         <span class="material-symbols-outlined">chevron_left</span>
                     </button>
                     <button @click="scrollRight()"
-                        class="size-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">
+                        class="size-10 rounded-full border border-surface-light dark:border-white/10 flex items-center justify-center hover:bg-surface-light dark:hover:bg-white/5 text-text-light dark:text-text-dark transition-colors">
                         <span class="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
@@ -1081,7 +1081,7 @@
                         <span class="material-symbols-outlined">chevron_left</span>
                     </button>
                     <button @click="scrollRight()"
-                        class="size-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">
+                        class="size-10 rounded-full border border-surface-light dark:border-white/10 flex items-center justify-center hover:bg-surface-light dark:hover:bg-white/5 text-text-light dark:text-text-dark transition-colors">
                         <span class="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
