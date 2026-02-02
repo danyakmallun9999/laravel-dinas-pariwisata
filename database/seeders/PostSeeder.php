@@ -34,7 +34,7 @@ class PostSeeder extends Seeder
                 'title' => 'Pameran Seni Ukir Internasional',
                 'content' => 'Jangan lewatkan Pameran Seni Ukir Internasional yang akan diadakan di Alun-alun Jepara. Menghadirkan karya terbaik dari pengrajin lokal dan mancanegara.',
                 'type' => 'event',
-                'image_path' => 'https://images.unsplash.com/photo-1599388145876-0f81d8564264?auto=format&fit=crop&w=800&q=80',
+                'image_path' => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
                 'published_at' => now()->addDays(10), // Future event
                 'is_published' => true,
             ],
