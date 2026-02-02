@@ -752,18 +752,33 @@
         },
         scrollToIndex(index) {
             const container = $refs.container;
-            const itemWidth = container.children[0]?.offsetWidth || 0;
-            const gap = 24; // gap-6 = 24px
-            container.scrollTo({ left: index * (itemWidth + gap), behavior: 'smooth' });
+            if (!container) return;
+            
+            // Proportional scrolling to match the index
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            if (maxScroll <= 0) return;
+            
+            const targetProp = index / (this.totalItems - 1);
+            const targetPos = targetProp * maxScroll;
+            
+            container.scrollTo({ left: targetPos, behavior: 'smooth' });
             setTimeout(() => this.updateCurrentIndex(), 300);
         },
         updateCurrentIndex() {
             const container = $refs.container;
             if (!container || !container.children.length) return;
+            
             const scrollLeft = container.scrollLeft;
-            const itemWidth = container.children[0].offsetWidth;
-            const gap = 24;
-            this.currentIndex = Math.round(scrollLeft / (itemWidth + gap));
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            
+            if (maxScroll <= 0) {
+                this.currentIndex = 0;
+                return;
+            }
+            
+            // Map scroll percentage to index range
+            const scrollValues = scrollLeft / maxScroll;
+            this.currentIndex = Math.round(scrollValues * (this.totalItems - 1));
         },
         startAutoplay() {
             this.stopAutoplay();
