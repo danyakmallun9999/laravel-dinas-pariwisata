@@ -676,7 +676,7 @@
             </div>
 
             <!-- Horizontal Accordion -->
-            <div class="flex flex-col md:flex-row h-[600px] w-full gap-4">
+            <div class="flex flex-col md:flex-row h-[700px] md:h-[600px] w-full gap-4">
                 @foreach($cultures as $index => $culture)
                 <div class="relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group shadow-2xl border border-white/5"
                      :class="active === {{ $index }} ? 'flex-[10] md:flex-[5] opacity-100' : 'flex-[2] md:flex-[1] opacity-70 hover:opacity-100'"
@@ -704,22 +704,22 @@
                     </div>
 
                     <!-- Active State Content -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 transition-all duration-700 transform"
+                    <div class="absolute bottom-0 left-0 right-0 p-6 md:p-12 transition-all duration-700 transform"
                          :class="active === {{ $index }} ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'">
                         
                         <div class="flex flex-col items-start max-w-2xl">
-                            <span class="inline-block px-3 py-1 rounded-full bg-primary/90 text-white text-xs font-bold mb-4 backdrop-blur-sm shadow-lg">
+                            <span class="inline-block px-3 py-1 rounded-full bg-primary/90 text-white text-[10px] md:text-xs font-bold mb-3 md:mb-4 backdrop-blur-sm shadow-lg">
                                 {{ $culture->location }}
                             </span>
-                            <h3 class="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-md">
+                            <h3 class="text-2xl md:text-5xl font-bold text-white mb-2 md:mb-4 leading-tight drop-shadow-md">
                                 {{ $culture->name }}
                             </h3>
-                            <p class="text-gray-200 text-lg md:text-xl line-clamp-3 mb-6 leading-relaxed">
+                            <p class="text-gray-200 text-sm md:text-xl line-clamp-3 mb-4 md:mb-6 leading-relaxed">
                                 {{ $culture->description }}
                             </p>
-                            <div class="flex items-center gap-4 text-sm font-medium text-blue-300">
+                            <div class="flex items-center gap-4 text-xs md:text-sm font-medium text-blue-300">
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-lg">calendar_month</span>
+                                    <span class="material-symbols-outlined text-base md:text-lg">calendar_month</span>
                                     {{ $culture->highlight }}
                                 </span>
                             </div>
