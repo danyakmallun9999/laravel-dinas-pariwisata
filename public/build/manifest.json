@@ -412,7 +412,11 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
+<<<<<<< HEAD
     "file": "assets/app-Dy8bTsAL.css",
+=======
+    "file": "assets/app-CqrCFess.css",
+>>>>>>> ab618f2 (haha)
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
