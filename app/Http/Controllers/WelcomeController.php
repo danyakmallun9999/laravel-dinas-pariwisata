@@ -265,16 +265,6 @@ class WelcomeController extends Controller
         return view('public.places.show', compact('place'));
     }
 
-<<<<<<< HEAD
-    public function showCulinary(\App\Models\Place $place)
-    {
-        return view('public.culinary.show', compact('place'));
-    }
-
-    public function showCulture(\App\Models\Place $place)
-    {
-        return view('public.culture.show', compact('place'));
-=======
     public function searchPlaces(\Illuminate\Http\Request $request)
     {
         $query = $request->get('q');
@@ -299,6 +289,5 @@ class WelcomeController extends Controller
             });
 
         return response()->json($places);
->>>>>>> e68d8cfc47f65f548f6127d4eda4db82992c7dfb
     }
 }
