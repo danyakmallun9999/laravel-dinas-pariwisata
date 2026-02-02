@@ -379,6 +379,14 @@
     "file": "assets/spritesheet-DpIxuf5L.svg",
     "src": "node_modules/leaflet-draw/dist/images/spritesheet.svg"
   },
+  "node_modules/leaflet-routing-machine/dist/leaflet.routing.icons.png": {
+    "file": "assets/leaflet.routing.icons-D1_G_SEE.png",
+    "src": "node_modules/leaflet-routing-machine/dist/leaflet.routing.icons.png"
+  },
+  "node_modules/leaflet-routing-machine/dist/routing-icon.png": {
+    "file": "assets/routing-icon-DR3Yqk3O.png",
+    "src": "node_modules/leaflet-routing-machine/dist/routing-icon.png"
+  },
   "node_modules/leaflet/dist/images/layers-2x.png": {
     "file": "assets/layers-2x-Bpkbi35X.png",
     "src": "node_modules/leaflet/dist/images/layers-2x.png"
@@ -404,7 +412,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-rVrjAPQI.css",
+    "file": "assets/app-Dy8bTsAL.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -413,9 +421,16 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-CQt5CXTf.js",
+    "file": "assets/app-CQ1UtxIa.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "css": [
+      "assets/app-pLh0Kfdc.css"
+    ],
+    "assets": [
+      "assets/leaflet.routing.icons-D1_G_SEE.png",
+      "assets/routing-icon-DR3Yqk3O.png"
+    ]
   }
 }
