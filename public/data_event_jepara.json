@@ -1,0 +1,536 @@
+{
+  "metadata": {
+    "title": "Data Event dan Festival Kabupaten Jepara",
+    "description": "Kalender event budaya, festival, dan acara tahunan di Kabupaten Jepara tahun 2026",
+    "total_event": 73,
+    "tahun": "2026",
+    "last_updated": "2026-02-02",
+    "statistik_per_bulan": {
+      "Januari": 1,
+      "Februari": 2,
+      "Maret": 10,
+      "April": 14,
+      "Mei": 13,
+      "Juni": 8,
+      "Juli": 6,
+      "Agustus": 8,
+      "September": 1,
+      "Oktober": 5,
+      "November": 2,
+      "Desember": 3
+    }
+  },
+  "data_event": [
+    {
+      "no": 1,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "29/01/2026 (Setiap hari kamis legi)",
+      "bulan": "Januari",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 2,
+      "nama_event": "Tradisi Budaya Baratan Kalinyamatan",
+      "tanggal_pelaksanaan": "1-Feb-26",
+      "bulan": "Februari",
+      "lokasi_pelaksanaan": "Lapangan Desa Bandungrejo, Kec. Kalinyamatan"
+    },
+    {
+      "no": 3,
+      "nama_event": "Pekan Budaya Desa Kriyan Baratan 2026 - Grebeg Kutho Bedah",
+      "tanggal_pelaksanaan": "8-Feb-26",
+      "bulan": "Februari",
+      "lokasi_pelaksanaan": "Pelataran Masjid Al Makmur Kriyan"
+    },
+    {
+      "no": 4,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "05/03/2026 (Setiap hari kamis legi)",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 5,
+      "nama_event": "Takbir Keliling Desa Ngabul",
+      "tanggal_pelaksanaan": "19-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "LAPANGAN DESA NGABUL"
+    },
+    {
+      "no": 6,
+      "nama_event": "Takbir Keliling Desa Mayongkidul",
+      "tanggal_pelaksanaan": "20-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "Start dan Finish Depan Balai Desa Mayongkidul"
+    },
+    {
+      "no": 7,
+      "nama_event": "Festival Pangangon, Desa Geneng",
+      "tanggal_pelaksanaan": "26/03/2026 (Setiap tanggal 7 Syawal)",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "Desa Geneng"
+    },
+    {
+      "no": 8,
+      "nama_event": "Festival Kenduri Tani Desa Teluk Awur",
+      "tanggal_pelaksanaan": "26-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "Jalan Usaha Tani"
+    },
+    {
+      "no": 9,
+      "nama_event": "Wayangan \"Pesta Lomban\"",
+      "tanggal_pelaksanaan": "26-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "TPI Ujung Batu"
+    },
+    {
+      "no": 10,
+      "nama_event": "Barikan Apem/ Bodo Apem",
+      "tanggal_pelaksanaan": "27-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "balai desa sukodono"
+    },
+    {
+      "no": 11,
+      "nama_event": "Pesta Lomban",
+      "tanggal_pelaksanaan": "27-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "TPI Ujung Batu"
+    },
+    {
+      "no": 12,
+      "nama_event": "Festival Kupat Lepet",
+      "tanggal_pelaksanaan": "28-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "Destinasi Wisata Pantai Kartini"
+    },
+    {
+      "no": 13,
+      "nama_event": "Sedekah Laut Desa Teluk Awur",
+      "tanggal_pelaksanaan": "29-Mar-26",
+      "bulan": "Maret",
+      "lokasi_pelaksanaan": "Pantai Telukawur"
+    },
+    {
+      "no": 14,
+      "nama_event": "Belajar Bersama #1 di Museum R.A. Kartini",
+      "tanggal_pelaksanaan": "Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 15,
+      "nama_event": "Kebudayaan Tingkat Kabupaten Jepara Lomba Karya Tulis Ilmiah Objek Pemajuan",
+      "tanggal_pelaksanaan": "Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 16,
+      "nama_event": "Hari Jut-Bio dan She-Jiet (Kelahiran)",
+      "tanggal_pelaksanaan": "Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Klenteng Hian Thian Siang Tee Welahan, Jepara"
+    },
+    {
+      "no": 17,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "09/04/2026 (Setiap hari kamis legi)",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 18,
+      "nama_event": "Buka Luwur Makam Mantingan, Jepara",
+      "tanggal_pelaksanaan": "9-Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Makam Sultan Hadlirin Masjid Astana Mantingan"
+    },
+    {
+      "no": 19,
+      "nama_event": "Festival Budaya Kelingan Keling ke-2",
+      "tanggal_pelaksanaan": "19-Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Desa Tunahan, Kecamatan Keling, Kabupaten Jepara"
+    },
+    {
+      "no": 20,
+      "nama_event": "Melekan Kabumi desa sukodono",
+      "tanggal_pelaksanaan": "19-Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "balai desa sukodono"
+    },
+    {
+      "no": 21,
+      "nama_event": "Haul Akbar Dan Hari Jadi Kabupaten Jepara Ke 477",
+      "tanggal_pelaksanaan": "20-Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Alun-Alun 1 Kabupaten Jepara"
+    },
+    {
+      "no": 22,
+      "nama_event": "Sedekah Bumi Desa Platar",
+      "tanggal_pelaksanaan": "20-Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Balai Desa Platar"
+    },
+    {
+      "no": 23,
+      "nama_event": "sedekah bumi desa sukodono",
+      "tanggal_pelaksanaan": "23/04/2026 atau 20 April 2026",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "balai desa sukodono"
+    },
+    {
+      "no": 24,
+      "nama_event": "Jembul Banyumanis",
+      "tanggal_pelaksanaan": "Kamis Pahing bulan Apit (Jawa) / Dzulqodah (Hijriah)",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Rumah Kepala Desa Banyumanis"
+    },
+    {
+      "no": 25,
+      "nama_event": "Jembul Tulakan",
+      "tanggal_pelaksanaan": "23/04/2026 / Kamis Pahing bulan Apit (Jawa) / Dzulqodah (Hijriah)",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Rumah Kepala Desa Tulakan"
+    },
+    {
+      "no": 26,
+      "nama_event": "Sedekah Bumi, Desa Telukawur",
+      "tanggal_pelaksanaan": "25-Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "Balai Desa Telukawur"
+    },
+    {
+      "no": 27,
+      "nama_event": "Menari Bersama di Hari Tari Sedunia",
+      "tanggal_pelaksanaan": "29-Apr-26",
+      "bulan": "April",
+      "lokasi_pelaksanaan": "perempatan PAUD WIYATA Sukodono"
+    },
+    {
+      "no": 28,
+      "nama_event": "Kabumi Desa Tahunan",
+      "tanggal_pelaksanaan": "2-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Balaidesa Tahunan dan Lapangan Tahunan"
+    },
+    {
+      "no": 29,
+      "nama_event": "Mbangun Tuk Pitu, Desa Jugo",
+      "tanggal_pelaksanaan": "3-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "7 sumber mata air ke Pendopo Petinggi"
+    },
+    {
+      "no": 30,
+      "nama_event": "Sedekah bumi Desa Jugo",
+      "tanggal_pelaksanaan": "4-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Pendopo Petinggi"
+    },
+    {
+      "no": 31,
+      "nama_event": "SEDEKAH BUMI DESA KECAPI",
+      "tanggal_pelaksanaan": "6-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "BALAI DESA KECAPI"
+    },
+    {
+      "no": 32,
+      "nama_event": "Sedekah Bumi (APITAN) Desa Mayongkidul",
+      "tanggal_pelaksanaan": "10-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Halaman Balai Desa Mayongkidul"
+    },
+    {
+      "no": 33,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "14-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 34,
+      "nama_event": "Sedekah Bumi Desa Petekeyan",
+      "tanggal_pelaksanaan": "16 Mei 2025*",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Balai desa Petekeyan"
+    },
+    {
+      "no": 35,
+      "nama_event": "SEDEKAH BUMI DESA SROBYONG",
+      "tanggal_pelaksanaan": "17 Mei 2025*",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "BALAI DESA SROBYONG"
+    },
+    {
+      "no": 36,
+      "nama_event": "Haul Makam Sheikh Maulana Mangun Sejati",
+      "tanggal_pelaksanaan": "25-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Makam Sheikh Maulana Mangun Sejati Bugel"
+    },
+    {
+      "no": 37,
+      "nama_event": "Perang Obor Tegalsambi",
+      "tanggal_pelaksanaan": "25/05/2026 (Senin Pahing bulan Dzulhijah)",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Desa Tegalsambi"
+    },
+    {
+      "no": 38,
+      "nama_event": "Festival Jondang Kawak",
+      "tanggal_pelaksanaan": "5/28/2026",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Desa Kawak"
+    },
+    {
+      "no": 39,
+      "nama_event": "Sedekah Bumi Desa Karanggondang",
+      "tanggal_pelaksanaan": "Kamis Kliwon bulan Dzulhijjah",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Balai Desa Karanggondang"
+    },
+    {
+      "no": 40,
+      "nama_event": "Festival \"GUNUNGAN\" Desa Slagi",
+      "tanggal_pelaksanaan": "30-May-26",
+      "bulan": "Mei",
+      "lokasi_pelaksanaan": "Desa Slagi, Pakis aji, Jepara"
+    },
+    {
+      "no": 41,
+      "nama_event": "Sedekah Bumi Desa Mororejo",
+      "tanggal_pelaksanaan": "3-Jun-26",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Balai Desa Mororejo"
+    },
+    {
+      "no": 42,
+      "nama_event": "Kirab Belik Bidadari dan Jaka Tarub",
+      "tanggal_pelaksanaan": "12 Juni 2025*",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Balai Desa Daren - Sendang Bidadari"
+    },
+    {
+      "no": 43,
+      "nama_event": "Haul Sunan Nyamplungan",
+      "tanggal_pelaksanaan": "16 Juni 2026 (Bulan Muharam/Suro)",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Makam Sunan Nyamplungan"
+    },
+    {
+      "no": 44,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "18/06/2025*",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 45,
+      "nama_event": "Sedekah Bumi Desa Suwawal",
+      "tanggal_pelaksanaan": "18 Juni 2025*",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Balai Desa Suwawal"
+    },
+    {
+      "no": 46,
+      "nama_event": "Festival Kopi Sumanding 2026",
+      "tanggal_pelaksanaan": "27-Jun-26",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Obyek Wisata Hutan Pinus Sumanding"
+    },
+    {
+      "no": 47,
+      "nama_event": "Festival Ikan Asap",
+      "tanggal_pelaksanaan": "27-Jun-26",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Desa Dermolo"
+    },
+    {
+      "no": 48,
+      "nama_event": "Nyadran Desa Jugo",
+      "tanggal_pelaksanaan": "30-Jun-26",
+      "bulan": "Juni",
+      "lokasi_pelaksanaan": "Punden mbah noor salim"
+    },
+    {
+      "no": 49,
+      "nama_event": "Jepara City Festival",
+      "tanggal_pelaksanaan": "5 Juli 2024*",
+      "bulan": "Juli",
+      "lokasi_pelaksanaan": "PANTAI PERAWEAN"
+    },
+    {
+      "no": 50,
+      "nama_event": "Barikan Kubro",
+      "tanggal_pelaksanaan": "10/07/2026 (Jumat Wage Bulan Sura)",
+      "bulan": "Juli",
+      "lokasi_pelaksanaan": "Wilayah Kecamatan Karimunjawa"
+    },
+    {
+      "no": 51,
+      "nama_event": "Buka Luwur / Khoul Mbah Ki Tanu Jayan",
+      "tanggal_pelaksanaan": "10-Jul-26",
+      "bulan": "Juli",
+      "lokasi_pelaksanaan": "Makam Mbah Ki Tanu Jayan Mayongkidul"
+    },
+    {
+      "no": 52,
+      "nama_event": "Sedekah Bumi Desa Jambu timur",
+      "tanggal_pelaksanaan": "12 Juli 2025*",
+      "bulan": "Juli",
+      "lokasi_pelaksanaan": "Balai Desa Jambu Timur"
+    },
+    {
+      "no": 53,
+      "nama_event": "FESTIVAL KESENIAN ADAT BUDAYA TULAKAN",
+      "tanggal_pelaksanaan": "14 Juli 2025*",
+      "bulan": "Juli",
+      "lokasi_pelaksanaan": "DEPAN RUMAH PETINGGI DESA"
+    },
+    {
+      "no": 54,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "23/07/2025*",
+      "bulan": "Juli",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 55,
+      "nama_event": "Festival Memeden Gadu",
+      "tanggal_pelaksanaan": "10/08/2026 (Senin Pahing bulan Safar)",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "Desa Kepuk, Bangsri"
+    },
+    {
+      "no": 56,
+      "nama_event": "Merdeka Runbike 2026",
+      "tanggal_pelaksanaan": "15-Aug-26",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "Halaman Parkir GBK / Pantai Kartini"
+    },
+    {
+      "no": 57,
+      "nama_event": "Jalan Sehat HUT RI ke 81 Desa Mayongkidul",
+      "tanggal_pelaksanaan": "17-Aug-26",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "Balai Desa Mayongkidul"
+    },
+    {
+      "no": 58,
+      "nama_event": "Sedekah Laut Desa Mororejo",
+      "tanggal_pelaksanaan": "20 Agustus 2025*",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "Pantai Jubel"
+    },
+    {
+      "no": 59,
+      "nama_event": "KARNAVAL 17 AGUSTUS DESA JEBOL",
+      "tanggal_pelaksanaan": "23-Aug-26",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "LAPANGAN JEBOL"
+    },
+    {
+      "no": 60,
+      "nama_event": "Sedekah Bumi Sekuro",
+      "tanggal_pelaksanaan": "22 Agustus 2025*",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "Balai Desa Sekuro"
+    },
+    {
+      "no": 61,
+      "nama_event": "Kelingan Damarwulan",
+      "tanggal_pelaksanaan": "25 Agustus 2025*",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "Situs Budaya Distoroto"
+    },
+    {
+      "no": 62,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "27/08/2025*",
+      "bulan": "Agustus",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 63,
+      "nama_event": "Lomba Cerita Dialek Jeparanan",
+      "tanggal_pelaksanaan": "Sep-26",
+      "bulan": "September",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 64,
+      "nama_event": "Lomba Mewarnai Paud & TK",
+      "tanggal_pelaksanaan": "Oct-26",
+      "bulan": "Oktober",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 65,
+      "nama_event": "Belajar Bersama #2 di Museum R.A. Kartini",
+      "tanggal_pelaksanaan": "Oct-26",
+      "bulan": "Oktober",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 66,
+      "nama_event": "Festival Permainan Traditional",
+      "tanggal_pelaksanaan": "Oct-26",
+      "bulan": "Oktober",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 67,
+      "nama_event": "SEMURIA (Semarak Museum RA Kartini)",
+      "tanggal_pelaksanaan": "Oct-26",
+      "bulan": "Oktober",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 68,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "10/1/2026",
+      "bulan": "Oktober",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 69,
+      "nama_event": "Festival Thothok Terusan",
+      "tanggal_pelaksanaan": "1 November 2026 (Musim Pancaroba)",
+      "bulan": "November",
+      "lokasi_pelaksanaan": "Desa Kemujan, Karimunjawa"
+    },
+    {
+      "no": 70,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "11/5/2026",
+      "bulan": "November",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    },
+    {
+      "no": 71,
+      "nama_event": "Hari Disabilitas Internasional (HDI)",
+      "tanggal_pelaksanaan": "3-Dec-26",
+      "bulan": "Desember",
+      "lokasi_pelaksanaan": "Pendopo Kabupaten atau Panti Potroyudan"
+    },
+    {
+      "no": 72,
+      "nama_event": "Sedekah Menir",
+      "tanggal_pelaksanaan": "7 Desember 2025*",
+      "bulan": "Desember",
+      "lokasi_pelaksanaan": "Pantai Semat"
+    },
+    {
+      "no": 73,
+      "nama_event": "Jamu Legi",
+      "tanggal_pelaksanaan": "12/10/2026",
+      "bulan": "Desember",
+      "lokasi_pelaksanaan": "Museum RA. Kartini Jepara"
+    }
+  ]
+}
