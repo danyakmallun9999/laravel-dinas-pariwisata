@@ -890,29 +890,48 @@
     <!-- Makanan Khas Jepara -->
     <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-10 lg:py-16 border-t border-surface-light dark:border-surface-dark" x-data="{
         currentIndex: 0,
-        totalItems: 9,
         autoplay: null,
+        scrollFrame: null,
+        
+        getGap() {
+            const container = $refs.foodContainer;
+            if(!container) return 32;
+            const style = window.getComputedStyle(container);
+            return parseInt(style.gap) || 0;
+        },
+
         scrollLeft() { 
             const c = $refs.foodContainer;
-            const w = c.children[0].clientWidth; // lebar 1 item
-            c.scrollBy({ left: -w, behavior: 'smooth' });
-            setTimeout(() => this.updateCurrentIndex(), 300);
+            if(!c) return;
+            const itemWidth = c.children[0].offsetWidth; 
+            const gap = this.getGap();
+            c.scrollBy({ left: -(itemWidth + gap), behavior: 'smooth' });
+            this.stopAutoplay();
+            this.startAutoplay();
         },
         scrollRight() { 
             const c = $refs.foodContainer;
-            const w = c.children[0].clientWidth;
-            c.scrollBy({ left: w, behavior: 'smooth' });
-            setTimeout(() => this.updateCurrentIndex(), 300);
+            if(!c) return;
+            const itemWidth = c.children[0].offsetWidth;
+            const gap = this.getGap();
+            c.scrollBy({ left: (itemWidth + gap), behavior: 'smooth' });
+            this.stopAutoplay();
+            this.startAutoplay();
         },
         scrollToIndex(index) {
             const container = $refs.foodContainer;
             if (!container || !container.children.length) return;
-            const originals = 9; // total original items
-            const targetIndex = originals + index; // Skip clones di awal
-            const itemWidth = container.children[0].offsetWidth;
-            const gap = 32; // gap-8 lg
-            container.scrollTo({ left: targetIndex * (itemWidth + gap) - (container.clientWidth - itemWidth) / 2, behavior: 'smooth' });
-            setTimeout(() => this.updateCurrentIndex(), 300);
+            
+            const originalsCount = 9;
+            const targetIndex = originalsCount + index;
+            
+            const targetElement = container.children[targetIndex];
+            if(targetElement) {
+                const scrollPos = targetElement.offsetLeft - (container.clientWidth - targetElement.offsetWidth) / 2;
+                container.scrollTo({ left: scrollPos, behavior: 'smooth' });
+            }
+            this.stopAutoplay();
+            this.startAutoplay();
         },
         updateActive() {
             const container = $refs.foodContainer;
@@ -921,11 +940,10 @@
             const center = container.scrollLeft + (container.clientWidth / 2);
             
             Array.from(container.children).forEach(child => {
-                const childCenter = child.offsetLeft + (child.clientWidth / 2);
+                const childCenter = child.offsetLeft + (child.offsetWidth / 2);
                 const distance = Math.abs(center - childCenter);
                 
-                // Jika jarak ke tengah kurang dari setengah lebar card, anggap aktif
-                if (distance < child.clientWidth / 2) {
+                if (distance < child.offsetWidth / 2) {
                     child.setAttribute('data-snapped', 'true');
                 } else {
                     child.setAttribute('data-snapped', 'false');
@@ -935,18 +953,35 @@
         updateCurrentIndex() {
             const container = $refs.foodContainer;
             if (!container || !container.children.length) return;
-            const originals = 9;
-            const scrollLeft = container.scrollLeft;
-            const itemWidth = container.children[0].offsetWidth;
-            const gap = 32;
-            const rawIndex = Math.round(scrollLeft / (itemWidth + gap));
-            // Map back to original indices (0-8)
-            this.currentIndex = ((rawIndex - originals) % originals + originals) % originals;
+            
+            const center = container.scrollLeft + (container.clientWidth / 2);
+            let closestIndex = -1;
+            let minDistance = Infinity;
+            
+            Array.from(container.children).forEach((child, idx) => {
+                 const childCenter = child.offsetLeft + (child.offsetWidth / 2);
+                 const distance = Math.abs(center - childCenter);
+                 if(distance < minDistance) {
+                     minDistance = distance;
+                     closestIndex = idx;
+                 }
+            });
+            
+            if(closestIndex !== -1) {
+                const originalsCount = 9;
+                const rawIndex = closestIndex - originalsCount;
+                this.currentIndex = ((rawIndex % originalsCount) + originalsCount) % originalsCount;
+            }
         },
         startAutoplay() {
             this.stopAutoplay();
             this.autoplay = setInterval(() => {
-                this.scrollRight();
+                const container = $refs.foodContainer;
+                if(container) {
+                    const itemWidth = container.children[0].offsetWidth;
+                    const gap = this.getGap();
+                    container.scrollBy({ left: (itemWidth + gap), behavior: 'smooth' });
+                }
             }, 3000);
         },
         stopAutoplay() {
@@ -957,71 +992,65 @@
         },
         init() {
             const container = $refs.foodContainer;
+            if (!container) return;
             
-            // Simpan original items
             const originals = Array.from(container.children);
+            const originalsCount = originals.length;
             
-            // Clone sets untuk infinite loop (Total 3 set: A-B-A)
-            // Append clone set (Set C)
             originals.forEach(item => {
                 const clone = item.cloneNode(true);
                 clone.setAttribute('data-clone', 'true');
+                clone.setAttribute('aria-hidden', 'true');
                 container.appendChild(clone);
             });
             
-            // Prepend clone set (Set A) - Agar bisa scroll kiri dari awal
-            // Note: Prepend mengubah scroll position, harus kita fix nanti
-            originals.reverse().forEach(item => {
+            [...originals].reverse().forEach(item => {
                 const clone = item.cloneNode(true);
                 clone.setAttribute('data-clone', 'true');
+                clone.setAttribute('aria-hidden', 'true');
                 container.insertBefore(clone, container.firstChild);
             });
             
-            // Set scroll position ke Set B (Originals)
-            // Tunggu render selesai
             this.$nextTick(() => {
-                const itemWidth = container.children[0].clientWidth; // asumsikan sama
-                const gap = 32; // gap-8 = 2rem = 32px (lg)
-                // Total width 1 set (8 items) approx
-                // Kita cari elemen original pertama (index ke-8, karena ada 8 clone di depan)
-                const startItem = container.children[originals.length];
-                
-                // Scroll ke posisi startItem
-                container.scrollLeft = startItem.offsetLeft - (container.clientWidth - startItem.clientWidth) / 2;
+                const startItem = container.children[originalsCount];
+                if(startItem) {
+                    container.scrollLeft = startItem.offsetLeft - (container.clientWidth - startItem.offsetWidth) / 2;
+                }
                 
                 this.updateActive();
-                
-                // Infinite Loop Listener
-                container.addEventListener('scroll', () => {
-                    this.updateActive();
-                    this.updateCurrentIndex();
-                    
-                    const oneSetWidth = (originals.length * (container.children[0].clientWidth + 32)); // Estimasi rough width
-                    // Atau lebih akurat: startItem.offsetLeft
-                    
-                    const scroll = container.scrollLeft;
-                    const max = container.scrollWidth;
-                    
-                    // Logic Jump
-                    // Ambil posisi Set B start dan Set B end
-                    const setB_Start = container.children[originals.length].offsetLeft;
-                    const setB_End = container.children[originals.length * 2].offsetLeft;
-                    
-                    // Jika scroll terlalu ke kiri (masuk Set A), lompat ke Set B
-                    // if (scroll < 100) ... logic ini butuh presisi tinggi agar seamless.
-                    
-                    // Metode simple: Jika sampai ujung, reset.
-                    // Jika scroll mencapai hampir ujung kanan (Set C end), lompat ke Set B end.
-                    if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 50) {
-                        container.scrollLeft = setB_End - container.clientWidth;
-                    }
-                    // Jika scroll mencapai ujung kiri (Set A start), lompat ke Set B start
-                    else if (container.scrollLeft <= 50) {
-                        container.scrollLeft = setB_Start;
-                    }
-                });
-                
+                this.updateCurrentIndex();
                 this.startAutoplay();
+                
+                container.addEventListener('scroll', () => {
+                    if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
+                    this.scrollFrame = requestAnimationFrame(() => {
+                        this.updateActive();
+                        this.updateCurrentIndex();
+                        
+                        if (container.children.length < originalsCount * 3) return;
+                        
+                        const setB_StartElement = container.children[originalsCount];
+                        const setC_StartElement = container.children[originalsCount * 2];
+                        
+                        // Precise width calculation based on offsets
+                        const setWidth = setC_StartElement.offsetLeft - setB_StartElement.offsetLeft;
+                        const scrollLeft = container.scrollLeft;
+                        
+                        // Jump thresholds must be robust
+                        // Jump BACK to Set B from Set C
+                        if (scrollLeft >= setC_StartElement.offsetLeft) {
+                            // Calculate overlap to maintain smooth momentum if needed (though tricky with scrollLeft)
+                            // const overlap = scrollLeft - setC_StartElement.offsetLeft;
+                            // container.scrollLeft = setB_StartElement.offsetLeft + overlap;
+                            // Simple offset subtraction logic is usually safest
+                             container.scrollLeft -= setWidth;
+                        }
+                        // Jump FORWARD to Set B from Set A
+                        else if (scrollLeft < setB_StartElement.offsetLeft - setWidth) {
+                             container.scrollLeft += setWidth;
+                        }
+                    });
+                });
             });
         }
     }" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
@@ -1051,10 +1080,9 @@
 
             <!-- Food Carousel -->
             <div class="relative w-full group">
-                <!-- Carousel Container with Mask Image for Perfect Fade -->
+                <!-- Carousel Container -->
                 <div class="flex gap-4 lg:gap-8 overflow-x-auto pb-12 pt-4 px-4 lg:px-0 snap-x snap-mandatory scrollbar-hide" 
-                     x-ref="foodContainer"
-                     style="-webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%); padding-left: 3rem; padding-right: 5rem;">
+                     x-ref="foodContainer">
                 
                 
                     <!-- 1. Pindang Serani -->
@@ -1063,7 +1091,7 @@
                              alt="Pindang Serani" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <!-- Inactive Background Fade -->
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <!-- Text Readability Gradient -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <!-- Content -->
@@ -1078,7 +1106,7 @@
                         <img src="{{ asset('images/kuliner-jppr/duren.png') }}" 
                              alt="Durian Jepara" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Durian Jepara</h3>
@@ -1091,7 +1119,7 @@
                         <img src="{{ asset('images/kuliner-jppr/adon-coro.png') }}" 
                              alt="Adon-adon Coro" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Adon-adon Coro</h3>
@@ -1104,7 +1132,7 @@
                         <img src="{{ asset('images/kuliner-jppr/horog.png') }}" 
                              alt="Horog-horog" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Horog-horog</h3>
@@ -1117,7 +1145,7 @@
                         <img src="{{ asset('images/kuliner-jppr/carang-madu.png') }}" 
                              alt="Carang Madu" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Carang Madu</h3>
@@ -1130,7 +1158,7 @@
                         <img src="{{ asset('images/kuliner-jppr/gempol.png') }}" 
                              alt="Es Gempol Pleret" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Es Gempol Pleret</h3>
@@ -1143,7 +1171,7 @@
                         <img src="{{ asset('images/kuliner-jppr/kopi.png') }}" 
                              alt="Kopi Jeparanan" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Kopi Jeparanan</h3>
@@ -1156,7 +1184,7 @@
                         <img src="{{ asset('images/kuliner-jppr/kcang.png') }}" 
                              alt="Kacang Listrik" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Kacang Listrik</h3>
@@ -1169,7 +1197,7 @@
                         <img src="{{ asset('images/kuliner-jppr/krpktgr.png') }}" 
                              alt="Krupuk Ikan Tengiri" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-surface-light/95 dark:bg-surface-dark/95 transition-opacity duration-500 group-data-[snapped=true]:opacity-0 backdrop-blur-[2px]"></div>
+                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
                             <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Krupuk Ikan Tengiri</h3>
