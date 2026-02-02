@@ -377,64 +377,60 @@
     </script>
 
     <!-- Stats Section -->
-    <div class="w-full bg-background-light dark:bg-background-dark py-8 transition-colors duration-300">
+    <div class="w-full bg-background-light dark:bg-background-dark py-6 border-b border-surface-light dark:border-surface-dark transition-colors duration-300">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <!-- Responsive Grid: 1 col mobile, 2 cols tablet, 4 cols desktop -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
+            <!-- Responsive Grid: 2 cols on mobile/tablet, 4 cols on desktop -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 <!-- Destinasi Wisata -->
-                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
-                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                        <span class="material-symbols-outlined text-2xl">photo_camera</span>
+                <div class="flex items-center gap-3 md:gap-4 rounded-xl p-4 bg-surface-light/50 dark:bg-white/5 hover:bg-surface-light dark:hover:bg-white/10 transition-colors duration-200 border border-transparent hover:border-primary/20 group">
+                    <div class="size-10 md:size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-xl md:text-2xl">photo_camera</span>
                     </div>
                     <div>
-                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
-                            Destinasi Wisata</p>
                         <!-- Using $countDestinasi passed from controller -->
-                        <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">
+                        <p class="text-text-light dark:text-text-dark text-xl md:text-2xl font-bold tracking-tight leading-none mb-1">
                             {{ $countDestinasi }}+</p>
-                        <p class="text-xs text-text-light/50 mt-1">Objek Wisata</p>
+                        <p class="text-[10px] md:text-xs text-text-light/60 dark:text-text-dark/60 font-medium uppercase tracking-wider">
+                            Destinasi</p>
                     </div>
                 </div>
 
                 <!-- Kuliner Khas -->
-                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
-                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                        <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
+                <div class="flex items-center gap-3 md:gap-4 rounded-xl p-4 bg-surface-light/50 dark:bg-white/5 hover:bg-surface-light dark:hover:bg-white/10 transition-colors duration-200 border border-transparent hover:border-primary/20 group">
+                    <div class="size-10 md:size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-xl md:text-2xl">restaurant_menu</span>
                     </div>
                     <div>
-                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
-                             Kuliner Khas</p>
-                        <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">
+                        <p class="text-text-light dark:text-text-dark text-xl md:text-2xl font-bold tracking-tight leading-none mb-1">
                             {{ $countKuliner }}+</p>
-                        <p class="text-xs text-text-light/50 mt-1">Menu Favorit</p>
+                        <p class="text-[10px] md:text-xs text-text-light/60 dark:text-text-dark/60 font-medium uppercase tracking-wider">
+                             Kuliner</p>
                     </div>
                 </div>
 
                 <!-- Agenda Event -->
-                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
-                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                        <span class="material-symbols-outlined text-2xl">event_available</span>
+                <div class="flex items-center gap-3 md:gap-4 rounded-xl p-4 bg-surface-light/50 dark:bg-white/5 hover:bg-surface-light dark:hover:bg-white/10 transition-colors duration-200 border border-transparent hover:border-primary/20 group">
+                    <div class="size-10 md:size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-xl md:text-2xl">event_available</span>
                     </div>
                     <div>
-                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
-                            Agenda Event</p>
-                        <p class="text-text-light dark:text-text-dark text-3xl font-bold tracking-tight">
+                        <p class="text-text-light dark:text-text-dark text-xl md:text-2xl font-bold tracking-tight leading-none mb-1">
                             {{ $countEvent }}</p>
-                        <p class="text-xs text-text-light/50 mt-1">Acara Tahunan</p>
+                        <p class="text-[10px] md:text-xs text-text-light/60 dark:text-text-dark/60 font-medium uppercase tracking-wider">
+                            Event</p>
                     </div>
                 </div>
 
                 <!-- Desa Wisata -->
-                <div class="flex flex-col gap-3 rounded-xl p-6 bg-surface-light dark:bg-surface-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 shadow-sm hover:shadow-md border border-transparent hover:border-primary/20 group">
-                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                        <span class="material-symbols-outlined text-2xl">holiday_village</span>
+                <div class="flex items-center gap-3 md:gap-4 rounded-xl p-4 bg-surface-light/50 dark:bg-white/5 hover:bg-surface-light dark:hover:bg-white/10 transition-colors duration-200 border border-transparent hover:border-primary/20 group">
+                    <div class="size-10 md:size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-xl md:text-2xl">holiday_village</span>
                     </div>
                     <div>
-                        <p class="text-text-light/60 dark:text-text-dark/60 text-sm font-medium uppercase tracking-wide mb-1">
-                            Desa Wisata</p>
-                        <p class="text-text-light dark:text-text-dark text-xl font-bold tracking-tight leading-tight">
+                        <p class="text-text-light dark:text-text-dark text-xl md:text-2xl font-bold tracking-tight leading-none mb-1">
                             {{ $countDesa }}</p>
-                        <p class="text-xs text-text-light/50 mt-1">Desa Potensial</p>
+                        <p class="text-[10px] md:text-xs text-text-light/60 dark:text-text-dark/60 font-medium uppercase tracking-wider">
+                            Desa Wisata</p>
                     </div>
                 </div>
             </div>
