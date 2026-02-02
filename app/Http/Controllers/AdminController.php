@@ -74,6 +74,14 @@ class AdminController extends Controller
     public function store(Request $request): RedirectResponse|JsonResponse
     {
         $data = $this->validatePlace($request);
+        
+        // Parse Rides and Facilities from String to Array
+        if (isset($data['rides'])) {
+            $data['rides'] = $this->parseRides($data['rides']);
+        }
+        if (isset($data['facilities'])) {
+            $data['facilities'] = $this->parseFacilities($data['facilities']);
+        }
 
         // Handle geometry from drawing component (if provided)
         if ($request->has('geometry') && $request->geometry) {
@@ -142,6 +150,14 @@ class AdminController extends Controller
     public function update(Request $request, Place $place): RedirectResponse|JsonResponse
     {
         $data = $this->validatePlace($request);
+
+        // Parse Rides and Facilities from String to Array
+        if (isset($data['rides'])) {
+            $data['rides'] = $this->parseRides($data['rides']);
+        }
+        if (isset($data['facilities'])) {
+            $data['facilities'] = $this->parseFacilities($data['facilities']);
+        }
 
         // Handle geometry from drawing component (if provided)
         if ($request->has('geometry') && $request->geometry) {
@@ -225,6 +241,11 @@ class AdminController extends Controller
             'website' => ['nullable', 'url', 'max:255'],
             'google_maps_link' => ['nullable', 'url', 'max:255'],
             'gallery_images.*' => ['nullable', 'image', 'max:2048'],
+            'rides' => ['nullable', 'string'],
+            'facilities' => ['nullable', 'string'],
+            'ownership_status' => ['nullable', 'string'],
+            'manager' => ['nullable', 'string'],
+            'social_media' => ['nullable', 'string'],
         ];
 
         // Latitude/longitude required only if geometry not provided
@@ -265,5 +286,50 @@ class AdminController extends Controller
         if (Storage::disk($disk)->exists($relativePath)) {
             Storage::disk($disk)->delete($relativePath);
         }
+    }
+
+    protected function parseFacilities(?string $text): array
+    {
+         if (!$text) return [];
+         return array_values(array_filter(array_map('trim', explode("\n", $text))));
+    }
+
+    protected function parseRides(?string $text): array
+    {
+        if (!$text) return [];
+        $lines = explode("\n", $text);
+        $rides = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+
+            // Simple parser: "Name - Price"
+            // If no separator, assume just name (or header)
+            $parts = explode('-', $line);
+            
+            if (count($parts) > 1) {
+                // Check if the last part looks like a price (contains Rp or digits)
+                // Actually, let's keep it simple: Last part is price, rest is name.
+                // Or split by first hyphen? Standard "Name - Price" usually has price at end.
+                // Reusing logic from clean_json somewhat, but simplified for manual entry.
+                // User instruction: "Name - Price"
+                
+                $price = trim(array_pop($parts));
+                $name = trim(implode('-', $parts));
+                
+                 $rides[] = [
+                    'name' => $name,
+                    'price' => $price
+                ];
+            } else {
+                // No hyphen, treated as item without price or header
+                $rides[] = [
+                    'name' => $line,
+                    'price' => null
+                ];
+            }
+        }
+        return $rides;
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Jelajahi Peta - Desa Mayong Lor</title>
+    <title>Jelajahi Destinasi</title>
     
     
     <!-- Local assets handled by Vite -->
@@ -118,50 +118,92 @@
             </div>
 
             <!-- Scrollable Content Area -->
-            <div class="flex-1 overflow-y-auto custom-scrollbar px-6 py-2">
+            <div class="flex-1 overflow-y-auto custom-scrollbar px-6 relative">
                 
-
-
-                <!-- List of Places (Visible when no selection or scrollable below) -->
-                <div>
-                     <p class="text-xs font-semibold uppercase tracking-wider text-text-light/60 dark:text-text-dark/60 mb-3 font-display">Daftar Lokasi</p>
-                     
+                <!-- Sticky Toolbar -->
+                <div class="sticky top-0 bg-white/95 dark:bg-[#24211b]/95 backdrop-blur-md z-10 pb-4 pt-4 -mx-6 px-6 border-b border-stone-100 dark:border-stone-800 mb-4 transition-all sidebar-header">
+                    <div class="flex items-center justify-between">
+                         <div class="flex items-baseline gap-1">
+                            <span class="text-2xl font-bold text-text-light dark:text-text-dark font-display" x-text="visiblePlaces.length"></span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-text-light/40 dark:text-text-dark/40 font-display">Lokasi</span>
+                         </div>
+                         
+                         <button @click="toggleSortNearby()" 
+                                 :class="sortByDistance ? 'bg-primary text-white shadow-primary/30 shadow-lg ring-2 ring-primary/20' : 'bg-stone-100 dark:bg-white/5 text-text-light/60 dark:text-text-dark/60 hover:bg-stone-200 dark:hover:bg-white/10'"
+                                 class="text-[10px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 active:scale-95 group">
+                             <span class="material-symbols-outlined text-base transition-transform group-hover:scale-110" :class="sortByDistance ? 'text-white' : ''">near_me</span>
+                             <span x-text="sortByDistance ? 'Terdekat' : 'Cari Terdekat'"></span>
+                         </button>
+                    </div>
+                </div>
+                
+                 <!-- List of Places -->
+                 <div class="pb-6 space-y-3">
                      <template x-if="visiblePlaces.length === 0">
-                         <div class="text-center py-8 text-text-light/40">
-                             <p class="text-sm font-sans">Tidak ada lokasi yang cocok dengan filter.</p>
+                         <div class="text-center py-12 px-4 flex flex-col items-center justify-center">
+                             <div class="w-16 h-16 bg-stone-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-4 text-stone-300 dark:text-stone-600">
+                                 <span class="material-symbols-outlined text-3xl">location_off</span>
+                             </div>
+                             <p class="text-text-light/50 dark:text-text-dark/50 font-medium font-display">Tidak ada lokasi ditemukan</p>
+                             <p class="text-xs text-text-light/30 dark:text-text-dark/30 mt-1 max-w-[200px]">Coba ubah kata kunci pencarian atau filter kategori.</p>
                          </div>
                      </template>
 
                      <template x-for="place in visiblePlaces" :key="place.id">
-                        <div @click="selectPlace(place)" class="flex gap-3 mb-3 p-3 rounded-xl bg-white dark:bg-[#2c2923] border border-stone-100 dark:border-stone-800 shadow-sm hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 cursor-pointer transition-all active:scale-[0.98] group">
-                            <div class="w-16 h-16 rounded-lg bg-cover bg-center shrink-0 bg-gray-200 relative overflow-hidden ring-1 ring-black/5">
+                        <div @click="selectPlace(place)" 
+                             :class="selectedFeature && selectedFeature.id === place.id ? 'border-primary ring-1 ring-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent bg-white dark:bg-[#2c2923] hover:border-stone-200 dark:hover:border-stone-700'"
+                             class="flex gap-4 p-4 rounded-2xl border shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-none hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] dark:hover:shadow-none cursor-pointer transition-all duration-300 group relative overflow-hidden">
+                            
+                            <!-- Active Indicator Strip -->
+                            <div x-show="selectedFeature && selectedFeature.id === place.id" class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+
+                            <!-- Image -->
+                            <div class="w-20 h-20 rounded-xl bg-gray-200 shrink-0 relative overflow-hidden ring-1 ring-black/5 dark:ring-white/10 group-hover:ring-primary/30 transition-all">
                                 <template x-if="place.image_path">
-                                    <img :src="'{{ url('/') }}/' + place.image_path" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    <img :src="'{{ url('/') }}/' + place.image_path" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                 </template>
                                 <template x-if="!place.image_path">
-                                    <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100">
-                                        <i class="fa-solid fa-map-marker-alt text-xl opacity-50"></i>
+                                    <div class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 bg-gray-50 dark:bg-white/5">
+                                        <i class="fa-solid fa-map-marker-alt text-2xl opacity-50"></i>
                                     </div>
                                 </template>
                             </div>
-                            <div class="flex flex-col justify-center min-w-0 flex-1">
-                                <h4 class="font-bold text-base text-text-light dark:text-text-dark group-hover:text-primary transition-colors truncate font-display" x-text="place.name"></h4>
-                                <div class="flex items-center gap-2 mt-1">
-                                     <span class="w-2 h-2 rounded-full ring-2 ring-white dark:ring-[#2c2923]" :style="`background-color: ${place.category?.color || '#ccc'}`"></span>
-                                     <p class="text-xs text-text-light/60 dark:text-text-dark/60 truncate font-sans font-medium" x-text="place.category?.name"></p>
+                            
+                            <!-- Content -->
+                            <div class="flex flex-col min-w-0 flex-1 py-0.5">
+                                <div class="flex justify-between items-start gap-2">
+                                    <h4 class="font-bold text-base text-text-light dark:text-text-dark group-hover:text-primary transition-colors leading-tight line-clamp-2 font-display" x-text="place.name"></h4>
+                                </div>
+                                
+                                <div class="mt-auto flex items-center justify-between">
+                                    <!-- Category Badge -->
+                                    <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-stone-100 dark:bg-white/5 w-fit">
+                                         <span class="w-1.5 h-1.5 rounded-full" :style="`background-color: ${place.category?.color || '#ccc'}`"></span>
+                                         <p class="text-[10px] font-bold uppercase tracking-wider text-text-light/60 dark:text-text-dark/60 truncate max-w-[80px]" x-text="place.category?.name"></p>
+                                    </div>
+
+                                    <!-- Distance Badge -->
+                                    <template x-if="place.distance">
+                                        <div class="flex items-center gap-1 text-primary">
+                                            <span class="material-symbols-outlined text-[14px]">directions_walk</span>
+                                            <span class="text-xs font-bold" x-text="place.distance + ' km'"></span>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
-                            <button class="self-center p-2 rounded-full text-stone-300 hover:text-primary hover:bg-primary/10 transition-colors">
-                                <span class="material-symbols-outlined text-xl">chevron_right</span>
-                            </button>
+                            
+                            <!-- Hover Arrow -->
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                                <span class="material-symbols-outlined text-stone-300 dark:text-stone-600">chevron_right</span>
+                            </div>
                         </div>
                      </template>
                 </div>
                 
                 <!-- Footer -->
-                <div class="mt-8 pt-6 border-t border-[#e5e7eb] dark:border-[#3a3630]">
+                <div class="mt-4 pt-6 border-t border-[#e5e7eb] dark:border-[#3a3630]">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-text-light/50 font-sans">© 2025 Mayong Lor GIS</span>
+                        <span class="text-xs text-text-light/40 dark:text-text-dark/40 font-sans">© 2025 Mayong Lor GIS</span>
                     </div>
                 </div>
             </div>
@@ -231,9 +273,27 @@
                     </div>
 
                     <!-- Actions -->
-                    <button @click="zoomToFeature(selectedFeature)" class="w-full py-2.5 bg-primary hover:bg-primary-dark text-[#171511] rounded-xl font-bold text-sm shadow-lg shadow-primary/20 transition flex items-center justify-center gap-2 transform active:scale-95 font-display mt-auto">
-                        <span class="material-symbols-outlined text-sm">my_location</span> Zoom ke Lokasi
-                    </button>
+                    <div class="flex flex-col gap-2 mt-auto">
+                         <div class="grid grid-cols-2 gap-2">
+                             <button @click="startRouting(selectedFeature)" class="py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition flex items-center justify-center gap-2 transform active:scale-95 font-display">
+                                <span class="material-symbols-outlined text-sm">directions</span> Rute
+                            </button>
+                             <button @click="openGoogleMaps(selectedFeature)" class="py-2.5 bg-white dark:bg-white/10 hover:bg-gray-50 dark:hover:bg-white/20 text-text-light dark:text-text-dark border border-stone-200 dark:border-stone-700 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 transform active:scale-95 font-display">
+                                <i class="fa-brands fa-google text-red-500"></i> Maps
+                            </button>
+                         </div>
+                         
+                         <!-- Toggle Instructions Button (Only visible if route exists) -->
+                         <template x-if="routingControl">
+                             <button @click="toggleNavigationInstructions()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2 transform active:scale-95 font-display">
+                                <span class="material-symbols-outlined text-sm">list_alt</span> Lihat Petunjuk Arah
+                            </button>
+                         </template>
+                         
+                        <button @click="zoomToFeature(selectedFeature)" class="w-full py-2.5 bg-surface-light hover:bg-stone-200 text-text-light rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 transform active:scale-95 font-display">
+                            <span class="material-symbols-outlined text-sm">my_location</span> Zoom ke Lokasi
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -266,8 +326,15 @@
                         <span class="material-symbols-outlined">remove</span>
                     </button>
                 </div>
+                <!-- Navigation Toggle -->
+                <button @click="toggleLiveNavigation()" 
+                        :class="isNavigating ? 'bg-red-500 text-white animate-pulse' : 'bg-white dark:bg-[#2c2923] text-text-light dark:text-text-dark'"
+                        class="flex items-center justify-center h-12 w-12 rounded-full shadow-lg hover:scale-105 transition-all">
+                    <span class="material-symbols-outlined" x-text="isNavigating ? 'navigation' : 'near_me'"></span>
+                </button>
+                
                 <!-- My Location -->
-                <button @click="locateUser()" class="flex items-center justify-center h-12 w-12 bg-primary text-[#171511] rounded-full shadow-lg hover:bg-primary/90 hover:scale-105 transition-all">
+                <button @click="locateUser(null, true)" class="flex items-center justify-center h-12 w-12 bg-primary text-[#171511] rounded-full shadow-lg hover:bg-primary/90 hover:scale-105 transition-all">
                     <span class="material-symbols-outlined">my_location</span>
                 </button>
             </div>
@@ -309,6 +376,7 @@
                 categories: @json($categories),
                 selectedCategories: [],
                 showBoundaries: true,
+                sortByDistance: false, // New State
 
                 allPlaces: [],
                 geoFeatures: [],
@@ -317,22 +385,41 @@
                 selectedFeature: null,
                 markers: [],
                 boundariesLayer: null,
+                routingControl: null, // Routing instance
+                
+                // Proximity Alert State
+                nearbyAlert: null,
+                notifiedPlaces: new Set(),
+                watchId: null,
+                
+                // Navigation Mode State
+                isNavigating: false,
+                heading: 0,
+                wakeLock: null,
 
                 defaultCenter: [-6.59, 110.68],
                 defaultZoom: 10,
                 userMarker: null,
+                userLocation: null, // Store user coords
 
                 get visiblePlaces() {
                     // Logic to show all places if no category selected, OR matching categories
                     const ids = this.selectedCategories.length > 0 ? this.selectedCategories : this.categories.map(c => c.id);
-                    return this.allPlaces.filter(p => ids.includes(p.properties.category?.id))
+                    let places = this.allPlaces.filter(p => ids.includes(p.properties.category?.id))
                          .map(p => ({
                              ...p.properties,
                              image_path: p.properties.image_path,
                              category: p.properties.category,
                              latitude: p.geometry.coordinates[1],
-                             longitude: p.geometry.coordinates[0]
+                             longitude: p.geometry.coordinates[0],
+                             distance: this.calculateDistance(p.geometry.coordinates[1], p.geometry.coordinates[0]) // Add distance
                          }));
+                    
+                    if (this.sortByDistance) {
+                        places.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+                    }
+                    
+                    return places;
                 },
 
                 init() {
@@ -343,9 +430,69 @@
                     
                     this.$watch('selectedCategories', () => this.updateMapMarkers());
                     this.$watch('showBoundaries', () => this.loadBoundaries());
+                    
+                    // Device Orientation for Compass
+                    if (window.DeviceOrientationEvent) {
+                        window.addEventListener('deviceorientation', (e) => this.handleOrientation(e));
+                    }
 
                     
                     if (window.innerWidth < 1024) { this.sidebarOpen = false; }
+                },
+                
+                handleOrientation(event) {
+                    if (!this.isNavigating) return;
+                    
+                    // Calculate heading
+                    let heading = event.alpha; 
+                    if (event.webkitCompassHeading) {
+                        // iOS
+                        heading = event.webkitCompassHeading;
+                    }
+                    
+                    this.heading = heading;
+                    
+                    // Rotate marker if it exists
+                    if (this.userMarker) {
+                         const icon = this.userMarker.getElement();
+                         if (icon) {
+                             const arrow = icon.querySelector('.user-arrow');
+                             if (arrow) {
+                                 arrow.style.transform = `rotate(${heading}deg)`;
+                             }
+                         }
+                    }
+                },
+                
+                async toggleLiveNavigation() {
+                    this.isNavigating = !this.isNavigating;
+                    
+                    if (this.isNavigating) {
+                        // Enter Navigation Mode
+                        this.sidebarOpen = false;
+                        this.selectedFeature = null; // Clear selection to see full map
+                        this.map.closePopup();
+                        
+                        // Request Wake Lock
+                        try {
+                            if ('wakeLock' in navigator) {
+                                this.wakeLock = await navigator.wakeLock.request('screen');
+                            }
+                        } catch (err) { console.log('Wake Lock error:', err); }
+                        
+                        // Force locate and zoom
+                        this.locateUser(() => {
+                            this.map.setZoom(19);
+                        }, true); // true = force follow
+                        
+                    } else {
+                        // Exit Navigation Mode
+                        if (this.wakeLock) {
+                            this.wakeLock.release();
+                            this.wakeLock = null;
+                        }
+                        this.map.setZoom(15);
+                    }
                 },
 
                 toggleCategory(id) {
@@ -355,6 +502,30 @@
                         this.selectedCategories.push(id);
                     }
                     // Loop is reactive via watch
+                },
+                
+                toggleSortNearby() {
+                    if (!this.userLocation) {
+                        this.locateUser(() => {
+                            this.sortByDistance = !this.sortByDistance;
+                        });
+                    } else {
+                        this.sortByDistance = !this.sortByDistance;
+                    }
+                },
+
+                calculateDistance(lat2, lon2) {
+                    if (!this.userLocation) return null;
+                    const lat1 = this.userLocation.lat;
+                    const lon1 = this.userLocation.lng;
+                    const R = 6371; // km
+                    const dLat = (lat2 - lat1) * Math.PI / 180;
+                    const dLon = (lon2 - lon1) * Math.PI / 180;
+                    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                            Math.sin(dLon/2) * Math.sin(dLon/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    return (R * c).toFixed(1);
                 },
 
                 initMap() {
@@ -469,25 +640,224 @@
                          this.map.fitBounds(layer.getBounds(), { padding: [100, 100] });
                     }
                 },
+                
+                startRouting(destination) {
+                    if (!this.userLocation) {
+                        this.locateUser(() => this.calculateRoute(destination));
+                    } else {
+                        this.calculateRoute(destination);
+                    }
+                },
+                
+                calculateRoute(destination) {
+                    if (this.routingControl) {
+                        this.map.removeControl(this.routingControl);
+                    }
+                    
+                    this.routingControl = L.Routing.control({
+                        waypoints: [
+                            L.latLng(this.userLocation.lat, this.userLocation.lng),
+                            L.latLng(destination.latitude, destination.longitude)
+                        ],
+                        routeWhileDragging: true,
+                        lineOptions: {
+                            styles: [{color: '#6FA1EC', opacity: 0.8, weight: 6}]
+                        },
+                        show: true, // MUST be true to generate the itinerary HTML
+                        addWaypoints: false,
+                        draggableWaypoints: false,
+                        fitSelectedRoutes: true,
+                        createMarker: function() { return null; }, // Don't create default markers, use ours
+                        containerClassName: 'routing-container custom-scrollbar' // Add class for styling
+                    }).addTo(this.map);
+                    
+                    // Force hide initially (we toggle it with the button)
+                    setTimeout(() => {
+                        const container = this.routingControl.getContainer();
+                        if (container) container.style.display = 'none';
+                    }, 100);
+                    
+                    // Close sidebar to show map/route
+                    if (window.innerWidth < 1024) { this.sidebarOpen = false; }
+                },
 
-                locateUser() {
+                openGoogleMaps(destination) {
+                    if (!this.userLocation) {
+                        alert('Lokasi anda belum terdeteksi.');
+                        return;
+                    }
+                    const url = `https://www.google.com/maps/dir/?api=1&destination=${destination.latitude},${destination.longitude}&travelmode=driving`;
+                    window.open(url, '_blank');
+                },
+                
+                toggleNavigationInstructions() {
+                     if (!this.routingControl) return;
+                     // Toggle the routing control container visibility
+                     const container = this.routingControl.getContainer();
+                     if (container) {
+                         if (container.style.display === 'none') {
+                             container.style.display = 'block';
+                         } else {
+                             container.style.display = 'none';
+                         }
+                     }
+                },
+
+                locateUser(callback = null, forceFollow = false) {
                     if (!navigator.geolocation) { alert('Browser tidak mendukung geolokasi'); return; }
                     this.loading = true;
-                    navigator.geolocation.getCurrentPosition(
+                    
+                    // Use watchPosition for continuous tracking
+                    if (this.watchId) navigator.geolocation.clearWatch(this.watchId);
+                    
+                    this.watchId = navigator.geolocation.watchPosition(
                         (pos) => {
                             const { latitude, longitude } = pos.coords;
-                            if (this.userMarker) this.map.removeLayer(this.userMarker);
-                            this.userMarker = L.marker([latitude, longitude], {
-                                icon: L.divIcon({ html: '<div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow pulse"></div>', className: '' })
-                            }).addTo(this.map);
-                            this.map.flyTo([latitude, longitude], 17);
+                            this.userLocation = { lat: latitude, lng: longitude };
+                            
+                            // Compass Marker HTML
+                            const compassHtml = `
+                                <div class="relative w-12 h-12 flex items-center justify-center">
+                                    <div class="user-arrow w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[16px] border-b-blue-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 origin-center" style="transform: rotate(${this.heading}deg)"></div>
+                                    <div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-md relative z-10 pulse"></div>
+                                    <div class="absolute inset-0 bg-blue-500/10 rounded-full animate-ping"></div>
+                                </div>
+                            `;
+
+                            // Update marker
+                            if (this.userMarker) {
+                                this.userMarker.setLatLng([latitude, longitude]);
+                                // Update icon if needed (mostly just for the arrow rotation which is handled in handleOrientation)
+                                // But if we just switched modes, we might want to ensure the arrow is there.
+                                // For simplicity, we just set the icon again if it doesn't have the arrow class? 
+                                // Actually, let's just use the compass icon always for the user.
+                            } else {
+                                this.userMarker = L.marker([latitude, longitude], {
+                                    icon: L.divIcon({ html: compassHtml, className: '', iconSize: [48, 48], iconAnchor: [24, 24] })
+                                }).addTo(this.map);
+                            }
+                            
+                            // Navigation Mode: Auto-Center
+                            if (this.isNavigating || forceFollow || this.loading) {
+                                this.map.flyTo([latitude, longitude], this.isNavigating ? 18 : 17, { animate: true, duration: 1 });
+                            }
+                            
                             this.loading = false;
+                            if (callback) callback();
+                            
+                            // Check Proximity
+                            this.checkProximity(latitude, longitude);
                         },
-                        () => { this.loading = false; alert('Gagal mengambil lokasi'); }
+                        (err) => { 
+                            this.loading = false; 
+                            console.error(err);
+                        },
+                        { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
                     );
+                },
+                
+                checkProximity(lat, lng) {
+                    const threshold = 0.5; // 500 meters
+                    
+                    this.allPlaces.forEach(place => {
+                        // Skip if already notified
+                        if (this.notifiedPlaces.has(place.properties.name)) return;
+                        
+                        const dist = this.calculateDistance(place.geometry.coordinates[1], place.geometry.coordinates[0]);
+                        if (dist && parseFloat(dist) <= threshold) {
+                            this.nearbyAlert = {
+                                ...place.properties,
+                                image_url: place.properties.image_path ? '{{ url('/') }}/' + place.properties.image_path : null
+                            };
+                            this.notifiedPlaces.add(place.properties.name);
+                            
+                            // Optional: Play sound or vibrate
+                            if (navigator.vibrate) navigator.vibrate(200);
+                        }
+                    });
                 }
             };
         }
     </script>
+    
+    <style>
+        /* Custom Styling for Leaflet Routing Machine */
+        .leaflet-routing-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-height: 40vh;
+            overflow-y: auto;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            border: 1px solid rgba(0,0,0,0.05);
+            width: 320px !important; /* Force width */
+            
+            /* Positioning override */
+            position: absolute !important;
+            top: 20px !important;
+            right: 20px !important;
+            z-index: 9999 !important; /* Ensure on top of everything */
+            display: none; /* Hidden by default */
+        }
+        .dark .leaflet-routing-container {
+            background-color: rgba(44, 41, 35, 0.95);
+            color: #eceae4;
+            border-color: rgba(255,255,255,0.1);
+        }
+        .leaflet-routing-alt {
+            max-height: 100%;
+        }
+        .leaflet-routing-alt tr:hover {
+            background-color: rgba(0,0,0,0.03);
+        }
+        .dark .leaflet-routing-alt tr:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+    </style>
+    
+    <!-- Proximity Alert Modal -->
+    <div x-show="nearbyAlert" 
+         class="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center p-4 sm:p-0"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+         x-cloak>
+        
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="nearbyAlert = null"></div>
+
+        <div class="relative bg-white dark:bg-[#2c2923] rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-white/20">
+            <!-- Image Header -->
+            <div class="h-32 bg-gray-200 relative">
+                <template x-if="nearbyAlert?.image_url">
+                    <img :src="nearbyAlert.image_url" class="w-full h-full object-cover">
+                </template>
+                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                     <div>
+                         <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1 block">Di Sekitar Anda</span>
+                         <h3 class="text-white font-bold text-xl leading-tight" x-text="nearbyAlert?.name"></h3>
+                     </div>
+                 </div>
+            </div>
+            
+            <div class="p-5">
+                <p class="text-text-light/80 dark:text-text-dark/80 text-sm mb-6">
+                    Anda berada dalam jarak 500m dari lokasi ini. Ingin melihat detailnya?
+                </p>
+                
+                <div class="flex gap-3">
+                    <button @click="nearbyAlert = null" class="flex-1 px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 text-text-light dark:text-text-dark text-sm font-bold hover:bg-stone-50 dark:hover:bg-white/5 transition">
+                        Tutup
+                    </button>
+                    <button @click="selectPlace({ properties: nearbyAlert, geometry: { coordinates: [0,0] } }); nearbyAlert = null;" class="flex-1 px-4 py-2 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary-dark shadow-lg shadow-primary/20 transition">
+                        Lihat Detail
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

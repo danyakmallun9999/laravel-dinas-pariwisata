@@ -28,13 +28,6 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     
-                    @if(session('status'))
-                        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="mb-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg flex items-center justify-between">
-                            <span>{{ session('status') }}</span>
-                            <button @click="show = false" class="text-green-600 hover:text-green-800"><i class="fa-solid fa-times"></i></button>
-                        </div>
-                    @endif
-
                     <div class="overflow-x-auto rounded-lg border border-gray-100">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
@@ -102,7 +95,7 @@
                                                 <a href="{{ route('admin.posts.edit', $post) }}" class="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
                                                     <i class="fa-solid fa-pen-to-square text-lg"></i>
                                                 </a>
-                                                <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.');">
+                                                <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="inline-block delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">

@@ -404,11 +404,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-<<<<<<< HEAD
-    "file": "assets/app-OtnumVqm.css",
-=======
-    "file": "assets/app-BxPTthp6.css",
->>>>>>> origin/edit-minor
+    "file": "assets/app-rVrjAPQI.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",

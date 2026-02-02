@@ -26,4 +26,17 @@ class EventController extends Controller
 
         return view('public.events.index', compact('groupedEvents'));
     }
+
+    /**
+     * Display the specified event.
+     */
+    public function show(Event $event)
+    {
+        // Ensure event is published
+        if (!$event->is_published) {
+            abort(404);
+        }
+
+        return view('public.events.show', compact('event'));
+    }
 }

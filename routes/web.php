@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/explore-map', [WelcomeController::class, 'exploreMap'])->name('explore.map');
 Route::get('/places.geojson', [WelcomeController::class, 'geoJson'])->name('places.geojson');
+Route::get('/search/places', [WelcomeController::class, 'searchPlaces'])->name('search.places');
 Route::get('/boundaries.geojson', [WelcomeController::class, 'boundariesGeoJson'])->name('boundaries.geojson');
 Route::get('/infrastructures.geojson', [WelcomeController::class, 'infrastructuresGeoJson'])->name('infrastructures.geojson');
 Route::get('/land_uses.geojson', [WelcomeController::class, 'landUsesGeoJson'])->name('land_uses.geojson');
@@ -24,6 +25,7 @@ Route::get('/destinasi/{place:slug}', [WelcomeController::class, 'showPlace'])->
 Route::get('/kuliner/{place:slug}', [WelcomeController::class, 'showCulinary'])->name('culinary.show');
 Route::get('/kebudayaan/{place:slug}', [WelcomeController::class, 'showCulture'])->name('culture.show');
 Route::get('/calendar-of-events', [App\Http\Controllers\Public\EventController::class, 'index'])->name('events.public.index');
+Route::get('/calendar-of-events/{event:slug}', [App\Http\Controllers\Public\EventController::class, 'show'])->name('events.public.show');
 
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');

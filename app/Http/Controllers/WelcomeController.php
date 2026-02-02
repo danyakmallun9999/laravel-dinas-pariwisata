@@ -14,7 +14,24 @@ class WelcomeController extends Controller
     public function index()
     {
         $categories = Category::withCount('places')->get();
+        
+        // Detailed Statistics
         $totalPlaces = Place::count();
+        
+        // Destinasi: Exclude Kuliner/Hotel to get true "Tourist Spots"
+        $countDestinasi = Place::whereHas('category', function($q) {
+            $q->whereNotIn('name', ['Kuliner', 'Hotel', 'Penginapan', 'Hotel & Penginapan']);
+        })->count();
+
+        // Kuliner Count
+        $countKuliner = $categories->first(fn($c) => \Illuminate\Support\Str::contains($c->name, 'Kuliner', true))?->places_count ?? 0;
+
+        // Event Count
+        $countEvent = \App\Models\Event::count();
+
+        // Desa Wisata / Wilayah
+        $countDesa = Boundary::count();
+
         $totalCategories = $categories->count();
         $totalBoundaries = Boundary::count(); // Represents Dukuh/Wilayah count
         $totalArea = Boundary::sum('area_hectares');
@@ -41,7 +58,11 @@ class WelcomeController extends Controller
 
         return view('welcome', compact(
             'categories', 
-            'totalPlaces', 
+            'totalPlaces',
+            'countDestinasi',
+            'countKuliner',
+            'countEvent',
+            'countDesa',
             'totalCategories', 
             'totalBoundaries', 
             'totalArea',
@@ -81,6 +102,7 @@ class WelcomeController extends Controller
                         'address' => $place->address,
                         'google_maps_link' => $place->google_maps_link,
                         'notes' => $place->notes,
+                        'slug' => $place->slug,
                     ],
                     'geometry' => [
                         'type' => 'Point',
@@ -243,6 +265,7 @@ class WelcomeController extends Controller
         return view('public.places.show', compact('place'));
     }
 
+<<<<<<< HEAD
     public function showCulinary(\App\Models\Place $place)
     {
         return view('public.culinary.show', compact('place'));
@@ -251,5 +274,31 @@ class WelcomeController extends Controller
     public function showCulture(\App\Models\Place $place)
     {
         return view('public.culture.show', compact('place'));
+=======
+    public function searchPlaces(\Illuminate\Http\Request $request)
+    {
+        $query = $request->get('q');
+        
+        if (!$query) {
+            return response()->json([]);
+        }
+
+        $places = Place::where('name', 'like', "%{$query}%")
+            ->select('id', 'name', 'slug', 'description', 'image_path')
+            ->take(5)
+            ->get()
+            ->map(function ($place) {
+                return [
+                    'id' => $place->id,
+                    'name' => $place->name,
+                    'slug' => $place->slug,
+                    'description' => \Illuminate\Support\Str::limit($place->description, 50),
+                    'image_url' => $place->image_path ? asset($place->image_path) : null,
+                    'type' => 'Lokasi'
+                ];
+            });
+
+        return response()->json($places);
+>>>>>>> e68d8cfc47f65f548f6127d4eda4db82992c7dfb
     }
 }

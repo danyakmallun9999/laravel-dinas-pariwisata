@@ -24,14 +24,22 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
             <!-- Welcome Banner -->
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-                <div class="relative z-10">
-                    <h1 class="text-3xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name }}! 👋</h1>
-                    <p class="text-blue-100 text-lg max-w-2xl">Kelola destinasi wisata, berita, dan agenda kegiatan Kabupaten Jepara dalam satu panel terintegrasi.</p>
+            <!-- Welcome Banner (Compact & Elegant) -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">
+                        Selamat Datang, <span class="text-blue-600">{{ Auth::user()->name }}</span>! 👋
+                    </h1>
+                    <p class="text-gray-500 text-sm mt-1">
+                        Siap untuk mengelola pariwisata Jepara hari ini?
+                    </p>
                 </div>
-                <!-- Decorative Circles -->
-                <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-10 blur-3xl"></div>
-                <div class="absolute bottom-0 right-20 -mb-16 w-48 h-48 rounded-full bg-white opacity-10 blur-2xl"></div>
+                <div class="hidden md:block">
+                     <a href="{{ route('welcome') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors border border-gray-200 hover:border-blue-100">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        Lihat Website
+                    </a>
+                </div>
             </div>
 
             <!-- Quick Actions -->

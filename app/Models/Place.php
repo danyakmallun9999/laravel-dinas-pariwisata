@@ -42,6 +42,11 @@ class Place extends Model
         'rating',
         'website',
         'google_maps_link',
+        'ownership_status',
+        'manager',
+        'rides',
+        'facilities',
+        'social_media',
     ];
 
     public function category()
@@ -58,4 +63,9 @@ class Place extends Model
     {
         return $this->hasMany(PlaceImage::class);
     }
+
+    protected $casts = [
+        'rides' => 'array',
+        'facilities' => 'array',
+    ];
 }

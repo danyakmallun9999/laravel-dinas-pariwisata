@@ -110,6 +110,67 @@
                     placeholder="https://example.com">
             </div>
 
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Kepemilikan</label>
+                    <input type="text" name="ownership_status" value="{{ old('ownership_status', $place->ownership_status) }}"
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder="Contoh: Pemda, Swasta">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Pengelola</label>
+                    <input type="text" name="manager" value="{{ old('manager', $place->manager) }}"
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder="Nama pengelola...">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Media Sosial</label>
+                <textarea name="social_media" rows="2"
+                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Info akun sosial media...">{{ old('social_media', $place->social_media) }}</textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Wahana</label>
+                @php
+                    $ridesInput = old('rides', $place->rides);
+                    if (is_array($ridesInput)) {
+                        $lines = [];
+                        foreach ($ridesInput as $r) {
+                            if (is_array($r)) {
+                                $str = $r['name'];
+                                if (!empty($r['price'])) {
+                                    $str .= ' - ' . $r['price'];
+                                }
+                                $lines[] = $str;
+                            } else {
+                                $lines[] = $r;
+                            }
+                        }
+                        $ridesInput = implode("\n", $lines);
+                    }
+                @endphp
+                <textarea name="rides" rows="3"
+                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Daftar wahana yang tersedia (Format: Nama Wahana - Harga)...">{{ $ridesInput }}</textarea>
+                <p class="mt-1 text-xs text-slate-500">Gunakan format "Nama - Harga" per baris. Contoh: Jetsky - Rp 150.000</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Fasilitas</label>
+                @php
+                    $facilitiesInput = old('facilities', $place->facilities);
+                    if (is_array($facilitiesInput)) {
+                        $facilitiesInput = implode("\n", $facilitiesInput);
+                    }
+                @endphp
+                <textarea name="facilities" rows="3"
+                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Daftar fasilitas yang tersedia...">{{ $facilitiesInput }}</textarea>
+            </div>
+
             <div x-data="{ photoName: null, photoPreview: null }" class="col-span-6 sm:col-span-4 mt-6">
                 <!-- Photo File Input -->
                 <input type="file" class="hidden" x-ref="photo" name="image"

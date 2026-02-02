@@ -76,42 +76,137 @@
             </div>
         </div>
         @stack('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <!-- Global Notification Toast (Alpine.js) -->
+        <div x-data="{ 
+            show: {{ session('success') || session('status') ? 'true' : 'false' }}, 
+            message: '{{ session('success') ?? session('status') }}',
+            type: 'success',
+            init() {
+                if (this.show) setTimeout(() => this.show = false, 3000);
+                window.addEventListener('notify', (e) => {
+                    this.message = e.detail.message;
+                    this.type = e.detail.type || 'success';
+                    this.show = true;
+                    setTimeout(() => this.show = false, 3000);
+                });
+            }
+        }" 
+        x-show="show" 
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 translate-y-2"
+        class="fixed bottom-6 right-6 z-50 flex items-center gap-4 px-5 py-4 rounded-2xl shadow-xl border bg-white"
+        :class="{
+            'border-green-100 dark:border-green-900/30': type === 'success',
+            'border-red-100 dark:border-red-900/30': type === 'error'
+        }" 
+        style="display: none;">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                 :class="{
+                     'bg-green-50 text-green-500': type === 'success',
+                     'bg-red-50 text-red-500': type === 'error'
+                 }">
+                <i class="fa-solid text-lg" :class="type === 'success' ? 'fa-check' : 'fa-xmark'"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900 text-sm" x-text="type === 'success' ? 'Berhasil!' : 'Terjadi Kesalahan!'"></h4>
+                <p class="text-gray-500 text-sm" x-text="message"></p>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Global Confirmation Modal (Alpine.js) -->
+        <div x-data="{ 
+            open: false, 
+            title: 'Konfirmasi', 
+            message: 'Apakah Anda yakin?', 
+            confirmCallback: null,
+            processing: false,
+            init() {
+                window.confirmAction = (title, message, callback) => {
+                    this.title = title || 'Konfirmasi';
+                    this.message = message || 'Apakah Anda yakin ingin melanjutkan?';
+                    this.confirmCallback = callback;
+                    this.open = true;
+                }
+            },
+            confirm() {
+                if (this.confirmCallback) {
+                    this.processing = true;
+                    this.confirmCallback();
+                    setTimeout(() => { this.open = false; this.processing = false; }, 500); 
+                }
+            }
+        }"
+        x-show="open" 
+        style="display: none;"
+        class="fixed inset-0 z-50 flex items-center justify-center px-4"
+        x-cloak>
+            
+            <!-- Backdrop -->
+            <div x-show="open" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+                 @click="open = false"></div>
+
+            <!-- Modal Card -->
+            <div x-show="open"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                 class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden p-6 mx-auto">
+                 
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5 text-red-500 animate-bounce-slow">
+                        <i class="fa-solid fa-trash-can text-2xl"></i>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-900 mb-2" x-text="title"></h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-8" x-text="message"></p>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button @click="open = false" 
+                                class="w-full px-5 py-3 rounded-xl text-sm font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors">
+                            Batal
+                        </button>
+                        <button @click="confirm()" 
+                                class="w-full px-5 py-3 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                            <span x-show="!processing">Ya, Hapus</span>
+                            <i class="fa-solid fa-circle-notch fa-spin" x-show="processing"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Global Delete Confirmation
+                // Intercept Delete Forms
                 document.body.addEventListener('submit', function(e) {
                     if (e.target.classList.contains('delete-form')) {
                         e.preventDefault();
                         const form = e.target;
-                        
-                        Swal.fire({
-                            title: 'Apakah Anda yakin?',
-                            text: "Data yang dihapus tidak dapat dikembalikan!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Ya, hapus!',
-                            cancelButtonText: 'Batal'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit();
-                            }
-                        });
+                        window.confirmAction(
+                            'Hapus Data?', 
+                            'Data yang dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?', 
+                            () => form.submit()
+                        );
                     }
                 });
-
-                // Success Flash Message
-                @if(session('status') || session('success'))
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: "{{ session('status') ?? session('success') }}",
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
-                @endif
             });
         </script>
     </body>
