@@ -78,10 +78,10 @@
                 <div class="flex flex-col items-center justify-center relative">
                     <div class="text-center">
                         <span class="block text-white/90 text-sm md:text-xl font-bold tracking-tight leading-tight uppercase font-heading">
-                            Dinas Pariwisata & Kebudayaan
+                            {{ __('Footer.Department') }}
                         </span>
                         <span class="block text-white/40 text-[10px] md:text-sm font-medium tracking-wide mt-1">
-                            Tourism & Culture Office of Jepara
+                            {{ __('Footer.Subtitle') }}
                         </span>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
             <!-- Column 1: About (Always visible) -->
             <div class="space-y-6 text-center md:text-left">
                 <p class="text-white/60 text-sm leading-relaxed max-w-xs mx-auto md:ml-0 font-medium">
-                    Pusat informasi resmi pariwisata dan kebudayaan Kabupaten Jepara. Temukan keindahan alam dan kekayaan budaya Kartini.
+                    {{ __('Footer.About') }}
                 </p>
                 <div class="flex items-center gap-4 justify-center md:justify-start">
                     <a href="#" aria-label="Facebook" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
@@ -115,17 +115,17 @@
             <div class="border-b border-white/5 md:border-none pb-4 md:pb-0">
                 <button onclick="toggleFooterSection('explore')" class="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group">
                     <h3 class="text-white text-sm md:text-lg font-extrabold relative inline-block tracking-tight">
-                        Jelajahi
+                        {{ __('Footer.Section.Explore') }}
                         <span class="absolute -bottom-2 md:-bottom-2 left-0 w-8 h-1 bg-primary rounded-full hidden md:block"></span>
                     </h3>
                     <i id="icon-explore" class="fa-solid fa-chevron-down text-white/40 text-xs transition-transform duration-300 md:hidden"></i>
                 </button>
                 <ul id="content-explore" class="hidden md:block space-y-3 md:space-y-4 mt-4 md:mt-8 transition-all duration-300 origin-top">
-                    <li><a href="{{ route('welcome') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Beranda</a></li>
-                    <li><a href="{{ route('places.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Destinasi</a></li>
-                    <li><a href="{{ route('explore.map') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Peta Wisata</a></li>
-                    <li><a href="{{ route('events.public.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Agenda</a></li>
-                    <li><a href="{{ route('posts.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Berita</a></li>
+                    <li><a href="{{ route('welcome') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> {{ __('Nav.Home') }}</a></li>
+                    <li><a href="{{ route('places.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> {{ __('Nav.Destinations') }}</a></li>
+                    <li><a href="{{ route('explore.map') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> {{ __('Nav.Map') }}</a></li>
+                    <li><a href="{{ route('events.public.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> {{ __('Nav.Events') }}</a></li>
+                    <li><a href="{{ route('posts.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> {{ __('Nav.News') }}</a></li>
                 </ul>
             </div>
 
@@ -133,7 +133,7 @@
             <div class="border-b border-white/5 md:border-none pb-4 md:pb-0">
                 <button onclick="toggleFooterSection('categories')" class="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group">
                     <h3 class="text-white text-sm md:text-lg font-extrabold relative inline-block tracking-tight">
-                        Kategori
+                        {{ __('Footer.Section.Categories') }}
                         <span class="absolute -bottom-2 md:-bottom-2 left-0 w-8 h-1 bg-primary rounded-full hidden md:block"></span>
                     </h3>
                     <i id="icon-categories" class="fa-solid fa-chevron-down text-white/40 text-xs transition-transform duration-300 md:hidden"></i>
@@ -150,7 +150,7 @@
             <div class="border-b border-white/5 md:border-none pb-4 md:pb-0">
                 <button onclick="toggleFooterSection('contact')" class="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group">
                     <h3 class="text-white text-sm md:text-lg font-extrabold relative inline-block tracking-tight">
-                        Hubungi Kami
+                        {{ __('Footer.Section.Contact') }}
                         <span class="absolute -bottom-2 md:-bottom-2 left-0 w-8 h-1 bg-primary rounded-full hidden md:block"></span>
                     </h3>
                     <i id="icon-contact" class="fa-solid fa-chevron-down text-white/40 text-xs transition-transform duration-300 md:hidden"></i>
@@ -203,10 +203,10 @@
             </div>
             
             <div class="text-center md:text-right">
-                <p class="text-[9px] md:text-[10px] text-white/30 uppercase tracking-[0.4em] mb-2 md:mb-4 font-bold">Official Tourism Website of Jepara Regency</p>
+                <p class="text-[9px] md:text-[10px] text-white/30 uppercase tracking-[0.4em] mb-2 md:mb-4 font-bold">{{ __('Footer.Section.Official') }}</p>
                 <p class="text-[10px] md:text-xs text-white/50 font-semibold tracking-tight">
-                    &copy; 2024 <span class="text-white">Dinas Pariwisata dan Kebudayaan</span>. <br class="md:hidden"> 
-                    All Rights Reserved.
+                    &copy; 2024 <span class="text-white">{{ __('Footer.Department') }}</span>. <br class="md:hidden"> 
+                    {{ __('Footer.Rights') }}
                 </p>
             </div>
         </div>
