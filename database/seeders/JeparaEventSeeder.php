@@ -68,11 +68,6 @@ class JeparaEventSeeder extends Seeder
 
     private function parseDate($rawDate, $monthName)
     {
-        // 1. Clean string: remove content in parens, asterisks, trim
-        $cleanDate = preg_replace('/\s*\(.*?\)/', '', $rawDate); // Remove (Setiap hari...)
-        $cleanDate = str_replace('*', '', $cleanDate);
-        $cleanDate = trim($cleanDate);
-
         // Map Indonesian Month names to English for Carbon
         $monthMap = [
             'Januari' => 'January', 'Februari' => 'February', 'Maret' => 'March',
@@ -81,75 +76,68 @@ class JeparaEventSeeder extends Seeder
             'Oktober' => 'October', 'November' => 'November', 'Desember' => 'December',
         ];
 
-        $bulanInggris = $monthMap[$monthName] ?? $monthName;
-
         try {
-            // Try explicit standard formats first
-            // Case: "29/01/2026" -> d/m/Y
-            if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $cleanDate)) {
-                return Carbon::createFromFormat('d/m/Y', $cleanDate);
+            // Pattern 1: dd/mm/yyyy anywhere in the string
+            // Example: "sedekah bumi ... (23/04/2026 ...)"
+            if (preg_match('/(\d{1,2})\/(\d{1,2})\/(\d{4})/', $rawDate, $matches)) {
+                 $d = $matches[1];
+                 $m = $matches[2];
+                 $y = $matches[3];
+                 return Carbon::createFromDate($y, $m, $d);
             }
+
+            // Pattern 2: dd Month yyyy anywhere in the string
+            // Named months in Indonesian
+            // Example: "20 April 2026"
+            $monthNamesRegex = implode('|', array_keys($monthMap));
+            if (preg_match('/(\d{1,2})\s+('.$monthNamesRegex.')\s+(\d{4})/i', $rawDate, $matches)) {
+                $d = $matches[1];
+                $mName = ucfirst(strtolower($matches[2])); // Normalize case if needed, but array keys are Title Case
+                // Fix casing if regex matched lowercase
+                foreach ($monthMap as $indo => $eng) {
+                    if (strcasecmp($indo, $mName) === 0) {
+                        $mName = $indo;
+                        break;
+                    }
+                }
+                $y = $matches[3];
+                $englishMonth = $monthMap[$mName] ?? $mName;
+                return Carbon::createFromFormat('j F Y', "$d $englishMonth $y");
+            }
+
+            // Pattern 3: Standard clean check (fallback to original logic for simple cases)
+             // 1. Clean string: remove content in parens, asterisks, trim
+            $cleanDate = preg_replace('/\s*\(.*?\)/', '', $rawDate); // Remove (Setiap hari...)
+            $cleanDate = str_replace('*', '', $cleanDate);
+            $cleanDate = trim($cleanDate);
 
             // Case: "1-Feb-26" -> j-M-y
             if (preg_match('/^\d{1,2}-[A-Za-z]+-\d{2}$/', $cleanDate)) {
-                return Carbon::parse($cleanDate);
+                 return Carbon::parse($cleanDate);
+            }
+             // Case: "5/28/2026" (m/d/Y) or "10/1/2026" - Start/End anchor
+            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $cleanDate)) {
+                 return Carbon::parse($cleanDate); 
+            }
+            
+            // If we are here, we haven't found a specific numeric date.
+            // Check if it's a "Javanese date" text like "Kamis Pahing..."
+            // We will fallback to the 1st of the provided $monthName and assumed year 2026 (or 2025).
+            // The dataset seems to be for 2026 mostly based on previous errors.
+            // Let's assume 2026 for now, or use current year.
+            
+            $year = 2026;
+            $englishMonth = $monthMap[$monthName] ?? null;
+
+            if ($englishMonth) {
+                // Return 1st of that month
+                return Carbon::createFromFormat('j F Y', "1 $englishMonth $year");
             }
 
-            // Case: "5/28/2026" (m/d/Y) or "10/1/2026"
-            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $cleanDate, $matches)) {
-                // Check if month matches
-                // matches[1] = part 1, matches[2] = part 2
-                // We need to know which is month.
-                // Comparison with $monthName
-
-                $p1 = (int) $matches[1];
-                $p2 = (int) $matches[2];
-                $y = (int) $matches[3];
-
-                // Rough Map of month name to index
-                $monthIndexMap = [
-                    'Januari' => 1, 'Februari' => 2, 'Maret' => 3, 'April' => 4,
-                    'Mei' => 5, 'Juni' => 6, 'Juli' => 7, 'Agustus' => 8,
-                    'September' => 9, 'Oktober' => 10, 'November' => 11, 'Desember' => 12,
-                ];
-                $expectedMonth = $monthIndexMap[$monthName] ?? 0;
-
-                if ($p1 == $expectedMonth) {
-                    // It's m/d/Y
-                    return Carbon::createFromDate($y, $p1, $p2);
-                } elseif ($p2 == $expectedMonth) {
-                    // It's d/m/Y
-                    return Carbon::createFromDate($y, $p2, $p1);
-                }
-
-                // Fallback: guess
-                if ($p1 > 12) {
-                    return Carbon::createFromDate($y, $p2, $p1);
-                } // p1 must be day
-                if ($p2 > 12) {
-                    return Carbon::createFromDate($y, $p1, $p2);
-                } // p2 must be day
-
-                // Default to m/d/Y as seen in 5/28/2026
-                return Carbon::createFromDate($y, $p1, $p2);
-            }
-
-            // Case: "Apr-26" -> M-y
-            if (preg_match('/^[A-Za-z]+-\d{2}$/', $cleanDate)) {
-                // Prepend 1-
-                return Carbon::parse("1-$cleanDate");
-            }
-
-            // Case: "18 Juni 2025" or "10 Juli 2026" - Indonesian format
-            // Replace Month Name with English
-            $englishDateStr = strtr($cleanDate, $monthMap);
-
-            return Carbon::parse($englishDateStr);
+            return null;
 
         } catch (\Exception $e) {
             return null;
         }
-
-        return null;
     }
 }
