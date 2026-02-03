@@ -36,13 +36,25 @@
                     <div class="hidden md:block w-px h-8 bg-gray-200 dark:bg-gray-700"></div>
 
                     <!-- Share Buttons -->
-                    <div class="flex items-center gap-3">
+                    <!-- Share Buttons -->
+                    <div class="flex items-center gap-3" x-data="{
+                        share() {
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: '{{ $post->title }}',
+                                    text: '{{ Str::limit(strip_tags($post->content), 100) }}',
+                                    url: window.location.href,
+                                })
+                                .catch(console.error);
+                            } else {
+                                navigator.clipboard.writeText(window.location.href);
+                                alert('Link telah disalin ke clipboard!');
+                            }
+                        }
+                    }">
                         <span class="text-sm text-gray-500 mr-2 hidden md:inline">Share:</span>
-                        <button class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <button @click="share()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors" title="Bagikan artikel ini">
                             <i class="fa-solid fa-share-nodes"></i>
-                        </button>
-                        <button class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                            <i class="fa-regular fa-bookmark"></i>
                         </button>
                     </div>
                 </div>

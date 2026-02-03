@@ -719,6 +719,12 @@
                                     {{ $culture->highlight }}
                                 </span>
                             </div>
+                            
+                            <!-- Link to Detail Page -->
+                            <a href="{{ route('culture.show', $culture->slug) }}" class="mt-4 inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-sm font-bold transition-all shadow-lg hover:translate-x-1 pointer-events-auto z-10">
+                                <span>Selengkapnya</span>
+                                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1089,11 +1095,11 @@
                 <div class="flex gap-4 lg:gap-8 overflow-x-auto pb-12 pt-4 px-4 lg:px-0 snap-x snap-mandatory scrollbar-hide" 
                      x-ref="foodContainer">
                 
-                
-                    <!-- 1. Pindang Serani -->
+                    @foreach($culinaries as $index => $culinary)
+                    <!-- Culinary Item -->
                     <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/srani.png') }}" 
-                             alt="Pindang Serani" 
+                        <img src="{{ asset($culinary->image) }}" 
+                             alt="{{ $culinary->name }}" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
                         <!-- Inactive Background Fade -->
                         <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
@@ -1101,127 +1107,32 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
                         <!-- Content -->
                         <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Pindang Serani</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Sup ikan laut dengan kuah bening segar berbumbu belimbing wuluh dan rempah khas Jepara.</p>
+                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">{{ $culinary->name }}</h3>
+                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">{{ $culinary->description }}</p>
+                            
+                            <!-- Read More Button (Visible only when snapped/active) -->
+                            <div class="opacity-0 group-data-[snapped=true]:opacity-100 transition-opacity duration-500 delay-100">
+                                <a href="{{ route('culinary.show', $culinary->slug) }}" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-sm font-bold transition-all shadow-lg hover:translate-x-1">
+                                    <span>Selengkapnya</span>
+                                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- 2. Durian Jepara -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/duren.png') }}" 
-                             alt="Durian Jepara" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Durian Jepara</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Raja buah lokal Petruk dari Jepara dengan daging tebal manis dan aroma menggoda.</p>
-                        </div>
-                    </div>
-
-                    <!-- 3. Adon-adon Coro -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/adon-coro.png') }}" 
-                             alt="Adon-adon Coro" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Adon-adon Coro</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Minuman jamu tradisional hangat berbahan santan, jahe, gula merah, dan rempah pilihan.</p>
-                        </div>
-                    </div>
-
-                    <!-- 4. Horog-horog -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/horog.png') }}" 
-                             alt="Horog-horog" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Horog-horog</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Pengganti nasi unik bertekstur butiran kenyal, terbuat dari tepung pohon aren.</p>
-                        </div>
-                    </div>
-
-                    <!-- 5. Carang Madu -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/carang-madu.png') }}" 
-                             alt="Carang Madu" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Carang Madu</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kue oleh-oleh renyah berbentuk sarang madu dengan siraman gula merah manis.</p>
-                        </div>
-                    </div>
-
-                    <!-- 6. Es Gempol Pleret -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/gempol.png') }}" 
-                             alt="Es Gempol Pleret" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Es Gempol Pleret</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Minuman es segar berisi gempol beras dan pleret tepung, disiram kuah santan dan sirup.</p>
-                        </div>
-                    </div>
-
-                    <!-- 7. Kopi Jeparanan -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/kopi.png') }}" 
-                             alt="Kopi Jeparanan" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Kopi Jeparanan</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kopi robusta khas pegunungan Muria Jepara dengan aroma kuat dan cita rasa otentik.</p>
-                        </div>
-                    </div>
-
-                    <!-- 8. Kacang Listrik -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/kcang.png') }}" 
-                             alt="Kacang Listrik" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Kacang Listrik</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kacang tanah sangrai unik yang dimatangkan dengan bantuan oven, gurih dan renyah.</p>
-                        </div>
-                    </div>
-
-                    <!-- 9. Krupuk Ikan Tengiri -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
-                        <img src="{{ asset('images/kuliner-jppr/krpktgr.png') }}" 
-                             alt="Krupuk Ikan Tengiri" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">Krupuk Ikan Tengiri</h3>
-                            <p class="text-white/95 text-sm lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg">Kerupuk gurih dengan rasa ikan tengiri asli yang kuat, oleh-oleh wajib khas pesisir.</p>
-                        </div>
-                    </div>
+                    @endforeach
 
                 </div>
                 
                 <!-- Dots Indicator -->
                 <div class="flex justify-center gap-2 mt-8">
-                    <template x-for="i in 9" :key="i">
-                        <button 
-                            @click="scrollToIndex(i - 1)"
-                            :class="currentIndex === (i - 1) ? 'w-8 bg-primary' : 'w-2 bg-gray-300 dark:bg-gray-600 hover:bg-primary/50'"
-                            class="h-2 rounded-full transition-all duration-300"
-                            :aria-label="'Go to slide ' + i">
-                        </button>
-                    </template>
+                    @foreach($culinaries as $index => $culinary)
+                    <button 
+                        @click="scrollToIndex({{ $index }})"
+                        :class="currentIndex === {{ $index }} ? 'w-8 bg-primary' : 'w-2 bg-gray-300 dark:bg-gray-600 hover:bg-primary/50'"
+                        class="h-2 rounded-full transition-all duration-300"
+                        aria-label="Go to slide {{ $index + 1 }}">
+                    </button>
+                    @endforeach
                 </div>
             </div>
         </div>
