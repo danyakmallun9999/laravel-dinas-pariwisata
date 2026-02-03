@@ -36,10 +36,10 @@
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
                             <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                                Jelajahi Destinasi
+                                {{ __('Destinations.Title') }}
                             </h1>
                             <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl">
-                                Temukan keindahan alam, sejarah, dan budaya di setiap sudut Jepara.
+                                {{ __('Destinations.Subtitle') }}
                             </p>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                         <input 
                             x-model="search"
                             type="text" 
-                            placeholder="Cari destinasi wisata..." 
+                            placeholder="{{ __('Destinations.SearchPlaceholder') }}" 
                             class="w-full pl-12 pr-4 py-3.5 rounded-2xl border-none bg-slate-50 dark:bg-black/20 focus:bg-white dark:focus:bg-black/40 ring-1 ring-slate-200 dark:ring-white/10 focus:ring-2 focus:ring-primary text-slate-700 dark:text-white font-medium transition-all placeholder:text-slate-400"
                         >
                     </div>
@@ -68,7 +68,7 @@
                             @click.outside="open = false"
                             class="w-full pl-12 pr-10 py-3.5 text-left rounded-2xl ring-1 ring-slate-200 dark:ring-white/10 bg-slate-50 dark:bg-black/20 hover:bg-white dark:hover:bg-black/40 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between transition-all text-slate-700 dark:text-white"
                         >
-                            <span x-text="selectedCategory === '' ? 'Semua Kategori' : selectedCategory" class="truncate"></span>
+                            <span x-text="selectedCategory === '' ? '{{ __('Destinations.Filter.AllCategories') }}' : selectedCategory" class="truncate"></span>
                             <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
                         </button>
 
@@ -88,7 +88,7 @@
                                 class="w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
                                 :class="selectedCategory === '' ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'"
                             >
-                                <span>Semua Kategori</span>
+                                <span>{{ __('Destinations.Filter.AllCategories') }}</span>
                                 <i class="fa-solid fa-check text-primary" x-show="selectedCategory === ''"></i>
                             </button>
                             @foreach($categories as $category)
@@ -113,7 +113,7 @@
                             @click.outside="open = false"
                             class="w-full pl-12 pr-10 py-3.5 text-left rounded-2xl ring-1 ring-slate-200 dark:ring-white/10 bg-slate-50 dark:bg-black/20 hover:bg-white dark:hover:bg-black/40 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between transition-all text-slate-700 dark:text-white"
                         >
-                            <span x-text="selectedLocation === '' ? 'Semua Lokasi' : selectedLocation" class="truncate"></span>
+                            <span x-text="selectedLocation === '' ? '{{ __('Destinations.Filter.AllLocations') }}' : selectedLocation" class="truncate"></span>
                             <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
                         </button>
 
@@ -133,7 +133,7 @@
                                 class="w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between group"
                                 :class="selectedLocation === '' ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'"
                             >
-                                <span>Semua Lokasi</span>
+                                <span>{{ __('Destinations.Filter.AllLocations') }}</span>
                                 <i class="fa-solid fa-check text-primary" x-show="selectedLocation === ''"></i>
                             </button>
                             @foreach($locations as $loc)
@@ -156,7 +156,7 @@
                         x-show="search || selectedCategory || selectedLocation"
                         x-transition
                     >
-                        Reset
+                        {{ __('Destinations.Filter.Reset') }}
                     </button>
                 </div>
 
@@ -185,7 +185,7 @@
                                 <!-- Category Badge -->
                                 <div class="absolute top-4 left-4">
                                     <span class="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur text-xs font-bold text-slate-800 dark:text-white shadow-sm border border-white/20" 
-                                          x-text="(place.category && place.category.name) ? place.category.name : 'Wisata'">
+                                          x-text="(place.category && place.category.name) ? place.category.name : '{{ __('Tourism.Category.Default') }}'">
                                     </span>
                                 </div>
 
@@ -227,9 +227,9 @@
                         <div class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
                             <span class="material-symbols-outlined text-4xl">travel_explore</span>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Tidak ditemukan</h3>
-                        <p class="text-slate-500">Coba kata kunci atau filter lain.</p>
-                        <button @click="search = ''; selectedCategory = ''; selectedLocation = ''" class="mt-4 text-primary font-bold hover:underline">Reset Filter</button>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">{{ __('Destinations.Empty.Title') }}</h3>
+                        <p class="text-slate-500">{{ __('Destinations.Empty.Subtitle') }}</p>
+                        <button @click="search = ''; selectedCategory = ''; selectedLocation = ''" class="mt-4 text-primary font-bold hover:underline">{{ __('Destinations.Empty.Button') }}</button>
                     </div>
                 </div>
             </div>

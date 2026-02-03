@@ -22,10 +22,10 @@
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                         <div>
                             <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                                Calendar of Events <span class="text-slate-400 font-light">{{ date('Y') }}</span>
+                                {{ __('Events.Title') }} <span class="text-slate-400 font-light">{{ date('Y') }}</span>
                             </h1>
                             <p class="text-slate-500 dark:text-slate-400 text-lg">
-                                Temukan {{ $allEvents->count() }} agenda wisata dan budaya menarik di Jepara.
+                                {{ __('Events.Subtitle', ['count' => $allEvents->count()]) }}
                             </p>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                             <input 
                                 x-model="search"
                                 type="text" 
-                                placeholder="Cari nama event..." 
+                                placeholder="{{ __('Events.SearchPlaceholder') }}" 
                                 class="w-full pl-11 pr-4 py-3 rounded-xl border-none ring-1 ring-gray-200 dark:ring-white/10 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary text-sm font-medium"
                             >
                         </div>
@@ -53,7 +53,7 @@
                                 @click.outside="open = false"
                                 class="w-full pl-11 pr-10 py-3 text-left rounded-xl ring-1 ring-gray-200 dark:ring-white/10 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between"
                             >
-                                <span x-text="selectedMonth === '' ? 'Semua Bulan' : selectedMonth" class="truncate"></span>
+                                <span x-text="selectedMonth === '' ? '{{ __('Events.Filter.AllMonths') }}' : selectedMonth" class="truncate"></span>
                                 <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
                             </button>
 
@@ -74,7 +74,7 @@
                                         class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                                         :class="selectedMonth === '' ? 'text-primary font-bold bg-primary/5' : 'text-slate-600 dark:text-slate-300'"
                                     >
-                                        Semua Bulan
+                                        {{ __('Events.Filter.AllMonths') }}
                                     </button>
                                     @foreach($months as $month)
                                         <button 
@@ -98,7 +98,7 @@
                                 @click.outside="open = false"
                                 class="w-full pl-11 pr-10 py-3 text-left rounded-xl ring-1 ring-gray-200 dark:ring-white/10 bg-white dark:bg-black/20 focus:ring-2 focus:ring-primary text-sm font-medium flex items-center justify-between"
                             >
-                                <span x-text="selectedLocation === '' ? 'Semua Lokasi' : selectedLocation" class="truncate"></span>
+                                <span x-text="selectedLocation === '' ? '{{ __('Events.Filter.AllLocations') }}' : selectedLocation" class="truncate"></span>
                                 <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
                             </button>
 
@@ -119,7 +119,7 @@
                                         class="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                                         :class="selectedLocation === '' ? 'text-primary font-bold bg-primary/5' : 'text-slate-600 dark:text-slate-300'"
                                     >
-                                        Semua Lokasi
+                                        {{ __('Events.Filter.AllLocations') }}
                                     </button>
                                     @foreach($locations as $loc)
                                         <button 
@@ -141,7 +141,7 @@
                             x-show="search || selectedMonth || selectedLocation"
                             x-transition
                         >
-                            Reset
+                            {{ __('Events.Filter.Reset') }}
                         </button>
                     </div>
                 </div>
@@ -181,7 +181,7 @@
                                 <!-- Content -->
                                 <div class="p-5 flex flex-col flex-1">
                                     <div class="flex items-center gap-2 mb-3">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded">Event</span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded">{{ __('Events.Badge') }}</span>
                                         <div class="text-xs text-gray-400 flex items-center gap-1">
                                                 <i class="fa-regular fa-clock"></i>
                                                 {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('H:i') : '-' }}
@@ -198,7 +198,7 @@
                                     </div>
 
                                     <div class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-sm">
-                                        <span class="text-gray-400 group-hover:text-primary transition-colors">Lihat Detail</span>
+                                        <span class="text-gray-400 group-hover:text-primary transition-colors">{{ __('Events.Card.ViewDetail') }}</span>
                                         <i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-primary transition-colors -translate-x-1 group-hover:translate-x-0 duration-300"></i>
                                     </div>
                                 </div>
@@ -213,8 +213,8 @@
                             <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 dark:bg-white/5 mb-4 text-gray-400">
                                 <i class="fa-solid fa-magnifying-glass text-3xl"></i>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Tidak ditemukan</h3>
-                            <p class="text-gray-500">Coba kata kunci atau filter lain.</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ __('Events.Empty.Title') }}</h3>
+                            <p class="text-gray-500">{{ __('Events.Empty.Subtitle') }}</p>
                         </div>
                     </div>
                 @else
@@ -222,7 +222,7 @@
                         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 dark:bg-white/5 mb-4 text-gray-400">
                             <i class="fa-regular fa-calendar-xmark text-3xl"></i>
                         </div>
-                        <p class="text-gray-500 dark:text-gray-400 font-medium">Belum ada event jadwal event.</p>
+                        <p class="text-gray-500 dark:text-gray-400 font-medium">{{ __('Events.NoEvents') }}</p>
                     </div>
                 @endif
 

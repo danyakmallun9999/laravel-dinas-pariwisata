@@ -5,12 +5,12 @@
             
             <!-- Header -->
             <div class="text-center mb-16">
-                <span class="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Dinas Pariwisata dan Kebudayaan Jepara</span>
+                <span class="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">{{ __('News.Header.Department') }}</span>
                 <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4">
-                    Berita & Artikel Terkini
+                    {{ __('News.Header.Title') }}
                 </h1>
                 <p class="text-gray-500 max-w-2xl mx-auto text-lg">
-                    Informasi terbaru seputar pariwisata, budaya, dan kegiatan ekonomi kreatif di Kabupaten Jepara.
+                    {{ __('News.Header.Subtitle') }}
                 </p>
             </div>
 
@@ -24,7 +24,7 @@
                     <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
                         <div class="max-w-4xl">
                             <span class="inline-block px-3 py-1 mb-4 text-xs font-bold text-white uppercase tracking-wider rounded-full bg-primary/90 backdrop-blur-sm">
-                                Feature Story
+                                {{ __('News.FeaturedBadge') }}
                             </span>
                             <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-4 group-hover:text-primary transition-colors duration-300">
                                 {{ $featuredPost->title }}
@@ -38,7 +38,7 @@
                                     <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
                                         <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" class="w-4 h-4 object-contain">
                                     </div>
-                                    Admin Wisata
+                                    {{ __('News.Author.Admin') }}
                                 </span>
                                 <span>•</span>
                                 <span>{{ $featuredPost->published_at ? $featuredPost->published_at->format('M d, Y') : '' }}</span>
@@ -56,14 +56,14 @@
                     <a href="{{ route('posts.show', $post) }}" class="block overflow-hidden rounded-2xl aspect-[4/3] mb-5 relative shadow-md">
                         <img src="{{ $post->image_path }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/50 backdrop-blur-md rounded text-xs text-white">
-                            5 min read
+                            {{ __('News.ReadTime') }}
                         </div>
                     </a>
                     
                     <div class="flex-1 flex flex-col">
                         <div class="flex items-center gap-3 mb-3">
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">
-                                {{ $post->type == 'event' ? 'Agenda' : 'News' }}
+                                {{ $post->type == 'event' ? __('News.Type.Agenda') : __('News.Type.News') }}
                             </span>
                             <span class="text-xs text-gray-400 font-medium">
                                 {{ $post->published_at ? $post->published_at->format('M d, Y') : '' }}
@@ -81,7 +81,7 @@
                         </p>
                         
                         <a href="{{ route('posts.show', $post) }}" class="inline-flex items-center text-sm font-bold text-primary group-hover:underline decoration-2 underline-offset-4">
-                            Baca Selengkapnya
+                            {{ __('News.Button.ReadMore') }}
                             <span class="material-symbols-outlined text-base ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
                         </a>
                     </div>
