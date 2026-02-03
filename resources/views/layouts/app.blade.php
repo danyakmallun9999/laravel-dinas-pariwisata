@@ -14,7 +14,8 @@
 
         
         <!-- TinyMCE (Official Cloud) -->
-        <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
+        <!-- TinyMCE (Official Cloud) -->
+        <script src="https://cdn.tiny.cloud/1/4s9z14hu3s0t79sgv5en1l6dwen6jrdx5tkux16vps4qejt9/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
