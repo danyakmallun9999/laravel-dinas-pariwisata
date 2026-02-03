@@ -68,10 +68,6 @@
                                 href="{{ route('explore.map') }}">
                                 Jelajahi Destinasi
                             </a>
-                            <a href="#profile"
-                                class="hidden sm:flex items-center justify-center h-12 px-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white text-base font-bold transition-all">
-                                Jepara Kalcer
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -279,33 +275,28 @@
 
                         <!-- Typography -->
                         <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif text-gray-900 dark:text-white leading-[1.1]">
-                            The Northern <br>
-                            <span class="italic text-gray-500 font-light">Peninsula.</span>
+                            Mutiara <br>
+                            <span class="italic text-gray-500 font-light">Semenanjung.</span>
                         </h2>
 
                         <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-light max-w-md">
                             Kabupaten Jepara, permata di ujung utara Jawa Tengah. Garis pantai membentang 83 km, menyatukan budaya ukir kelas dunia dengan keindahan alam tropis.
                         </p>
 
-                        <!-- Clean Boundary List (No Cards, Just Text) -->
+                        <!-- Key Highlights (Pillars) -->
                         <div class="pt-8 mt-8 border-t border-gray-100 dark:border-gray-800">
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-6">Batas Wilayah</h4>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between group">
-                                    <span class="text-gray-500 text-sm font-medium group-hover:text-primary transition-colors">Utara</span>
-                                    <span class="text-gray-900 dark:text-gray-300 font-serif">Laut Jawa</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                <div>
+                                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Alam</span>
+                                    <p class="font-serif text-lg text-gray-900 dark:text-white leading-tight">Surga <br> Tropis</p>
                                 </div>
-                                <div class="flex items-center justify-between group">
-                                    <span class="text-gray-500 text-sm font-medium group-hover:text-primary transition-colors">Timur</span>
-                                    <span class="text-gray-900 dark:text-gray-300 font-serif">Kudus & Pati</span>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Sejarah</span>
+                                    <p class="font-serif text-lg text-gray-900 dark:text-white leading-tight">Bumi <br> Kartini</p>
                                 </div>
-                                <div class="flex items-center justify-between group">
-                                    <span class="text-gray-500 text-sm font-medium group-hover:text-primary transition-colors">Selatan</span>
-                                    <span class="text-gray-900 dark:text-gray-300 font-serif">Kab. Demak</span>
-                                </div>
-                                <div class="flex items-center justify-between group">
-                                    <span class="text-gray-500 text-sm font-medium group-hover:text-primary transition-colors">Barat</span>
-                                    <span class="text-gray-900 dark:text-gray-300 font-serif">Laut Jawa</span>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Seni</span>
+                                    <p class="font-serif text-lg text-gray-900 dark:text-white leading-tight">Ukir <br> Dunia</p>
                                 </div>
                             </div>
                         </div>
