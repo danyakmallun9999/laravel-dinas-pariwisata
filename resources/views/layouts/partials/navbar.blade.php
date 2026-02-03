@@ -8,19 +8,19 @@
                     <h2 class="text-xl font-bold leading-tight tracking-tight">Blusukan Jepara</h2>
                 </a>
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a class="text-sm font-medium transition-colors {{ request()->routeIs('welcome') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                    <a class="text-sm font-medium transition-colors hover:underline underline-offset-4 {{ request()->routeIs('welcome') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
                        href="{{ route('welcome') }}">Beranda</a>
                        
-                    <a class="text-sm font-medium transition-colors {{ request()->routeIs('explore.map') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
-                       href="{{ route('explore.map') }}">Peta GIS</a>
+                    <a class="text-sm font-medium transition-colors hover:underline underline-offset-4 {{ request()->routeIs('explore.map') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                       href="{{ route('explore.map') }}">Peta Wisata</a>
                        
-                    <a class="text-sm font-medium transition-colors {{ request()->routeIs('places.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                    <a class="text-sm font-medium transition-colors hover:underline underline-offset-4 {{ request()->routeIs('places.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
                        href="{{ route('places.index') }}">Destinasi</a>
                        
-                    <a class="text-sm font-medium transition-colors {{ request()->routeIs('events.public.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                    <a class="text-sm font-medium transition-colors hover:underline underline-offset-4 {{ request()->routeIs('events.public.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
                        href="{{ route('events.public.index') }}">Agenda</a>
                        
-                    <a class="text-sm font-medium transition-colors {{ request()->routeIs('posts.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
+                    <a class="text-sm font-medium transition-colors hover:underline underline-offset-4 {{ request()->routeIs('posts.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
                        href="{{ route('posts.index') }}">Berita</a>
                 </nav>
             </div>
@@ -95,17 +95,17 @@
                 class="absolute top-20 left-0 w-full bg-background-light dark:bg-background-dark border-b border-surface-light dark:border-surface-dark shadow-xl lg:hidden z-50 p-4 flex flex-col gap-4">
 
                 <nav class="flex flex-col gap-4">
-                    <a class="text-sm font-medium hover:text-primary transition-colors p-2"
+                    <a class="text-sm font-medium hover:text-primary hover:underline underline-offset-4 transition-colors p-2"
                         href="{{ route('welcome') }}">Beranda</a>
                     @if(request()->routeIs('welcome'))
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#gis-map">Peta GIS</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#profile">Profil</a>
+                        <a class="text-sm font-medium hover:text-primary hover:underline underline-offset-4 transition-colors p-2" href="#gis-map">Peta Wisata</a>
+                        <a class="text-sm font-medium hover:text-primary hover:underline underline-offset-4 transition-colors p-2" href="#profile">Profil</a>
                     @else
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="{{ route('explore.map') }}">Peta GIS</a>
+                        <a class="text-sm font-medium hover:text-primary hover:underline underline-offset-4 transition-colors p-2" href="{{ route('explore.map') }}">Peta Wisata</a>
                     @endif
-                    <a class="text-sm font-medium hover:text-primary transition-colors p-2"
+                    <a class="text-sm font-medium hover:text-primary hover:underline underline-offset-4 transition-colors p-2"
                         href="{{ route('places.index') }}">Destinasi</a>
-                    <a class="text-sm font-medium hover:text-primary transition-colors p-2"
+                    <a class="text-sm font-medium hover:text-primary hover:underline underline-offset-4 transition-colors p-2"
                         href="{{ route('posts.index') }}">Berita</a>
                 </nav>
 

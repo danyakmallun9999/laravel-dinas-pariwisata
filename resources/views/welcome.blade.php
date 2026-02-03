@@ -50,10 +50,6 @@
                 <div
                     class="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center pointer-events-none">
                     <div class="max-w-4xl space-y-6 pointer-events-auto">
-                        <span
-                            class="hidden md:inline-block px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider animate-fade-in-down">
-                            Official Tourism Portal
-                        </span>
                         <h1
                             class="text-white text-3xl sm:text-5xl lg:text-7xl font-black leading-tight tracking-tight drop-shadow-sm animate-fade-in-up">
                             Blusukan Jepara.<br /> Ukir Cerita Serumu Disini
@@ -65,7 +61,7 @@
                         <div
                             class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-in-up delay-200">
                             <a class="flex items-center justify-center h-12 px-8 rounded-full bg-primary hover:bg-primary-dark text-white text-base font-bold shadow-lg shadow-black/20 transition-all hover:-translate-y-0.5"
-                                href="{{ route('explore.map') }}">
+                                href="{{ route('places.index') }}">
                                 Jelajahi Destinasi
                             </a>
                         </div>
