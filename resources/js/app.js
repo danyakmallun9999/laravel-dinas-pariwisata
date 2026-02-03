@@ -6,6 +6,9 @@ import 'leaflet-routing-machine';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'; // Import CSS
 window.maplibregl = maplibregl;
 
+import Chart from 'chart.js/auto';
+window.Chart = Chart;
+
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';
 

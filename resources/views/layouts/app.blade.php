@@ -8,14 +8,13 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
         
         <!-- FontAwesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
         
         <!-- TinyMCE (Official Cloud) -->
-        <script src="https://cdn.tiny.cloud/1/4s9z14hu3s0t79sgv5en1l6dwen6jrdx5tkux16vps4qejt9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+        <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])

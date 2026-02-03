@@ -24,8 +24,10 @@ export default {
                 "surface-dark": "#1e293b" // Slate 800
             },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-                display: ["Plus Jakarta Sans"],
+                sans: ['Inter', 'Figtree', ...defaultTheme.fontFamily.sans],
+                display: ["Plus Jakarta Sans", "Poppins"],
+                playfair: ["Playfair Display", "serif"],
+                script: ["Pinyon Script", "cursive"],
             },
         },
     },

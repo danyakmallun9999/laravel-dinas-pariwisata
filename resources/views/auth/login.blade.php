@@ -6,13 +6,10 @@
     <title>Login Admin - Sistem Informasi Geografis Desa Mayong Lor</title>
     
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600|plus-jakarta-sans:400,600,700,800" rel="stylesheet" />
+
     
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Material Symbols -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
