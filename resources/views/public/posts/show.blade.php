@@ -37,25 +37,14 @@
 
                     <!-- Share Buttons -->
                     <!-- Share Buttons -->
-                    <div class="flex items-center gap-3" x-data="{
-                        share() {
-                            if (navigator.share) {
-                                navigator.share({
-                                    title: '{{ $post->title }}',
-                                    text: '{{ Str::limit(strip_tags($post->content), 100) }}',
-                                    url: window.location.href,
-                                })
-                                .catch(console.error);
-                            } else {
-                                navigator.clipboard.writeText(window.location.href);
-                                alert('Link telah disalin ke clipboard!');
-                            }
-                        }
-                    }">
+                    <!-- Share Buttons -->
+                    <div class="flex items-center gap-3">
                         <span class="text-sm text-gray-500 mr-2 hidden md:inline">Share:</span>
-                        <button @click="share()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors" title="Bagikan artikel ini">
-                            <i class="fa-solid fa-share-nodes"></i>
-                        </button>
+                        <x-share-modal :url="route('posts.show', $post)" :title="$post->title" :text="Str::limit(strip_tags($post->content), 100)">
+                            <button class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors" title="Bagikan artikel ini">
+                                <i class="fa-solid fa-share-nodes"></i>
+                            </button>
+                        </x-share-modal>
                     </div>
                 </div>
             </div>
