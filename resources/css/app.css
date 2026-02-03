@@ -69,6 +69,50 @@
         @apply border-l-4 border-gray-300 pl-4 italic my-4 bg-gray-50 py-2 pr-2;
     }
 
+    .menu-ring {
+        @apply absolute inset-0 w-full h-full text-primary/20 dark:text-primary/40 transition-transform duration-700 ease-in-out;
+    }
+
+    /* Luxury Menu Animation */
+    .menu-icon {
+        transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.4s ease;
+    }
+
+    .menu-icon-hidden {
+        transform: scale(0) rotate(180deg);
+        opacity: 0;
+    }
+
+    .menu-icon-visible {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    /* Golden Thread Animation */
+    .menu-path {
+        stroke-dasharray: 60; /* Sufficient length for 24px icon paths */
+        transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+    }
+
+    .menu-path-hidden {
+        stroke-dashoffset: 60;
+        opacity: 0;
+    }
+
+    .menu-path-visible {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+
+    @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .animate-spin-slow {
+        animation: spin-slow 12s linear infinite;
+    }
+
     /* Image Alignment */
     .tinymce-content img {
         @apply max-w-full h-auto rounded-lg my-2;

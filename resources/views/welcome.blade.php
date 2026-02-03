@@ -209,7 +209,7 @@
                             {{ $countDestinasi }}+</p>
                         <p class="text-[10px] md:text-xs text-text-light/60 dark:text-text-dark/60 font-medium uppercase tracking-wider">
                             {{ __('Stats.Destinations') }}</p>
-                            {{ __('Nav.Destinations') }}</p>
+
                     </div>
                 </div>
 
@@ -222,7 +222,6 @@
                         <p class="text-text-light dark:text-text-dark text-xl md:text-2xl font-bold tracking-tight leading-none mb-1">
                             {{ $countKuliner }}+</p>
                         <p class="text-[10px] md:text-xs text-text-light/60 dark:text-text-dark/60 font-medium uppercase tracking-wider">
-                             {{ __('Stats.Culinary') }}</p>
                              {{ __('Stats.Culinary') }}</p>
                     </div>
                 </div>
@@ -249,7 +248,6 @@
                         <p class="text-text-light dark:text-text-dark text-xl md:text-2xl font-bold tracking-tight leading-none mb-1">
                             {{ $countDesa }}</p>
                         <p class="text-[10px] md:text-xs text-text-light/60 dark:text-text-dark/60 font-medium uppercase tracking-wider">
-                            {{ __('Stats.Villages') }}</p>
                             {{ __('Stats.Villages') }}</p>
                     </div>
                 </div>
