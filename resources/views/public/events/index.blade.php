@@ -12,16 +12,56 @@
                 $allEvents = $groupedEvents->flatten();
                 $locations = $allEvents->pluck('location')->unique()->values();
                 $months = $groupedEvents->keys();
+
+                $allEventsJSON = $allEvents->map(function($event) {
+                    return [
+                        'id' => $event->id,
+                        'title' => $event->title,
+                        'slug' => $event->slug,
+                        'description' => $event->description,
+                        'location' => $event->location,
+                        'image_url' => $event->image ? Storage::url($event->image) : null,
+                        'start_date_month' => $event->start_date->format('M'),
+                        'start_date_day' => $event->start_date->format('d'),
+                        'start_date_full' => $event->start_date->translatedFormat('F Y'),
+                        'start_time' => $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('H:i') : '-',
+                    ];
+                });
             @endphp
 
             <div x-data="{ 
                 search: '', 
                 selectedMonth: '', 
                 selectedLocation: '',
+                currentPage: 1,
+                perPage: 9,
+                events: {{ Js::from($allEventsJSON) }},
                 get filteredEvents() {
-                    return true; // Logic handled in x-show for simplicity/SEO
+                    return this.events.filter(event => {
+                        const matchesSearch = this.search === '' || event.title.toLowerCase().includes(this.search.toLowerCase());
+                        const matchesMonth = this.selectedMonth === '' || event.start_date_full === this.selectedMonth;
+                        const matchesLocation = this.selectedLocation === '' || event.location === this.selectedLocation;
+                        return matchesSearch && matchesMonth && matchesLocation;
+                    });
+                },
+                get totalPages() {
+                    return Math.ceil(this.filteredEvents.length / this.perPage);
+                },
+                get paginatedEvents() {
+                    const start = (this.currentPage - 1) * this.perPage;
+                    return this.filteredEvents.slice(start, start + this.perPage);
+                },
+                get pages() {
+                    let pages = [];
+                    let start = Math.max(1, this.currentPage - 2);
+                    let end = Math.min(this.totalPages, start + 4);
+                    if (end - start < 4) start = Math.max(1, end - 4);
+                    for (let i = start; i <= end; i++) {
+                        if (i > 0) pages.push(i);
+                    }
+                    return pages;
                 }
-            }">
+            }" x-init="$watch('search', () => currentPage = 1); $watch('selectedMonth', () => currentPage = 1); $watch('selectedLocation', () => currentPage = 1)">
 
                 <!-- Header & Filters -->
                 <div class="mb-10 border-b border-gray-100 dark:border-white/10 pb-8">
@@ -153,84 +193,102 @@
                 </div>
 
                 <!-- Events Grid -->
-                @if($allEvents->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
-                        @foreach($allEvents as $event)
-                        <a href="{{ route('events.public.show', $event) }}" 
-                           class="group block h-full transition-all duration-300"
-                           x-show="(selectedMonth === '' || '{{ $event->start_date->translatedFormat('F Y') }}' === selectedMonth) && 
-                                   (selectedLocation === '' || '{{ $event->location }}' === selectedLocation) && 
-                                   (search === '' || '{{ strtolower($event->title) }}'.toLowerCase().includes(search.toLowerCase()))"
-                           x-transition:enter="transition ease-out duration-300"
-                           x-transition:enter-start="opacity-0 scale-95"
-                           x-transition:enter-end="opacity-100 scale-100"
-                        >
-                            <div class="h-full flex flex-col bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden hover:border-primary/50 dark:hover:border-primary/50 transition-colors duration-300 shadow-sm hover:shadow-lg">
-                                
-                                <!-- Image 16:9 -->
-                                <div class="aspect-video w-full relative overflow-hidden bg-gray-100 dark:bg-white/5">
-                                    @if($event->image)
-                                        <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                    @else
-                                        <div class="flex items-center justify-center h-full text-gray-300">
-                                            <i class="fa-regular fa-image text-3xl"></i>
-                                        </div>
-                                    @endif
+                <div class="min-h-[400px]">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <template x-for="event in paginatedEvents" :key="event.id">
+                            <a :href="`/calendar-of-events/${event.slug}`" 
+                               class="group block h-full transition-all duration-300"
+                               x-transition:enter="transition ease-out duration-300"
+                               x-transition:enter-start="opacity-0 scale-95"
+                               x-transition:enter-end="opacity-100 scale-100"
+                            >
+                                <div class="h-full flex flex-col bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden hover:border-primary/50 dark:hover:border-primary/50 transition-colors duration-300 shadow-sm hover:shadow-lg">
                                     
-                                    <!-- Simple Date Badge -->
-                                    <div class="absolute top-3 right-3 bg-white dark:bg-black/80 px-3 py-1.5 rounded shadow-sm text-center border border-gray-100 dark:border-white/10">
-                                        <div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ $event->start_date->format('M') }}</div>
-                                        <div class="text-xl font-bold text-gray-800 dark:text-white leading-none">{{ $event->start_date->format('d') }}</div>
-                                    </div>
-                                </div>
-
-                                <!-- Content -->
-                                <div class="p-5 flex flex-col flex-1">
-                                    <div class="flex items-center gap-2 mb-3">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded">{{ __('Events.Badge') }}</span>
-                                        <div class="text-xs text-gray-400 flex items-center gap-1">
-                                                <i class="fa-regular fa-clock"></i>
-                                                {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('H:i') : '-' }}
+                                    <!-- Image 16:9 -->
+                                    <div class="aspect-video w-full relative overflow-hidden bg-gray-100 dark:bg-white/5">
+                                        <template x-if="event.image_url">
+                                            <img :src="event.image_url" :alt="event.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                        </template>
+                                        <template x-if="!event.image_url">
+                                            <div class="flex items-center justify-center h-full text-gray-300">
+                                                <i class="fa-regular fa-image text-3xl"></i>
+                                            </div>
+                                        </template>
+                                        
+                                        <!-- Simple Date Badge -->
+                                        <div class="absolute top-3 right-3 bg-white dark:bg-black/80 px-3 py-1.5 rounded shadow-sm text-center border border-gray-100 dark:border-white/10">
+                                            <div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide" x-text="event.start_date_month"></div>
+                                            <div class="text-xl font-bold text-gray-800 dark:text-white leading-none" x-text="event.start_date_day"></div>
                                         </div>
                                     </div>
 
-                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                                        {{ $event->title }}
-                                    </h3>
+                                    <!-- Content -->
+                                    <div class="p-5 flex flex-col flex-1">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <span class="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded">{{ __('Events.Badge') }}</span>
+                                            <div class="text-xs text-gray-400 flex items-center gap-1">
+                                                    <i class="fa-regular fa-clock"></i>
+                                                    <span x-text="event.start_time"></span>
+                                            </div>
+                                        </div>
 
-                                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex items-start gap-1.5">
-                                        <i class="fa-solid fa-location-dot text-gray-400 mt-0.5"></i>
-                                        <span class="line-clamp-1">{{ $event->location }}</span>
+                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2" x-text="event.title">
+                                        </h3>
+
+                                        <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex items-start gap-1.5">
+                                            <i class="fa-solid fa-location-dot text-gray-400 mt-0.5"></i>
+                                            <span class="line-clamp-1" x-text="event.location"></span>
+                                        </div>
+
+                                        <div class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-sm">
+                                            <span class="text-gray-400 group-hover:text-primary transition-colors">{{ __('Events.Card.ViewDetail') }}</span>
+                                            <i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-primary transition-colors -translate-x-1 group-hover:translate-x-0 duration-300"></i>
+                                        </div>
                                     </div>
 
-                                    <div class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-sm">
-                                        <span class="text-gray-400 group-hover:text-primary transition-colors">{{ __('Events.Card.ViewDetail') }}</span>
-                                        <i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-primary transition-colors -translate-x-1 group-hover:translate-x-0 duration-300"></i>
-                                    </div>
                                 </div>
-
-                            </div>
-                        </a>
-                        @endforeach
-                        
-                        <!-- No Results Message (Pure Alpine) -->
-                        <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 hidden" 
-                             :class="{ '!block': !document.querySelectorAll('a[x-show]:not([style*=\'display: none\'])').length && (search || selectedMonth || selectedLocation) }">
-                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 dark:bg-white/5 mb-4 text-gray-400">
-                                <i class="fa-solid fa-magnifying-glass text-3xl"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ __('Events.Empty.Title') }}</h3>
-                            <p class="text-gray-500">{{ __('Events.Empty.Subtitle') }}</p>
-                        </div>
+                            </a>
+                        </template>
                     </div>
-                @else
-                    <div class="py-20 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-xl">
+                    
+                    <!-- No Results Message -->
+                    <div x-show="filteredEvents.length === 0" class="text-center py-20" style="display: none;">
                         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 dark:bg-white/5 mb-4 text-gray-400">
-                            <i class="fa-regular fa-calendar-xmark text-3xl"></i>
+                            <i class="fa-solid fa-magnifying-glass text-3xl"></i>
                         </div>
-                        <p class="text-gray-500 dark:text-gray-400 font-medium">{{ __('Events.NoEvents') }}</p>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ __('Events.Empty.Title') }}</h3>
+                        <p class="text-gray-500">{{ __('Events.Empty.Subtitle') }}</p>
                     </div>
-                @endif
+                </div>
+
+                <!-- Pagination -->
+                <div x-show="totalPages > 1" class="mt-12 flex justify-center items-center gap-2 pb-12">
+                    <button 
+                        @click="currentPage > 1 ? (currentPage--, window.scrollTo({ top: 0, behavior: 'smooth' })) : null"
+                        :disabled="currentPage === 1"
+                        class="size-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all shadow-sm"
+                    >
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+
+                    <template x-for="page in pages" :key="page">
+                        <button 
+                            @click="currentPage = page; window.scrollTo({ top: 0, behavior: 'smooth' })"
+                            x-text="page"
+                            class="size-10 rounded-xl border font-bold text-sm transition-all shadow-sm"
+                            :class="currentPage === page ? 'bg-primary border-primary text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary'"
+                        ></button>
+                    </template>
+
+                    <button 
+                        @click="currentPage < totalPages ? (currentPage++, window.scrollTo({ top: 0, behavior: 'smooth' })) : null"
+                        :disabled="currentPage === totalPages"
+                        class="size-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all shadow-sm"
+                    >
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+
 
             </div>
 

@@ -20,6 +20,8 @@
                 search: '',
                 selectedCategory: '',
                 selectedLocation: '',
+                currentPage: 1,
+                perPage: 9,
                 places: {{ Js::from($places) }},
                 get filteredPlaces() {
                     return this.places.filter(place => {
@@ -35,8 +37,26 @@
 
                         return matchesSearch && matchesCategory && matchesLocation;
                     });
+                },
+                get totalPages() {
+                    return Math.ceil(this.filteredPlaces.length / this.perPage);
+                },
+                get paginatedPlaces() {
+                    const start = (this.currentPage - 1) * this.perPage;
+                    return this.filteredPlaces.slice(start, start + this.perPage);
+                },
+                get pages() {
+                    let pages = [];
+                    let start = Math.max(1, this.currentPage - 2);
+                    let end = Math.min(this.totalPages, start + 4);
+                    if (end - start < 4) start = Math.max(1, end - 4);
+                    
+                    for (let i = start; i <= end; i++) {
+                        if (i > 0) pages.push(i);
+                    }
+                    return pages;
                 }
-            }">
+            }" x-init="$watch('search', () => currentPage = 1); $watch('selectedCategory', () => currentPage = 1); $watch('selectedLocation', () => currentPage = 1)">
                 
                 <!-- Simple Header -->
                 <div class="mb-10 border-b border-gray-100 dark:border-white/10 pb-8">
@@ -169,7 +189,7 @@
 
                 <!-- Modern Grid Layout -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[50vh]">
-                    <template x-for="place in filteredPlaces" :key="place.id">
+                    <template x-for="place in paginatedPlaces" :key="place.id">
                         <a :href="`/destinasi/${place.slug}`" class="group relative bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700 hover:-translate-y-2 flex flex-col h-full"
                            x-transition:enter="transition ease-out duration-300"
                            x-transition:enter-start="opacity-0 scale-95"
@@ -238,6 +258,34 @@
                         <p class="text-slate-500">{{ __('Destinations.Empty.Subtitle') }}</p>
                         <button @click="search = ''; selectedCategory = ''; selectedLocation = ''" class="mt-4 text-primary font-bold hover:underline">{{ __('Destinations.Empty.Button') }}</button>
                     </div>
+                </div>
+
+                <!-- Pagination -->
+                <div x-show="totalPages > 1" class="mt-12 flex justify-center items-center gap-2 pb-12">
+                    <button 
+                        @click="currentPage > 1 ? (currentPage--, window.scrollTo({ top: 0, behavior: 'smooth' })) : null"
+                        :disabled="currentPage === 1"
+                        class="size-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all shadow-sm"
+                    >
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+
+                    <template x-for="page in pages" :key="page">
+                        <button 
+                            @click="currentPage = page; window.scrollTo({ top: 0, behavior: 'smooth' })"
+                            x-text="page"
+                            class="size-10 rounded-xl border font-bold text-sm transition-all shadow-sm"
+                            :class="currentPage === page ? 'bg-primary border-primary text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary'"
+                        ></button>
+                    </template>
+
+                    <button 
+                        @click="currentPage < totalPages ? (currentPage++, window.scrollTo({ top: 0, behavior: 'smooth' })) : null"
+                        :disabled="currentPage === totalPages"
+                        class="size-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all shadow-sm"
+                    >
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
                 </div>
             </div>
         </div>
