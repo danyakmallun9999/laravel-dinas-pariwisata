@@ -574,6 +574,9 @@
             this.currentIndex = Math.round(scrollValues * (this.totalItems - 1));
         },
         startAutoplay() {
+            // Only autoplay on desktop (md breakpoint and above)
+            if (window.innerWidth < 768) return;
+            
             this.stopAutoplay();
             this.autoplay = setInterval(() => {
                 if (this.currentIndex >= this.totalItems - 1) {
@@ -592,6 +595,15 @@
         init() {
             this.$refs.container?.addEventListener('scroll', () => this.updateCurrentIndex());
             this.startAutoplay();
+            
+            // Stop autoplay on resize to mobile
+            window.addEventListener('resize', () => {
+                if (window.innerWidth < 768) {
+                    this.stopAutoplay();
+                } else {
+                    this.startAutoplay();
+                }
+            });
         }
     }" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -784,6 +796,9 @@
             }
         },
         startAutoplay() {
+            // Only autoplay on desktop (md breakpoint and above)
+            if (window.innerWidth < 768) return;
+            
             this.stopAutoplay();
             this.autoplay = setInterval(() => {
                 const container = $refs.foodContainer;
@@ -861,6 +876,15 @@
                         }
                     });
                 });
+            });
+            
+            // Stop autoplay on resize to mobile
+            window.addEventListener('resize', () => {
+                if (window.innerWidth < 768) {
+                    this.stopAutoplay();
+                } else {
+                    this.startAutoplay();
+                }
             });
         }
     }" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
