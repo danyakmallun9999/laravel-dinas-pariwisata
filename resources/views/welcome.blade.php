@@ -942,7 +942,7 @@
                 <h2 class="text-2xl md:text-3xl font-bold text-text-light dark:text-text-dark">{{ __('News.Title') }}</h2>
                 <a class="text-primary font-bold hover:underline flex items-center gap-1 self-start md:self-auto"
                     href="{{ route('posts.index') }}">
-                    {{ __('News.Button.ViewAll') }} <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    {{ __('View All') }} <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
