@@ -85,133 +85,8 @@
     x-data="mapComponent()">
 
     <!-- Top Navigation -->
-    <div
-        class="fixed top-0 left-0 right-0 z-[10000] w-full border-b border-surface-light dark:border-surface-dark bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <header class="flex h-20 items-center justify-between gap-8" x-data="{ mobileMenuOpen: false }">
-                <div class="flex items-center gap-8">
-                    <a class="flex items-center gap-3 text-text-light dark:text-text-dark group" href="#">
-                        <img src="{{ asset('images/logo-kabupaten-jepara.png') }}" alt="Logo Kabupaten Jepara"
-                            class="w-10 h-auto object-contain">
-                        <h2 class="text-xl font-bold leading-tight tracking-tight">Blusukan Jepara</h2>
-                    </a>
-                    <nav class="hidden lg:flex items-center gap-8">
-                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('welcome') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
-                           href="{{ route('welcome') }}">Beranda</a>
-                           
-                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('explore.map') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
-                           href="{{ route('explore.map') }}">Peta GIS</a>
-                           
-                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('places.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
-                           href="{{ route('places.index') }}">Destinasi</a>
-                           
-                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('events.public.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
-                           href="{{ route('events.public.index') }}">Agenda</a>
-                           
-                        <a class="text-sm font-medium transition-colors {{ request()->routeIs('posts.*') ? 'text-primary font-bold' : 'text-text-light dark:text-text-dark hover:text-primary' }}" 
-                           href="{{ route('posts.index') }}">Berita</a>
-                    </nav>
-                </div>
-
-                <div class="flex flex-1 items-center justify-end gap-4">
-                    <!-- Search Bar -->
-                    <label class="hidden md:flex flex-col w-full max-w-xs h-10 relative">
-                        <div
-                            class="flex w-full h-full items-center rounded-full bg-surface-light dark:bg-surface-dark px-4 transition-colors focus-within:ring-2 focus-within:ring-primary/50">
-                            <span class="material-symbols-outlined text-gray-500 dark:text-gray-400">search</span>
-                            <input
-                                class="w-full bg-transparent border-none text-sm px-3 text-text-light dark:text-text-dark placeholder-gray-500 focus:ring-0"
-                                placeholder="Cari lokasi, data..." type="text" x-model="searchQuery"
-                                @input.debounce.50ms="performSearch()" @keydown.enter="scrollToMap()" />
-                        </div>
-
-                        <!-- Search Results Dropdown -->
-                        <div x-show="searchResults.length > 0" @click.outside="searchResults = []"
-                            class="absolute top-12 left-0 right-0 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-surface-light dark:border-surface-dark overflow-hidden z-50 max-h-80 overflow-y-auto"
-                            x-cloak x-transition>
-                            <template x-for="result in searchResults" :key="result.id || result.name">
-                                <button @click="selectFeature(result); scrollToMap()"
-                                    class="w-full text-left px-4 py-3 hover:bg-surface-light dark:hover:bg-black/20 border-b border-surface-light dark:border-surface-dark last:border-0 transition flex items-center gap-3">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary flex-shrink-0">
-                                        <i class="fa-solid fa-location-dot"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="font-bold text-text-light dark:text-text-dark text-sm truncate"
-                                            x-text="result.name"></p>
-                                        <p class="text-xs text-text-light/60 dark:text-text-dark/60 truncate"
-                                            x-text="result.type || 'Location'"></p>
-                                    </div>
-                                </button>
-                            </template>
-                        </div>
-                    </label>
-
-                    <!-- Auth Buttons (Desktop) -->
-                    <div class="hidden">
-                        @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}"
-                                    class="flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
-                                    Dashboard
-                                </a>
-                            @else
-                                <a href="{{ route('login') }}"
-                                    class="flex items-center justify-center rounded-full h-10 px-6 bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
-                                    <span class="truncate">Login</span>
-                                </a>
-                            @endauth
-                        @endif
-                    </div>
-
-                    <!-- Mobile Menu Button -->
-                    <button @click="mobileMenuOpen = !mobileMenuOpen"
-                        class="lg:hidden p-2 rounded-full hover:bg-surface-light dark:hover:bg-surface-dark">
-                        <span class="material-symbols-outlined" x-text="mobileMenuOpen ? 'close' : 'menu'">menu</span>
-                    </button>
-                </div>
-
-                <!-- Mobile Menu Dropdown -->
-                <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 -translate-y-2"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 -translate-y-2" @click.outside="mobileMenuOpen = false" x-cloak
-                    class="absolute top-20 left-0 w-full bg-background-light dark:bg-background-dark border-b border-surface-light dark:border-surface-dark shadow-xl lg:hidden z-50 p-4 flex flex-col gap-4">
-
-                    <nav class="flex flex-col gap-4">
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2"
-                            href="{{ route('welcome') }}">Beranda</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2" href="#gis-map">Peta
-                            GIS</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2"
-                            href="#profile">Profil</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2"
-                            href="{{ route('places.index') }}">Destinasi</a>
-                        <a class="text-sm font-medium hover:text-primary transition-colors p-2"
-                            href="{{ route('posts.index') }}">Berita</a>
-                    </nav>
-
-                    <div class="hidden border-t border-surface-light dark:border-surface-dark pt-4">
-                        @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}"
-                                    class="flex items-center justify-center rounded-xl h-12 w-full bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
-                                    Dashboard
-                                </a>
-                            @else
-                                <a href="{{ route('login') }}"
-                                    class="flex items-center justify-center rounded-xl h-12 w-full bg-primary hover:bg-primary-dark text-white dark:text-gray-900 text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95">
-                                    Login
-                                </a>
-                            @endauth
-                        @endif
-                    </div>
-                </div>
-            </header>
-        </div>
-    </div>
+    <!-- Top Navigation -->
+    @include('layouts.partials.navbar')
 
     <div class="relative w-full">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
@@ -549,7 +424,7 @@
                  x-intersect.threshold.0.5="shown = true">
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-text-light dark:text-text-dark mb-6 opacity-0 translate-y-4 transition-all duration-700 delay-100"
                     :class="shown ? 'opacity-100 translate-y-0' : ''">
-                    Sejarah & Legenda
+                    SEJARAH & LEGENDA
                 </h2>
                 <p class="text-text-light/70 dark:text-text-dark/70 max-w-2xl mx-auto text-lg opacity-0 translate-y-4 transition-all duration-700 delay-200"
                    :class="shown ? 'opacity-100 translate-y-0' : ''">
@@ -663,7 +538,7 @@
             <div class="text-center mb-16" x-data="{ shown: false }" x-intersect.threshold.0.5="shown = true">
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-text-light dark:text-text-dark mb-6 opacity-0 translate-y-4 transition-all duration-700 delay-100"
                     :class="shown ? 'opacity-100 translate-y-0' : ''">
-                    Budaya Jepara
+                    BUDAYA JEPARA
                 </h2>
                 <p class="text-text-light/70 dark:text-text-dark/70 max-w-2xl mx-auto text-lg opacity-0 translate-y-4 transition-all duration-700 delay-200"
                    :class="shown ? 'opacity-100 translate-y-0' : ''">
@@ -801,7 +676,7 @@
             <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
                 <div class="max-w-2xl">
                     <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4 leading-tight">
-                        Wisata Unggulan Jepara
+                        WISATA UNGGULAN JEPARA
                     </h2>
                     <p class="text-text-light/70 dark:text-text-dark/70 text-lg leading-relaxed">
                         Jelajahi keindahan alam, kekayaan budaya, dan sejarah yang memukau di Bumi Kartini.
@@ -1069,7 +944,7 @@
             <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
                 <div class="max-w-2xl">
                     <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4 leading-tight">
-                        Kuliner Khas Jepara
+                        KULINER KHAS JEPARA
                     </h2>
                     <p class="text-text-light/70 dark:text-text-dark/70 text-lg leading-relaxed">
                         Nikmati cita rasa autentik kuliner tradisional Jepara yang kaya akan rempah dan warisan budaya.
@@ -1143,7 +1018,7 @@
         id="news">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 mb-8">
-                <h2 class="text-2xl md:text-3xl font-bold text-text-light dark:text-text-dark">Berita & Pengumuman</h2>
+                <h2 class="text-2xl md:text-3xl font-bold text-text-light dark:text-text-dark">BERITA & PENGUMUMAN</h2>
                 <a class="text-primary font-bold hover:underline flex items-center gap-1 self-start md:self-auto"
                     href="{{ route('posts.index') }}">
                     Lihat Semua <span class="material-symbols-outlined text-sm">arrow_forward</span>
@@ -1191,220 +1066,8 @@
 
     <!-- Footer -->
     <!-- Footer Start -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;900&display=swap');
-    </style>
-    <!-- Redesigned Footer with Photo Collage -->
-    <style>
-        .text-outline {
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        }
-        .text-outline-sm {
-            text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000;
-        }
-    </style>
-    <footer class="relative bg-[#1a1c23] text-white pt-16 md:pt-24 pb-8 md:pb-12 overflow-hidden">
-        <!-- Dynamic Photo Collage Background -->
-        <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 h-full w-full gap-0.5 md:gap-2 p-0.5 md:p-2 transform scale-105 motion-safe:animate-[slow-pan_20s_ease-in-out_infinite] opacity-30 md:opacity-40">
-                <!-- Item 1 (Large Square) -->
-                <div class="relative overflow-hidden rounded-lg col-span-2 row-span-2 bg-gray-800">
-                    <img src="{{ asset('images/culture/barikan-kubro.png') }}" alt="" class="w-full h-full object-cover">
-                </div>
-                <!-- Item 2 (Small) -->
-                <div class="relative overflow-hidden rounded-lg bg-gray-800">
-                    <img src="{{ asset('images/culture/festival-kupat-lepet.png') }}" alt="" class="w-full h-full object-cover">
-                </div>
-                <!-- Item 3 (Tall) -->
-                <div class="relative overflow-hidden rounded-lg row-span-2 bg-gray-800">
-                    <img src="{{ asset('images/culture/jondang-kawak.png') }}" alt="" class="w-full h-full object-cover">
-                </div>
-                <!-- Item 4 (Wide - Original Footer Image) -->
-                <div class="relative overflow-hidden rounded-lg col-span-2 bg-gray-800">
-                    <img src="{{ asset('images/footer/image.png') }}" alt="" class="w-full h-full object-cover">
-                </div>
-                <!-- Item 5 (Small) -->
-                <div class="relative overflow-hidden rounded-lg bg-gray-800">
-                    <img src="{{ asset('images/culture/kirab-buka-luwur.png') }}" alt="" class="w-full h-full object-cover">
-                </div>
-                <!-- Item 6 (Wide) -->
-                <div class="relative overflow-hidden rounded-lg col-span-2 bg-gray-800">
-                    <img src="{{ asset('images/culture/lomban.png') }}" alt="" class="w-full h-full object-cover">
-                </div>
-                <!-- Item 7 (Small) -->
-                <div class="relative overflow-hidden rounded-lg bg-gray-800">
-                    <img src="{{ asset('images/culture/obor.png') }}" alt="" class="w-full h-full object-cover">
-                </div>
-            </div>
-            
-            <!-- Deep Dark Overlays -->
-            <div class="absolute inset-0 bg-gradient-to-t from-[#1a1c23] via-[#1a1c23]/70 to-[#1a1c23] z-10"></div>
-            <div class="absolute inset-0 bg-gradient-to-r from-[#1a1c23] via-transparent to-[#1a1c23] z-10"></div>
-        </div>
-
-        <style>
-            @keyframes slow-pan {
-                0%, 100% { transform: scale(1.05) translate(0, 0); }
-                50% { transform: scale(1.1) translate(-0.5%, -0.5%); }
-            }
-        </style>
-
-        <!-- Background Decorative Elements -->
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-white/5 z-10"></div>
-        
-        <!-- Animated Background Orbs -->
-        <div class="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] pointer-events-none z-10"></div>
-        <div class="absolute bottom-[-10%] right-[-5%] w-[30%] h-[30%] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none z-10"></div>
-
-        <div class="relative w-full mx-auto max-w-7xl px-6 md:px-10 z-20">
-            <!-- Branding Section -->
-            <div class="mb-12 md:mb-16 text-center">
-                <div class="inline-flex flex-col mb-4 md:mb-6 w-full items-center">
-                    
-                    <!-- Main Branding -->
-                    <h2 class="text-3xl md:text-7xl font-bold tracking-tight leading-[0.9] md:leading-[0.8] uppercase mb-6 text-outline-sm md:text-outline drop-shadow-2xl">
-                        Pemerintah <br class="hidden md:block">
-                        Kabupaten <span class="text-primary">Jepara</span>
-                    </h2>
-
-                    <!-- Department Subtitle (Centered) -->
-                    <div class="flex flex-col items-center justify-center relative">
-                        <div class="text-center">
-                            <span class="block text-white/90 text-sm md:text-xl font-bold tracking-tight leading-tight uppercase font-heading">
-                                Dinas Pariwisata & Kebudayaan
-                            </span>
-                            <span class="block text-white/40 text-[10px] md:text-sm font-medium tracking-wide mt-1">
-                                Tourism & Culture Office of Jepara
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-20">
-                <!-- Column 1: About (Always visible) -->
-                <div class="space-y-6 text-center md:text-left">
-                    <p class="text-white/60 text-sm leading-relaxed max-w-xs mx-auto md:ml-0 font-medium">
-                        Pusat informasi resmi pariwisata dan kebudayaan Kabupaten Jepara. Temukan keindahan alam dan kekayaan budaya Kartini.
-                    </p>
-                    <div class="flex items-center gap-4 justify-center md:justify-start">
-                        <a href="#" aria-label="Facebook" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
-                            <i class="fa-brands fa-facebook-f text-white/70 group-hover:text-white text-sm"></i>
-                        </a>
-                        <a href="#" aria-label="Instagram" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
-                            <i class="fa-brands fa-instagram text-white/70 group-hover:text-white text-sm"></i>
-                        </a>
-                        <a href="#" aria-label="YouTube" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
-                            <i class="fa-brands fa-youtube text-white/70 group-hover:text-white text-sm"></i>
-                        </a>
-                        <a href="#" aria-label="Twitter" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
-                            <i class="fa-brands fa-twitter text-white/70 group-hover:text-white text-sm"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Column 2: Explore (Collapsible on Mobile) -->
-                <div class="border-b border-white/5 md:border-none pb-4 md:pb-0">
-                    <button onclick="toggleFooterSection('explore')" class="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group">
-                        <h3 class="text-white text-sm md:text-lg font-extrabold relative inline-block tracking-tight">
-                            Jelajahi
-                            <span class="absolute -bottom-2 md:-bottom-2 left-0 w-8 h-1 bg-primary rounded-full hidden md:block"></span>
-                        </h3>
-                        <i id="icon-explore" class="fa-solid fa-chevron-down text-white/40 text-xs transition-transform duration-300 md:hidden"></i>
-                    </button>
-                    <ul id="content-explore" class="hidden md:block space-y-3 md:space-y-4 mt-4 md:mt-8 transition-all duration-300 origin-top">
-                        <li><a href="{{ route('welcome') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Beranda</a></li>
-                        <li><a href="{{ route('places.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Destinasi</a></li>
-                        <li><a href="{{ route('explore.map') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Peta Wisata</a></li>
-                        <li><a href="{{ route('events.public.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Agenda</a></li>
-                        <li><a href="{{ route('posts.index') }}" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Berita</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Categories (Collapsible on Mobile) -->
-                <div class="border-b border-white/5 md:border-none pb-4 md:pb-0">
-                    <button onclick="toggleFooterSection('categories')" class="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group">
-                        <h3 class="text-white text-sm md:text-lg font-extrabold relative inline-block tracking-tight">
-                            Kategori
-                            <span class="absolute -bottom-2 md:-bottom-2 left-0 w-8 h-1 bg-primary rounded-full hidden md:block"></span>
-                        </h3>
-                        <i id="icon-categories" class="fa-solid fa-chevron-down text-white/40 text-xs transition-transform duration-300 md:hidden"></i>
-                    </button>
-                    <ul id="content-categories" class="hidden md:block space-y-3 md:space-y-4 mt-4 md:mt-8 transition-all duration-300 origin-top">
-                        <li><a href="#" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Wisata Alam</a></li>
-                        <li><a href="#" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Wisata Budaya</a></li>
-                        <li><a href="#" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Wisata Kuliner</a></li>
-                        <li><a href="#" class="text-white/60 hover:text-white md:hover:translate-x-2 transition-all duration-300 flex items-center gap-2 group font-semibold text-xs md:text-base selection:bg-primary/30"><span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></span> Wisata Religi</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4: Contact (Collapsible on Mobile) -->
-                <div class="border-b border-white/5 md:border-none pb-4 md:pb-0">
-                    <button onclick="toggleFooterSection('contact')" class="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group">
-                        <h3 class="text-white text-sm md:text-lg font-extrabold relative inline-block tracking-tight">
-                            Hubungi Kami
-                            <span class="absolute -bottom-2 md:-bottom-2 left-0 w-8 h-1 bg-primary rounded-full hidden md:block"></span>
-                        </h3>
-                        <i id="icon-contact" class="fa-solid fa-chevron-down text-white/40 text-xs transition-transform duration-300 md:hidden"></i>
-                    </button>
-                    <ul id="content-contact" class="hidden md:block space-y-4 md:space-y-5 mt-4 md:mt-8 transition-all duration-300 origin-top">
-                        <li class="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 group leading-tight">
-                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 flex-shrink-0 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                                <i class="fa-solid fa-location-dot text-primary text-xs md:text-base"></i>
-                            </div>
-                            <span class="text-white/60 text-[11px] md:text-sm leading-tight group-hover:text-white/80 transition-colors font-medium">Jl. Kartini No.1, Panggang I, Jepara, Jawa Tengah</span>
-                        </li>
-                        <li class="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 group leading-tight">
-                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 flex-shrink-0 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                                <i class="fa-solid fa-phone text-primary text-xs md:text-base"></i>
-                            </div>
-                            <span class="text-white/60 text-[11px] md:text-sm group-hover:text-white/80 transition-colors font-medium">(0291) 591148</span>
-                        </li>
-                        <li class="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4 group leading-tight">
-                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 flex-shrink-0 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                                <i class="fa-solid fa-envelope text-primary text-xs md:text-base"></i>
-                            </div>
-                            <span class="text-white/60 text-[11px] md:text-sm group-hover:text-white/80 transition-colors font-medium">disparbud@jepara.go.id</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <script>
-                function toggleFooterSection(id) {
-                    const content = document.getElementById('content-' + id);
-                    const icon = document.getElementById('icon-' + id);
-                    
-                    if (window.innerWidth < 768) { // Only enable toggle on mobile
-                        if (content.classList.contains('hidden')) {
-                            content.classList.remove('hidden');
-                            icon.classList.add('rotate-180');
-                        } else {
-                            content.classList.add('hidden');
-                            icon.classList.remove('rotate-180');
-                        }
-                    }
-                }
-            </script>
-
-            <!-- Stamps & Partners -->
-            <div class="pt-8 md:pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12">
-                <div class="flex items-center gap-8 md:gap-12 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                    <img src="{{ asset('images/footer/wndrfl-indonesia2.png') }}" alt="Wonderful Indonesia" class="h-8 md:h-10 w-auto object-contain">
-                    <img src="{{ asset('images/footer/logo-jpr-psn.png') }}" alt="Jepara Mempesona" class="h-12 md:h-16 w-auto object-contain">
-                </div>
-                
-                <div class="text-center md:text-right">
-                    <p class="text-[9px] md:text-[10px] text-white/30 uppercase tracking-[0.4em] mb-2 md:mb-4 font-bold">Official Tourism Website of Jepara Regency</p>
-                    <p class="text-[10px] md:text-xs text-white/50 font-semibold tracking-tight">
-                        &copy; 2024 <span class="text-white">Dinas Pariwisata dan Kebudayaan</span>. <br class="md:hidden"> 
-                        All Rights Reserved.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Footer -->
+    @include('layouts.partials.footer')
 
     <!-- JS Logic from Old File -->
     <!-- JS Logic from Old File -->
