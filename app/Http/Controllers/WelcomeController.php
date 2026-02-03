@@ -9,7 +9,6 @@ use App\Models\Infrastructure;
 use App\Models\LandUse;
 use App\Models\Place;
 use App\Models\Post;
-use App\Models\Product;
 use App\Repositories\Contracts\PlaceRepositoryInterface;
 use App\Services\GeoJsonService;
 use App\Services\StaticDataService;
@@ -228,10 +227,7 @@ class WelcomeController extends Controller
         return view('public.places.index', compact('places', 'categories'));
     }
 
-    public function showProduct(Product $product): View
-    {
-        return view('public.products.show', compact('product'));
-    }
+
 
     public function showPlace(Place $place): View
     {

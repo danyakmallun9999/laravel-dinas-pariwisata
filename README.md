@@ -1,6 +1,6 @@
 # 🏝️ Pesona Jepara - Portal Resmi Pariwisata
 
-![Banner Project](/public/images/landing-page.png)
+![Banner Project](/public/images/readme.png)
 
 > **Platform digital terintegrasi untuk promosi pariwisata, ekonomi kreatif, dan informasi publik Kabupaten Jepara.**
 
