@@ -22,5 +22,9 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        // Register NoCaptcha Alias safely
+        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        $loader->alias('NoCaptcha', \Anhskohbo\NoCaptcha\Facades\NoCaptcha::class);
     }
 }

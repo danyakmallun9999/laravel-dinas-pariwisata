@@ -13,14 +13,15 @@
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {!! NoCaptcha::renderJs() !!}
 </head>
 <body class="antialiased font-sans text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark h-screen overflow-hidden">
     <div class="h-full grid lg:grid-cols-2">
         <!-- Left Side: Image -->
         <div class="relative hidden lg:block h-full overflow-hidden group">
-            <div class="absolute inset-0 bg-background-dark/40 group-hover:bg-background-dark/20 transition-colors duration-700 z-10"></div>
+            <div class="absolute inset-0 bg-background-dark/70 group-hover:bg-background-dark/60 transition-colors duration-700 z-10"></div>
             <!-- Dynamic Image or Fallback -->
-            <img src="/images/geografis.png" alt="Pesona Jepara" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+            <img src="/images/section-2.jpg" alt="Pesona Jepara" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
             
             <div class="absolute bottom-0 left-0 right-0 z-20 p-16 bg-gradient-to-t from-background-dark via-background-dark/80 to-transparent">
                 <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
@@ -121,6 +122,16 @@
                              </div>
                             <span class="ml-2 text-sm text-text-light/70 dark:text-text-dark/70 font-medium group-hover:text-text-light transition-colors">Ingat saya</span>
                         </label>
+                    </div>
+
+                    <!-- Google reCAPTCHA -->
+                    <div class="flex flex-col gap-2">
+                        {!! NoCaptcha::display() !!}
+                        @if ($errors->has('g-recaptcha-response'))
+                            <p class="text-sm text-red-600 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">error</span> {{ $errors->first('g-recaptcha-response') }}
+                            </p>
+                        @endif
                     </div>
 
                     <!-- Submit Button -->
