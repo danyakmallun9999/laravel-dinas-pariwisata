@@ -309,7 +309,7 @@
                     
                     <!-- Main Image (Clean Crop) -->
                     <div class="relative w-full aspect-[4/3] md:aspect-[3/4] overflow-hidden bg-gray-100 dark:bg-gray-900 rounded-2xl md:rounded-none">
-                        <img src="{{ asset('images/section-2.jpg') }}" 
+                        <img src="{{ asset('images/profile/section-2.jpg') }}" 
                              alt="Landscape Jepara" 
                              class="w-full h-full object-cover transition-all duration-1000 ease-out"
                              :class="(hover || shown) ? 'grayscale-0 scale-105' : 'grayscale'">
@@ -317,7 +317,7 @@
                     <!-- Secondary Image (Smaller, Clean Overlay) -->
                     <div class="absolute bottom-6 -left-6 md:bottom-8 md:-left-12 w-32 md:w-48 lg:w-64 aspect-square overflow-hidden shadow-2xl border-4 md:border-8 border-white dark:border-gray-950 transition-transform duration-700 ease-out hidden sm:block"
                          :class="hover ? 'translate-x-4 -translate-y-4' : ''">
-                        <img src="{{ asset('images/diving-karimunjawa.jpg') }}" 
+                        <img src="{{ asset('images/profile/diving-karimunjawa.jpg') }}" 
                              alt="Diving" 
                              class="w-full h-full object-cover">
                     </div>
@@ -364,7 +364,7 @@
                      :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 transition-all duration-1000'">
                     
                     <!-- Full Background Image -->
-                    <img src="{{ asset('images/shima.jpg') }}" 
+                    <img src="{{ asset('images/legenda/shima.jpg') }}" 
                          alt="Ratu Shima" 
                          class="absolute inset-0 w-full h-full object-cover object-top filter grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1500ms] ease-out">
                     
@@ -393,7 +393,7 @@
                      :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
                     
                     <!-- Full Background Image -->
-                    <img src="{{ asset('images/kalinyamat.jpg') }}" 
+                    <img src="{{ asset('images/legenda/kalinyamat.jpg') }}" 
                          alt="Ratu Kalinyamat" 
                          class="absolute inset-0 w-full h-full object-cover object-center filter grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1500ms] ease-out">
                     
@@ -422,7 +422,7 @@
                      :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
                     
                     <!-- Full Background Image -->
-                    <img src="{{ asset('images/kartini.jpg') }}" 
+                    <img src="{{ asset('images/legenda/kartini.jpg') }}" 
                          alt="R.A. Kartini" 
                          class="absolute inset-0 w-full h-full object-cover object-top filter grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1500ms] ease-out">
                     

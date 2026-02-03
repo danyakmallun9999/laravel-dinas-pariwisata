@@ -110,19 +110,7 @@
                         @enderror
                     </div>
 
-                    <!-- Remember Me -->
-                    <div class="flex items-center">
-                        <label class="flex items-center cursor-pointer group">
-                             <div class="relative">
-                                <input id="remember_me" type="checkbox" name="remember" class="peer sr-only">
-                                <div class="w-5 h-5 border-2 border-stone-300 dark:border-stone-600 rounded bg-white dark:bg-stone-800 peer-checked:bg-primary peer-checked:border-primary transition-all"></div>
-                                <div class="absolute inset-0 text-white flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">
-                                    <span class="material-symbols-outlined text-sm font-bold">check</span>
-                                </div>
-                             </div>
-                            <span class="ml-2 text-sm text-text-light/70 dark:text-text-dark/70 font-medium group-hover:text-text-light transition-colors">Ingat saya</span>
-                        </label>
-                    </div>
+
 
                     <!-- Google reCAPTCHA -->
                     <div class="flex flex-col gap-2">

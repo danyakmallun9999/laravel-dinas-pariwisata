@@ -70,7 +70,7 @@ class WelcomeController extends Controller
         $cultures = $this->staticDataService->getCultures();
         $culinaries = $this->staticDataService->getCulinaries();
 
-        return view('welcome', compact(
+        return view('public.welcome', compact(
             'categories',
             'totalPlaces',
             'countDestinasi',
@@ -182,7 +182,7 @@ class WelcomeController extends Controller
         $totalPlaces = Place::count();
         $totalBoundaries = Boundary::count();
 
-        return view('explore-map', compact(
+        return view('public.explore-map', compact(
             'categories',
             'totalPlaces',
             'totalBoundaries'
