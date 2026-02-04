@@ -96,16 +96,16 @@
                     {{ __('Footer.About') }}
                 </p>
                 <div class="flex items-center gap-4 justify-center md:justify-start">
-                    <a href="#" aria-label="Facebook" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
+                    <a href="https://www.facebook.com/disparbudjepara" target="_blank" aria-label="Facebook" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
                         <i class="fa-brands fa-facebook-f text-white/70 group-hover:text-white text-sm"></i>
                     </a>
-                    <a href="#" aria-label="Instagram" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
+                    <a href="https://www.instagram.com/disparbudjepara" target="_blank" aria-label="Instagram" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
                         <i class="fa-brands fa-instagram text-white/70 group-hover:text-white text-sm"></i>
                     </a>
-                    <a href="#" aria-label="YouTube" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
+                    <a href="https://www.youtube.com/@disparbud.jepara" target="_blank" aria-label="YouTube" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
                         <i class="fa-brands fa-youtube text-white/70 group-hover:text-white text-sm"></i>
                     </a>
-                    <a href="#" aria-label="Twitter" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
+                    <a href="https://twitter.com/disparbudjepara" target="_blank" aria-label="Twitter" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-300 group backdrop-blur-sm">
                         <i class="fa-brands fa-twitter text-white/70 group-hover:text-white text-sm"></i>
                     </a>
                 </div>
@@ -197,7 +197,7 @@
 
         <!-- Stamps & Partners -->
         <div class="pt-8 md:pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12">
-            <div class="flex items-center gap-8 md:gap-12 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <div class="flex items-center gap-8 md:gap-12 transition-all duration-500">
                 <img src="{{ asset('images/footer/wndrfl-indonesia2.png') }}" alt="Wonderful Indonesia" class="h-8 md:h-10 w-auto object-contain">
                 <img src="{{ asset('images/footer/logo-jpr-psn.png') }}" alt="Jepara Mempesona" class="h-12 md:h-16 w-auto object-contain">
             </div>
@@ -205,10 +205,14 @@
             <div class="text-center md:text-right">
                 <p class="text-[9px] md:text-[10px] text-white/30 uppercase tracking-[0.4em] mb-2 md:mb-4 font-bold">{{ __('Footer.Section.Official') }}</p>
                 <p class="text-[10px] md:text-xs text-white/50 font-semibold tracking-tight">
-                    &copy; 2024 <span class="text-white">{{ __('Footer.Department') }}</span>. <br class="md:hidden"> 
+                    &copy; <span id="current-year"></span> <span class="text-white">{{ __('Footer.Department') }}</span>. <br class="md:hidden"> 
                     {{ __('Footer.Rights') }}
                 </p>
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 </footer>
