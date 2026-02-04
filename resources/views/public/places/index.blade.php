@@ -1,5 +1,5 @@
 <x-public-layout>
-    <div class="bg-gray-50 dark:bg-background-dark min-h-screen -mt-20 pt-24">
+    <div class="bg-gray-50 dark:bg-background-dark min-h-screen -mt-20 pt-24 pb-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
             <nav class="flex text-xs md:text-sm text-gray-400 mb-6 space-x-2">

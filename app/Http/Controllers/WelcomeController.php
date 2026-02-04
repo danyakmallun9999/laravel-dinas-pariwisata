@@ -48,7 +48,7 @@ class WelcomeController extends Controller
         })->count();
 
         // Kuliner Count
-        $countKuliner = $categories->first(fn ($c) => Str::contains($c->name, 'Kuliner', true))?->places_count ?? 0;
+        $countKuliner = $this->staticDataService->getCulinaries()->count();
 
         // Event Count
         $countEvent = Event::whereYear('start_date', 2026)->count();
