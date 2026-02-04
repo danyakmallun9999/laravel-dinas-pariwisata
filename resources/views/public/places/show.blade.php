@@ -317,7 +317,7 @@
                                 <div 
                                     x-show="lightboxOpen" 
                                     style="display: none;"
-                                    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-4"
+                                    class="fixed inset-0 z-[20000] flex items-center justify-center bg-black/95 p-4"
                                     x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0"
                                     x-transition:enter-end="opacity-100"
@@ -330,17 +330,17 @@
                                     @click="lightboxOpen = false"
                                 >
                                     <!-- Close Button -->
-                                    <button @click.stop="lightboxOpen = false" class="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-[10000] p-2 hover:bg-white/10 rounded-lg">
+                                    <button @click.stop="lightboxOpen = false" class="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-[20001] p-2 hover:bg-white/10 rounded-lg">
                                         <span class="material-symbols-outlined text-3xl">close</span>
                                     </button>
                                     
                                     <!-- Prev Button -->
-                                    <button @click.stop="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-[10000] p-3 hover:bg-white/10 rounded-lg transition-colors hidden md:block">
+                                    <button @click.stop="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-[20001] p-3 hover:bg-white/10 rounded-lg transition-colors hidden md:block">
                                         <span class="material-symbols-outlined text-4xl">chevron_left</span>
                                     </button>
                                     
                                     <!-- Next Button -->
-                                    <button @click.stop="next()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-[10000] p-3 hover:bg-white/10 rounded-lg transition-colors hidden md:block">
+                                    <button @click.stop="next()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-[20001] p-3 hover:bg-white/10 rounded-lg transition-colors hidden md:block">
                                         <span class="material-symbols-outlined text-4xl">chevron_right</span>
                                     </button>
 
@@ -355,7 +355,7 @@
                                          <!-- Image -->
                                          <img 
                                             :src="activeImage" 
-                                            class="max-h-[80vh] max-w-full rounded-lg object-contain transition-all duration-300"
+                                            class="max-h-[85vh] max-w-full rounded-lg object-contain transition-all duration-300"
                                             x-transition:enter="transition ease-out duration-300"
                                             x-transition:enter-start="opacity-50"
                                             x-transition:enter-end="opacity-100"
