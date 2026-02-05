@@ -110,8 +110,19 @@
                                     <span class="w-1.5 h-6 bg-blue-500 rounded-full"></span>
                                     Tentang Destinasi
                                 </h3>
-                                <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
-                                    <p class="whitespace-pre-line">{{ $place->description }}</p>
+                                <div x-data="{ expanded: false }">
+                                    <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify transition-all duration-300"
+                                         :class="expanded ? '' : 'line-clamp-4 mask-image-b'">
+                                        <p class="whitespace-pre-line">{{ $place->description }}</p>
+                                    </div>
+                                    @if(strlen($place->description) > 300)
+                                        <button @click="expanded = !expanded" 
+                                                class="mt-3 inline-flex items-center gap-1 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                                            <span x-text="expanded ? 'Sembunyikan' : 'Baca Selengkapnya'"></span>
+                                            <span class="material-symbols-outlined text-lg transition-transform duration-300" 
+                                                  :class="expanded ? 'rotate-180' : ''">expand_more</span>
+                                        </button>
+                                    @endif
                                 </div>
                             </section>
     
