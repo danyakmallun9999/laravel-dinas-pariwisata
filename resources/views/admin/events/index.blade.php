@@ -13,24 +13,43 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Search & Filter Bar -->
-            <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
-                <form action="{{ route('admin.events.index') }}" method="GET" class="w-full sm:w-auto flex-1 max-w-lg" x-data="{ query: '{{ request('search') }}' }">
+            <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center" 
+                x-data="{ 
+                    query: '{{ request('search') }}',
+                    updateList() {
+                        const params = new URLSearchParams();
+                        if (this.query) params.set('search', this.query);
+                        
+                        const url = `${window.location.pathname}?${params.toString()}`;
+                        history.pushState(null, '', url);
+
+                        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newContent = doc.getElementById('table-wrapper').innerHTML;
+                                document.getElementById('table-wrapper').innerHTML = newContent;
+                            });
+                    }
+                }"
+            >
+                <div class="w-full sm:w-auto flex-1 max-w-lg">
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                              <i class="fa-solid fa-search text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
                         </div>
                         <input 
                             type="text" 
-                            name="search" 
                             x-model="query"
-                            @input.debounce.500ms="$el.form.submit()"
+                            @input.debounce.500ms="updateList()"
                             class="block w-full pl-11 pr-10 py-2.5 border-gray-200 rounded-xl bg-gray-50 text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm transition-all shadow-sm hover:bg-white placeholder-gray-400" 
                             placeholder="Cari event..."
                         >
                         <button 
                             type="button" 
                             x-show="query.length > 0" 
-                            @click="query = ''; $nextTick(() => { $el.closest('form').submit() })"
+                            @click="query = ''; updateList()"
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
                             style="display: none;"
                             x-transition:enter="transition ease-out duration-200"
@@ -43,11 +62,11 @@
                             <i class="fa-solid fa-circle-xmark"></i>
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
+                <div class="p-6 bg-white border-b border-gray-200" id="table-wrapper">
                     
                     <div class="overflow-x-auto rounded-lg border border-gray-100">
                         <table class="min-w-full divide-y divide-gray-200">
