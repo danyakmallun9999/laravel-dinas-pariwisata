@@ -5,7 +5,7 @@
             <div class="flex flex-col lg:flex-row">
             
             <!-- Left Side: Sticky Visuals (50%) -->
-            <div class="lg:w-1/2 lg:h-screen lg:sticky lg:top-0 relative bg-white dark:bg-slate-950 z-10 p-4 lg:pl-16 lg:pr-8 lg:pt-32 flex flex-col justify-start">
+            <div class="lg:w-1/2 lg:h-screen lg:sticky lg:top-0 relative bg-white dark:bg-slate-950 z-10 p-4 lg:pl-16 lg:pr-8 lg:pt-24 flex flex-col justify-start">
                  
                  <!-- Back Button (Separated) -->
                  <div class="mb-6">
