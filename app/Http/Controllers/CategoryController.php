@@ -11,9 +11,15 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::withCount('places')->latest()->paginate(10);
+        $query = Category::withCount('places')->latest();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%'.$request->search.'%');
+        }
+
+        $categories = $query->paginate(10);
 
         return view('admin.categories.index', compact('categories'));
     }

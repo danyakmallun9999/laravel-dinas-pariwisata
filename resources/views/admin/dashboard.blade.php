@@ -132,8 +132,34 @@
                         <h3 class="text-lg font-bold text-gray-800">Distribusi Kategori Wisata</h3>
                         <a href="{{ route('admin.categories.index') }}" class="text-sm text-blue-600 hover:underline">Kelola Kategori</a>
                     </div>
-                    <div class="h-64 relative">
-                        <canvas id="categoriesChart"></canvas>
+                    <div class="flex flex-col md:flex-row items-center gap-6">
+                        <!-- Chart -->
+                        <div class="relative w-48 h-48 md:w-56 md:h-56 flex-shrink-0">
+                            <canvas id="categoriesChart"></canvas>
+                            <!-- Center Text -->
+                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                <span class="text-3xl font-bold text-gray-800">{{ $stats['places_count'] }}</span>
+                                <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Total</span>
+                            </div>
+                        </div>
+
+                        <!-- Custom Legend -->
+                        <div class="flex-1 w-full grid grid-cols-2 gap-3">
+                            @foreach($stats['categories'] as $category)
+                            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: {{ $category->color }}"></span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-medium text-gray-700 truncate">{{ $category->name }}</span>
+                                        <span class="text-xs font-bold text-gray-500">{{ $category->places_count }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-1 mt-1">
+                                        <div class="bg-gray-300 h-1 rounded-full" style="width: {{ $stats['places_count'] > 0 ? ($category->places_count / $stats['places_count']) * 100 : 0 }}%; background-color: {{ $category->color }}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
@@ -246,41 +272,36 @@
             const categoriesCtx = document.getElementById('categoriesChart');
             if (categoriesCtx) {
                 new Chart(categoriesCtx, {
-                    type: 'bar', // Changed to bar for better readability on distribution
+                    type: 'doughnut',
                     data: {
                         labels: @json($stats['categories']->pluck('name')->values()),
                         datasets: [{
-                            label: 'Jumlah Destinasi',
                             data: @json($stats['categories']->pluck('places_count')->values()),
                             backgroundColor: @json($stats['categories']->pluck('color')->values()),
-                            borderRadius: 6,
+                            borderWidth: 0,
+                            hoverOffset: 4,
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        cutout: '75%', 
                         plugins: {
                             legend: {
-                                display: false 
+                                display: false // We use custom legend
                             },
                             tooltip: {
                                 backgroundColor: '#1e293b',
                                 padding: 12,
                                 cornerRadius: 8,
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    display: true,
-                                    drawBorder: false,
-                                    color: '#f1f5f9'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        let value = context.parsed || 0;
+                                        let total = context.chart._metasets[context.datasetIndex].total;
+                                        let percentage = ((value / total) * 100).toFixed(1) + '%';
+                                        return label + ': ' + value + ' (' + percentage + ')';
+                                    }
                                 }
                             }
                         }

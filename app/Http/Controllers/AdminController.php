@@ -35,9 +35,17 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('places', 'stats'));
     }
 
-    public function placesIndex(): View
+    public function placesIndex(Request $request): View
     {
-        $places = Place::with('category')->latest()->paginate(10);
+        $query = Place::with('category')->latest();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%'.$request->search.'%')
+                  ->orWhere('description', 'like', '%'.$request->search.'%')
+                  ->orWhere('address', 'like', '%'.$request->search.'%');
+        }
+
+        $places = $query->paginate(10);
 
         return view('admin.places.index', compact('places'));
     }
