@@ -73,7 +73,15 @@
                     }]
                 },
                 center: [110.678, -6.589], // Central Jepara Regency coordinates
-                zoom: 9.5, // Zoomed out to view the regency
+                zoom: 9.5, 
+                minZoom: 9, // Prevent zooming out too far (loading global tiles)
+                maxZoom: 12, // Prevent zooming in too close
+                // Restrict map to Jepara area (approx coords)
+                maxBounds: [
+                    [110.0, -7.0], // Southwest coordinates
+                    [111.3, -5.9]  // Northeast coordinates
+                ],
+                renderWorldCopies: false, // Don't render multiple world copies on low zoom
                 pitch: 0,
                 attributionControl: false,
                 interactive: false // Disable interaction for background effect

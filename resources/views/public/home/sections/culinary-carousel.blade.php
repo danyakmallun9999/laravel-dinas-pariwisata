@@ -209,7 +209,7 @@
                 
                     @foreach($culinaries as $index => $culinary)
                     <!-- Culinary Item -->
-                    <div class="min-w-[95%] sm:min-w-[85%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[80%] sm:min-w-[60%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         <img src="{{ asset($culinary->image) }}" 
                              alt="{{ $culinary->name }}" 
                              class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
