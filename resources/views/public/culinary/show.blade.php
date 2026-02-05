@@ -129,18 +129,12 @@
                     <div class="mt-16 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
                         <span class="text-slate-400 text-sm font-serif italic">Bagikan kelezatan ini:</span>
                         <div class="flex gap-3">
-                             <!-- WhatsApp -->
-                             <a href="https://wa.me/?text={{ urlencode('Ayo coba ' . $culinary->name . ' khas Jepara! Cek detailnya: ' . request()->url()) }}" target="_blank" class="w-10 h-10 rounded-full bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 flex items-center justify-center hover:bg-[#25D366] hover:text-white transition-all" title="Share via WhatsApp">
-                                 <i class="fa-brands fa-whatsapp text-lg"></i>
-                             </a>
-                             <!-- Facebook -->
-                             <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" class="w-10 h-10 rounded-full bg-[#1877F2]/10 text-[#1877F2] border border-[#1877F2]/20 flex items-center justify-center hover:bg-[#1877F2] hover:text-white transition-all" title="Share via Facebook">
-                                 <i class="fa-brands fa-facebook-f text-lg"></i>
-                             </a>
-                             <!-- Copy Link -->
-                             <button onclick="navigator.clipboard.writeText('{{ request()->url() }}'); alert('Link disalin!');" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-all" title="Copy Link">
-                                 <span class="material-symbols-outlined text-lg">link</span>
-                             </button>
+                             <x-share-modal :url="request()->url()" :title="$culinary->name" :text="Str::limit(strip_tags($culinary->description), 100)">
+                                <button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-primary hover:text-white transition-all group" title="Bagikan Kuliner Ini">
+                                    <i class="fa-solid fa-share-nodes text-lg group-hover:rotate-12 transition-transform"></i>
+                                    <span>Bagikan</span>
+                                </button>
+                             </x-share-modal>
                         </div>
                     </div>
 

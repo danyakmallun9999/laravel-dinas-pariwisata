@@ -122,15 +122,12 @@
                      
                      <div class="flex items-center gap-4">
                          <span class="text-sm font-serif italic text-slate-400">Bagikan:</span>
-                         <button class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition-colors" title="Share via Facebook">
-                             <i class="fa-brands fa-facebook-f"></i>
-                         </button>
-                         <button class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition-colors" title="Share via WhatsApp">
-                             <i class="fa-brands fa-whatsapp"></i>
-                         </button>
-                         <button class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition-colors" title="Copy Link">
-                             <span class="material-symbols-outlined text-lg">link</span>
-                         </button>
+                         <x-share-modal :url="request()->url()" :title="$culture->name" :text="Str::limit(strip_tags($culture->description), 100)">
+                            <button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all group" title="Bagikan Budaya Ini">
+                                <i class="fa-solid fa-share-nodes text-lg group-hover:rotate-12 transition-transform"></i>
+                                <span>Bagikan</span>
+                            </button>
+                         </x-share-modal>
                      </div>
                  </div>
 
