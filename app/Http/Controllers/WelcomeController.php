@@ -242,18 +242,56 @@ class WelcomeController extends Controller
             return response()->json([]);
         }
 
-        $places = $this->placeRepository->searchByName($query, 5)
+        // Search Places
+        $places = $this->placeRepository->searchByName($query, 3)
             ->map(function ($place) {
                 return [
                     'id' => $place->id,
                     'name' => $place->name,
-                    'slug' => $place->slug,
                     'description' => Str::limit($place->description, 50),
                     'image_url' => $place->image_path ? asset($place->image_path) : null,
-                    'type' => 'Lokasi',
+                    'type' => 'Destinasi',
+                    'url' => route('places.show', $place->slug),
+                    // For map features
+                    'slug' => $place->slug, 
                 ];
             });
 
-        return response()->json($places);
+        // Search Posts (Berita)
+        $posts = Post::where('is_published', true)
+            ->where('title', 'like', "%{$query}%")
+            ->take(3)
+            ->get()
+            ->map(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'name' => $post->title,
+                    'description' => Str::limit(strip_tags($post->content ?? ''), 50),
+                    'image_url' => $post->image_path ? asset($post->image_path) : null,
+                    'type' => 'Berita',
+                    'url' => route('posts.show', $post->slug),
+                ];
+            });
+
+        // Search Events (Agenda)
+        $events = Event::where('is_published', true)
+            ->where('title', 'like', "%{$query}%")
+            ->take(3)
+            ->get()
+            ->map(function ($event) {
+                return [
+                    'id' => $event->id,
+                    'name' => $event->title,
+                    'description' => Str::limit($event->description, 50),
+                    'image_url' => $event->image ? asset($event->image) : null,
+                    'type' => 'Agenda',
+                    'url' => route('events.public.show', $event->slug),
+                ];
+            });
+
+        // Merge all results
+        $results = $places->merge($posts)->merge($events);
+
+        return response()->json($results);
     }
 }

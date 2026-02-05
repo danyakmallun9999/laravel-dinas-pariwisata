@@ -286,15 +286,29 @@ window.mapComponent = function (config = {}) {
         },
 
         selectFeature(result) {
-            // If result has a slug (is a Place), redirect to detail page
-            if (result.slug) {
-                window.location.href = `/destinasi/${result.slug}`;
+            // Priority: URL redirection (for Places, Posts, Events)
+            if (result.url) {
+                window.location.href = result.url;
                 return;
             }
 
+            // Fallback for map features (Boundaries, Infrastructure, etc.)
             this.selectedFeature = result;
             this.zoomToFeature(result);
             this.searchResults = [];
+        },
+
+        getIconClass(type) {
+            switch (type) {
+                case 'Destinasi':
+                    return 'fa-solid fa-location-dot';
+                case 'Berita':
+                    return 'fa-solid fa-newspaper';
+                case 'Agenda':
+                    return 'fa-solid fa-calendar-alt';
+                default:
+                    return 'fa-solid fa-search';
+            }
         },
 
         selectPlace(place) {
