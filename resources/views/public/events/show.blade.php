@@ -22,7 +22,7 @@
     
                     <!-- Main Image Area -->
                     <div class="flex-1 relative w-full flex items-start justify-start overflow-hidden perspective-[1000px]">
-                        <div class="relative w-full h-full rounded-3xl overflow-hidden text-transparent shadow-2xl">
+                        <div class="relative w-full h-full rounded-3xl overflow-hidden text-transparent">
                             @if($event->image)
                                 <img src="{{ Storage::url($event->image) }}" 
                                      alt="{{ $event->title }}" 
