@@ -1,114 +1,152 @@
     <!-- SECTION: History -->
-    <div class="relative w-full bg-white dark:bg-gray-900 overflow-hidden py-24" id="history">
-        <!-- Background Decor -->
-        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent"></div>
+    <div class="relative w-full bg-white dark:bg-gray-900 overflow-hidden py-16 md:py-24" id="history">
         
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <!-- Section Header -->
-            <div class="text-center mb-16" 
-                 x-data="{ shown: false }" 
-                 x-intersect.threshold.0.5="shown = true">
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-text-light dark:text-text-dark mb-6 opacity-0 translate-y-4 transition-all duration-700 delay-100"
-                    :class="shown ? 'opacity-100 translate-y-0' : ''">
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
                     {{ __('History.Title') }}
                 </h2>
-                <p class="text-text-light/70 dark:text-text-dark/70 max-w-2xl mx-auto text-lg opacity-0 translate-y-4 transition-all duration-700 delay-200"
-                    :class="shown ? 'opacity-100 translate-y-0' : ''">
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-base md:text-lg">
                     {{ __('History.Subtitle') }}
                 </p>
             </div>
 
-            <!-- Full Image Cards Grid -->
-            <div class="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-8 md:pb-0 px-4 md:px-0 -mx-4 md:mx-0 scrollbar-hide touch-pan-x">
-                
-                <!-- Shima Card (Kalingga - Oldest) -->
-                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[450px] md:h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none"
-                     x-data="{ shown: false }" 
-                     x-intersect.threshold.0.2="shown = true"
-                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 transition-all duration-1000'">
+            <!-- EXPANDING CARDS CONTAINER -->
+            <!-- Alpine Data: activeCard tracks which card is expanded. Default to 'kalinyamat' (center) on desktop. -->
+            <div class="flex flex-col md:flex-row gap-4 h-auto md:h-[600px] w-full select-none"
+                 x-data="{ activeCard: 'kalinyamat' }">
+
+                <!-- CARD 1: SHIMA -->
+                <div class="group relative overflow-hidden rounded-2xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] w-full md:w-auto min-h-[400px] md:min-h-0"
+                     :class="activeCard === 'shima' ? 'md:flex-[3]' : 'md:flex-[1]'"
+                     @mouseenter="activeCard = 'shima'"
+                     @click="activeCard = 'shima'">
                     
-                    <!-- Full Background Image -->
+                    <!-- Background -->
                     <img src="{{ asset('images/legenda/shima.jpg') }}" 
                          alt="Ratu Shima" 
-                         class="absolute top-0 left-0 w-full h-full object-cover object-top origin-top filter grayscale-[0.2] md:group-hover:grayscale-0 md:group-hover:scale-105 transition-all duration-[1500ms] ease-out will-change-transform pointer-events-none select-none">
+                         class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-1000"
+                         :class="activeCard === 'shima' ? 'scale-100 grayscale-0' : 'scale-110 grayscale md:grayscale'">
                     
-                    <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 transition-opacity duration-500"
+                         :class="activeCard === 'shima' ? 'opacity-80' : 'opacity-60 md:opacity-80'"></div>
 
-                    <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                        <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Shima</h3>
-                        <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
-                            {!! __('History.Shima.Quote') !!}
-                        </p>
-                        <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
-                            <p class="text-white/80 text-sm leading-relaxed">
+                    <!-- Content -->
+                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-10 transition-all duration-500">
+                        <div class="flex items-end gap-4 mb-2">
+                             <h3 class="text-2xl md:text-4xl font-serif font-black text-white whitespace-nowrap transition-all duration-500"
+                                :class="activeCard === 'shima' ? 'translate-y-0' : 'translate-y-0'">
+                                Ratu Shima
+                            </h3>
+                            <div class="h-px bg-white/50 flex-1 mb-2 md:mb-3 origin-left transition-all duration-500"
+                                 :class="activeCard === 'shima' ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'"></div>
+                        </div>
+
+                        <div class="overflow-hidden transition-all duration-700 ease-out"
+                             :class="activeCard === 'shima' ? 'max-h-[500px] opacity-100' : 'max-h-0 md:max-h-0 opacity-100 md:opacity-0'">
+                             <p class="text-lg md:text-xl font-serif italic text-white/90 mb-4 md:mb-6 pl-4 border-l-2 border-primary">
+                                {!! __('History.Shima.Quote') !!}
+                            </p>
+                            <p class="text-white/80 text-sm md:text-base leading-relaxed max-w-xl">
                                 {{ __('History.Shima.Desc') }}
                             </p>
                         </div>
+                        
+                        <!-- Collapsed Hint (Desktop Only) -->
+                        <div class="hidden md:block absolute bottom-10 right-10 transition-all duration-500 delay-100"
+                             :class="activeCard === 'shima' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'">
+                             <span class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-plus"></i>
+                             </span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Kalinyamat Card (16th Century) -->
-                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[450px] md:h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-200"
-                     x-data="{ shown: false }" 
-                     x-intersect.threshold.0.2="shown = true"
-                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                <!-- CARD 2: KALINYAMAT -->
+                <div class="group relative overflow-hidden rounded-2xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] w-full md:w-auto min-h-[400px] md:min-h-0"
+                     :class="activeCard === 'kalinyamat' ? 'md:flex-[3]' : 'md:flex-[1]'"
+                     @mouseenter="activeCard = 'kalinyamat'"
+                     @click="activeCard = 'kalinyamat'">
                     
-                    <!-- Full Background Image -->
                     <img src="{{ asset('images/legenda/kalinyamat.jpg') }}" 
                          alt="Ratu Kalinyamat" 
-                         class="absolute top-0 left-0 w-full h-full object-cover object-center origin-top filter grayscale-[0.2] md:group-hover:grayscale-0 md:group-hover:scale-105 transition-all duration-[1500ms] ease-out will-change-transform pointer-events-none select-none">
+                         class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000"
+                         :class="activeCard === 'kalinyamat' ? 'scale-100 grayscale-0' : 'scale-110 grayscale md:grayscale'">
                     
-                    <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 transition-opacity duration-500"
+                         :class="activeCard === 'kalinyamat' ? 'opacity-80' : 'opacity-60 md:opacity-80'"></div>
 
-                    <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                        <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Kalinyamat</h3>
-                        <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
-                            {!! __('History.Kalinyamat.Quote') !!}
-                        </p>
-                        <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
-                            <p class="text-white/80 text-sm leading-relaxed">
+                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-10 transition-all duration-500">
+                        <div class="flex items-end gap-4 mb-2">
+                             <h3 class="text-2xl md:text-4xl font-serif font-black text-white whitespace-nowrap transition-all duration-500">
+                                Ratu Kalinyamat
+                            </h3>
+                            <div class="h-px bg-white/50 flex-1 mb-2 md:mb-3 origin-left transition-all duration-500"
+                                 :class="activeCard === 'kalinyamat' ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'"></div>
+                        </div>
+
+                        <div class="overflow-hidden transition-all duration-700 ease-out"
+                             :class="activeCard === 'kalinyamat' ? 'max-h-[500px] opacity-100' : 'max-h-0 md:max-h-0 opacity-100 md:opacity-0'">
+                             <p class="text-lg md:text-xl font-serif italic text-white/90 mb-4 md:mb-6 pl-4 border-l-2 border-primary">
+                                {!! __('History.Kalinyamat.Quote') !!}
+                            </p>
+                            <p class="text-white/80 text-sm md:text-base leading-relaxed max-w-xl">
                                 {{ __('History.Kalinyamat.Desc') }}
                             </p>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Kartini Card (19th Century - Youngest) -->
-                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[450px] md:h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none transition-all duration-1000 delay-400"
-                     x-data="{ shown: false }" 
-                     x-intersect.threshold.0.2="shown = true"
-                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
-                    
-                    <!-- Full Background Image -->
-                    <img src="{{ asset('images/legenda/kartini.jpg') }}" 
-                         alt="R.A. Kartini" 
-                         class="absolute top-0 left-0 w-full h-full object-cover object-top origin-top filter grayscale-[0.2] md:group-hover:grayscale-0 md:group-hover:scale-105 transition-all duration-[1500ms] ease-out will-change-transform pointer-events-none select-none">
-                    
-                    <!-- Gradient Overlay (Subtle) -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
-
-                    <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                        <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">R.A. Kartini</h3>
-                        <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
-                            {!! __('History.Kartini.Quote') !!}
-                        </p>
-                        <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
-                            <p class="text-white/80 text-sm leading-relaxed">
-                                {{ __('History.Kartini.Desc') }}
-                            </p>
+                        
+                         <div class="hidden md:block absolute bottom-10 right-10 transition-all duration-500 delay-100"
+                             :class="activeCard === 'kalinyamat' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'">
+                             <span class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-plus"></i>
+                             </span>
                         </div>
                     </div>
                 </div>
 
+                <!-- CARD 3: KARTINI -->
+                <div class="group relative overflow-hidden rounded-2xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] w-full md:w-auto min-h-[400px] md:min-h-0"
+                     :class="activeCard === 'kartini' ? 'md:flex-[3]' : 'md:flex-[1]'"
+                     @mouseenter="activeCard = 'kartini'"
+                     @click="activeCard = 'kartini'">
+                    
+                    <img src="{{ asset('images/legenda/kartini.jpg') }}" 
+                         alt="R.A. Kartini" 
+                         class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-1000"
+                         :class="activeCard === 'kartini' ? 'scale-100 grayscale-0' : 'scale-110 grayscale md:grayscale'">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90 transition-opacity duration-500"
+                         :class="activeCard === 'kartini' ? 'opacity-80' : 'opacity-60 md:opacity-80'"></div>
+
+                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-10 transition-all duration-500">
+                        <div class="flex items-end gap-4 mb-2">
+                             <h3 class="text-2xl md:text-4xl font-serif font-black text-white whitespace-nowrap transition-all duration-500">
+                                R.A. Kartini
+                            </h3>
+                            <div class="h-px bg-white/50 flex-1 mb-2 md:mb-3 origin-left transition-all duration-500"
+                                 :class="activeCard === 'kartini' ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'"></div>
+                        </div>
+
+                        <div class="overflow-hidden transition-all duration-700 ease-out"
+                             :class="activeCard === 'kartini' ? 'max-h-[500px] opacity-100' : 'max-h-0 md:max-h-0 opacity-100 md:opacity-0'">
+                             <p class="text-lg md:text-xl font-serif italic text-white/90 mb-4 md:mb-6 pl-4 border-l-2 border-primary">
+                                {!! __('History.Kartini.Quote') !!}
+                            </p>
+                            <p class="text-white/80 text-sm md:text-base leading-relaxed max-w-xl">
+                                {{ __('History.Kartini.Desc') }}
+                            </p>
+                        </div>
+                        
+                         <div class="hidden md:block absolute bottom-10 right-10 transition-all duration-500 delay-100"
+                             :class="activeCard === 'kartini' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'">
+                             <span class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-plus"></i>
+                             </span>
+                        </div>
+                    </div>
                 </div>
+
+            </div>
         </div>
     </div>
-    <!-- END SECTION: History -->
