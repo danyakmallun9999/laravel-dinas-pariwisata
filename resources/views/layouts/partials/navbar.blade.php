@@ -47,7 +47,7 @@
                                 class="w-full text-left px-4 py-3 hover:bg-surface-light dark:hover:bg-black/20 border-b border-surface-light dark:border-surface-dark last:border-0 transition flex items-center gap-3">
                                 <div
                                     class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary flex-shrink-0">
-                                    <i class="fa-solid fa-location-dot"></i>
+                                    <i :class="getIconClass(result.type)"></i>
                                 </div>
                                 <div class="min-w-0">
                                     <p class="font-bold text-text-light dark:text-text-dark text-sm truncate"
