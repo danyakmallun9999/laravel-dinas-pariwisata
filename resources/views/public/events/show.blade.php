@@ -5,184 +5,186 @@
         @section('meta_image', Storage::url($event->image))
     @endif
 
-    <!-- Hero Section -->
-    <div class="relative h-[60vh] min-h-[400px] flex items-end">
-        <!-- Background Image with Parallax-like feel -->
-        <div class="absolute inset-0 z-0">
-            @if($event->image)
-                <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
-            @else
-                <div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-6xl text-slate-300">event</span>
-                </div>
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
-        </div>
-
-        <!-- Content -->
-        <div class="container mx-auto px-4 relative z-10 pb-12 lg:pb-20">
-            <div class="max-w-4xl">
-                <!-- Badges -->
-                <div class="flex flex-wrap gap-3 mb-6">
-                    <span class="px-3 py-1 bg-primary/90 backdrop-blur text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg shadow-primary/20">
-                        {{ __('Events.Badge') }}
-                    </span>
-                    @if($event->start_date->isFuture())
-                         <span class="px-3 py-1 bg-emerald-500/90 backdrop-blur text-white text-xs font-bold uppercase tracking-wider rounded-lg">
-                            {{ __('Events.Status.Upcoming') }}
-                        </span>
-                    @else
-                        <span class="px-3 py-1 bg-slate-500/90 backdrop-blur text-white text-xs font-bold uppercase tracking-wider rounded-lg">
-                            {{ __('Events.Status.Past') }}
-                        </span>
-                    @endif
-                </div>
-
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white leading-tight mb-6 drop-shadow-sm">
-                    {{ $event->title }}
-                </h1>
-
-                <div class="flex flex-wrap items-center gap-6 text-white/90 text-sm md:text-base font-medium">
-                    <div class="flex items-center gap-2.5 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
-                        <span class="material-symbols-outlined text-primary text-xl">calendar_month</span>
-                         <span>{{ $event->start_date->translatedFormat('d F Y') }}</span>
-                         @if($event->end_date && $event->end_date != $event->start_date)
-                            <span> - {{ $event->end_date->translatedFormat('d F Y') }}</span>
-                         @endif
-                    </div>
-                    @if($event->location)
-                    <div class="flex items-center gap-2.5 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
-                        <span class="material-symbols-outlined text-red-400 text-xl">location_on</span>
-                        <span>{{ $event->location }}</span>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Content Grid -->
-    <div class="bg-slate-50 dark:bg-slate-900 min-h-screen relative z-20 -mt-8 rounded-t-3xl border-t border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
-        <div class="container mx-auto px-4 py-12">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-20">
+        
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12">
+            <div class="flex flex-col lg:flex-row">
                 
-                <!-- Left Column (Content) -->
-                <div class="lg:col-span-8 space-y-12">
+                <!-- Left Side: Sticky Visuals (50%) -->
+                <div class="lg:w-1/2 lg:h-screen lg:sticky lg:top-0 relative h-[60vh] bg-white dark:bg-slate-950 z-10 group flex flex-col p-4 lg:pl-16 lg:pr-8 lg:pt-24">
                     
-                    <!-- Description -->
-                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                        <h2 class="text-2xl font-display font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-3">
-                            <span class="w-2 h-8 bg-primary rounded-full"></span>
-                            {{ __('Events.Detail.About') }}
-                        </h2>
-                        <div class="prose prose-lg prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
-                             {!! nl2br(e($event->description)) !!}
-                             {{-- Note: If description stores HTML, remove e(). If plain text, keep e() --}}
+                    <!-- Back Button (Separated) -->
+                    <div class="mb-6">
+                        <a href="{{ route('events.public.index') }}" class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 dark:bg-slate-800 text-primary dark:text-primary hover:bg-primary hover:text-white transition-all duration-300 shadow-sm border border-primary/20">
+                            <span class="material-symbols-outlined text-lg">arrow_back</span>
+                        </a>
+                    </div>
+    
+                    <!-- Main Image Area -->
+                    <div class="flex-1 relative w-full flex items-start justify-start overflow-hidden perspective-[1000px]">
+                        <div class="relative w-full h-full rounded-3xl overflow-hidden text-transparent shadow-2xl">
+                            @if($event->image)
+                                <img src="{{ Storage::url($event->image) }}" 
+                                     alt="{{ $event->title }}" 
+                                     class="w-full h-full object-cover transition-all duration-500 ease-in-out transform hover:scale-105">
+                            @else
+                                <div class="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-6xl text-slate-300">event</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
-
-                    <!-- Map (If coordinates exist) -->
-                    <!-- Placeholder: Event model might not have lat/long yet, using generic location logic -->
-                    @if($event->location)
-                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                        <h2 class="text-2xl font-display font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-3">
-                            <span class="w-2 h-8 bg-emerald-500 rounded-full"></span>
-                            {{ __('Events.Detail.Location') }}
-                        </h2>
-                        <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 relative">
-                             <!-- Simple Map Embed or Link -->
-                             <iframe 
-                                width="100%" 
-                                height="100%" 
-                                frameborder="0" 
-                                scrolling="no" 
-                                marginheight="0" 
-                                marginwidth="0" 
-                                src="https://maps.google.com/maps?q={{ urlencode($event->location . ' Jepara') }}&t=&z=15&ie=UTF8&iwloc=&output=embed">
-                            </iframe>
-                        </div>
-                        <div class="mt-4 flex justify-end">
-                            <a href="https://maps.google.com/maps?q={{ urlencode($event->location . ' Jepara') }}" target="_blank" class="inline-flex items-center gap-2 text-primary font-bold hover:text-primary-dark transition-colors">
-                                {{ __('Events.Detail.MapsLink') }}
-                                <span class="material-symbols-outlined text-sm">open_in_new</span>
-                            </a>
-                        </div>
-                    </div>
-                    @endif
-
+    
+                    <!-- Optional: Thumbnail Gallery could go here if events had multiple images -->
+                    <div class="w-full pb-6 pt-3"></div>
                 </div>
-
-                <!-- Right Column (Sidebar) -->
-                <div class="lg:col-span-4 space-y-8 sticky-sidebar h-fit" style="top: 100px;">
-                    
-                    <!-- Date Card -->
-                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-2xl">event</span>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-800 dark:text-white">{{ __('Events.Detail.Sidebar.Title') }}</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">{{ __('Events.Detail.Sidebar.Subtitle') }}</p>
-                            </div>
-                        </div>
+    
+                <!-- Right Side: Scrollable Content (50%) -->
+                <div class="lg:w-1/2 relative bg-white dark:bg-slate-950">
+                    <main class="max-w-3xl mx-auto px-6 py-12 md:py-16 lg:px-16 lg:py-24">
                         
-                        <div class="space-y-4">
-                            <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50">
-                                <div class="text-center w-12 shrink-0">
-                                    <span class="block text-xs uppercase font-bold text-slate-400">{{ $event->start_date->translatedFormat('M') }}</span>
-                                    <span class="block text-2xl font-black text-slate-800 dark:text-white">{{ $event->start_date->format('d') }}</span>
-                                </div>
-                                <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
-                                <div>
-                                    <span class="block text-sm font-bold text-slate-700 dark:text-slate-200">{{ $event->start_date->translatedFormat('l') }}</span>
-                                    <span class="block text-xs text-slate-500 dark:text-slate-400">Pukul {{ $event->start_time ? Carbon\Carbon::parse($event->start_time)->format('H:i') : '08:00' }} WIB</span>
-                                </div>
-                            </div>
-
-                            @if($event->end_date && $event->end_date != $event->start_date)
-                            <div class="flex justify-center">
-                                <span class="material-symbols-outlined text-slate-300">arrow_downward</span>
-                            </div>
-                             <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50">
-                                <div class="text-center w-12 shrink-0">
-                                    <span class="block text-xs uppercase font-bold text-slate-400">{{ $event->end_date->translatedFormat('M') }}</span>
-                                    <span class="block text-2xl font-black text-slate-800 dark:text-white">{{ $event->end_date->format('d') }}</span>
-                                </div>
-                                <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
-                                <div>
-                                    <span class="block text-sm font-bold text-slate-700 dark:text-slate-200">{{ $event->end_date->translatedFormat('l') }}</span>
-                                    <span class="block text-xs text-slate-500 dark:text-slate-400">{{ __('Events.Detail.Sidebar.End') }}</span>
-                                </div>
+                        <!-- Top Meta: Badge & Status -->
+                        <div class="flex flex-wrap items-center gap-3 mb-6 animate-fade-in-up">
+                            <span class="px-3 py-1 rounded-full bg-primary/5 dark:bg-primary/10 text-primary dark:text-primary font-bold uppercase tracking-wider text-xs border border-primary/20 dark:border-primary/20">
+                                {{ __('Events.Badge') }}
+                            </span>
+                            @if($event->start_date->isFuture())
+                                <span class="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider text-xs border border-emerald-100 dark:border-emerald-800/30">
+                                    {{ __('Events.Status.Upcoming') }}
+                                </span>
+                            @else
+                                <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs border border-slate-200 dark:border-slate-700">
+                                    {{ __('Events.Status.Past') }}
+                                </span>
+                            @endif
+                        </div>
+    
+                        <!-- Title & Location -->
+                        <div class="mb-10 animate-fade-in-up delay-100">
+                            <h1 class="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-tight mb-4">
+                                {{ $event->title }}
+                            </h1>
+                            @if($event->location)
+                            <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-lg">
+                                <span class="material-symbols-outlined text-xl flex-shrink-0 text-red-500">location_on</span>
+                                <span class="font-light">{{ $event->location }}</span>
                             </div>
                             @endif
                         </div>
-                        
-                        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
-                             <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($event->title) }}&dates={{ $event->start_date->format('Ymd') }}/{{ $event->end_date ? $event->end_date->addDay()->format('Ymd') : $event->start_date->addDay()->format('Ymd') }}&details={{ urlencode(Str::limit($event->description, 100)) }}&location={{ urlencode($event->location . ' Jepara') }}" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5">
-                                <span class="material-symbols-outlined text-xl">calendar_add_on</span>
-                                {{ __('Events.Detail.Sidebar.CalendarBtn') }}
-                             </a>
-                        </div>
-                    </div>
+    
+                        <!-- Horizontal Divider -->
+                        <hr class="border-slate-100 dark:border-slate-800 mb-10">
+    
+                        <!-- Content Body -->
+                        <div class="space-y-12 animate-fade-in-up delay-200">
+                            
+                            <!-- Description -->
+                            <section>
+                                <h3 class="font-bold text-xl text-slate-900 dark:text-white mb-4 flex items-center gap-3">
+                                    <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                                    {{ __('Events.Detail.About') }}
+                                </h3>
+                                <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
+                                    {!! nl2br(e($event->description)) !!}
+                                </div>
+                            </section>
+    
+                            <!-- Key Information Grid (Date & Time) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Date Info -->
+                                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary/30 dark:hover:border-primary/30 transition-colors">
+                                    <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3">Waktu Pelaksanaan</div>
+                                    <div class="text-slate-900 dark:text-white font-semibold flex items-start gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex-shrink-0 flex items-center justify-center text-primary dark:text-primary">
+                                            <span class="material-symbols-outlined text-xl">calendar_month</span>
+                                        </div>
+                                        <div class="min-w-0 flex-1 pt-1">
+                                            <div class="flex flex-col gap-1">
+                                                <div class="text-sm font-bold">{{ $event->start_date->translatedFormat('d F Y') }}</div>
+                                                @if($event->end_date && $event->end_date != $event->start_date)
+                                                    <div class="text-xs text-slate-500">sampai {{ $event->end_date->translatedFormat('d F Y') }}</div>
+                                                @endif
+                                                <div class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                                    <span class="material-symbols-outlined text-[10px]">schedule</span>
+                                                    {{ $event->start_time ? Carbon\Carbon::parse($event->start_time)->format('H:i') : '08:00' }} WIB
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <!-- Organizer/Info -->
-                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 shadow-xl text-white relative overflow-hidden">
-                         <div class="absolute top-0 right-0 p-8 opacity-5">
-                            <span class="material-symbols-outlined text-9xl">campaign</span>
-                        </div>
-                        <h3 class="font-display font-bold text-lg mb-4 relative z-10">{{ __('Events.Detail.InfoTitle') }}</h3>
-                        <div class="space-y-4 relative z-10">
-                            <div class="flex items-start gap-3">
-                                <span class="material-symbols-outlined text-slate-400 mt-0.5">info</span>
-                                <p class="text-sm text-slate-300">
-                                    {{ __('Events.Detail.OrganizerText') }} <strong class="text-white">Dinas Pariwisata & Kebudayaan Jepara</strong>.
-                                </p>
+                                <!-- Organizer / Contact -->
+                                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary/30 dark:hover:border-primary/30 transition-colors">
+                                    <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3">Penyelenggara</div>
+                                    <div class="text-slate-900 dark:text-white font-semibold flex items-start gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex-shrink-0 flex items-center justify-center text-primary dark:text-primary">
+                                            <span class="material-symbols-outlined text-xl">campaign</span>
+                                        </div>
+                                        <div class="min-w-0 flex-1 pt-1">
+                                            <div class="text-sm">Dinas Pariwisata & Kebudayaan Kabupaten Jepara</div>
+                                            <div class="text-xs text-slate-500 mt-1">Information Center</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+    
+                            <!-- Actions: Calendar & Share -->
+                            <section>
+                                 <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-4">Aksi & Bagikan</h3>
+                                 <div class="flex flex-wrap gap-4">
+                                    <!-- Google Calendar -->
+                                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($event->title) }}&dates={{ $event->start_date->format('Ymd') }}/{{ $event->end_date ? $event->end_date->addDay()->format('Ymd') : $event->start_date->addDay()->format('Ymd') }}&details={{ urlencode(Str::limit($event->description, 100)) }}&location={{ urlencode($event->location . ' Jepara') }}" 
+                                       target="_blank" 
+                                       class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25 hover:translate-y-[-2px]">
+                                        <span class="material-symbols-outlined text-xl">calendar_add_on</span>
+                                        <span>Simpan ke Kalender</span>
+                                    </a>
+                                 </div>
+                            </section>
+    
+                            <!-- Map / Location Section -->
+                            @if($event->location)
+                            <section>
+                                <h3 class="font-bold text-xl text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                                    <span class="w-1.5 h-6 bg-orange-500 rounded-full"></span>
+                                    Lokasi Acara
+                                </h3>
+                                <a href="https://maps.google.com/maps?q={{ urlencode($event->location . ' Jepara') }}" target="_blank" class="block w-full h-[300px] md:h-auto md:aspect-video rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-[6px] border-white dark:border-slate-800 shadow-xl relative group">
+                                     <!-- Simple Map Embed -->
+                                     <iframe 
+                                        width="100%" 
+                                        height="100%" 
+                                        frameborder="0" 
+                                        scrolling="no" 
+                                        marginheight="0" 
+                                        marginwidth="0" 
+                                        style="pointer-events: none;"
+                                        src="https://maps.google.com/maps?q={{ urlencode($event->location . ' Jepara') }}&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                                    </iframe>
+                                    
+                                    <!-- Hover Overlay -->
+                                    <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center z-10">
+                                        <div class="bg-white px-6 py-3 rounded-full shadow-2xl font-bold text-slate-900 flex items-center gap-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                                            <span class="material-symbols-outlined text-red-500">near_me</span>
+                                            Buka Google Maps
+                                        </div>
+                                    </div>
+                                </a>
+                            </section>
+                            @endif
+    
                         </div>
-                    </div>
-
+    
+                        <!-- Footer Area -->
+                        <div class="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 text-center">
+                            <p class="text-slate-400 text-sm">
+                                &copy; {{ date('Y') }} Dinas Pariwisata & Kebudayaan Kabupaten Jepara
+                            </p>
+                        </div>
+    
+                    </main>
                 </div>
+    
             </div>
         </div>
     </div>

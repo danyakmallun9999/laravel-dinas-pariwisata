@@ -1,7 +1,7 @@
     <!-- SECTION: Culture -->
     <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-20 lg:py-28 overflow-hidden relative" id="culture" x-data="{ active: 0 }">
         <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-15 dark:opacity-20 pointer-events-none mix-blend-multiply dark:mix-blend-soft-light saturate-0">
+        <div class="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none mix-blend-multiply dark:mix-blend-soft-light saturate-0">
             <img src="{{ asset('images/culture/tenun-troso.png') }}" alt="Motif Tenun Troso" class="w-full h-full object-cover">
         </div>
         
