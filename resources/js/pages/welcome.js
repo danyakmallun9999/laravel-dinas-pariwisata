@@ -306,6 +306,10 @@ window.mapComponent = function (config = {}) {
                     return 'fa-solid fa-newspaper';
                 case 'Agenda':
                     return 'fa-solid fa-calendar-alt';
+                case 'Budaya':
+                    return 'fa-solid fa-masks-theater';
+                case 'Kuliner':
+                    return 'fa-solid fa-utensils';
                 default:
                     return 'fa-solid fa-search';
             }

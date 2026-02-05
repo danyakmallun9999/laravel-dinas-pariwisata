@@ -289,8 +289,42 @@ class WelcomeController extends Controller
                 ];
             });
 
+        // Search Cultures (Budaya)
+        $cultures = $this->staticDataService->getCultures()
+            ->filter(function ($item) use ($query) {
+                return Str::contains(strtolower($item->name), strtolower($query));
+            })
+            ->take(3)
+            ->map(function ($item) {
+                return [
+                    'id' => $item->slug,
+                    'name' => $item->name,
+                    'description' => Str::limit($item->description, 50),
+                    'image_url' => asset($item->image),
+                    'type' => 'Budaya',
+                    'url' => route('culture.show', $item->slug),
+                ];
+            })->values();
+
+        // Search Culinaries (Kuliner)
+        $culinaries = $this->staticDataService->getCulinaries()
+            ->filter(function ($item) use ($query) {
+                return Str::contains(strtolower($item->name), strtolower($query));
+            })
+            ->take(3)
+            ->map(function ($item) {
+                return [
+                    'id' => $item->slug,
+                    'name' => $item->name,
+                    'description' => Str::limit($item->description, 50),
+                    'image_url' => asset($item->image),
+                    'type' => 'Kuliner',
+                    'url' => route('culinary.show', $item->slug),
+                ];
+            })->values();
+
         // Merge all results
-        $results = $places->merge($posts)->merge($events);
+        $results = $places->merge($posts)->merge($events)->merge($cultures)->merge($culinaries);
 
         return response()->json($results);
     }
