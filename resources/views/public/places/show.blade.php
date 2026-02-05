@@ -271,14 +271,6 @@
                         @push('scripts')
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
-                                // Fix Leaflet Marker Icon
-                                delete L.Icon.Default.prototype._getIconUrl;
-                                L.Icon.Default.mergeOptions({
-                                    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-                                    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-                                    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-                                });
-
                                 const lat = {{ $place->latitude ?? -6.5817 }};
                                 const lng = {{ $place->longitude ?? 110.6685 }};
                                 
@@ -298,7 +290,7 @@
                                     attribution: '© OpenStreetMap contributors'
                                 }).addTo(map);
 
-                                L.marker([lat, lng]).addTo(map);
+                                // Marker removed as per request
                                 
                                 // Invalidate size to ensure render
                                 setTimeout(() => {
