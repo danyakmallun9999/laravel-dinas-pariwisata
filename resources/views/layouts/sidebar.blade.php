@@ -33,7 +33,7 @@
         <!-- Logo -->
         <div class="flex items-center h-20 border-b border-gray-200 px-4 transition-all duration-300" :class="sidebarMinimized ? 'justify-center' : 'justify-between'">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-blue-600 border-blue-600 transition flex-shrink-0">
+                <div x-show="sidebarMinimized" class="w-10 h-10 rounded-xl flex items-center justify-center text-blue-600 border-blue-600 transition flex-shrink-0">
                     <i class="fa-solid fa-map-location-dot text-lg"></i>
                 </div>
                 <span x-show="!sidebarMinimized" class="font-bold text-xl text-gray-800 tracking-tight whitespace-nowrap transition-opacity duration-300">Dinas<span class="text-blue-600">Pariwisata</span></span>

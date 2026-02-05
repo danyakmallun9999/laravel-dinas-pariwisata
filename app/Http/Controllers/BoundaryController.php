@@ -13,9 +13,20 @@ class BoundaryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $boundaries = Boundary::latest()->paginate(10);
+        $query = Boundary::query();
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%");
+            });
+        }
+
+        $boundaries = $query->latest()->paginate(10);
 
         return view('admin.boundaries.index', compact('boundaries'));
     }
