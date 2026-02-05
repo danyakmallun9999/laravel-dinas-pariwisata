@@ -1,112 +1,140 @@
 <x-public-layout>
-    <div class="bg-white dark:bg-background-dark min-h-screen">
+    <div class="bg-white dark:bg-slate-900 min-h-screen font-sans">
         
         <!-- Immersive Hero Section -->
-        <div class="relative h-[60vh] md:h-[70vh] w-full overflow-hidden group rounded-b-[2.5rem] md:rounded-b-[4rem] shadow-2xl z-20">
-            <img src="{{ asset($culture->image) }}" alt="{{ $culture->name }}" class="w-full h-full object-cover attachment-fixed transform scale-105 group-hover:scale-100 transition-transform duration-[3s] ease-out">
+        <div class="relative h-[85vh] w-full overflow-hidden group">
+            <img src="{{ asset($culture->image) }}" alt="{{ $culture->name }}" class="absolute inset-0 w-full h-full object-cover transform scale-105 group-hover:scale-100 transition-transform duration-[10s] ease-out">
             
             <!-- Cinematic Gradient Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-black/20 opacity-90"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80"></div>
+            <div class="absolute inset-0 bg-black/20"></div>
 
-            <!-- Hero Content (Centered) -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-                <div class="max-w-4xl mx-auto space-y-6 md:space-y-8 animate-fade-in-up mt-10 md:mt-0">
+            <!-- Hero Content -->
+            <div class="absolute bottom-0 left-0 right-0 p-8 md:p-16 pb-24 md:pb-32 z-20 text-center">
+                <div class="max-w-5xl mx-auto space-y-6 animate-fade-in-up">
                     
-                    <!-- Badges -->
-                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-                        <span class="px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-orange-600/90 backdrop-blur-md border border-white/20 text-white text-xs md:text-sm font-bold tracking-widest uppercase shadow-xl hover:bg-orange-600 transition-colors">
-                            Budaya & Tradisi
-                        </span>
-                    </div>
+                    <!-- Decorative Subtitle -->
+                    <p class="font-script text-3xl md:text-5xl text-accent/90 mb-2 drop-shadow-lg" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                        Heritage & Traditions
+                    </p>
                     
-                    <!-- Title -->
-                    <h1 class="font-display text-4xl sm:text-5xl md:text-7xl lg:text-7xl font-black text-white leading-tight drop-shadow-2xl tracking-tight px-4">
+                    <!-- Main Title -->
+                    <h1 class="font-playfair text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight drop-shadow-2xl tracking-wide">
                         {{ $culture->name }}
                     </h1>
 
-                    <!-- Location -->
-                    <div class="flex items-center justify-center gap-2 text-white/80 font-medium text-base md:text-xl">
-                        <span class="material-symbols-outlined text-orange-400 text-xl md:text-2xl">location_on</span>
-                        <span class="border-b border-transparent hover:border-white/50 transition-all cursor-pointer">{{ $culture->location }}</span>
+                    <!-- Divider -->
+                    <div class="w-24 h-1 bg-accent mx-auto rounded-full shadow-lg"></div>
+
+                    <!-- Location & Short Desc -->
+                    <div class="flex flex-col items-center gap-3 text-white/90">
+                        <div class="flex items-center gap-2 text-lg font-medium bg-black/30 backdrop-blur-sm px-4 py-1 rounded-full border border-white/10">
+                            <span class="material-symbols-outlined text-accent">location_on</span>
+                            <span>{{ $culture->location }}</span>
+                        </div>
+                        <p class="text-lg md:text-2xl font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md font-serif italic text-white/80">
+                             {{ $culture->description }}
+                        </p>
                     </div>
 
                 </div>
             </div>
             
             <!-- Scroll Indicator -->
-            <div class="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce cursor-pointer opacity-70 hover:opacity-100 transition-opacity" @click="document.getElementById('content').scrollIntoView({behavior: 'smooth'})">
-                <span class="material-symbols-outlined text-white text-3xl md:text-4xl drop-shadow-lg">keyboard_arrow_down</span>
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce cursor-pointer opacity-80 hover:opacity-100 transition-opacity" @click="document.getElementById('content').scrollIntoView({behavior: 'smooth'})">
+                <span class="material-symbols-outlined text-white text-4xl drop-shadow-lg">keyboard_arrow_down</span>
             </div>
         </div>
 
-        <!-- Main Content Section -->
-        <div id="content" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 relative z-10">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
-                
-                <!-- Left Column: Content (8 cols) -->
-                <div class="md:col-span-8 space-y-8">
-                    
-                    <!-- About Section -->
-                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-100 dark:border-slate-700/50">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
-                                <span class="material-symbols-outlined text-2xl">menu_book</span>
-                            </div>
-                            <h2 class="text-2xl font-display font-bold text-slate-800 dark:text-white">Tentang Tradisi</h2>
-                        </div>
-                        <div class="prose prose-lg prose-slate dark:prose-invert max-w-none font-light leading-relaxed">
-                            <p class="whitespace-pre-line">{{ $culture->full_description ?? $culture->description }}</p>
-                        </div>
-                    </div>
+        <!-- Main Content Section (Floating Card) -->
+        <div id="content" class="relative z-30 -mt-20 px-4 sm:px-6 lg:px-8 pb-20">
+             <div class="max-w-6xl mx-auto bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-t-[3rem] shadow-2xl border-t border-white/20 p-8 md:p-16">
+                 
+                 <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+                     
+                     <!-- Left Column: Main Article (8 cols) -->
+                     <div class="md:col-span-8">
+                         <!-- Section Header -->
+                         <div class="flex flex-col items-start mb-8">
+                             <div class="flex items-center gap-4 mb-4">
+                                 <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                                     <span class="material-symbols-outlined text-2xl">menu_book</span>
+                                 </div>
+                                 <h2 class="font-playfair text-3xl font-bold text-slate-800 dark:text-white">
+                                     Tentang Tradisi
+                                 </h2>
+                             </div>
+                             <div class="w-20 h-1 bg-accent rounded-full"></div>
+                         </div>
 
-                </div>
+                         <!-- Article Content -->
+                         <div class="prose prose-lg prose-slate dark:prose-invert max-w-none font-light leading-loose text-slate-600 dark:text-slate-300 first-letter:float-left first-letter:text-6xl first-letter:pr-3 first-letter:font-playfair first-letter:text-accent first-letter:font-bold">
+                             <p class="whitespace-pre-line text-justify">{{ $culture->full_description ?? $culture->description }}</p>
+                         </div>
+                     </div>
 
-                <!-- Right Column: Sidebar (4 cols) -->
-                <div class="md:col-span-4 space-y-8">
-                    <!-- Sticky Sidebar -->
-                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-100 dark:border-slate-700/50 sticky top-24">
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-4">
-                            <span class="material-symbols-outlined text-orange-500">info</span> Informasi Utama
-                        </h3>
+                     <!-- Right Column: Info Sidebar (4 cols) -->
+                     <div class="md:col-span-4 space-y-8">
+                         <!-- Info Card -->
+                         <div class="bg-gray-50 dark:bg-slate-700/50 rounded-3xl p-8 border border-gray-100 dark:border-slate-600 sticky top-32">
+                             <h3 class="font-playfair text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2 pb-4 border-b border-gray-200 dark:border-slate-600">
+                                 <span class="material-symbols-outlined text-accent">info</span> Informasi Utama
+                             </h3>
 
-                        <div class="space-y-6">
-                             <!-- Highlight/Date -->
-                            <div class="group">
-                                <div class="flex items-center gap-3 mb-2 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                    <span class="material-symbols-outlined text-base">event</span>
-                                    Waktu Pelaksanaan
-                                </div>
-                                <div class="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-100 dark:border-orange-800/30 group-hover:border-orange-500/30 transition-colors">
-                                    <p class="text-orange-800 dark:text-orange-200 font-bold text-sm whitespace-pre-line leading-relaxed">
-                                        {{ $culture->highlight }}
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <!-- Location Detail -->
-                            <div class="group">
-                                <div class="flex items-center gap-3 mb-2 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                    <span class="material-symbols-outlined text-base">pin_drop</span>
-                                    Lokasi
-                                </div>
-                                <p class="text-slate-800 dark:text-white font-semibold pl-1">
-                                    {{ $culture->location }}
-                                </p>
-                            </div>
+                             <div class="space-y-6">
+                                  <!-- Time/Event -->
+                                 <div class="group">
+                                     <div class="flex items-center gap-3 mb-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                                         <span class="material-symbols-outlined text-sm">event</span>
+                                         Waktu Pelaksanaan
+                                     </div>
+                                     <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-gray-200 dark:border-slate-600 shadow-sm group-hover:border-accent/50 transition-colors">
+                                         <p class="text-accent font-bold text-sm whitespace-pre-line leading-relaxed">
+                                             {{ $culture->highlight }}
+                                         </p>
+                                     </div>
+                                 </div>
+                                 
+                                 <!-- Location Detail -->
+                                 <div>
+                                     <div class="flex items-center gap-3 mb-2 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                                         <span class="material-symbols-outlined text-sm">map</span>
+                                         Lokasi
+                                     </div>
+                                     <p class="text-slate-700 dark:text-slate-200 font-medium pl-1">
+                                         {{ $culture->location }}
+                                     </p>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Navigation Back -->
-            <div class="mt-12 text-center">
-                 <a href="{{ route('welcome') }}#culture" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold transition-all">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                    Kembali ke Beranda
-                 </a>
-            </div>
+                 </div>
 
+                 <!-- Navigation Footer -->
+                 <div class="mt-16 pt-8 border-t border-slate-100 dark:border-slate-700/50 flex flex-col md:flex-row items-center justify-between gap-6">
+                     <a href="{{ route('welcome') }}#culture" class="group inline-flex items-center gap-3 px-6 py-3 rounded-full bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all duration-300">
+                        <span class="w-8 h-8 rounded-full bg-white dark:bg-slate-600 flex items-center justify-center shadow-sm group-hover:-translate-x-1 transition-transform">
+                            <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        </span>
+                        <span class="font-medium tracking-wide">Kembali ke Beranda</span>
+                     </a>
+                     
+                     <div class="flex items-center gap-4">
+                         <span class="text-sm font-serif italic text-slate-400">Bagikan:</span>
+                         <button class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition-colors" title="Share via Facebook">
+                             <i class="fa-brands fa-facebook-f"></i>
+                         </button>
+                         <button class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition-colors" title="Share via WhatsApp">
+                             <i class="fa-brands fa-whatsapp"></i>
+                         </button>
+                         <button class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-accent hover:border-accent transition-colors" title="Copy Link">
+                             <span class="material-symbols-outlined text-lg">link</span>
+                         </button>
+                     </div>
+                 </div>
+
+             </div>
         </div>
     </div>
 </x-public-layout>
