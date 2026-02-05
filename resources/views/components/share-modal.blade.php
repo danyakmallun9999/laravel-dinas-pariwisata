@@ -30,7 +30,7 @@
         x-transition:leave="transition ease-in duration-300" 
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md"
+        class="fixed inset-0 z-[11000] bg-black/60 backdrop-blur-md"
         style="display: none;"
     >
         <!-- Modal Content -->
