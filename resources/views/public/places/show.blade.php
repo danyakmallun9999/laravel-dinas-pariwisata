@@ -254,14 +254,12 @@
                                 <span class="w-1.5 h-6 bg-orange-500 rounded-full"></span>
                                 Lokasi Peta
                             </h3>
-                            <a href="{{ $place->google_maps_link ?? 'https://www.google.com/maps/dir/?api=1&destination=' . $place->latitude . ',' . $place->longitude }}" target="_blank" class="group relative block w-full aspect-video rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-[6px] border-white dark:border-slate-800 shadow-2xl">
-                                <!-- Placeholder Map Image -->
-                                <div class="absolute inset-0 flex items-center justify-center bg-slate-200 dark:bg-slate-800 group-hover:scale-105 transition-transform duration-700">
-                                    <span class="material-symbols-outlined text-6xl text-slate-400">map</span>
-                                </div>
+                            <a href="{{ $place->google_maps_link ?? 'https://www.google.com/maps/dir/?api=1&destination=' . $place->latitude . ',' . $place->longitude }}" target="_blank" class="block w-full aspect-video rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-[6px] border-white dark:border-slate-800 shadow-xl relative group">
+                                <!-- Leaflet Map Container -->
+                                <div id="mini-map" class="absolute inset-0 w-full h-full z-0"></div>
                                 
                                 <!-- Hover Overlay -->
-                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center z-10 pointer-events-none">
                                     <div class="bg-white px-6 py-3 rounded-full shadow-2xl font-bold text-slate-900 flex items-center gap-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                                         <span class="material-symbols-outlined text-red-500">near_me</span>
                                         Buka Google Maps
@@ -269,6 +267,46 @@
                                 </div>
                             </a>
                         </section>
+
+                        @push('scripts')
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Fix Leaflet Marker Icon
+                                delete L.Icon.Default.prototype._getIconUrl;
+                                L.Icon.Default.mergeOptions({
+                                    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                                    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                                    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                                });
+
+                                const lat = {{ $place->latitude ?? -6.5817 }};
+                                const lng = {{ $place->longitude ?? 110.6685 }};
+                                
+                                const map = L.map('mini-map', {
+                                    center: [lat, lng],
+                                    zoom: 15, // Zoomed in a bit more for detail
+                                    zoomControl: false,
+                                    dragging: false,
+                                    scrollWheelZoom: false,
+                                    doubleClickZoom: false,
+                                    boxZoom: false,
+                                    attributionControl: false,
+                                    keyboard: false
+                                });
+
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: '© OpenStreetMap contributors'
+                                }).addTo(map);
+
+                                L.marker([lat, lng]).addTo(map);
+                                
+                                // Invalidate size to ensure render
+                                setTimeout(() => {
+                                    map.invalidateSize();
+                                }, 100);
+                            });
+                        </script>
+                        @endpush
 
                     </div>
 
