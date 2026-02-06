@@ -2,6 +2,13 @@
 <aside id="desktop-sidebar" 
        class="fixed left-0 top-0 bottom-0 w-[420px] flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 z-20"
        style="transform: translateX(-100%); opacity: 0;"
+       x-show="!isNavigating"
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="-translate-x-full"
+       x-transition:enter-end="translate-x-0"
+       x-transition:leave="transition ease-in duration-300"
+       x-transition:leave-start="translate-x-0"
+       x-transition:leave-end="-translate-x-full"
        x-init="$nextTick(() => animateSidebar())">
     
     {{-- Header Section --}}
