@@ -14,9 +14,9 @@
             <!-- Logo Area -->
             <div class="flex items-center gap-8">
                 <a class="flex items-center gap-3 group relative" href="{{ route('welcome') }}">
-                    <div class="relative w-14 h-14 transition-transform duration-300 group-hover:scale-110">
+                    <div class="relative w-16 h-16 transition-transform duration-300 group-hover:scale-110">
                          <!-- Logo Image -->
-                         <img src="{{ asset('images/logo.png') }}" alt="Logo Kabupaten Jepara" class="w-full h-full object-contain filter drop-shadow-md">
+                         <img src="{{ asset('images/logo-1.png') }}" alt="Logo Kabupaten Jepara" class="w-full h-full object-contain filter drop-shadow-md">
                     </div>
                     <div>
                         <h2 class="text-xl font-bold leading-none tracking-tight text-slate-800 dark:text-white group-hover:text-primary transition-colors">
