@@ -87,7 +87,7 @@
 
                         <!-- Location / Map Section -->
                         <section>
-                             <div class="bg-slate-50 dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800">
+                             <div class="bg-slate-50 dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800">
                                  <div class="flex items-center gap-3 mb-4">
                                      <div class="w-10 h-10 rounded-full bg-primary/10 dark:bg-blue-900/30 flex items-center justify-center text-primary dark:text-blue-400">
                                          <span class="material-symbols-outlined text-xl">storefront</span>
@@ -126,16 +126,13 @@
                     </div>
 
                     <!-- Footer Area -->
-                    <div class="mt-16 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="mt-16 pt-8 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                         <span class="text-slate-400 text-sm font-serif italic">{{ __('Culinary.Detail.ShareLabel') }}</span>
-                        <div class="flex gap-3">
-                             <x-share-modal :url="request()->url()" :title="$culinary->name" :text="Str::limit(strip_tags($culinary->description), 100)">
-                                <button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-primary hover:text-white transition-all group" title="{{ __('Culinary.Detail.ShareButton') }}">
-                                    <i class="fa-solid fa-share-nodes text-lg group-hover:rotate-12 transition-transform"></i>
-                                    <span>{{ __('Culinary.Detail.ShareButton') }}</span>
-                                </button>
-                             </x-share-modal>
-                        </div>
+                        <x-share-modal :url="request()->url()" :title="$culinary->name" :text="Str::limit(strip_tags($culinary->description), 100)">
+                            <button class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-all duration-300" title="{{ __('Culinary.Detail.ShareButton') }}">
+                                <i class="fa-solid fa-share-nodes text-sm"></i>
+                            </button>
+                        </x-share-modal>
                     </div>
 
                 </main>
