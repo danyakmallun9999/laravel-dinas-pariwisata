@@ -67,10 +67,10 @@
                     @endisset
 
                     @if(isset($attributes) && $attributes->get('full-width'))
-                        {{ $slot }}
+                        @yield('content')
                     @else
                         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                            {{ $slot }}
+                            @yield('content')
                         </div>
                     @endif
                 </main>

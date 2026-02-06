@@ -31,6 +31,7 @@
                         ['label' => __('Nav.Home'), 'route' => 'welcome', 'active' => 'welcome'],
                         ['label' => __('Nav.Map'), 'route' => 'explore.map', 'active' => 'explore.map'],
                         ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => 'places.*'],
+                        ['label' => 'E-Tiket', 'route' => 'tickets.index', 'active' => 'tickets.*'],
                         ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => 'events.public.*'],
                         ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => 'posts.*']
                     ] as $link)
@@ -159,6 +160,7 @@
                         ['label' => __('Nav.Home'), 'route' => 'welcome', 'active' => 'welcome'],
                         ['label' => __('Nav.Map'), 'route' => 'explore.map', 'active' => 'explore.map'],
                         ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => 'places.*'],
+                        ['label' => 'E-Tiket', 'route' => 'tickets.index', 'active' => 'tickets.*'],
                         ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => 'events.public.*'],
                         ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => 'posts.*']
                     ] as $index => $link)

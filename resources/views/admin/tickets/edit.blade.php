@@ -1,0 +1,123 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Edit E-Tiket</h1>
+        <a href="{{ route('admin.tickets.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+            <i class="fas fa-arrow-left mr-2"></i>Kembali
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <form action="{{ route('admin.tickets.update', $ticket) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Place Selection -->
+                <div class="md:col-span-2">
+                    <label for="place_id" class="block text-sm font-medium text-gray-700 mb-2">Destinasi Wisata *</label>
+                    <select name="place_id" id="place_id" required class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                        <option value="">Pilih Destinasi</option>
+                        @foreach($places as $place)
+                            <option value="{{ $place->id }}" {{ old('place_id', $ticket->place_id) == $place->id ? 'selected' : '' }}>
+                                {{ $place->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('place_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Ticket Name -->
+                <div class="md:col-span-2">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama Tiket *</label>
+                    <input type="text" name="name" id="name" value="{{ old('name', $ticket->name) }}" required 
+                           placeholder="Contoh: Tiket Masuk Dewasa, Tiket Anak-anak"
+                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                    @error('name')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Description -->
+                <div class="md:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                    <textarea name="description" id="description" rows="3" 
+                              class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                              placeholder="Deskripsi tiket (opsional)">{{ old('description', $ticket->description) }}</textarea>
+                    @error('description')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Price -->
+                <div>
+                    <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Harga (Rp) *</label>
+                    <input type="number" name="price" id="price" value="{{ old('price', $ticket->price) }}" required min="0" step="1000"
+                           placeholder="50000"
+                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                    @error('price')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Quota -->
+                <div>
+                    <label for="quota" class="block text-sm font-medium text-gray-700 mb-2">Kuota per Hari</label>
+                    <input type="number" name="quota" id="quota" value="{{ old('quota', $ticket->quota) }}" min="1"
+                           placeholder="Kosongkan untuk unlimited"
+                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                    <p class="mt-1 text-xs text-gray-500">Kosongkan jika tidak ada batasan kuota</p>
+                    @error('quota')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Valid Days -->
+                <div>
+                    <label for="valid_days" class="block text-sm font-medium text-gray-700 mb-2">Masa Berlaku (Hari) *</label>
+                    <input type="number" name="valid_days" id="valid_days" value="{{ old('valid_days', $ticket->valid_days) }}" required min="1"
+                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                    <p class="mt-1 text-xs text-gray-500">Berapa hari tiket ini berlaku sejak tanggal kunjungan</p>
+                    @error('valid_days')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Active Status -->
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', $ticket->is_active) ? 'checked' : '' }}
+                               class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                        <span class="ml-2 text-sm text-gray-700">Aktifkan Tiket</span>
+                    </label>
+                    <p class="mt-1 text-xs text-gray-500">Tiket yang tidak aktif tidak akan ditampilkan di halaman publik</p>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="md:col-span-2">
+                    <label for="terms_conditions" class="block text-sm font-medium text-gray-700 mb-2">Syarat & Ketentuan</label>
+                    <textarea name="terms_conditions" id="terms_conditions" rows="4" 
+                              class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                              placeholder="Masukkan syarat dan ketentuan penggunaan tiket">{{ old('terms_conditions', $ticket->terms_conditions) }}</textarea>
+                    @error('terms_conditions')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-3">
+                <a href="{{ route('admin.tickets.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg">
+                    Batal
+                </a>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg">
+                    <i class="fas fa-save mr-2"></i>Update Tiket
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
