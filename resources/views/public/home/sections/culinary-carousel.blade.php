@@ -191,7 +191,7 @@
                 
                     @foreach($culinaries as $index => $culinary)
                     <!-- Culinary Card -->
-                    <div class="min-w-[90%] sm:min-w-[70%] md:min-w-[60%] lg:min-w-[75%] snap-center group relative rounded-3xl overflow-hidden aspect-[3/4] sm:aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
+                    <div class="min-w-[85%] sm:min-w-[65%] md:min-w-[55%] lg:min-w-[70%] snap-start group relative rounded-3xl overflow-hidden aspect-[3/4] sm:aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10">
                         
                         <!-- Image -->
                         <img src="{{ asset($culinary->image) }}" 
