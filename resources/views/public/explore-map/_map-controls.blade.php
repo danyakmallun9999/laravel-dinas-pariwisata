@@ -53,17 +53,6 @@
     </button>
 </div>
 
-{{-- Legend (Bottom Left) --}}
-<div id="map-legend" class="fixed bottom-6 z-[400]" style="left: 440px; opacity: 0; transform: translateY(20px);">
-    <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-        <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Legenda</h5>
-        <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-emerald-500/30 animate-pulse"></span>
-            <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Batas Wilayah</span>
-        </div>
-    </div>
-</div>
-
 <script>
 function animateMapControls() {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.5 });
@@ -83,14 +72,6 @@ function animateMapControls() {
         duration: 0.5,
         ease: 'power4.out'
     }, '-=0.2');
-    
-    // Legend from bottom
-    tl.to('#map-legend', {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        ease: 'back.out(1.2)'
-    }, '-=0.3');
     
     // Location button pulse
     tl.fromTo('.location-btn', 

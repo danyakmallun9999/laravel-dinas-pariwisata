@@ -41,7 +41,7 @@
                 
                 {{-- Minimalist Close Button --}}
                 <button @click="selectedFeature = null" 
-                        class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md flex items-center justify-center transition-all active:scale-95 detail-close-btn opacity-0 translate-x-4">
+                        class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md flex items-center justify-center transition-all active:scale-95 detail-close-btn opacity-0 translate-x-4 z-20">
                     <span class="material-symbols-outlined text-lg">close</span>
                 </button>
                 
@@ -96,14 +96,14 @@
                 <div class="grid grid-cols-[1fr,auto] gap-3 detail-actions opacity-0 translate-y-4">
                     {{-- Primary Route Button --}}
                     <button @click="startRouting(selectedFeature); selectedFeature = null" 
-                            class="h-11 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg shadow-slate-200 dark:shadow-none">
-                        <span class="material-symbols-outlined text-[18px]">directions</span>
+                            class="h-12 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg shadow-sky-500/30">
+                        <span class="material-symbols-outlined text-[20px]">directions</span>
                         <span>Rute Sekarang</span>
                     </button>
 
                     {{-- Icon-only Google Maps Button --}}
                     <button @click="openGoogleMaps(selectedFeature)" 
-                            class="w-11 h-11 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center active:scale-[0.98] transition-all"
+                            class="w-12 h-12 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-2xl flex items-center justify-center active:scale-[0.98] transition-all"
                             title="Buka di Google Maps">
                         <i class="fa-brands fa-google text-lg"></i>
                     </button>

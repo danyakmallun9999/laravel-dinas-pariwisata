@@ -203,10 +203,12 @@
             toggleSortNearby() {
                 if (!this.userLocation) {
                     this.locateUser(() => {
-                        this.sortByDistance = !this.sortByDistance;
+                        this.sortByDistance = true;
+                        this.applyFilters();
                     });
                 } else {
                     this.sortByDistance = !this.sortByDistance;
+                    this.applyFilters();
                 }
             },
 
