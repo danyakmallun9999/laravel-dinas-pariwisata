@@ -2,17 +2,20 @@
 <script>
     function mapComponent() {
         return {
+            // Core State
             map: null,
             loading: true,
             sidebarOpen: true,
-            activeTab: 'places',
             currentBaseLayer: 'satellite',
             baseLayers: {},
+            
+            // Categories & Filters
             categories: @json($categories),
             selectedCategories: [],
             showBoundaries: true,
             sortByDistance: false,
 
+            // Places Data
             allPlaces: [],
             geoFeatures: [],
             searchQuery: '',
@@ -20,6 +23,7 @@
             selectedFeature: null,
             markers: [],
             boundariesLayer: null,
+            boundariesFeatures: [],
             routingControl: null,
             
             // Proximity Alert State
@@ -32,11 +36,18 @@
             heading: 0,
             wakeLock: null,
 
+            // Map Settings
             defaultCenter: [-6.59, 110.68],
             defaultZoom: 10,
             userMarker: null,
             userLocation: null,
+            
+            // Mobile Bottom Sheet
+            bottomSheetState: 'collapsed',
+            touchStartY: 0,
+            touchCurrentY: 0,
 
+            // Computed: Visible Places
             get visiblePlaces() {
                 const ids = this.selectedCategories.length > 0 ? this.selectedCategories : this.categories.map(c => c.id);
                 let places = this.allPlaces.filter(p => ids.includes(p.properties.category?.id))
@@ -50,12 +61,13 @@
                      }));
                 
                 if (this.sortByDistance) {
-                    places.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+                    places.sort((a, b) => (parseFloat(a.distance) || Infinity) - (parseFloat(b.distance) || Infinity));
                 }
                 
                 return places;
             },
 
+            // Initialize
             init() {
                 this.selectedCategories = this.categories.map(c => c.id);
                 this.initMap();
@@ -69,8 +81,56 @@
                     window.addEventListener('deviceorientation', (e) => this.handleOrientation(e));
                 }
 
-                if (window.innerWidth < 1024) { this.sidebarOpen = false; }
+                // Mobile sidebar default closed
+                if (window.innerWidth < 1024) { 
+                    this.sidebarOpen = false; 
+                }
             },
+            
+            // ============================================
+            // MOBILE BOTTOM SHEET METHODS
+            // ============================================
+            
+            cycleBottomSheet() {
+                const states = ['collapsed', 'half', 'full'];
+                const current = states.indexOf(this.bottomSheetState);
+                this.bottomSheetState = states[(current + 1) % 3];
+            },
+            
+            handleTouchStart(e) {
+                this.touchStartY = e.touches[0].clientY;
+            },
+            
+            handleTouchMove(e) {
+                this.touchCurrentY = e.touches[0].clientY;
+            },
+            
+            handleTouchEnd(e) {
+                const diff = this.touchStartY - this.touchCurrentY;
+                const threshold = 50;
+                
+                if (diff > threshold) {
+                    // Swipe up
+                    if (this.bottomSheetState === 'collapsed') this.bottomSheetState = 'half';
+                    else if (this.bottomSheetState === 'half') this.bottomSheetState = 'full';
+                } else if (diff < -threshold) {
+                    // Swipe down
+                    if (this.bottomSheetState === 'full') this.bottomSheetState = 'half';
+                    else if (this.bottomSheetState === 'half') this.bottomSheetState = 'collapsed';
+                }
+            },
+            
+            toggleCategorySingle(id) {
+                if (this.selectedCategories.length === 1 && this.selectedCategories.includes(id)) {
+                    this.selectedCategories = this.categories.map(c => c.id);
+                } else {
+                    this.selectedCategories = [id];
+                }
+            },
+            
+            // ============================================
+            // ORIENTATION & NAVIGATION
+            // ============================================
             
             handleOrientation(event) {
                 if (!this.isNavigating) return;
@@ -99,7 +159,8 @@
                 if (this.isNavigating) {
                     this.sidebarOpen = false;
                     this.selectedFeature = null;
-                    this.map.closePopup();
+                    this.bottomSheetState = 'collapsed';
+                    if (this.map) this.map.closePopup();
                     
                     try {
                         if ('wakeLock' in navigator) {
@@ -119,6 +180,10 @@
                     this.map.setZoom(15);
                 }
             },
+
+            // ============================================
+            // CATEGORY & FILTER METHODS
+            // ============================================
 
             toggleCategory(id) {
                 if (this.selectedCategories.includes(id)) {
@@ -152,6 +217,10 @@
                 return (R * c).toFixed(1);
             },
 
+            // ============================================
+            // MAP INITIALIZATION
+            // ============================================
+
             initMap() {
                 this.map = L.map('leaflet-map', { zoomControl: false, attributionControl: false }).setView(this.defaultCenter, this.defaultZoom);
                 
@@ -168,6 +237,10 @@
                 this.currentBaseLayer = type;
                 this.baseLayers[type].addTo(this.map);
             },
+
+            // ============================================
+            // DATA FETCHING
+            // ============================================
 
             async fetchAllData() {
                 try {
@@ -192,10 +265,6 @@
                 }
             },
 
-            updateLayers() {
-                 // Handled by watchers now
-            },
-
             loadBoundaries() {
                 if (this.boundariesLayer) this.map.removeLayer(this.boundariesLayer);
                 if (!this.showBoundaries) return;
@@ -207,6 +276,10 @@
                 }).addTo(this.map);
             },
 
+            // ============================================
+            // MARKERS
+            // ============================================
+
             updateMapMarkers() {
                 this.markers.forEach(m => this.map.removeLayer(m));
                 this.markers = [];
@@ -214,14 +287,18 @@
                 const visible = this.visiblePlaces;
                 
                 visible.forEach(p => {
-                     const color = p.category?.color || '#3b82f6';
+                     const color = p.category?.color || '#0ea5e9';
                      const iconHtml = `
-                        <div class="w-9 h-9 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-sm custom-marker" style="background-color: ${color}">
-                            <i class="${p.category?.icon_class ?? 'fa-solid fa-map-marker-alt'}"></i>
+                        <div class="marker-container">
+                            <div class="marker-pulse" style="background-color: ${color};"></div>
+                            <div class="marker-icon" style="background-color: ${color};">
+                                <i class="${p.category?.icon_class ?? 'fa-solid fa-map-marker-alt'}"></i>
+                            </div>
+                            <div class="marker-pointer" style="border-top-color: ${color};"></div>
                         </div>
                     `;
                     const marker = L.marker([p.latitude, p.longitude], {
-                         icon: L.divIcon({ html: iconHtml, className: '', iconSize: [36, 36], iconAnchor: [18, 18] })
+                         icon: L.divIcon({ html: iconHtml, className: '', iconSize: [44, 52], iconAnchor: [22, 52] })
                     });
                     marker.on('click', () => { this.selectPlace(p); });
                     marker.addTo(this.map);
@@ -229,36 +306,59 @@
                 });
             },
 
+            // ============================================
+            // SEARCH
+            // ============================================
+
             performSearch() {
                 if (this.searchQuery.length < 2) { this.searchResults = []; return; }
                 const q = this.searchQuery.toLowerCase();
                 this.searchResults = this.allPlaces.filter(p => p.properties.name.toLowerCase().includes(q))
-                    .map(p => ({ ...p.properties, type: 'Lokasi', latitude: p.geometry.coordinates[1], longitude: p.geometry.coordinates[0] }))
+                    .map(p => ({ 
+                        ...p.properties, 
+                        type: 'Lokasi', 
+                        category: p.properties.category,
+                        latitude: p.geometry.coordinates[1], 
+                        longitude: p.geometry.coordinates[0] 
+                    }))
                     .slice(0, 5);
             },
 
+            // ============================================
+            // SELECTION
+            // ============================================
+
             selectFeature(feat) {
-                this.selectedFeature = feat;
+                this.selectedFeature = {
+                    ...feat,
+                    image_url: feat.image_url || (feat.image_path ? '{{ url('/') }}/' + feat.image_path : null)
+                };
                 this.zoomToFeature(feat);
+                this.bottomSheetState = 'collapsed';
             },
 
             selectPlace(place) {
                  this.selectedFeature = {
                     ...place,
-                    type: 'Lokasi',
+                    type: place.category?.name || 'Lokasi',
                     image_url: place.image_url || (place.image_path ? '{{ url('/') }}/' + place.image_path : null)
                 };
                 this.zoomToFeature(place);
+                this.bottomSheetState = 'collapsed';
             },
 
             zoomToFeature(feature) {
                 if (feature.latitude && feature.longitude) {
-                    this.map.flyTo([feature.latitude, feature.longitude], 18);
+                    this.map.flyTo([feature.latitude, feature.longitude], 16, { duration: 0.5 });
                 } else if (feature.geometry) {
                      const layer = L.geoJSON(feature);
                      this.map.fitBounds(layer.getBounds(), { padding: [100, 100] });
                 }
             },
+            
+            // ============================================
+            // ROUTING
+            // ============================================
             
             startRouting(destination) {
                 if (!this.userLocation) {
@@ -278,9 +378,9 @@
                         L.latLng(this.userLocation.lat, this.userLocation.lng),
                         L.latLng(destination.latitude, destination.longitude)
                     ],
-                    routeWhileDragging: true,
+                    routeWhileDragging: false,
                     lineOptions: {
-                        styles: [{color: '#6FA1EC', opacity: 0.8, weight: 6}]
+                        styles: [{color: '#0ea5e9', opacity: 0.8, weight: 6}]
                     },
                     show: true,
                     addWaypoints: false,
@@ -294,15 +394,9 @@
                     const container = this.routingControl.getContainer();
                     if (container) container.style.display = 'none';
                 }, 100);
-                
-                if (window.innerWidth < 1024) { this.sidebarOpen = false; }
             },
 
             openGoogleMaps(destination) {
-                if (!this.userLocation) {
-                    alert('Lokasi anda belum terdeteksi.');
-                    return;
-                }
                 const url = `https://www.google.com/maps/dir/?api=1&destination=${destination.latitude},${destination.longitude}&travelmode=driving`;
                 window.open(url, '_blank');
             },
@@ -311,13 +405,13 @@
                  if (!this.routingControl) return;
                  const container = this.routingControl.getContainer();
                  if (container) {
-                     if (container.style.display === 'none') {
-                         container.style.display = 'block';
-                     } else {
-                         container.style.display = 'none';
-                     }
+                     container.style.display = container.style.display === 'none' ? 'block' : 'none';
                  }
             },
+
+            // ============================================
+            // GEOLOCATION
+            // ============================================
 
             locateUser(callback = null, forceFollow = false) {
                 if (!navigator.geolocation) { alert('Browser tidak mendukung geolokasi'); return; }
@@ -332,9 +426,8 @@
                         
                         const compassHtml = `
                             <div class="relative w-12 h-12 flex items-center justify-center">
-                                <div class="user-arrow w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[16px] border-b-blue-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 origin-center" style="transform: rotate(${this.heading}deg)"></div>
-                                <div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-md relative z-10 pulse"></div>
-                                <div class="absolute inset-0 bg-blue-500/10 rounded-full animate-ping"></div>
+                                <div class="user-arrow w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[16px] border-b-sky-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 origin-center" style="transform: rotate(${this.heading}deg)"></div>
+                                <div class="w-5 h-5 bg-sky-500 rounded-full border-3 border-white relative z-10" style="box-shadow: 0 0 0 8px rgba(14,165,233,0.2);"></div>
                             </div>
                         `;
 
@@ -346,8 +439,8 @@
                             }).addTo(this.map);
                         }
                         
-                        if (this.isNavigating || forceFollow || this.loading) {
-                            this.map.flyTo([latitude, longitude], this.isNavigating ? 18 : 17, { animate: true, duration: 1 });
+                        if (this.isNavigating || forceFollow) {
+                            this.map.flyTo([latitude, longitude], this.isNavigating ? 18 : 16, { animate: true, duration: 0.5 });
                         }
                         
                         this.loading = false;
@@ -357,11 +450,16 @@
                     },
                     (err) => { 
                         this.loading = false; 
-                        console.error(err);
+                        console.error('Geolocation error:', err);
+                        alert('Tidak dapat mendeteksi lokasi. Pastikan GPS aktif.');
                     },
-                    { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
+                    { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
                 );
             },
+            
+            // ============================================
+            // PROXIMITY ALERT
+            // ============================================
             
             checkProximity(lat, lng) {
                 const threshold = 0.5; // 500 meters
@@ -373,6 +471,8 @@
                     if (dist && parseFloat(dist) <= threshold) {
                         this.nearbyAlert = {
                             ...place.properties,
+                            latitude: place.geometry.coordinates[1],
+                            longitude: place.geometry.coordinates[0],
                             image_url: place.properties.image_path ? '{{ url('/') }}/' + place.properties.image_path : null
                         };
                         this.notifiedPlaces.add(place.properties.name);
@@ -380,6 +480,19 @@
                         if (navigator.vibrate) navigator.vibrate(200);
                     }
                 });
+            },
+            
+            // ============================================
+            // UTILITY HELPERS
+            // ============================================
+            
+            darkenColor(hex, percent) {
+                // Convert hex to RGB, darken, convert back
+                const num = parseInt(hex.replace('#', ''), 16);
+                const r = Math.max(0, (num >> 16) - Math.round(2.55 * percent));
+                const g = Math.max(0, ((num >> 8) & 0x00FF) - Math.round(2.55 * percent));
+                const b = Math.max(0, (num & 0x0000FF) - Math.round(2.55 * percent));
+                return '#' + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
             }
         };
     }
