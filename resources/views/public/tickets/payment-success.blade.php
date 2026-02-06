@@ -1,4 +1,4 @@
-<x-public-layout>
+<x-public-layout :hideFooter="true">
     <div class="bg-gray-50 dark:bg-background-dark min-h-screen -mt-20 pt-32 pb-24">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->

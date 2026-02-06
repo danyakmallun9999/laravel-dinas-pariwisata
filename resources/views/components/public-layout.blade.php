@@ -1,3 +1,5 @@
+@props(['hideFooter' => false])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
@@ -109,6 +111,7 @@
     </main>
 
     <!-- Footer -->
+    @unless($hideFooter)
     <footer class="bg-slate-900 pt-16 pb-8 border-t border-slate-800 mt-auto">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
@@ -132,6 +135,7 @@
             </div>
         </div>
     </footer>
+    @endunless
 
 </body>
 </html>

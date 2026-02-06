@@ -7,11 +7,18 @@ use Illuminate\View\View;
 
 class PublicLayout extends Component
 {
+    public bool $hideFooter;
+
+    public function __construct(bool $hideFooter = false)
+    {
+        $this->hideFooter = $hideFooter;
+    }
+
     /**
      * Get the view / contents that represents the component.
      */
     public function render(): View
     {
-        return view('layouts.public');
+        return view('layouts.public', ['hideFooter' => $this->hideFooter]);
     }
 }
