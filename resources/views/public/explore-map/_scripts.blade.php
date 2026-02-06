@@ -33,6 +33,8 @@
             
             // Navigation Mode State
             isNavigating: false,
+            hasActiveRoute: false,
+            navigationDestination: null,
             heading: 0,
             wakeLock: null,
 
@@ -179,6 +181,12 @@
                         this.wakeLock = null;
                     }
                     this.map.setZoom(15);
+                    this.hasActiveRoute = false;
+                    if (this.routingControl) {
+                        this.map.removeControl(this.routingControl);
+                        this.routingControl = null;
+                    }
+                    this.sidebarOpen = true; // Re-open sidebar
                 }
             },
 
@@ -363,6 +371,7 @@
             // ============================================
             
             startRouting(destination) {
+                this.navigationDestination = destination;
                 if (!this.userLocation) {
                     this.locateUser(() => this.calculateRoute(destination));
                 } else {
@@ -395,6 +404,7 @@
                 setTimeout(() => {
                     const container = this.routingControl.getContainer();
                     if (container) container.style.display = 'none';
+                    this.hasActiveRoute = true;
                 }, 100);
             },
 

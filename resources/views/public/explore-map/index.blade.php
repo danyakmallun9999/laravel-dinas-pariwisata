@@ -30,7 +30,8 @@
     {{-- ============================================= --}}
     
     {{-- Mobile: Floating Search Bar --}}
-    <div class="lg:hidden fixed top-0 left-0 right-0 z-[500] p-4 pointer-events-none">
+    <div class="lg:hidden fixed top-0 left-0 right-0 z-[500] p-4 pointer-events-none"
+         x-show="!isNavigating" x-transition.opacity.duration.500ms>
         <div class="pointer-events-auto flex items-center gap-3">
             {{-- Back Button --}}
             <a href="{{ route('welcome') }}" class="flex-shrink-0 w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700 active:scale-95 transition-transform">
@@ -74,7 +75,9 @@
     </div>
 
     {{-- Mobile: Map Controls (Right Side) --}}
-    <div class="lg:hidden fixed right-4 z-[400] flex flex-col gap-3" :style="'bottom: ' + (bottomSheetState === 'collapsed' ? '220px' : '60px')">
+    <div class="lg:hidden fixed right-4 z-[400] flex flex-col gap-3" 
+         :style="'bottom: ' + (bottomSheetState === 'collapsed' ? '220px' : '60px')"
+         x-show="!isNavigating" x-transition.opacity.duration.500ms>
         {{-- Layer Toggle --}}
         <div x-data="{ open: false }" class="relative">
             <button @click="open = !open" class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700 active:scale-95 transition-transform">
@@ -116,7 +119,10 @@
              'translate-y-[45%]': bottomSheetState === 'half',
              'translate-y-0': bottomSheetState === 'full'
          }"
-         x-show="!selectedFeature"
+         x-show="!selectedFeature && !isNavigating"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="translate-y-0"
+         x-transition:leave-end="translate-y-full"
          @touchstart.passive="handleTouchStart($event)"
          @touchmove.passive="handleTouchMove($event)"
          @touchend="handleTouchEnd($event)">
@@ -255,6 +261,44 @@
 
     {{-- Proximity Modal --}}
     @include('public.explore-map._proximity-modal')
+
+    {{-- Start Journey Button --}}
+    <div x-show="hasActiveRoute && !isNavigating" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="translate-y-20 opacity-0"
+         x-transition:enter-end="translate-y-0 opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="translate-y-0 opacity-100"
+         x-transition:leave-end="translate-y-20 opacity-0"
+         class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[600]" x-cloak>
+        <button @click="toggleLiveNavigation()" class="h-12 pl-4 pr-6 bg-sky-600 hover:bg-sky-700 text-white rounded-full shadow-lg shadow-sky-600/30 flex items-center gap-2 active:scale-95 transition-all">
+             <span class="material-symbols-outlined text-[20px]">near_me</span>
+             <span class="font-bold text-sm tracking-wide">Mulai</span>
+        </button>
+    </div>
+
+    {{-- Navigation Mode Overlay --}}
+    <div x-show="isNavigating" x-transition.opacity.duration.500ms class="fixed inset-0 z-[2000] pointer-events-none flex flex-col justify-between p-6" x-cloak>
+        {{-- Top Bar --}}
+        <div class="pointer-events-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 flex items-center gap-4 animate-slide-down">
+             <div class="w-12 h-12 rounded-xl bg-sky-500 flex items-center justify-center text-white shrink-0">
+                 <span class="material-symbols-outlined text-2xl animate-pulse">navigation</span>
+             </div>
+             <div class="flex-1 min-w-0">
+                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Menuju Lokasi</p>
+                 <h2 class="text-lg font-bold text-slate-800 dark:text-white truncate" x-text="navigationDestination?.name || 'Destinasi'"></h2>
+                 <p class="text-xs text-sky-600 dark:text-sky-400 font-medium mt-0.5">Mode Navigasi Aktif</p>
+             </div>
+        </div>
+
+        {{-- Bottom Controls --}}
+        <div class="pointer-events-auto flex items-center justify-center pb-8 animate-slide-up">
+            <button @click="toggleLiveNavigation()" class="group relative px-8 py-4 bg-red-500 hover:bg-red-600 text-white rounded-full font-bold shadow-lg shadow-red-500/30 transition-all active:scale-95 flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl">stop_circle</span>
+                <span>Akhiri Perjalanan</span>
+            </button>
+        </div>
+    </div>
 
     {{-- Scripts --}}
     @include('public.explore-map._scripts')
