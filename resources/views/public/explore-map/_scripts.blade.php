@@ -53,7 +53,7 @@
                 let places = this.allPlaces.filter(p => ids.includes(p.properties.category?.id))
                      .map(p => ({
                          ...p.properties,
-                         image_path: p.properties.image_path,
+                         image_url: p.properties.image_url,
                          category: p.properties.category,
                          latitude: p.geometry.coordinates[1],
                          longitude: p.geometry.coordinates[0],
@@ -316,6 +316,7 @@
                 this.searchResults = this.allPlaces.filter(p => p.properties.name.toLowerCase().includes(q))
                     .map(p => ({ 
                         ...p.properties, 
+                        image_url: p.properties.image_url,
                         type: 'Lokasi', 
                         category: p.properties.category,
                         latitude: p.geometry.coordinates[1], 

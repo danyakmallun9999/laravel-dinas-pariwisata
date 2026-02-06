@@ -1,4 +1,4 @@
-{{-- Inline Styles for Explore Map --}}
+{{-- Inline Styles for Explore Map - Enhanced with GSAP Animations --}}
 <style>
     /* ============================================ */
     /* CUSTOM SCROLLBAR */
@@ -33,7 +33,7 @@
     [x-cloak] { display: none !important; }
     
     /* ============================================ */
-    /* MARKER STYLES (Minimalist) */
+    /* MARKER STYLES (Minimalist + Animation) */
     /* ============================================ */
     .marker-container {
         position: relative;
@@ -43,6 +43,21 @@
         flex-direction: column;
         align-items: center;
         cursor: pointer;
+        animation: markerDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    
+    @keyframes markerDrop {
+        0% { 
+            opacity: 0;
+            transform: translateY(-30px) scale(0.5);
+        }
+        60% { 
+            transform: translateY(5px) scale(1.1);
+        }
+        100% { 
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     }
     
     .marker-pulse {
@@ -73,7 +88,11 @@
     }
     
     .marker-container:hover .marker-icon {
-        transform: scale(1.1);
+        transform: scale(1.15);
+    }
+    
+    .marker-container:hover .marker-pulse {
+        animation: marker-pulse-fast 1s ease-out infinite;
     }
     
     .marker-pointer {
@@ -90,6 +109,11 @@
     @keyframes marker-pulse {
         0% { transform: translateX(-50%) scale(1); opacity: 0.3; }
         100% { transform: translateX(-50%) scale(1.8); opacity: 0; }
+    }
+    
+    @keyframes marker-pulse-fast {
+        0% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+        100% { transform: translateX(-50%) scale(2); opacity: 0; }
     }
 
     /* ============================================ */
@@ -125,6 +149,51 @@
     }
 
     /* ============================================ */
+    /* CARD HOVER ANIMATIONS */
+    /* ============================================ */
+    .place-card {
+        animation: fadeSlideUp 0.4s ease-out forwards;
+        opacity: 0;
+    }
+    
+    @keyframes fadeSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ============================================ */
+    /* BUTTON MICRO-INTERACTIONS */
+    /* ============================================ */
+    .btn-bounce:active {
+        animation: btnBounce 0.3s ease;
+    }
+    
+    @keyframes btnBounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(0.95); }
+    }
+
+    /* ============================================ */
+    /* LOADING SPINNER */
+    /* ============================================ */
+    .loading-shimmer {
+        background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* ============================================ */
     /* ROUTING CONTAINER */
     /* ============================================ */
     .leaflet-routing-container {
@@ -138,6 +207,18 @@
         position: absolute !important;
         z-index: 9999 !important;
         display: none;
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     /* Desktop: Right of sidebar */
@@ -179,5 +260,21 @@
     .leaflet-control-attribution,
     .leaflet-control-zoom {
         display: none !important;
+    }
+
+    /* ============================================ */
+    /* BOTTOM SHEET ANIMATION OVERRIDE */
+    /* ============================================ */
+    @media (max-width: 1023px) {
+        .bottom-sheet-animate {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    }
+
+    /* ============================================ */
+    /* GLOW EFFECT */
+    /* ============================================ */
+    .glow-sky {
+        box-shadow: 0 0 20px rgba(14, 165, 233, 0.3), 0 0 40px rgba(14, 165, 233, 0.1);
     }
 </style>

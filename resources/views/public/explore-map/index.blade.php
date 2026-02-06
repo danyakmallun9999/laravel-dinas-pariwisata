@@ -6,6 +6,9 @@
     <title>Jelajahi Destinasi - Kabupaten Jepara</title>
     <link rel="icon" href="{{ asset('images/logo-kabupaten-jepara.png') }}" type="image/png">
     
+    {{-- GSAP Animation Library --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('public.explore-map._styles')
 </head>
@@ -51,7 +54,7 @@
                 {{-- Search Results Dropdown --}}
                 <div x-show="searchResults.length > 0" 
                      @click.outside="searchResults = []"
-                     class="absolute top-14 left-0 right-0 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 max-h-60 overflow-y-auto z-50"
+                     class="absolute top-14 left-0 right-0 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 max-h-60 overflow-y-auto z-[600]"
                      x-transition x-cloak>
                     <template x-for="result in searchResults" :key="result.id">
                         <button @click="selectFeature(result); searchResults = []; bottomSheetState = 'collapsed'" 
