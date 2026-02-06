@@ -1,7 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto px-4 py-6" x-data="{ 
+    showDeleteModal: false, 
+    deleteUrl: '', 
+    deleteName: '',
+    openDeleteModal(url, name) {
+        this.deleteUrl = url;
+        this.deleteName = name;
+        this.showDeleteModal = true;
+    }
+}">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Kelola E-Tiket</h1>
         <div class="flex gap-2">
@@ -65,13 +74,11 @@
                             <a href="{{ route('admin.tickets.edit', $ticket) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus tiket ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
-                            </form>
+                            <button type="button" 
+                                    @click="openDeleteModal('{{ route('admin.tickets.destroy', $ticket) }}', '{{ $ticket->name }}')"
+                                    class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
                         </td>
                     </tr>
                 @empty
@@ -90,5 +97,57 @@
             {{ $tickets->links() }}
         </div>
     @endif
+
+    <!-- Custom Delete Confirmation Modal -->
+    <div x-show="showDeleteModal" 
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         x-cloak>
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-black/50 transition-opacity" @click="showDeleteModal = false"></div>
+            
+            <!-- Modal Content -->
+            <div x-show="showDeleteModal"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 z-10">
+                
+                <!-- Warning Icon -->
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Konfirmasi Hapus</h3>
+                <p class="text-gray-600 text-center mb-6">
+                    Apakah Anda yakin ingin menghapus tiket <strong x-text="deleteName"></strong>? Tindakan ini tidak dapat dibatalkan.
+                </p>
+                
+                <div class="flex gap-3">
+                    <button @click="showDeleteModal = false" 
+                            class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-xl transition-colors">
+                        Batal
+                    </button>
+                    <form :action="deleteUrl" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" 
+                                class="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors">
+                            <i class="fas fa-trash mr-2"></i>Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
