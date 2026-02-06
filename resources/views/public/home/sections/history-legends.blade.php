@@ -33,16 +33,16 @@
                          class="absolute top-0 left-0 w-full h-full object-cover object-top origin-top filter grayscale-[0.2] md:group-hover:grayscale-0 md:group-hover:scale-105 transition-all duration-[1500ms] ease-out will-change-transform pointer-events-none select-none">
                     
                     <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 md:group-hover:opacity-60 transition-opacity duration-700"></div>
 
                     <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 md:group-hover:translate-y-0 transition-transform duration-700">
+                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full md:group-hover:w-20 transition-all duration-500"></div>
                         <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Shima</h3>
                         <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
                             {!! __('History.Shima.Quote') !!}
                         </p>
-                        <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
+                        <div class="h-0 md:group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 md:group-hover:opacity-100">
                             <p class="text-white/80 text-sm leading-relaxed">
                                 {{ __('History.Shima.Desc') }}
                             </p>
@@ -62,16 +62,16 @@
                          class="absolute top-0 left-0 w-full h-full object-cover object-center origin-top filter grayscale-[0.2] md:group-hover:grayscale-0 md:group-hover:scale-105 transition-all duration-[1500ms] ease-out will-change-transform pointer-events-none select-none">
                     
                     <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 md:group-hover:opacity-60 transition-opacity duration-700"></div>
 
                     <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 md:group-hover:translate-y-0 transition-transform duration-700">
+                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full md:group-hover:w-20 transition-all duration-500"></div>
                         <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">Ratu Kalinyamat</h3>
                         <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
                             {!! __('History.Kalinyamat.Quote') !!}
                         </p>
-                        <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
+                        <div class="h-0 md:group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 md:group-hover:opacity-100">
                             <p class="text-white/80 text-sm leading-relaxed">
                                 {{ __('History.Kalinyamat.Desc') }}
                             </p>
@@ -91,16 +91,16 @@
                          class="absolute top-0 left-0 w-full h-full object-cover object-top origin-top filter grayscale-[0.2] md:group-hover:grayscale-0 md:group-hover:scale-105 transition-all duration-[1500ms] ease-out will-change-transform pointer-events-none select-none">
                     
                     <!-- Gradient Overlay (Subtle) -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 md:group-hover:opacity-60 transition-opacity duration-700"></div>
 
                     <!-- Content Overlay -->
-                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full group-hover:w-20 transition-all duration-500"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white transform translate-y-4 md:group-hover:translate-y-0 transition-transform duration-700">
+                        <div class="w-12 h-1 bg-white/30 backdrop-blur-sm mb-6 rounded-full md:group-hover:w-20 transition-all duration-500"></div>
                         <h3 class="text-3xl font-['Playfair_Display'] font-black mb-3 leading-tight tracking-tight">R.A. Kartini</h3>
                         <p class="text-xl font-['Pinyon_Script'] text-white/90 mb-6">
                             {!! __('History.Kartini.Quote') !!}
                         </p>
-                        <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 group-hover:opacity-100">
+                        <div class="h-0 md:group-hover:h-auto overflow-hidden transition-all duration-500 opacity-0 md:group-hover:opacity-100">
                             <p class="text-white/80 text-sm leading-relaxed">
                                 {{ __('History.Kartini.Desc') }}
                             </p>

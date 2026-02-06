@@ -1,5 +1,5 @@
     <!-- SECTION: Culture -->
-    <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-20 lg:py-28 overflow-hidden relative" id="culture" x-data="{ active: 0 }">
+    <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-20 lg:py-28 overflow-hidden relative" id="culture" x-data="cultureSection">
         <!-- Background Pattern -->
         <div class="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none mix-blend-multiply dark:mix-blend-soft-light saturate-0">
             <img src="{{ asset('images/culture/tenun-troso.png') }}" alt="Motif Tenun Troso" class="w-full h-full object-cover">
@@ -7,7 +7,7 @@
         
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <!-- Header -->
-            <div class="text-center mb-16" x-data="{ shown: false }" x-intersect.threshold.0.5="shown = true">
+            <div class="text-center mb-16" x-intersect.threshold.0.5="reveal()">
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-text-light dark:text-text-dark mb-6 opacity-0 translate-y-4 transition-all duration-700 delay-100"
                     :class="shown ? 'opacity-100 translate-y-0' : ''">
                     {{ __('Culture.Title') }}
@@ -23,7 +23,7 @@
                 @foreach($cultures as $index => $culture)
                 <div class="relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group shadow-2xl border border-white/5"
                      :class="active === {{ $index }} ? 'flex-[10] md:flex-[5] opacity-100' : 'flex-[2] md:flex-[1] opacity-70 hover:opacity-100'"
-                     @click="active = {{ $index }}">
+                     @click="setActive({{ $index }})">
                     
                     <!-- Background Image (Refactored to img tag for reliability) -->
                     <img src="{{ asset($culture->image) }}" 

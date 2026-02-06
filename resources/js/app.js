@@ -11,8 +11,10 @@ window.Chart = Chart;
 
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';
+import CultureSection from './components/culture-section';
 
 Alpine.plugin(intersect);
+Alpine.data('cultureSection', CultureSection);
 
 window.Alpine = Alpine;
 
