@@ -20,7 +20,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-bold leading-none tracking-tight text-slate-800 dark:text-white group-hover:text-primary transition-colors">
-                            Blusukan Jepara
+                            Jelajah Jepara
                         </h2>
                     </div>
                 </a>
