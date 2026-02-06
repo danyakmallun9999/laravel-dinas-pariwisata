@@ -944,7 +944,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CQWzTz7e.css",
+    "file": "assets/app-KFuQ-mSs.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -978,7 +978,7 @@
     ]
   },
   "resources/js/pages/welcome.js": {
-    "file": "assets/welcome-DYxSKAjH.js",
+    "file": "assets/welcome-D7n6qvxw.js",
     "name": "welcome",
     "src": "resources/js/pages/welcome.js",
     "isEntry": true,

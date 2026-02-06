@@ -24,6 +24,23 @@ Route::get('/calendar-of-events/{event:slug}', [App\Http\Controllers\Public\Even
 Route::get('/budaya/{slug}', [WelcomeController::class, 'showCulture'])->name('culture.show');
 Route::get('/kuliner/{slug}', [WelcomeController::class, 'showCulinary'])->name('culinary.show');
 
+// E-Ticket routes (Public)
+Route::get('/e-tiket', [App\Http\Controllers\Public\TicketController::class, 'index'])->name('tickets.index');
+Route::get('/e-tiket/{ticket}', [App\Http\Controllers\Public\TicketController::class, 'show'])->name('tickets.show');
+Route::post('/e-tiket/book', [App\Http\Controllers\Public\TicketController::class, 'book'])->name('tickets.book');
+Route::get('/e-tiket/confirmation/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'confirmation'])->name('tickets.confirmation');
+Route::get('/tiket-saya', [App\Http\Controllers\Public\TicketController::class, 'myTickets'])->name('tickets.my');
+Route::post('/tiket-saya/retrieve', [App\Http\Controllers\Public\TicketController::class, 'retrieveTickets'])->name('tickets.retrieve');
+Route::get('/e-tiket/download/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'downloadTicket'])->name('tickets.download');
+
+// Payment routes
+Route::get('/e-tiket/payment/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'payment'])->name('tickets.payment');
+Route::get('/e-tiket/payment-success/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'paymentSuccess'])->name('tickets.payment.success');
+Route::get('/e-tiket/payment-failed/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'paymentFailed'])->name('tickets.payment.failed');
+
+// Webhook route (no CSRF protection)
+Route::post('/webhooks/xendit', [App\Http\Controllers\WebhookController::class, 'handle'])->name('webhooks.xendit');
+
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -57,6 +74,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/posts/upload-image', [\App\Http\Controllers\PostController::class, 'uploadImage'])->name('posts.uploadImage');
     Route::resource('posts', \App\Http\Controllers\PostController::class);
     Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
+
+    // Ticket routes
+    Route::resource('tickets', \App\Http\Controllers\Admin\TicketController::class);
+    Route::get('ticket-orders', [\App\Http\Controllers\Admin\TicketController::class, 'orders'])->name('tickets.orders');
+    Route::post('ticket-orders/{order}/status', [\App\Http\Controllers\Admin\TicketController::class, 'updateOrderStatus'])->name('tickets.orders.updateStatus');
+    Route::delete('ticket-orders/{order}', [\App\Http\Controllers\Admin\TicketController::class, 'destroyOrder'])->name('tickets.orders.destroy');
 });
 
 Route::middleware('auth')->group(function () {
