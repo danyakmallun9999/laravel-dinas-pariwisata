@@ -77,6 +77,7 @@ class AdminController extends Controller
     public function store(StorePlaceRequest $request): RedirectResponse|JsonResponse
     {
         $data = $request->validated();
+        $data['rating'] = $data['rating'] ?? 0;
 
         // Parse Rides and Facilities
         if (isset($data['rides'])) {
@@ -143,6 +144,7 @@ class AdminController extends Controller
     public function update(UpdatePlaceRequest $request, Place $place): RedirectResponse|JsonResponse
     {
         $data = $request->validated();
+        $data['rating'] = $data['rating'] ?? 0;
 
         // Parse Rides and Facilities
         if (isset($data['rides'])) {

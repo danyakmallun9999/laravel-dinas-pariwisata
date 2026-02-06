@@ -1,105 +1,136 @@
 <x-public-layout>
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 -mt-20 pt-32">
-    <div class="container mx-auto px-4 max-w-4xl">
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Tiket Saya</h1>
+    <div class="bg-gray-50 dark:bg-background-dark min-h-screen -mt-20 pt-32 pb-24">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Breadcrumb -->
+            <nav class="flex text-xs md:text-sm text-gray-400 mb-6 space-x-2">
+                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Beranda</a>
+                <span>/</span>
+                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">E-Tiket</a>
+                <span>/</span>
+                <span class="text-gray-800 dark:text-gray-200 font-medium">Tiket Saya</span>
+            </nav>
 
-            @if(!isset($orders))
-                <!-- Email Form -->
-                <div class="max-w-md mx-auto">
-                    <p class="text-gray-600 mb-6 text-center">Masukkan email yang Anda gunakan saat memesan tiket</p>
-                    
-                    <form action="{{ route('tickets.retrieve') }}" method="POST">
-                        @csrf
-                        <div class="mb-4">
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" name="email" id="email" required
-                                   class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                                   placeholder="email@example.com">
-                        </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
-                            <i class="fas fa-search mr-2"></i>Cari Tiket Saya
-                        </button>
-                    </form>
-                </div>
-            @else
-                <!-- Orders List -->
-                @if($orders->count() > 0)
-                    <div class="space-y-4">
-                        @foreach($orders as $order)
-                            <div class="border rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-                                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                                    <div>
-                                        <div class="text-sm text-gray-500">No. Pesanan</div>
-                                        <div class="font-bold text-lg text-gray-800">{{ $order->order_number }}</div>
-                                    </div>
-                                    <div class="mt-2 md:mt-0">
-                                        <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold
-                                            {{ $order->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                            {{ $order->status == 'paid' ? 'bg-green-100 text-green-800' : '' }}
-                                            {{ $order->status == 'used' ? 'bg-blue-100 text-blue-800' : '' }}
-                                            {{ $order->status == 'cancelled' ? 'bg-red-100 text-red-800' : '' }}">
-                                            {{ $order->status_label }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                        <div class="text-sm text-gray-500">Tiket</div>
-                                        <div class="font-semibold text-gray-800">{{ $order->ticket->name }}</div>
-                                        <div class="text-sm text-gray-600">{{ $order->ticket->place->name }}</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm text-gray-500">Tanggal Kunjungan</div>
-                                        <div class="font-semibold text-gray-800">{{ $order->visit_date->format('d F Y') }}</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm text-gray-500">Jumlah</div>
-                                        <div class="font-semibold text-gray-800">{{ $order->quantity }} tiket</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm text-gray-500">Total</div>
-                                        <div class="font-semibold text-blue-600">Rp {{ number_format($order->total_price, 0, ',', '.') }}</div>
-                                    </div>
-                                </div>
-
-                                <div class="flex gap-2">
-                                    <a href="{{ route('tickets.confirmation', $order->order_number) }}" 
-                                       class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-2 rounded-lg transition-colors duration-200 text-sm">
-                                        <i class="fas fa-eye mr-1"></i>Lihat Detail
-                                    </a>
-                                    <a href="{{ route('tickets.download', $order->order_number) }}" 
-                                       class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-center font-semibold py-2 rounded-lg transition-colors duration-200 text-sm">
-                                        <i class="fas fa-download mr-1"></i>Download
-                                    </a>
-                                </div>
-                            </div>
-                        @endforeach
+            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 md:p-8">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-ticket text-primary text-2xl"></i>
                     </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">Tiket Saya</h1>
+                    <p class="text-slate-500 dark:text-slate-400">Lihat dan kelola tiket wisata Anda</p>
+                </div>
 
-                    <div class="mt-6 text-center">
-                        <a href="{{ route('tickets.my') }}" class="text-blue-600 hover:text-blue-700">
-                            <i class="fas fa-search mr-1"></i>Cari dengan email lain
-                        </a>
+                @if(!isset($orders))
+                    <!-- Email Form -->
+                    <div class="max-w-md mx-auto">
+                        <p class="text-slate-600 dark:text-slate-400 mb-6 text-center">Masukkan email yang Anda gunakan saat memesan tiket</p>
+                        
+                        <form action="{{ route('tickets.retrieve') }}" method="POST">
+                            @csrf
+                            <div class="mb-5">
+                                <label for="email" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                    <i class="fa-solid fa-envelope mr-1 text-primary"></i> Email
+                                </label>
+                                <input type="email" name="email" id="email" required
+                                       class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all placeholder:text-slate-400"
+                                       placeholder="email@example.com">
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-search"></i>
+                                Cari Tiket Saya
+                            </button>
+                        </form>
                     </div>
                 @else
-                    <div class="text-center py-12">
-                        <i class="fas fa-ticket-alt text-gray-300 text-6xl mb-4"></i>
-                        <p class="text-gray-500 text-lg mb-4">Tidak ada tiket ditemukan untuk email ini</p>
-                        <a href="{{ route('tickets.my') }}" class="text-blue-600 hover:text-blue-700">
-                            Coba lagi
-                        </a>
-                    </div>
-                @endif
-            @endif
+                    <!-- Orders List -->
+                    @if($orders->count() > 0)
+                        <div class="space-y-4">
+                            @foreach($orders as $order)
+                                <div class="bg-slate-50 dark:bg-slate-700/30 rounded-2xl p-5 hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-700">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                                        <div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">No. Pesanan</div>
+                                            <div class="font-bold text-lg text-slate-900 dark:text-white">{{ $order->order_number }}</div>
+                                        </div>
+                                        <div class="mt-2 md:mt-0">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold
+                                                {{ $order->status == 'pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' : '' }}
+                                                {{ $order->status == 'paid' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : '' }}
+                                                {{ $order->status == 'used' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : '' }}
+                                                {{ $order->status == 'cancelled' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : '' }}">
+                                                @if($order->status == 'pending')
+                                                    <i class="fa-solid fa-clock"></i>
+                                                @elseif($order->status == 'paid')
+                                                    <i class="fa-solid fa-check-circle"></i>
+                                                @elseif($order->status == 'used')
+                                                    <i class="fa-solid fa-ticket"></i>
+                                                @else
+                                                    <i class="fa-solid fa-times-circle"></i>
+                                                @endif
+                                                {{ $order->status_label }}
+                                            </span>
+                                        </div>
+                                    </div>
 
-            <div class="mt-8 text-center">
-                <a href="{{ route('tickets.index') }}" class="text-blue-600 hover:text-blue-700">
-                    <i class="fas fa-arrow-left mr-1"></i>Kembali ke Daftar Tiket
-                </a>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                        <div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400">Tiket</div>
+                                            <div class="font-semibold text-slate-900 dark:text-white text-sm">{{ $order->ticket->name }}</div>
+                                            <div class="text-xs text-primary">{{ $order->ticket->place->name }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400">Tanggal Kunjungan</div>
+                                            <div class="font-semibold text-slate-900 dark:text-white text-sm">{{ $order->visit_date->translatedFormat('d M Y') }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400">Jumlah</div>
+                                            <div class="font-semibold text-slate-900 dark:text-white text-sm">{{ $order->quantity }} tiket</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400">Total</div>
+                                            <div class="font-bold text-primary">Rp {{ number_format($order->total_price, 0, ',', '.') }}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('tickets.confirmation', $order->order_number) }}" 
+                                           class="flex-1 bg-primary hover:bg-primary/90 text-white text-center font-semibold py-2.5 rounded-xl transition-all duration-300 text-sm flex items-center justify-center gap-2">
+                                            <i class="fa-solid fa-eye"></i>Lihat Detail
+                                        </a>
+                                        <a href="{{ route('tickets.download', $order->order_number) }}" 
+                                           class="flex-1 bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-800 dark:text-white text-center font-semibold py-2.5 rounded-xl transition-all duration-300 text-sm flex items-center justify-center gap-2">
+                                            <i class="fa-solid fa-download"></i>Download
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <a href="{{ route('tickets.my') }}" class="text-primary hover:text-primary/80 font-semibold inline-flex items-center gap-2">
+                                <i class="fa-solid fa-search"></i>Cari dengan email lain
+                            </a>
+                        </div>
+                    @else
+                        <div class="text-center py-16">
+                            <div class="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-ticket text-slate-400 text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Tidak Ada Tiket Ditemukan</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-6">Tidak ada tiket yang ditemukan untuk email ini</p>
+                            <a href="{{ route('tickets.my') }}" class="text-primary hover:text-primary/80 font-semibold">
+                                Coba lagi
+                            </a>
+                        </div>
+                    @endif
+                @endif
+
+                <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700 text-center">
+                    <a href="{{ route('tickets.index') }}" class="text-slate-600 dark:text-slate-400 hover:text-primary font-medium inline-flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i>Kembali ke Daftar Tiket
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </x-public-layout>

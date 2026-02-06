@@ -17,17 +17,60 @@
                 <!-- Place Selection -->
                 <div class="md:col-span-2">
                     <label for="place_id" class="block text-sm font-medium text-gray-700 mb-2">Destinasi Wisata *</label>
-                    <select name="place_id" id="place_id" required class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                        <option value="">Pilih Destinasi</option>
+                    <select name="place_id" id="place_id" required 
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-colors"
+                            onchange="updatePlaceImage(this)">
+                        <option value="" data-image="">Pilih Destinasi</option>
                         @foreach($places as $place)
-                            <option value="{{ $place->id }}" {{ old('place_id') == $place->id ? 'selected' : '' }}>
+                            <option value="{{ $place->id }}" 
+                                    data-image="{{ str_starts_with($place->image_path, 'http') ? $place->image_path : (str_starts_with($place->image_path, 'images/') ? asset($place->image_path) : asset('storage/' . $place->image_path)) }}"
+                                    {{ old('place_id') == $place->id ? 'selected' : '' }}>
                                 {{ $place->name }}
                             </option>
                         @endforeach
                     </select>
+                    
+                    <!-- Image Preview -->
+                    <div id="place_image_preview" class="mt-4 hidden transition-all duration-300">
+                        <p class="text-xs text-gray-500 mb-2 font-medium uppercase tracking-wider">Preview Destinasi</p>
+                        <div class="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 shadow-sm group">
+                            <img src="" alt="Preview Destinasi" id="preview_img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                <span class="text-white text-sm font-bold shadow-black drop-shadow-md" id="preview_name"></span>
+                            </div>
+                        </div>
+                    </div>
+
                     @error('place_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+
+                    <script>
+                        function updatePlaceImage(select) {
+                            const option = select.options[select.selectedIndex];
+                            const imageUrl = option.getAttribute('data-image');
+                            const placeName = option.text.trim();
+                            const previewContainer = document.getElementById('place_image_preview');
+                            const previewImg = document.getElementById('preview_img');
+                            const previewName = document.getElementById('preview_name');
+                            
+                            if (imageUrl) {
+                                previewImg.src = imageUrl;
+                                previewName.textContent = placeName;
+                                previewContainer.classList.remove('hidden');
+                                setTimeout(() => previewContainer.classList.remove('opacity-0'), 10); // Fade in effect
+                            } else {
+                                previewContainer.classList.add('hidden');
+                                previewImg.src = '';
+                            }
+                        }
+
+                        // Run on load if valid (e.g. valid old input)
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const select = document.getElementById('place_id');
+                            if (select.value) updatePlaceImage(select);
+                        });
+                    </script>
                 </div>
 
                 <!-- Ticket Name -->
