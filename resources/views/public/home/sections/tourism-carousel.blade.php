@@ -77,7 +77,7 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
                 <div class="max-w-2xl tourism-header opacity-0 translate-y-8">
-                    <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4 leading-tight">
+                    <h2 class="text-3xl md:text-4xl font-poppins font-bold text-text-light dark:text-text-dark mb-4 leading-tight">
                         {{ __('Tourism.Title') }}
                     </h2>
                     <p class="text-text-light/70 dark:text-text-dark/70 text-lg leading-relaxed">

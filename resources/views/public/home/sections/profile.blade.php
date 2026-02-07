@@ -12,7 +12,7 @@
                         <!-- Minimal Label -->
                         <span class="block text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] text-gray-400 dark:text-gray-500">{{ __('Profile.Label') }}</span>
                         <!-- Typography -->
-                        <h2 class="text-3xl md:text-5xl lg:text-6xl font-serif text-gray-900 dark:text-white leading-[1.2] md:leading-[1.1]">
+                        <h2 class="text-3xl md:text-5xl lg:text-6xl font-poppins font-bold text-gray-900 dark:text-white leading-[1.2] md:leading-[1.1]">
                             {!! __('Profile.Title') !!}
                         </h2>
                         <p class="text-base md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-light max-w-md">
@@ -48,7 +48,7 @@
                         <img src="{{ asset('images/profile/section-2.jpg') }}" 
                              alt="Landscape Jepara" 
                              class="w-full h-full object-cover transition-all duration-1000 ease-out"
-                             :class="hover ? 'grayscale-0 scale-105' : 'grayscale'">
+                             :class="hover ? 'scale-105' : ''">
                     </div>
                     <!-- Secondary Image (Smaller, Clean Overlay) -->
                     <div class="absolute bottom-6 -left-6 md:bottom-8 md:-left-12 w-32 md:w-48 lg:w-64 aspect-square overflow-hidden rounded-[1.5rem] shadow-2xl border-4 md:border-8 border-white dark:border-gray-950 transition-transform duration-700 ease-out hidden sm:block"

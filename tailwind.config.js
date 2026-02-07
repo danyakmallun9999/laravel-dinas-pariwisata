@@ -26,6 +26,7 @@ export default {
             fontFamily: {
                 sans: ['Inter', 'Figtree', ...defaultTheme.fontFamily.sans],
                 display: ["Plus Jakarta Sans", "Poppins"],
+                poppins: ["Poppins", "sans-serif"],
                 playfair: ["Playfair Display", "serif"],
                 script: ["Pinyon Script", "cursive"],
             },

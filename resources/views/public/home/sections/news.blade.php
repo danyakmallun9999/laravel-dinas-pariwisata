@@ -3,7 +3,7 @@
         id="news">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 mb-8">
-                <h2 class="text-2xl md:text-3xl font-bold text-text-light dark:text-text-dark">{{ __('News.Title') }}</h2>
+                <h2 class="text-2xl md:text-3xl font-poppins font-bold text-text-light dark:text-text-dark">{{ __('News.Title') }}</h2>
                 <a class="text-primary font-bold hover:underline flex items-center gap-1 self-start md:self-auto"
                     href="{{ route('posts.index') }}">
                     {{ __('View All') }} <span class="material-symbols-outlined text-sm">arrow_forward</span>

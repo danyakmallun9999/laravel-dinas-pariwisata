@@ -6,7 +6,7 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <!-- Section Header -->
             <div class="text-center mb-16 history-header opacity-0 translate-y-8">
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-text-light dark:text-text-dark mb-6">
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-poppins font-bold text-text-light dark:text-text-dark mb-6">
                     {{ __('History.Title') }}
                 </h2>
                 <p class="text-text-light/70 dark:text-text-dark/70 max-w-2xl mx-auto text-lg">
