@@ -166,7 +166,7 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
-                <div class="max-w-2xl culinary-header opacity-0 translate-y-8">
+                <div class="max-w-2xl culinary-header">
                     <h2 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-4 leading-tight">
                         {{ __('Culinary.Title') }}
                     </h2>
@@ -196,7 +196,7 @@
                 
                     @foreach($culinaries as $index => $culinary)
                     <!-- Culinary Card -->
-                    <div class="culinary-card shrink-0 w-[90vw] md:w-[60vw] lg:w-[50vw] snap-center group relative rounded-[2.5rem] overflow-hidden aspect-[16/9] transition-all duration-500 scale-95 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10 opacity-0 translate-y-8"
+                    <div class="culinary-card shrink-0 w-[90vw] md:w-[60vw] lg:w-[50vw] snap-center group relative rounded-[2.5rem] overflow-hidden aspect-[16/9] transition-all duration-500 scale-95 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10"
                          style="scroll-snap-align: center; scroll-snap-stop: always;">
                         
                         <!-- Image -->
@@ -255,31 +255,38 @@
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
             
-            // Header Animation
-            gsap.to(".culinary-header", {
-                scrollTrigger: {
-                    trigger: ".culinary-header",
-                    start: "top 85%",
-                    toggleActions: "play none none reverse"
-                },
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power2.out"
-            });
-
-            // Cards Animation
-            const culinaryCards = document.querySelectorAll('.culinary-card');
+            // Immediately set initial state via GSAP (faster than CSS)
+            gsap.set(".culinary-header", { opacity: 0, y: 20 });
+            gsap.set(".culinary-card", { opacity: 0, y: 30 });
             
-            ScrollTrigger.batch(culinaryCards, {
-                start: "top bottom", // Starts as soon as the top of the card hits the bottom of the viewport
-                onEnter: batch => {
-                    gsap.to(batch, {
+            // Header Animation - Super fast trigger
+            ScrollTrigger.create({
+                trigger: ".culinary-header",
+                start: "top bottom-=50",
+                onEnter: () => {
+                    gsap.to(".culinary-header", {
                         opacity: 1,
                         y: 0,
-                        duration: 0.8,
-                        stagger: 0.1,
-                        ease: "power2.out"
+                        duration: 0.4,
+                        ease: "power1.out"
+                    });
+                }
+            });
+
+            // Cards Animation - Instant trigger when section visible
+            const culinaryCards = document.querySelectorAll('.culinary-card');
+            const section = document.querySelector('.culinary-header')?.closest('[class*="bg-surface"]');
+            
+            ScrollTrigger.create({
+                trigger: section || ".culinary-header",
+                start: "top bottom-=20",
+                onEnter: () => {
+                    gsap.to(culinaryCards, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.35,
+                        stagger: 0.05,
+                        ease: "power1.out"
                     });
                 }
             });
