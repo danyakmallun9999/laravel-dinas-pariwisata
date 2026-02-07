@@ -38,6 +38,7 @@ class GeoJsonService
                     'google_maps_link' => $place->google_maps_link,
                     'notes' => $place->notes,
                     'slug' => $place->slug,
+                    'images' => $place->images->map(fn($img) => asset($img->image_path))->toArray(),
                 ],
                 'geometry' => [
                     'type' => 'Point',

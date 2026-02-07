@@ -111,7 +111,7 @@ class WelcomeController extends Controller
 
     public function geoJson(): JsonResponse
     {
-        $places = Place::with('category')->get();
+        $places = Place::with(['category', 'images'])->get();
 
         return response()->json($this->geoJsonService->getPlacesGeoJson($places));
     }

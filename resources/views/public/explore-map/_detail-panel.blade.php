@@ -89,6 +89,61 @@
                         </button>
                     </template>
                 </div>
+                
+                {{-- Operating Hours --}}
+                <template x-if="selectedFeature?.opening_hours">
+                    <div class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 detail-info opacity-0 translate-y-4">
+                        <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-xl mt-0.5">schedule</span>
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wide">Jam Operasional</span>
+                            <p class="text-sm text-slate-700 dark:text-slate-200 mt-0.5" x-text="selectedFeature.opening_hours"></p>
+                        </div>
+                    </div>
+                </template>
+                
+                {{-- Photo Gallery --}}
+                <template x-if="selectedFeature?.images && selectedFeature.images.length > 0">
+                    <div x-data="{ galleryIndex: 0 }" class="detail-gallery opacity-0 translate-y-4">
+                        <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Galeri Foto</h4>
+                        <div class="relative">
+                            {{-- Main Image --}}
+                            <div class="relative aspect-video rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700">
+                                <img :src="selectedFeature.images[galleryIndex]" 
+                                     class="w-full h-full object-cover"
+                                     alt="Gallery image">
+                                {{-- Navigation Arrows --}}
+                                <template x-if="selectedFeature.images.length > 1">
+                                    <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-2">
+                                        <button @click="galleryIndex = galleryIndex > 0 ? galleryIndex - 1 : selectedFeature.images.length - 1" 
+                                                class="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm transition-all">
+                                            <span class="material-symbols-outlined text-lg">chevron_left</span>
+                                        </button>
+                                        <button @click="galleryIndex = galleryIndex < selectedFeature.images.length - 1 ? galleryIndex + 1 : 0" 
+                                                class="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm transition-all">
+                                            <span class="material-symbols-outlined text-lg">chevron_right</span>
+                                        </button>
+                                    </div>
+                                </template>
+                                {{-- Counter --}}
+                                <div class="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
+                                    <span x-text="(galleryIndex + 1) + '/' + selectedFeature.images.length"></span>
+                                </div>
+                            </div>
+                            {{-- Thumbnails --}}
+                            <template x-if="selectedFeature.images.length > 1">
+                                <div class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-hide">
+                                    <template x-for="(img, idx) in selectedFeature.images" :key="idx">
+                                        <button @click="galleryIndex = idx" 
+                                                class="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0 ring-2 transition-all"
+                                                :class="galleryIndex === idx ? 'ring-sky-500' : 'ring-transparent opacity-60 hover:opacity-100'">
+                                            <img :src="img" class="w-full h-full object-cover" alt="Thumbnail">
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
             </div>
 
             {{-- Minimalist Action Bar --}}
@@ -205,6 +260,20 @@ function animateDetailPanel() {
     
     // Content sections staggered
     tl.to('.detail-description', {
+        opacity: 1,
+        y: 0,
+        duration: 0.4
+    }, '-=0.1');
+    
+    // Operating hours info
+    tl.to('.detail-info', {
+        opacity: 1,
+        y: 0,
+        duration: 0.4
+    }, '-=0.1');
+    
+    // Photo gallery
+    tl.to('.detail-gallery', {
         opacity: 1,
         y: 0,
         duration: 0.4

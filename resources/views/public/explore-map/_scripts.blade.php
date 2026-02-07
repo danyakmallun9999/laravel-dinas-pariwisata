@@ -298,39 +298,44 @@
                 // Remove existing markers and cluster group
                 if (this.markerClusterGroup) {
                     this.map.removeLayer(this.markerClusterGroup);
+                    this.markerClusterGroup = null;
                 }
+                this.markers.forEach(m => this.map.removeLayer(m));
                 this.markers = [];
                 
-                // Create new cluster group with custom styling
-                this.markerClusterGroup = L.markerClusterGroup({
-                    maxClusterRadius: 50,
-                    spiderfyOnMaxZoom: true,
-                    showCoverageOnHover: false,
-                    zoomToBoundsOnClick: true,
-                    iconCreateFunction: (cluster) => {
-                        const count = cluster.getChildCount();
-                        let size = 'small';
-                        let color = '#0ea5e9'; // sky-500
-                        
-                        if (count >= 50) {
-                            size = 'large';
-                            color = '#10b981'; // emerald-500
-                        } else if (count >= 10) {
-                            size = 'medium';
-                            color = '#06b6d4'; // cyan-500
-                        }
-                        
-                        return L.divIcon({
-                            html: `<div class="cluster-icon cluster-${size}" style="background-color: ${color};">
-                                       <span>${count}</span>
-                                   </div>`,
-                            className: 'custom-cluster-icon',
-                            iconSize: L.point(40, 40)
-                        });
-                    }
-                });
-                
                 const visible = this.visiblePlaces;
+                const useCluster = typeof L.markerClusterGroup === 'function';
+                
+                // Create cluster group if available
+                if (useCluster) {
+                    this.markerClusterGroup = L.markerClusterGroup({
+                        maxClusterRadius: 50,
+                        spiderfyOnMaxZoom: true,
+                        showCoverageOnHover: false,
+                        zoomToBoundsOnClick: true,
+                        iconCreateFunction: (cluster) => {
+                            const count = cluster.getChildCount();
+                            let size = 'small';
+                            let color = '#0ea5e9'; // sky-500
+                            
+                            if (count >= 50) {
+                                size = 'large';
+                                color = '#10b981'; // emerald-500
+                            } else if (count >= 10) {
+                                size = 'medium';
+                                color = '#06b6d4'; // cyan-500
+                            }
+                            
+                            return L.divIcon({
+                                html: `<div class="cluster-icon cluster-${size}" style="background-color: ${color};">
+                                           <span>${count}</span>
+                                       </div>`,
+                                className: 'custom-cluster-icon',
+                                iconSize: L.point(40, 40)
+                            });
+                        }
+                    });
+                }
                 
                 visible.forEach(p => {
                      const color = p.category?.color || '#0ea5e9';
@@ -347,11 +352,18 @@
                          icon: L.divIcon({ html: iconHtml, className: '', iconSize: [44, 52], iconAnchor: [22, 52] })
                     });
                     marker.on('click', () => { this.selectPlace(p); });
-                    this.markerClusterGroup.addLayer(marker);
+                    
+                    if (useCluster) {
+                        this.markerClusterGroup.addLayer(marker);
+                    } else {
+                        marker.addTo(this.map);
+                    }
                     this.markers.push(marker);
                 });
                 
-                this.map.addLayer(this.markerClusterGroup);
+                if (useCluster) {
+                    this.map.addLayer(this.markerClusterGroup);
+                }
             },
 
             // ============================================
