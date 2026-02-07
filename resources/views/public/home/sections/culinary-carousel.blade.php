@@ -39,7 +39,7 @@
                 const targetIndex = this.originalsCount + index;
                 const targetElement = container.children[targetIndex];
                 if (targetElement) {
-                    container.scrollTo({ left: targetElement.offsetLeft, behavior: 'smooth' });
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 }
                 this.stopAutoplay();
                 this.startAutoplay();
@@ -48,10 +48,12 @@
             updateActive() {
                 const container = $refs.foodContainer;
                 if (!container) return;
-                const scrollLeft = container.scrollLeft;
-                const threshold = 50;
+                const containerCenter = container.scrollLeft + (container.clientWidth / 2);
+                
                 Array.from(container.children).forEach(child => {
-                    const isSnapped = Math.abs(child.offsetLeft - scrollLeft) < threshold;
+                    const childCenter = child.offsetLeft + (child.offsetWidth / 2);
+                    const distance = Math.abs(childCenter - containerCenter);
+                    const isSnapped = distance < (child.offsetWidth / 2); 
                     child.setAttribute('data-snapped', isSnapped ? 'true' : 'false');
                 });
             },
@@ -59,16 +61,20 @@
             updateCurrentIndex() {
                 const container = $refs.foodContainer;
                 if (!container || !container.children.length) return;
-                const scrollLeft = container.scrollLeft;
+                
+                const containerCenter = container.scrollLeft + (container.clientWidth / 2);
                 let closestIndex = -1;
                 let minDistance = Infinity;
+                
                 Array.from(container.children).forEach((child, idx) => {
-                    const distance = Math.abs(child.offsetLeft - scrollLeft);
+                    const childCenter = child.offsetLeft + (child.offsetWidth / 2);
+                    const distance = Math.abs(childCenter - containerCenter);
                     if (distance < minDistance) {
                         minDistance = distance;
                         closestIndex = idx;
                     }
                 });
+                
                 if (closestIndex !== -1) {
                     const rawIndex = closestIndex - this.originalsCount;
                     this.currentIndex = ((rawIndex % this.originalsCount) + this.originalsCount) % this.originalsCount;
@@ -184,14 +190,14 @@
 
             <!-- Carousel Container -->
             <div class="relative w-full group">
-                <div class="flex gap-4 lg:gap-8 overflow-x-auto pb-12 pt-4 px-4 lg:px-0 snap-x snap-mandatory scrollbar-hide scroll-smooth" 
-                     style="scroll-snap-type: x mandatory; scroll-padding-left: 1rem;"
+                <div class="flex gap-4 md:gap-8 overflow-x-auto pb-12 pt-4 px-[10%] md:px-[20%] snap-x snap-mandatory scrollbar-hide scroll-smooth items-center" 
+                     style="scroll-snap-type: x mandatory;"
                      x-ref="foodContainer">
                 
                     @foreach($culinaries as $index => $culinary)
                     <!-- Culinary Card -->
-                    <div class="min-w-[85%] sm:min-w-[65%] md:min-w-[55%] lg:min-w-[70%] snap-start group relative rounded-3xl overflow-hidden aspect-[3/4] sm:aspect-[4/5] md:aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10"
-                         style="scroll-snap-align: start; scroll-snap-stop: normal;">
+                    <div class="shrink-0 w-[80vw] md:w-[60vw] lg:w-[50vw] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10"
+                         style="scroll-snap-align: center; scroll-snap-stop: always;">
                         
                         <!-- Image -->
                         <img src="{{ asset($culinary->image) }}" 
@@ -201,11 +207,10 @@
                         <!-- Inactive Overlay -->
                         <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
                         
-                        <!-- Gradient Overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-data-[snapped=true]:opacity-100 transition-opacity duration-500"></div>
+                        <!-- Gradient Removed as requested -->
                         
                         <!-- Content -->
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-12">
                             <h3 class="text-white font-bold text-2xl sm:text-3xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">
                                 {{ $culinary->name }}
                             </h3>
