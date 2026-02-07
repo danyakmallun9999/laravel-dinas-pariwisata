@@ -36,15 +36,15 @@
             </a>
             
             {{-- Search Input --}}
-            <div class="flex-1 relative">
-                <div class="flex items-center h-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/50 dark:border-slate-700 px-4 gap-3">
-                    <span class="material-symbols-outlined text-slate-400">search</span>
+            <div class="flex-1 relative min-w-0">
+                <div class="flex items-center h-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/50 dark:border-slate-700 px-4 gap-3 overflow-hidden">
+                    <span class="material-symbols-outlined text-slate-400 flex-shrink-0">search</span>
                     <input type="text" 
                            x-model="searchQuery" 
                            @input.debounce.300ms="performSearch()"
                            placeholder="Cari destinasi wisata..." 
-                           class="flex-1 bg-transparent border-none focus:ring-0 text-sm text-slate-800 dark:text-white placeholder:text-slate-400">
-                    <button x-show="searchQuery" @click="searchQuery = ''; searchResults = []" class="text-slate-400">
+                           class="flex-1 min-w-0 bg-transparent border-none focus:ring-0 text-sm text-slate-800 dark:text-white placeholder:text-slate-400">
+                    <button x-show="searchQuery" @click="searchQuery = ''; searchResults = []" class="text-slate-400 flex-shrink-0">
                         <span class="material-symbols-outlined text-xl">close</span>
                     </button>
                 </div>
@@ -52,11 +52,11 @@
                 {{-- Search Results Dropdown --}}
                 <div x-show="searchResults.length > 0" 
                      @click.outside="searchResults = []"
-                     class="absolute top-14 left-0 right-0 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 max-h-60 overflow-y-auto z-[600]"
+                     class="absolute top-14 left-0 right-0 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl max-h-60 overflow-y-auto z-[600]"
                      x-transition x-cloak>
                     <template x-for="result in searchResults" :key="result.id">
                         <button @click="selectFeature(result); searchResults = []; bottomSheetState = 'collapsed'" 
-                                class="w-full text-left px-4 py-3 hover:bg-sky-50 dark:hover:bg-sky-900/30 flex items-center gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0 active:bg-sky-100">
+                                class="w-full text-left px-4 py-3 hover:bg-sky-50 dark:hover:bg-sky-900/30 flex items-center gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0 active:bg-sky-100 overflow-hidden">
                             <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center flex-shrink-0">
                                 <span class="material-symbols-outlined text-sky-500">location_on</span>
                             </div>
