@@ -3,7 +3,12 @@ import maplibregl from 'maplibre-gl';
 window.L = L;
 import 'leaflet-draw';
 import 'leaflet-routing-machine';
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'; // Import CSS
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import 'leaflet.markercluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+
+import { gsap } from 'gsap';
+window.gsap = gsap;
 window.maplibregl = maplibregl;
 
 import Chart from 'chart.js/auto';

@@ -6,13 +6,6 @@
     <title>Jelajahi Destinasi - Kabupaten Jepara</title>
     <link rel="icon" href="{{ asset('images/logo-kabupaten-jepara.png') }}" type="image/png">
     
-    {{-- GSAP Animation Library --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    
-    {{-- Leaflet MarkerCluster CSS --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('public.explore-map._styles')
 </head>
@@ -80,8 +73,11 @@
 
     {{-- Mobile: Map Controls (Right Side) --}}
     <div class="lg:hidden fixed right-4 z-[400] flex flex-col gap-3" 
-         :style="'bottom: ' + (bottomSheetState === 'collapsed' ? '220px' : '60px')"
-         x-show="!isNavigating && !hasActiveRoute" x-transition.opacity.duration.500ms>
+         :style="{
+             bottom: bottomSheetState === 'collapsed' ? '90px' : 
+                    (bottomSheetState === 'half' ? 'calc(45% + 70px)' : '20px')
+         }"
+         x-show="!isNavigating && !hasActiveRoute && bottomSheetState !== 'full'" x-transition.opacity.duration.500ms>
         {{-- Layer Toggle --}}
         <div x-data="{ open: false }" class="relative">
             <button @click="open = !open" class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700 active:scale-95 transition-transform">
