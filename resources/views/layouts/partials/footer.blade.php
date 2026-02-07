@@ -6,7 +6,7 @@
             <!-- Brand Column -->
             <div class="md:col-span-4 space-y-6">
                 <a href="{{ route('welcome') }}" class="block flex justify-center md:justify-start">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo Jepara" class="h-32 md:h-28 w-auto object-contain transition-transform hover:scale-105 duration-300">
+                    <img src="{{ asset('images/logo-kura.png') }}" alt="Logo Jepara" class="h-32 md:h-28 w-auto object-contain transition-transform hover:scale-105 duration-300">
                 </a>
                 <div class="space-y-4">
                     <p class="text-sm leading-relaxed text-white/50 max-w-sm">
