@@ -209,22 +209,27 @@
                         
                         <!-- Gradient Removed as requested -->
                         
+                        <!-- Gradient Overlay (Better for Mobile Legibility) -->
+                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-90 transition-opacity duration-500 pointer-events-none"></div>
+
                         <!-- Content -->
-                        <div class="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-12">
-                            <h3 class="text-white font-bold text-2xl sm:text-3xl lg:text-5xl mb-2 lg:mb-3 drop-shadow-2xl">
-                                {{ $culinary->name }}
-                            </h3>
-                            <p class="text-white/95 text-sm sm:text-base lg:text-xl max-w-xl mb-4 lg:mb-6 leading-relaxed drop-shadow-lg line-clamp-3">
-                                {{ $culinary->description }}
-                            </p>
-                            
-                            <!-- Read More Button (Active State Only) -->
-                            <div class="opacity-0 group-data-[snapped=true]:opacity-100 transition-opacity duration-500 delay-100">
-                                <a href="{{ route('culinary.show', $culinary->slug) }}" 
-                                   class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white text-sm font-bold transition-all shadow-lg hover:translate-x-1">
-                                    <span>{{ __('Culinary.Button.More') }}</span>
-                                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
-                                </a>
+                        <div class="absolute inset-0 flex flex-col justify-end p-4 md:p-8 lg:p-12">
+                            <div class="transform transition-transform duration-500 group-data-[snapped=true]:translate-y-0 translate-y-4 opacity-0 group-data-[snapped=true]:opacity-100">
+                                <h3 class="text-white font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2 drop-shadow-lg">
+                                    {{ $culinary->name }}
+                                </h3>
+                                <p class="text-white/90 text-xs sm:text-sm md:text-base lg:text-lg mb-3 md:mb-5 leading-relaxed line-clamp-2 md:line-clamp-3 font-medium drop-shadow-md">
+                                    {{ $culinary->description }}
+                                </p>
+                                
+                                <!-- Read More Button -->
+                                <div>
+                                    <a href="{{ route('culinary.show', $culinary->slug) }}" 
+                                       class="inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-white text-primary text-xs md:text-sm font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105">
+                                        <span>{{ __('Culinary.Button.More') }}</span>
+                                        <span class="material-symbols-outlined text-base md:text-lg">arrow_forward</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
