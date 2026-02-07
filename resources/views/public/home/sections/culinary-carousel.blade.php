@@ -190,13 +190,13 @@
 
             <!-- Carousel Container -->
             <div class="relative w-full group">
-                <div class="flex gap-4 md:gap-8 overflow-x-auto pb-12 pt-4 px-[10%] md:px-[20%] snap-x snap-mandatory scrollbar-hide scroll-smooth items-center" 
+                <div class="flex gap-4 md:gap-8 overflow-x-auto pb-12 pt-4 px-[5%] md:px-[20%] snap-x snap-mandatory scrollbar-hide scroll-smooth items-center" 
                      style="scroll-snap-type: x mandatory;"
                      x-ref="foodContainer">
                 
                     @foreach($culinaries as $index => $culinary)
                     <!-- Culinary Card -->
-                    <div class="shrink-0 w-[80vw] md:w-[60vw] lg:w-[50vw] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-90 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10"
+                    <div class="shrink-0 w-[90vw] md:w-[60vw] lg:w-[50vw] snap-center group relative rounded-3xl overflow-hidden aspect-[16/9] transition-all duration-500 scale-95 data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10"
                          style="scroll-snap-align: center; scroll-snap-stop: always;">
                         
                         <!-- Image -->
