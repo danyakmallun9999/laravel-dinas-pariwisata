@@ -11,7 +11,8 @@
             <span class="material-symbols-outlined">layers</span>
         </button>
         <div x-show="open" @click.outside="open = false" 
-             class="absolute w-auto whitespace-nowrap bg-transparent p-0 lg:top-12 lg:left-0 lg:origin-top-left"
+             class="absolute w-auto whitespace-nowrap bg-transparent p-0"
+             :class="isNavigating ? 'right-14 bottom-0 origin-bottom-right' : 'lg:top-12 lg:left-0 lg:origin-top-left'"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100"
