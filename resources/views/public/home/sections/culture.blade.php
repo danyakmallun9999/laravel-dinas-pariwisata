@@ -21,7 +21,7 @@
             <!-- Horizontal Accordion -->
             <div class="flex flex-col md:flex-row h-[700px] md:h-[600px] w-full gap-4">
                 @foreach($cultures as $index => $culture)
-                <div class="relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group shadow-2xl border border-white/5"
+                <div class="relative rounded-[2.5rem] overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group shadow-2xl border border-white/5"
                      :class="active === {{ $index }} ? 'flex-[10] md:flex-[5] opacity-100' : 'flex-[2] md:flex-[1] opacity-70 hover:opacity-100'"
                      @click="setActive({{ $index }})">
                     

@@ -81,7 +81,7 @@
                 @endphp
 
                 @foreach($legends as $legend)
-                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[450px] md:h-[600px] w-full rounded-[2rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none"
+                <div class="min-w-[85%] md:min-w-0 snap-center group relative h-[450px] md:h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none"
                      x-data="{ shown: false }" 
                      x-intersect.threshold.0.2="shown = true">
                     

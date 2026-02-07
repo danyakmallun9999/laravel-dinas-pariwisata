@@ -48,14 +48,14 @@
                      x-intersect.threshold.0.5="shown = true">
                     
                     <!-- Main Image (Clean Crop) -->
-                    <div class="relative w-full aspect-[4/3] md:aspect-[3/4] overflow-hidden bg-gray-100 dark:bg-gray-900 rounded-2xl md:rounded-none">
+                    <div class="relative w-full aspect-[4/3] md:aspect-[3/4] overflow-hidden bg-gray-100 dark:bg-gray-900 rounded-[2.5rem]">
                         <img src="{{ asset('images/profile/section-2.jpg') }}" 
                              alt="Landscape Jepara" 
                              class="w-full h-full object-cover transition-all duration-1000 ease-out"
                              :class="(hover || shown) ? 'grayscale-0 scale-105' : 'grayscale'">
                     </div>
                     <!-- Secondary Image (Smaller, Clean Overlay) -->
-                    <div class="absolute bottom-6 -left-6 md:bottom-8 md:-left-12 w-32 md:w-48 lg:w-64 aspect-square overflow-hidden shadow-2xl border-4 md:border-8 border-white dark:border-gray-950 transition-transform duration-700 ease-out hidden sm:block"
+                    <div class="absolute bottom-6 -left-6 md:bottom-8 md:-left-12 w-32 md:w-48 lg:w-64 aspect-square overflow-hidden rounded-[1.5rem] shadow-2xl border-4 md:border-8 border-white dark:border-gray-950 transition-transform duration-700 ease-out hidden sm:block"
                          :class="hover ? 'translate-x-4 -translate-y-4' : ''">
                         <img src="{{ asset('images/profile/diving-karimunjawa.jpg') }}" 
                              alt="Diving" 
@@ -63,7 +63,7 @@
                     </div>
 
                     <!-- Minimal Stats (Absolute, no glassmorphism, just solid) -->
-                    <div class="absolute top-8 -right-4 bg-white dark:bg-gray-800 p-6 shadow-xl hidden lg:block">
+                    <div class="absolute top-8 -right-4 bg-white dark:bg-gray-800 p-6 rounded-[2rem] shadow-xl hidden lg:block">
                         <span class="block text-4xl font-serif text-gray-900 dark:text-white">{{ $countDestinasi }}</span>
                         <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">{{ __('Nav.Destinations') }}</span>
                     </div>
