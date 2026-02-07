@@ -127,6 +127,26 @@
                     else if (this.bottomSheetState === 'half') this.bottomSheetState = 'collapsed';
                 }
             },
+
+            // ============================================
+            // DETAIL PANEL DRAG
+            // ============================================
+            
+            detailTouchStartY: 0,
+            
+            handleDetailTouchStart(e) {
+                this.detailTouchStartY = e.touches[0].clientY;
+            },
+            
+            handleDetailTouchEnd(e) {
+                const currentY = e.changedTouches[0].clientY;
+                const diff = currentY - this.detailTouchStartY;
+                
+                // If dragged down significantly (> 50px), close panel
+                if (diff > 50) {
+                    this.selectedFeature = null;
+                }
+            },
             
             toggleCategorySingle(id) {
                 if (this.selectedCategories.length === 1 && this.selectedCategories.includes(id)) {

@@ -22,12 +22,14 @@
              style="transform: translateY(100%); opacity: 0;">
             
             {{-- Mobile Drag Handle --}}
-            <div class="lg:hidden flex justify-center pt-3 pb-2">
+            <div class="lg:hidden flex justify-center pt-3 pb-2 touch-none"
+                 @touchstart.passive="handleDetailTouchStart($event)"
+                 @touchend="handleDetailTouchEnd($event)">
                 <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full drag-handle"></div>
             </div>
 
             {{-- Header Image with Minimalist Controls --}}
-            <div class="h-56 lg:h-48 bg-slate-100 dark:bg-slate-700 relative flex-shrink-0 overflow-hidden group">
+            <div class="h-56 lg:h-48 bg-slate-100 dark:bg-slate-700 relative flex-shrink-0 overflow-hidden group mx-4 rounded-xl mt-2 lg:mx-0 lg:mt-0 lg:rounded-none">
                 <template x-if="selectedFeature?.image_url">
                     <img :src="selectedFeature.image_url" 
                          class="w-full h-full object-cover detail-image transition-transform duration-700"

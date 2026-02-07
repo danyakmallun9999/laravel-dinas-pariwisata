@@ -23,7 +23,7 @@
                          <img src="{{ asset('images/logo-kura.png') }}" alt="Logo Kabupaten Jepara" class="w-full h-full object-contain filter">
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold leading-none tracking-tight text-slate-800 dark:text-white group-hover:text-primary transition-colors">
+                        <h2 class="text-2xl font-bold leading-none tracking-tight text-slate-600 dark:text-white group-hover:text-primary transition-colors font-['Caveat']">
                             Jelajah Jepara
                         </h2>
                     </div>
