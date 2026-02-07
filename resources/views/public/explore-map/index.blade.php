@@ -81,7 +81,7 @@
     {{-- Mobile: Map Controls (Right Side) --}}
     <div class="lg:hidden fixed right-4 z-[400] flex flex-col gap-3" 
          :style="'bottom: ' + (bottomSheetState === 'collapsed' ? '220px' : '60px')"
-         x-show="!isNavigating" x-transition.opacity.duration.500ms>
+         x-show="!isNavigating && !hasActiveRoute" x-transition.opacity.duration.500ms>
         {{-- Layer Toggle --}}
         <div x-data="{ open: false }" class="relative">
             <button @click="open = !open" class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700 active:scale-95 transition-transform">
@@ -246,16 +246,11 @@
 
     {{-- Start Journey Button --}}
     <div x-show="hasActiveRoute && !isNavigating" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="translate-y-20 opacity-0"
-         x-transition:enter-end="translate-y-0 opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="translate-y-0 opacity-100"
-         x-transition:leave-end="translate-y-20 opacity-0"
-         class="fixed left-1/2 -translate-x-1/2 z-[600] transition-all duration-300 ease-out"
+         x-transition.opacity.duration.500ms 
+         class="lg:hidden fixed left-1/2 -translate-x-1/2 z-[600] transition-all duration-300 ease-out"
          :style="{
-             bottom: bottomSheetState === 'collapsed' ? '220px' : 
-                    (bottomSheetState === 'half' ? 'calc(55% + 20px)' : '30px')
+             bottom: bottomSheetState === 'collapsed' ? '95px' : 
+                    (bottomSheetState === 'half' ? 'calc(55% + 20px)' : '24px')
          }"
          x-cloak>
         <div class="flex flex-col items-center gap-2">
