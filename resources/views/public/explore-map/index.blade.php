@@ -71,46 +71,7 @@
         </div>
     </div>
 
-    {{-- Mobile: Map Controls (Right Side) --}}
-    <div class="lg:hidden fixed right-4 z-[400] flex flex-col gap-3" 
-         :style="{
-             bottom: bottomSheetState === 'collapsed' ? '90px' : 
-                    (bottomSheetState === 'half' ? 'calc(45% + 70px)' : '20px')
-         }"
-         x-show="!isNavigating && !hasActiveRoute && bottomSheetState !== 'full'" x-transition.opacity.duration.500ms>
-        {{-- Layer Toggle --}}
-        <div x-data="{ open: false }" class="relative">
-            <button @click="open = !open" class="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-600 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700 active:scale-95 transition-transform">
-                <span class="material-symbols-outlined">layers</span>
-            </button>
-            <div x-show="open" @click.outside="open = false" 
-                 class="absolute right-14 bottom-0 w-32 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-2"
-                 x-transition x-cloak>
-                <button @click="setBaseLayer('streets'); open = false" 
-                        :class="currentBaseLayer === 'streets' ? 'bg-sky-500 text-white' : 'text-slate-600 dark:text-slate-300'"
-                        class="w-full py-2.5 text-xs font-bold rounded-lg mb-1 active:scale-95 transition-transform">Jalan</button>
-                <button @click="setBaseLayer('satellite'); open = false"
-                        :class="currentBaseLayer === 'satellite' ? 'bg-sky-500 text-white' : 'text-slate-600 dark:text-slate-300'"
-                        class="w-full py-2.5 text-xs font-bold rounded-lg active:scale-95 transition-transform">Satelit</button>
-            </div>
-        </div>
 
-        {{-- Zoom Controls --}}
-        <div class="flex flex-col bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-200/50 dark:border-slate-700">
-            <button @click="map.zoomIn()" class="w-12 h-12 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100">
-                <span class="material-symbols-outlined">add</span>
-            </button>
-            <div class="h-px bg-slate-200 dark:bg-slate-700"></div>
-            <button @click="map.zoomOut()" class="w-12 h-12 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100">
-                <span class="material-symbols-outlined">remove</span>
-            </button>
-        </div>
-
-        {{-- My Location --}}
-        <button @click="locateUser(null, true)" class="w-12 h-12 bg-gradient-to-br from-sky-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-transform">
-            <span class="material-symbols-outlined">my_location</span>
-        </button>
-    </div>
 
     {{-- Mobile: Bottom Sheet --}}
     {{-- Mobile: Bottom Sheet --}}
@@ -231,8 +192,8 @@
     {{-- ============================================= --}}
     <div class="hidden lg:block">
         @include('public.explore-map._sidebar')
-        @include('public.explore-map._map-controls')
     </div>
+    @include('public.explore-map._map-controls')
 
     {{-- Detail Panel (Both Mobile & Desktop) --}}
     @include('public.explore-map._detail-panel')
