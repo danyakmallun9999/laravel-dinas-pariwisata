@@ -75,6 +75,7 @@ class TicketController extends Controller
         // Calculate total price based on date (weekend/weekday)
         $pricePerTicket = $ticket->getPriceForDate($validated['visit_date']);
         $validated['total_price'] = $pricePerTicket * $validated['quantity'];
+        $validated['unit_price'] = $pricePerTicket;
         $validated['status'] = 'pending';
         $validated['payment_method'] = 'xendit'; // Set default to xendit
 

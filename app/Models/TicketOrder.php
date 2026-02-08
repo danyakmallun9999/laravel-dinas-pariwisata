@@ -27,13 +27,20 @@ class TicketOrder extends Model
         'xendit_invoice_url',
         'xendit_payment_method',
         'xendit_payment_channel',
-        'paid_at',
+        'payed_at',
+        'check_in_time',
+        'unit_price',
+        'customer_city',
+        'payment_gateway_ref',
+        'refund_status',
     ];
 
     protected $casts = [
         'visit_date' => 'date',
         'total_price' => 'decimal:2',
+        'unit_price' => 'decimal:2',
         'paid_at' => 'datetime',
+        'check_in_time' => 'datetime',
     ];
 
     /**

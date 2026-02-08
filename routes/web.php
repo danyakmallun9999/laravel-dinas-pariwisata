@@ -76,6 +76,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
 
     // Ticket routes
+    Route::get('/tickets/dashboard', [App\Http\Controllers\Admin\TicketDashboardController::class, 'index'])->name('tickets.dashboard');
     Route::resource('tickets', \App\Http\Controllers\Admin\TicketController::class);
     Route::get('ticket-orders', [\App\Http\Controllers\Admin\TicketController::class, 'orders'])->name('tickets.orders');
     Route::post('ticket-orders/{order}/status', [\App\Http\Controllers\Admin\TicketController::class, 'updateOrderStatus'])->name('tickets.orders.updateStatus');

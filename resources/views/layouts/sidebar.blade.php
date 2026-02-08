@@ -125,20 +125,51 @@
                 </div>
             </a>
 
-            <a href="{{ route('admin.tickets.index') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.tickets.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-               :class="sidebarMinimized ? 'justify-center' : ''">
-                <i class="fa-solid fa-ticket w-5 text-center {{ request()->routeIs('admin.tickets.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
-                <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">E-Tiket</span>
-                 <!-- Tooltip -->
-                 <!-- Tooltip -->
-                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
-                     x-show="sidebarMinimized" 
-                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     style="display: none;">
-                    E-Tiket
+            <!-- E-Tiket Dropdown -->
+            <div x-data="{ ticketOpen: {{ request()->routeIs('admin.tickets.*') ? 'true' : 'false' }} }">
+                <button @click="ticketOpen = !ticketOpen" @click.away="!sidebarMinimized && (ticketOpen = false)"
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.tickets.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+                    :class="sidebarMinimized ? 'justify-center' : 'justify-between'">
+                    
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-ticket w-5 text-center {{ request()->routeIs('admin.tickets.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
+                        <span x-show="!sidebarMinimized" class="whitespace-nowrap transition-opacity duration-300">E-Tiket</span>
+                    </div>
+
+                    <i x-show="!sidebarMinimized" class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{'rotate-180': ticketOpen}"></i>
+
+                    <!-- Tooltip for Minimized -->
+                    <div x-show="sidebarMinimized" 
+                         @mouseenter="$el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px'"
+                         class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                         style="display: none;">
+                        E-Tiket
+                    </div>
+                </button>
+
+                <!-- Dropdown Content -->
+                <div x-show="ticketOpen && !sidebarMinimized" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 -translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="pl-11 pr-3 py-2 space-y-1">
+                    
+                    <a href="{{ route('admin.tickets.dashboard') }}" 
+                       class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('admin.tickets.dashboard') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       Dashboard
+                    </a>
+                    
+                    <a href="{{ route('admin.tickets.index') }}" 
+                       class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('admin.tickets.index') || request()->routeIs('admin.tickets.create') || request()->routeIs('admin.tickets.edit') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       Kelola Tiket
+                    </a>
+
+                    <a href="{{ route('admin.tickets.orders') }}" 
+                       class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('admin.tickets.orders') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       Pesanan Masuk
+                    </a>
                 </div>
-            </a>
+            </div>
 
             <a href="{{ route('admin.categories.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.categories.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
