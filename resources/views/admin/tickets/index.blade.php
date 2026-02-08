@@ -48,11 +48,17 @@
                             <div class="text-sm font-medium text-gray-900">{{ $ticket->place->name }}</div>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-sm text-gray-900">{{ $ticket->name }}</div>
-                            <div class="text-sm text-gray-500">Berlaku {{ $ticket->valid_days }} hari</div>
+                            <div class="text-sm font-medium text-gray-900">{{ $ticket->name }}</div>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 uppercase tracking-wide">
+                                {{ $ticket->type }}
+                            </span>
+                            <div class="text-xs text-gray-500 mt-1">Berlaku {{ $ticket->valid_days }} hari</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">Rp {{ number_format($ticket->price, 0, ',', '.') }}</div>
+                            <div class="text-sm text-gray-900">Normal: Rp {{ number_format($ticket->price, 0, ',', '.') }}</div>
+                            @if($ticket->price_weekend)
+                                <div class="text-xs text-blue-600 font-medium">Weekend: Rp {{ number_format($ticket->price_weekend, 0, ',', '.') }}</div>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">

@@ -187,9 +187,17 @@
                                                             <div class="flex items-end justify-between gap-3 mt-3">
                                                                 <div>
                                                                     <span class="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">Harga</span>
-                                                                    <div class="flex items-baseline gap-1">
-                                                                        <span class="text-xs text-slate-500">Rp</span>
-                                                                        <span class="text-xl font-extrabold text-primary dark:text-primary">{{ number_format($ticket->price, 0, ',', '.') }}</span>
+                                                                    <div class="flex flex-col">
+                                                                        <div class="flex items-baseline gap-1">
+                                                                            <span class="text-xs text-slate-500">Normal</span>
+                                                                            <span class="text-lg font-extrabold text-primary dark:text-primary">Rp {{ number_format($ticket->price, 0, ',', '.') }}</span>
+                                                                        </div>
+                                                                        @if($ticket->price_weekend)
+                                                                            <div class="flex items-baseline gap-1">
+                                                                                <span class="text-[10px] text-rose-500 font-semibold">Weekend</span>
+                                                                                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Rp {{ number_format($ticket->price_weekend, 0, ',', '.') }}</span>
+                                                                            </div>
+                                                                        @endif
                                                                     </div>
                                                                 </div>
                                                                 <a href="{{ route('tickets.show', $ticket->id) }}" 

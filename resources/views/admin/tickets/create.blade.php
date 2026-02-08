@@ -74,12 +74,28 @@
                 </div>
 
                 <!-- Ticket Name -->
-                <div class="md:col-span-2">
+                <div class="md:col-span-1">
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama Tiket *</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required 
-                           placeholder="Contoh: Tiket Masuk Dewasa, Tiket Anak-anak"
+                           placeholder="Contoh: Tiket Masuk"
                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                     @error('name')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Ticket Type -->
+                <div class="md:col-span-1">
+                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Tipe Tiket *</label>
+                    <select name="type" id="type" required 
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                        <option value="general" {{ old('type') == 'general' ? 'selected' : '' }}>Umum</option>
+                        <option value="adult" {{ old('type') == 'adult' ? 'selected' : '' }}>Dewasa</option>
+                        <option value="child" {{ old('type') == 'child' ? 'selected' : '' }}>Anak-anak</option>
+                        <option value="foreigner" {{ old('type') == 'foreigner' ? 'selected' : '' }}>Mancanegara</option>
+                        <option value="vehicle" {{ old('type') == 'vehicle' ? 'selected' : '' }}>Kendaraan</option>
+                    </select>
+                    @error('type')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -95,13 +111,25 @@
                     @enderror
                 </div>
 
-                <!-- Price -->
+                <!-- Price Weekday -->
                 <div>
-                    <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Harga (Rp) *</label>
+                    <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Harga Weekday (Rp) *</label>
                     <input type="number" name="price" id="price" value="{{ old('price') }}" required min="0" step="1000"
                            placeholder="50000"
                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                     @error('price')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Price Weekend -->
+                <div>
+                    <label for="price_weekend" class="block text-sm font-medium text-gray-700 mb-2">Harga Weekend (Rp)</label>
+                    <input type="number" name="price_weekend" id="price_weekend" value="{{ old('price_weekend') }}" min="0" step="1000"
+                           placeholder="Kosongkan jika sama dengan weekday"
+                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                    <p class="mt-1 text-xs text-gray-500">Harga khusus Sabtu, Minggu & Hari Libur</p>
+                    @error('price_weekend')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

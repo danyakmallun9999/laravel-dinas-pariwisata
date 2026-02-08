@@ -12,8 +12,10 @@ class Ticket extends Model
     protected $fillable = [
         'place_id',
         'name',
+        'type',
         'description',
         'price',
+        'price_weekend',
         'quota',
         'valid_days',
         'is_active',
@@ -22,6 +24,7 @@ class Ticket extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'price_weekend' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
@@ -82,5 +85,25 @@ class Ticket extends Model
         }
 
         return $available >= $quantity;
+    }
+
+    /**
+     * Get the applicable price for a specific date.
+     */
+    public function getPriceForDate($date)
+    {
+        if ($this->isWeekend($date) && $this->price_weekend !== null) {
+            return $this->price_weekend;
+        }
+        return $this->price;
+    }
+
+    /**
+     * Check if a date is a weekend (Saturday or Sunday).
+     */
+    public function isWeekend($date)
+    {
+        $date = \Carbon\Carbon::parse($date);
+        return $date->isWeekend();
     }
 }

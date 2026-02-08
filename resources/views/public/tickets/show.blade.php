@@ -36,9 +36,16 @@
                                 
                                 <!-- Price Badge -->
                                 <div class="absolute bottom-6 left-6">
-                                    <span class="px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-2xl shadow-xl">
-                                        Rp {{ number_format($ticket->price, 0, ',', '.') }}
-                                    </span>
+                                    <div class="flex flex-col items-start gap-1">
+                                        <span class="px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-2xl shadow-xl">
+                                            Rp {{ number_format($ticket->price, 0, ',', '.') }}
+                                        </span>
+                                        @if($ticket->price_weekend)
+                                            <span class="px-3 py-1 rounded-lg bg-rose-500 text-white text-xs font-bold shadow-lg">
+                                                Weekend: Rp {{ number_format($ticket->price_weekend, 0, ',', '.') }}
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
 
                                 <!-- Valid Days Badge -->
@@ -126,7 +133,49 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('tickets.book') }}" method="POST" id="bookingForm" x-data="{ quantity: {{ old('quantity', 1) }} }">
+                        <form action="{{ route('tickets.book') }}" method="POST" id="bookingForm" 
+                            x-data="{ 
+                                quantity: {{ old('quantity', 1) }},
+                                open: false, 
+                                selectedDate: '{{ old('visit_date', '') }}',
+                                selectedLabel: '',
+                                dates: [],
+                                priceWeekday: {{ $ticket->price }},
+                                priceWeekend: {{ $ticket->price_weekend ?? $ticket->price }},
+                                currentPrice: {{ $ticket->price }},
+                                isWeekendSelected: false,
+                                init() {
+                                    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                    for (let i = 0; i < 30; i++) {
+                                        const d = new Date();
+                                        d.setDate(d.getDate() + i);
+                                        const value = d.toISOString().split('T')[0];
+                                        const dayName = days[d.getDay()];
+                                        const date = d.getDate();
+                                        const month = months[d.getMonth()];
+                                        const year = d.getFullYear();
+                                        const label = `${dayName}, ${date} ${month} ${year}`;
+                                        const shortLabel = `${date} ${month} ${year}`;
+                                        this.dates.push({ value, label, shortLabel, isWeekend: d.getDay() === 0 || d.getDay() === 6 });
+                                        if (this.selectedDate === value) {
+                                            this.selectedLabel = shortLabel;
+                                            this.isWeekendSelected = (d.getDay() === 0 || d.getDay() === 6);
+                                            this.currentPrice = this.isWeekendSelected ? this.priceWeekend : this.priceWeekday;
+                                        }
+                                    }
+                                    if (!this.selectedLabel && this.dates.length > 0) {
+                                        // Optional: Select first date by default? Or leave empty
+                                    }
+                                },
+                                selectDate(date) {
+                                    this.selectedDate = date.value;
+                                    this.selectedLabel = date.shortLabel;
+                                    this.isWeekendSelected = date.isWeekend;
+                                    this.currentPrice = date.isWeekend ? this.priceWeekend : this.priceWeekday;
+                                    this.open = false;
+                                }
+                            }">
                             @csrf
                             <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
 
@@ -163,39 +212,8 @@
                                 </div>
 
                                 <!-- Visit Date (Custom Dropdown) -->
-                                <div x-data="{ 
-                                    open: false, 
-                                    selectedDate: '{{ old('visit_date', '') }}',
-                                    selectedLabel: '',
-                                    dates: [],
-                                    init() {
-                                        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                                        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                                        for (let i = 0; i < 30; i++) {
-                                            const d = new Date();
-                                            d.setDate(d.getDate() + i);
-                                            const value = d.toISOString().split('T')[0];
-                                            const dayName = days[d.getDay()];
-                                            const date = d.getDate();
-                                            const month = months[d.getMonth()];
-                                            const year = d.getFullYear();
-                                            const label = `${dayName}, ${date} ${month} ${year}`;
-                                            const shortLabel = `${date} ${month} ${year}`;
-                                            this.dates.push({ value, label, shortLabel, isWeekend: d.getDay() === 0 || d.getDay() === 6 });
-                                            if (this.selectedDate === value) {
-                                                this.selectedLabel = shortLabel;
-                                            }
-                                        }
-                                        if (!this.selectedLabel && this.dates.length > 0) {
-                                            this.selectedLabel = '';
-                                        }
-                                    },
-                                    selectDate(date) {
-                                        this.selectedDate = date.value;
-                                        this.selectedLabel = date.shortLabel;
-                                        this.open = false;
-                                    }
-                                }" class="relative">
+                                <!-- Visit Date (Custom Dropdown) -->
+                                <div class="relative">
                                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                         <i class="fa-solid fa-calendar mr-1 text-primary"></i> Tanggal Kunjungan
                                     </label>
@@ -265,7 +283,7 @@
                                 <div class="bg-gradient-to-r from-primary/10 to-indigo-500/10 rounded-2xl p-5 border border-primary/20">
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Total Pembayaran</span>
-                                        <span class="text-lg font-bold text-primary" x-text="'Rp ' + ({{ $ticket->price }} * quantity).toLocaleString('id-ID')">
+                                        <span class="text-lg font-bold text-primary" x-text="'Rp ' + (currentPrice * quantity).toLocaleString('id-ID')">
                                             Rp {{ number_format($ticket->price, 0, ',', '.') }}
                                         </span>
                                     </div>
