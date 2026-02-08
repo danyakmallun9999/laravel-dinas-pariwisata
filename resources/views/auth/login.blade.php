@@ -97,7 +97,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-text-light/40 group-focus-within:text-primary transition-colors">
                                 <span class="material-symbols-outlined">mail</span>
                             </div>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
+                            <input id="email" type="email" name="email" value="{{ $errors->has('email') ? '' : old('email') }}" required autofocus autocomplete="username" 
                                 @input="showError = false"
                                 class="block w-full rounded-xl border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900/50 pl-11 pr-4 py-3.5 text-text-light dark:text-text-dark placeholder:text-text-light/30 focus:border-primary focus:bg-white dark:focus:bg-stone-900 focus:ring-4 focus:ring-primary/10 sm:text-sm transition-all shadow-sm group-hover:border-stone-300 dark:group-hover:border-stone-600"
                                 :class="showError ? 'border-red-300 bg-red-50/50' : ''"
