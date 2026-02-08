@@ -1,193 +1,261 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500">E-Tiket</p>
+                <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
+                    Tambah Tiket Baru
+                </h2>
+            </div>
+            <a href="{{ route('admin.tickets.index') }}" class="inline-flex items-center px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm">
+                <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
+            </a>
+        </div>
+    </x-slot>
 
-@section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Tambah E-Tiket Baru</h1>
-        <a href="{{ route('admin.tickets.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
-            <i class="fas fa-arrow-left mr-2"></i>Kembali
-        </a>
-    </div>
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <form action="{{ route('admin.tickets.store') }}" method="POST" class="space-y-6">
+                @csrf
 
-    <div class="bg-white rounded-lg shadow p-6">
-        <form action="{{ route('admin.tickets.store') }}" method="POST">
-            @csrf
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Place Selection -->
-                <div class="md:col-span-2">
-                    <label for="place_id" class="block text-sm font-medium text-gray-700 mb-2">Destinasi Wisata *</label>
-                    <select name="place_id" id="place_id" required 
-                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-colors"
-                            onchange="updatePlaceImage(this)">
-                        <option value="" data-image="">Pilih Destinasi</option>
-                        @foreach($places as $place)
-                            <option value="{{ $place->id }}" 
-                                    data-image="{{ str_starts_with($place->image_path, 'http') ? $place->image_path : (str_starts_with($place->image_path, 'images/') ? asset($place->image_path) : asset('storage/' . $place->image_path)) }}"
-                                    {{ old('place_id') == $place->id ? 'selected' : '' }}>
-                                {{ $place->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    
-                    <!-- Image Preview -->
-                    <div id="place_image_preview" class="mt-4 hidden transition-all duration-300">
-                        <p class="text-xs text-gray-500 mb-2 font-medium uppercase tracking-wider">Preview Destinasi</p>
-                        <div class="relative w-full aspect-video rounded-lg overflow-hidden border border-gray-200 shadow-sm group">
-                            <img src="" alt="Preview Destinasi" id="preview_img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                                <span class="text-white text-sm font-bold shadow-black drop-shadow-md" id="preview_name"></span>
-                            </div>
+                <!-- Section: Destinasi -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Destinasi Wisata</h3>
+                            <p class="text-xs text-gray-500">Pilih destinasi untuk tiket ini</p>
                         </div>
                     </div>
 
-                    @error('place_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-
-                    <script>
-                        function updatePlaceImage(select) {
-                            const option = select.options[select.selectedIndex];
-                            const imageUrl = option.getAttribute('data-image');
-                            const placeName = option.text.trim();
-                            const previewContainer = document.getElementById('place_image_preview');
-                            const previewImg = document.getElementById('preview_img');
-                            const previewName = document.getElementById('preview_name');
-                            
-                            if (imageUrl) {
-                                previewImg.src = imageUrl;
-                                previewName.textContent = placeName;
-                                previewContainer.classList.remove('hidden');
-                                setTimeout(() => previewContainer.classList.remove('opacity-0'), 10); // Fade in effect
-                            } else {
-                                previewContainer.classList.add('hidden');
-                                previewImg.src = '';
-                            }
-                        }
-
-                        // Run on load if valid (e.g. valid old input)
-                        document.addEventListener('DOMContentLoaded', () => {
-                            const select = document.getElementById('place_id');
-                            if (select.value) updatePlaceImage(select);
-                        });
-                    </script>
+                    <div>
+                        <label for="place_id" class="block text-sm font-semibold text-gray-700 mb-2">Pilih Destinasi *</label>
+                        <select name="place_id" id="place_id" required 
+                                class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition-colors"
+                                onchange="updatePlaceImage(this)">
+                            <option value="" data-image="">-- Pilih Destinasi --</option>
+                            @foreach($places as $place)
+                                <option value="{{ $place->id }}" 
+                                        data-image="{{ str_starts_with($place->image_path, 'http') ? $place->image_path : (str_starts_with($place->image_path, 'images/') ? asset($place->image_path) : asset('storage/' . $place->image_path)) }}"
+                                        {{ old('place_id') == $place->id ? 'selected' : '' }}>
+                                    {{ $place->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('place_id')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        
+                        <!-- Image Preview -->
+                        <div id="place_image_preview" class="mt-4 hidden transition-all duration-300">
+                            <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-gray-100 shadow-sm group">
+                                <img src="" alt="Preview Destinasi" id="preview_img" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                                    <span class="text-white text-sm font-bold" id="preview_name"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Ticket Name -->
-                <div class="md:col-span-1">
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama Tiket *</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" required 
-                           placeholder="Contoh: Tiket Masuk"
-                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                    @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <!-- Section: Informasi Tiket -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
+                            <i class="fa-solid fa-ticket"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Informasi Tiket</h3>
+                            <p class="text-xs text-gray-500">Detail nama dan tipe tiket</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Tiket *</label>
+                            <input type="text" name="name" id="name" value="{{ old('name') }}" required 
+                                   placeholder="Contoh: Tiket Masuk"
+                                   class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                            @error('name')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">Tipe Tiket *</label>
+                            <select name="type" id="type" required 
+                                    class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                <option value="general" {{ old('type') == 'general' ? 'selected' : '' }}>Umum</option>
+                                <option value="adult" {{ old('type') == 'adult' ? 'selected' : '' }}>Dewasa</option>
+                                <option value="child" {{ old('type') == 'child' ? 'selected' : '' }}>Anak-anak</option>
+                                <option value="foreigner" {{ old('type') == 'foreigner' ? 'selected' : '' }}>Mancanegara</option>
+                                <option value="vehicle" {{ old('type') == 'vehicle' ? 'selected' : '' }}>Kendaraan</option>
+                            </select>
+                            @error('type')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label>
+                            <textarea name="description" id="description" rows="3" 
+                                      class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                                      placeholder="Deskripsi tiket (opsional)">{{ old('description') }}</textarea>
+                            @error('description')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Ticket Type -->
-                <div class="md:col-span-1">
-                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Tipe Tiket *</label>
-                    <select name="type" id="type" required 
-                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                        <option value="general" {{ old('type') == 'general' ? 'selected' : '' }}>Umum</option>
-                        <option value="adult" {{ old('type') == 'adult' ? 'selected' : '' }}>Dewasa</option>
-                        <option value="child" {{ old('type') == 'child' ? 'selected' : '' }}>Anak-anak</option>
-                        <option value="foreigner" {{ old('type') == 'foreigner' ? 'selected' : '' }}>Mancanegara</option>
-                        <option value="vehicle" {{ old('type') == 'vehicle' ? 'selected' : '' }}>Kendaraan</option>
-                    </select>
-                    @error('type')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <!-- Section: Harga -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Harga</h3>
+                            <p class="text-xs text-gray-500">Atur harga weekday dan weekend</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Harga Weekday (Rp) *</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">Rp</span>
+                                <input type="number" name="price" id="price" value="{{ old('price') }}" required min="0" step="1000"
+                                       placeholder="50000"
+                                       class="w-full pl-12 border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                            </div>
+                            @error('price')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="price_weekend" class="block text-sm font-semibold text-gray-700 mb-2">Harga Weekend (Rp)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">Rp</span>
+                                <input type="number" name="price_weekend" id="price_weekend" value="{{ old('price_weekend') }}" min="0" step="1000"
+                                       placeholder="Kosongkan jika sama"
+                                       class="w-full pl-12 border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                            </div>
+                            <p class="mt-1 text-xs text-gray-400">Sabtu, Minggu & Hari Libur</p>
+                            @error('price_weekend')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Description -->
-                <div class="md:col-span-2">
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
-                    <textarea name="description" id="description" rows="3" 
-                              class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                              placeholder="Deskripsi tiket (opsional)">{{ old('description') }}</textarea>
-                    @error('description')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <!-- Section: Pengaturan -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center">
+                            <i class="fa-solid fa-gear"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Pengaturan</h3>
+                            <p class="text-xs text-gray-500">Kuota, masa berlaku, dan status</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="quota" class="block text-sm font-semibold text-gray-700 mb-2">Kuota per Hari</label>
+                            <input type="number" name="quota" id="quota" value="{{ old('quota') }}" min="1"
+                                   placeholder="Unlimited"
+                                   class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                            <p class="mt-1 text-xs text-gray-400">Kosongkan jika tidak ada batasan</p>
+                            @error('quota')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="valid_days" class="block text-sm font-semibold text-gray-700 mb-2">Masa Berlaku (Hari) *</label>
+                            <input type="number" name="valid_days" id="valid_days" value="{{ old('valid_days', 1) }}" required min="1"
+                                   class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                            <p class="mt-1 text-xs text-gray-400">Sejak tanggal kunjungan</p>
+                            @error('valid_days')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="flex items-center">
+                            <label class="flex items-center gap-3 cursor-pointer p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors w-full">
+                                <input type="checkbox" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}
+                                       class="w-5 h-5 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-700">Aktifkan Tiket</span>
+                                    <p class="text-xs text-gray-400">Tampilkan di halaman publik</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Price Weekday -->
-                <div>
-                    <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Harga Weekday (Rp) *</label>
-                    <input type="number" name="price" id="price" value="{{ old('price') }}" required min="0" step="1000"
-                           placeholder="50000"
-                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                    @error('price')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <!-- Section: Syarat & Ketentuan -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Syarat & Ketentuan</h3>
+                            <p class="text-xs text-gray-500">Aturan penggunaan tiket</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <textarea name="terms_conditions" id="terms_conditions" rows="4" 
+                                  class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                                  placeholder="Masukkan syarat dan ketentuan penggunaan tiket">{{ old('terms_conditions') }}</textarea>
+                        @error('terms_conditions')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
-                <!-- Price Weekend -->
-                <div>
-                    <label for="price_weekend" class="block text-sm font-medium text-gray-700 mb-2">Harga Weekend (Rp)</label>
-                    <input type="number" name="price_weekend" id="price_weekend" value="{{ old('price_weekend') }}" min="0" step="1000"
-                           placeholder="Kosongkan jika sama dengan weekday"
-                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                    <p class="mt-1 text-xs text-gray-500">Harga khusus Sabtu, Minggu & Hari Libur</p>
-                    @error('price_weekend')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <!-- Submit Buttons -->
+                <div class="flex justify-end gap-3">
+                    <a href="{{ route('admin.tickets.index') }}" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
+                        Batal
+                    </a>
+                    <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-sm">
+                        <i class="fa-solid fa-save mr-2"></i>Simpan Tiket
+                    </button>
                 </div>
-
-                <!-- Quota -->
-                <div>
-                    <label for="quota" class="block text-sm font-medium text-gray-700 mb-2">Kuota per Hari</label>
-                    <input type="number" name="quota" id="quota" value="{{ old('quota') }}" min="1"
-                           placeholder="Kosongkan untuk unlimited"
-                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                    <p class="mt-1 text-xs text-gray-500">Kosongkan jika tidak ada batasan kuota</p>
-                    @error('quota')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Valid Days -->
-                <div>
-                    <label for="valid_days" class="block text-sm font-medium text-gray-700 mb-2">Masa Berlaku (Hari) *</label>
-                    <input type="number" name="valid_days" id="valid_days" value="{{ old('valid_days', 1) }}" required min="1"
-                           class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                    <p class="mt-1 text-xs text-gray-500">Berapa hari tiket ini berlaku sejak tanggal kunjungan</p>
-                    @error('valid_days')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Active Status -->
-                <div>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}
-                               class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                        <span class="ml-2 text-sm text-gray-700">Aktifkan Tiket</span>
-                    </label>
-                    <p class="mt-1 text-xs text-gray-500">Tiket yang tidak aktif tidak akan ditampilkan di halaman publik</p>
-                </div>
-
-                <!-- Terms & Conditions -->
-                <div class="md:col-span-2">
-                    <label for="terms_conditions" class="block text-sm font-medium text-gray-700 mb-2">Syarat & Ketentuan</label>
-                    <textarea name="terms_conditions" id="terms_conditions" rows="4" 
-                              class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                              placeholder="Masukkan syarat dan ketentuan penggunaan tiket">{{ old('terms_conditions') }}</textarea>
-                    @error('terms_conditions')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-
-            <div class="mt-6 flex justify-end gap-3">
-                <a href="{{ route('admin.tickets.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg">
-                    Batal
-                </a>
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg">
-                    <i class="fas fa-save mr-2"></i>Simpan Tiket
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
-@endsection
+
+    <script>
+        function updatePlaceImage(select) {
+            const option = select.options[select.selectedIndex];
+            const imageUrl = option.getAttribute('data-image');
+            const placeName = option.text.trim();
+            const previewContainer = document.getElementById('place_image_preview');
+            const previewImg = document.getElementById('preview_img');
+            const previewName = document.getElementById('preview_name');
+            
+            if (imageUrl) {
+                previewImg.src = imageUrl;
+                previewName.textContent = placeName;
+                previewContainer.classList.remove('hidden');
+            } else {
+                previewContainer.classList.add('hidden');
+                previewImg.src = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.getElementById('place_id');
+            if (select.value) updatePlaceImage(select);
+        });
+    </script>
+</x-app-layout>
