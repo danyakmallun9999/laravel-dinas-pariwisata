@@ -126,8 +126,9 @@
             </a>
 
             <!-- E-Tiket Dropdown -->
-            <div x-data="{ ticketOpen: {{ request()->routeIs('admin.tickets.*') ? 'true' : 'false' }} }">
-                <button @click="ticketOpen = !ticketOpen" @click.away="!sidebarMinimized && (ticketOpen = false)"
+            <!-- E-Tiket Dropdown -->
+            <div x-data="{ ticketOpen: {{ request()->routeIs('admin.tickets.*') ? 'true' : 'false' }} }" class="relative">
+                <button @click="ticketOpen = !ticketOpen"
                     class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.tickets.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
                     :class="sidebarMinimized ? 'justify-center' : 'justify-between'">
                     
@@ -149,24 +150,24 @@
 
                 <!-- Dropdown Content -->
                 <div x-show="ticketOpen && !sidebarMinimized" 
-                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0 -translate-y-2"
                      x-transition:enter-end="opacity-100 translate-y-0"
-                     class="pl-11 pr-3 py-2 space-y-1">
+                     class="pl-4 pr-3 py-2 space-y-1 relative ml-2.5 border-l-2 border-gray-100">
                     
                     <a href="{{ route('admin.tickets.dashboard') }}" 
-                       class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('admin.tickets.dashboard') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                       Dashboard
+                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.dashboard') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       <span class="{{ request()->routeIs('admin.tickets.dashboard') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Dashboard</span>
                     </a>
                     
                     <a href="{{ route('admin.tickets.index') }}" 
-                       class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('admin.tickets.index') || request()->routeIs('admin.tickets.create') || request()->routeIs('admin.tickets.edit') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                       Kelola Tiket
+                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.index') || request()->routeIs('admin.tickets.create') || request()->routeIs('admin.tickets.edit') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       <span class="{{ request()->routeIs('admin.tickets.index') || request()->routeIs('admin.tickets.create') || request()->routeIs('admin.tickets.edit') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Kelola Tiket</span>
                     </a>
 
                     <a href="{{ route('admin.tickets.orders') }}" 
-                       class="block px-3 py-2 rounded-lg text-sm {{ request()->routeIs('admin.tickets.orders') ? 'text-blue-600 bg-blue-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                       Pesanan Masuk
+                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.orders') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       <span class="{{ request()->routeIs('admin.tickets.orders') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Pesanan Masuk</span>
                     </a>
                 </div>
             </div>
