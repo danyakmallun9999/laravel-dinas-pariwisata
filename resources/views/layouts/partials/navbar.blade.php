@@ -34,7 +34,7 @@
                         ['label' => __('Nav.Home'), 'route' => 'welcome', 'active' => 'welcome'],
                         ['label' => __('Nav.Map'), 'route' => 'explore.map', 'active' => 'explore.map'],
                         ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => 'places.*'],
-                        ['label' => 'E-Tiket', 'route' => 'tickets.index', 'active' => 'tickets.*'],
+                        ['label' => __('Nav.Tickets'), 'route' => 'tickets.index', 'active' => 'tickets.*'],
                         ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => 'events.public.*'],
                         ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => 'posts.*']
                     ] as $link)
@@ -97,7 +97,7 @@
                         x-cloak>
                         
                         <div class="px-4 py-3 text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider bg-blue-50/50 dark:bg-blue-900/20 border-b border-blue-50 dark:border-blue-900/30">
-                            Hasil Pencarian
+                            {{ __('Nav.SearchResults') }}
                         </div>
                         
                         <template x-for="(result, index) in searchResults" :key="index">
@@ -109,7 +109,7 @@
                                 <div class="min-w-0 flex-1">
                                     <p class="font-bold text-slate-800 dark:text-slate-100 text-sm truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" x-text="result.name"></p>
                                     <div class="flex items-center gap-2 mt-0.5">
-                                        <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400" x-text="result.type || 'Destinasi'"></span>
+                                        <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400" x-text="result.type || '{{ __('Nav.DefaultType') }}'"></span>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 truncate" x-text="result.address || result.description || ''"></p>
                                     </div>
                                 </div>
@@ -163,7 +163,7 @@
                         ['label' => __('Nav.Home'), 'route' => 'welcome', 'active' => 'welcome'],
                         ['label' => __('Nav.Map'), 'route' => 'explore.map', 'active' => 'explore.map'],
                         ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => 'places.*'],
-                        ['label' => 'E-Tiket', 'route' => 'tickets.index', 'active' => 'tickets.*'],
+                        ['label' => __('Nav.Tickets'), 'route' => 'tickets.index', 'active' => 'tickets.*'],
                         ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => 'events.public.*'],
                         ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => 'posts.*']
                     ] as $index => $link)
@@ -179,7 +179,7 @@
                 </nav>
 
                 <div class="mt-8">
-                     <p class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Pengaturan Bahasa</p>
+                     <p class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">{{ __('Nav.LanguageSettings') }}</p>
                      <div class="flex gap-4">
                         <a href="{{ route('lang.switch', 'id') }}" class="flex-1 py-3 rounded-xl border text-center font-bold transition-colors {{ app()->getLocale() == 'id' ? 'border-primary text-primary bg-primary/5' : 'border-slate-200 dark:border-slate-700 text-slate-500' }}">Bahasa Indonesia</a>
                         <a href="{{ route('lang.switch', 'en') }}" class="flex-1 py-3 rounded-xl border text-center font-bold transition-colors {{ app()->getLocale() == 'en' ? 'border-primary text-primary bg-primary/5' : 'border-slate-200 dark:border-slate-700 text-slate-500' }}">English</a>

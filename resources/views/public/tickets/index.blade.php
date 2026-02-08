@@ -3,9 +3,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
             <nav class="flex text-xs md:text-sm text-gray-400 mb-6 space-x-2">
-                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Beranda</a>
+                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.Home') }}</a>
                 <span>/</span>
-                <span class="text-gray-800 dark:text-gray-200 font-medium">E-Tiket</span>
+                <span class="text-gray-800 dark:text-gray-200 font-medium">{{ __('Tickets.Breadcrumb.Index') }}</span>
             </nav>
 
             @php
@@ -75,15 +75,15 @@
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
                             <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                                E-Tiket Wisata <span class="text-primary">Jepara</span>
+                                {{ __('Tickets.Title') }} <span class="text-primary">{{ __('Tickets.TitleHighlight') }}</span>
                             </h1>
                             <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl">
-                                Pesan tiket wisata secara online dengan mudah, cepat, dan aman
+                                {{ __('Tickets.Subtitle') }}
                             </p>
                         </div>
                         <a href="{{ route('tickets.my') }}" class="inline-flex items-center gap-2 px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-700 dark:text-slate-300 font-semibold text-sm hover:border-primary hover:text-primary transition-all shadow-sm">
                             <i class="fa-solid fa-ticket"></i>
-                            <span>Tiket Saya</span>
+                            <span>{{ __('Tickets.MyTicketsButton') }}</span>
                         </a>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                         <input 
                             x-model="search"
                             type="text" 
-                            placeholder="Cari tiket atau destinasi..." 
+                            placeholder="{{ __('Tickets.SearchPlaceholder') }}" 
                             class="w-full pl-12 pr-4 py-3.5 rounded-2xl border-none bg-slate-50 dark:bg-black/20 focus:bg-white dark:focus:bg-black/40 ring-1 ring-slate-200 dark:ring-white/10 focus:ring-2 focus:ring-primary text-slate-700 dark:text-white font-medium transition-all placeholder:text-slate-400"
                         >
                     </div>
@@ -108,7 +108,7 @@
                         x-show="search"
                         x-transition
                     >
-                        <i class="fa-solid fa-times mr-2"></i>Reset
+                        <i class="fa-solid fa-times mr-2"></i>{{ __('Tickets.ResetButton') }}
                     </button>
                 </div>
 
@@ -145,7 +145,7 @@
                                 <!-- Valid Days Badge -->
                                 <div class="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur text-xs font-bold text-slate-700 dark:text-white shadow-sm border border-white/20">
                                     <i class="fa-solid fa-calendar-check mr-1 text-primary"></i>
-                                    <span x-text="ticket.valid_days + ' hari'"></span>
+                                    <span x-text="ticket.valid_days + ' {{ __('Tickets.Card.Day') }}'"></span>
                                 </div>
                             </div>
 
@@ -167,18 +167,18 @@
                                     <template x-if="ticket.quota">
                                         <div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                                             <i class="fa-solid fa-users"></i>
-                                            <span x-text="'Kuota: ' + ticket.quota + '/hari'"></span>
+                                            <span x-text="'{{ __('Tickets.Card.Quota') }}: ' + ticket.quota + '/{{ __('Tickets.Card.Day') }}'"></span>
                                         </div>
                                     </template>
                                     <template x-if="!ticket.quota">
                                         <div class="flex items-center gap-1.5 text-green-600">
                                             <i class="fa-solid fa-infinity"></i>
-                                            <span>Unlimited</span>
+                                            <span>{{ __('Tickets.Card.Unlimited') }}</span>
                                         </div>
                                     </template>
                                     
                                     <div class="flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                                        <span>Pesan</span>
+                                        <span>{{ __('Tickets.Card.Book') }}</span>
                                         <i class="fa-solid fa-arrow-right"></i>
                                     </div>
                                 </div>
@@ -191,9 +191,9 @@
                         <div class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
                             <i class="fa-solid fa-ticket text-4xl"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">Tidak Ada Tiket Ditemukan</h3>
-                        <p class="text-slate-500">Coba ubah kata kunci pencarian Anda</p>
-                        <button @click="search = ''" class="mt-4 text-primary font-bold hover:underline">Reset Pencarian</button>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">{{ __('Tickets.NoTicketsFound') }}</h3>
+                        <p class="text-slate-500">{{ __('Tickets.NoTicketsSubtitle') }}</p>
+                        <button @click="search = ''" class="mt-4 text-primary font-bold hover:underline">{{ __('Tickets.ResetSearchButton') }}</button>
                     </div>
                 </div>
 

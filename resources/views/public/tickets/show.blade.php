@@ -3,9 +3,9 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
             <nav class="flex text-xs md:text-sm text-gray-400 mb-6 space-x-2">
-                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Beranda</a>
+                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.Home') }}</a>
                 <span>/</span>
-                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">E-Tiket</a>
+                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.Index') }}</a>
                 <span>/</span>
                 <span class="text-gray-800 dark:text-gray-200 font-medium">{{ $ticket->name }}</span>
             </nav>
@@ -42,7 +42,7 @@
                                         </span>
                                         @if($ticket->price_weekend)
                                             <span class="px-3 py-1 rounded-lg bg-rose-500 text-white text-xs font-bold shadow-lg">
-                                                Weekend: Rp {{ number_format($ticket->price_weekend, 0, ',', '.') }}
+                                                {{ __('Tickets.Show.WeekendPrice') }}: Rp {{ number_format($ticket->price_weekend, 0, ',', '.') }}
                                             </span>
                                         @endif
                                     </div>
@@ -51,7 +51,7 @@
                                 <!-- Valid Days Badge -->
                                 <div class="absolute top-6 right-6 px-4 py-2 rounded-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur text-sm font-bold text-slate-700 dark:text-white shadow-lg border border-white/20">
                                     <i class="fa-solid fa-calendar-check mr-2 text-primary"></i>
-                                    Berlaku {{ $ticket->valid_days }} hari
+                                    {{ __('Tickets.Show.ValidDays', ['days' => $ticket->valid_days]) }}
                                 </div>
                             </div>
                         @else
@@ -78,25 +78,25 @@
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                                 <div class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-4 text-center">
                                     <i class="fa-solid fa-money-bill-wave text-2xl text-primary mb-2"></i>
-                                    <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Harga</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{{ __('Tickets.Show.Info.Price') }}</div>
                                     <div class="font-bold text-slate-900 dark:text-white">Rp {{ number_format($ticket->price, 0, ',', '.') }}</div>
                                 </div>
                                 <div class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-4 text-center">
                                     <i class="fa-solid fa-calendar-days text-2xl text-primary mb-2"></i>
-                                    <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Masa Berlaku</div>
-                                    <div class="font-bold text-slate-900 dark:text-white">{{ $ticket->valid_days }} Hari</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{{ __('Tickets.Show.Info.ValidPeriod') }}</div>
+                                    <div class="font-bold text-slate-900 dark:text-white">{{ $ticket->valid_days }} {{ __('Tickets.Card.Day') }}</div>
                                 </div>
                                 @if($ticket->quota)
                                     <div class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-4 text-center">
                                         <i class="fa-solid fa-users text-2xl text-primary mb-2"></i>
-                                        <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kuota</div>
-                                        <div class="font-bold text-slate-900 dark:text-white">{{ number_format($ticket->quota) }}/hari</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{{ __('Tickets.Show.Info.Quota') }}</div>
+                                        <div class="font-bold text-slate-900 dark:text-white">{{ number_format($ticket->quota) }}/{{ __('Tickets.Card.Day') }}</div>
                                     </div>
                                 @else
                                     <div class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-4 text-center">
                                         <i class="fa-solid fa-infinity text-2xl text-green-500 mb-2"></i>
-                                        <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kuota</div>
-                                        <div class="font-bold text-green-600">Unlimited</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">{{ __('Tickets.Show.Info.Quota') }}</div>
+                                        <div class="font-bold text-green-600">{{ __('Tickets.Card.Unlimited') }}</div>
                                     </div>
                                 @endif
                             </div>
@@ -106,7 +106,7 @@
                                 <div class="border-t border-slate-100 dark:border-slate-700 pt-6">
                                     <h4 class="font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                                         <i class="fa-solid fa-file-contract text-primary"></i>
-                                        Syarat & Ketentuan
+                                        {{ __('Tickets.Show.Terms') }}
                                     </h4>
                                     <div class="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-line bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4">{{ $ticket->terms_conditions }}</div>
                                 </div>
@@ -120,7 +120,7 @@
                     <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 md:p-8 sticky top-28">
                         <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                             <i class="fa-solid fa-clipboard-list text-primary"></i>
-                            Form Pemesanan
+                            {{ __('Tickets.Form.Title') }}
                         </h2>
 
                         @if($errors->any())
@@ -183,39 +183,38 @@
                                 <!-- Customer Name -->
                                 <div>
                                     <label for="customer_name" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        <i class="fa-solid fa-user mr-1 text-primary"></i> Nama Lengkap
+                                        <i class="fa-solid fa-user mr-1 text-primary"></i> {{ __('Tickets.Form.Name') }}
                                     </label>
                                     <input type="text" name="customer_name" id="customer_name" value="{{ old('customer_name') }}" required
                                            class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all placeholder:text-slate-400"
-                                           placeholder="Masukkan nama lengkap">
+                                           placeholder="{{ __('Tickets.Form.NamePlaceholder') }}">
                                 </div>
 
                                 <!-- Email -->
                                 <div>
                                     <label for="customer_email" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        <i class="fa-solid fa-envelope mr-1 text-primary"></i> Email
+                                        <i class="fa-solid fa-envelope mr-1 text-primary"></i> {{ __('Tickets.Form.Email') }}
                                     </label>
                                     <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email') }}" required
                                            class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all placeholder:text-slate-400"
-                                           placeholder="email@example.com">
-                                    <p class="text-xs text-slate-500 mt-1.5"><i class="fa-solid fa-info-circle mr-1"></i>Tiket akan dikirim ke email ini</p>
+                                           placeholder="{{ __('Tickets.Form.EmailPlaceholder') }}">
+                                    <p class="text-xs text-slate-500 mt-1.5"><i class="fa-solid fa-info-circle mr-1"></i>{{ __('Tickets.Form.EmailInfo') }}</p>
                                 </div>
 
                                 <!-- Phone -->
                                 <div>
                                     <label for="customer_phone" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        <i class="fa-solid fa-phone mr-1 text-primary"></i> No. Telepon
+                                        <i class="fa-solid fa-phone mr-1 text-primary"></i> {{ __('Tickets.Form.Phone') }}
                                     </label>
                                     <input type="tel" name="customer_phone" id="customer_phone" value="{{ old('customer_phone') }}" required
                                            class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all placeholder:text-slate-400"
-                                           placeholder="08xxxxxxxxxx">
+                                           placeholder="{{ __('Tickets.Form.PhonePlaceholder') }}">
                                 </div>
 
                                 <!-- Visit Date (Custom Dropdown) -->
-                                <!-- Visit Date (Custom Dropdown) -->
                                 <div class="relative">
                                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        <i class="fa-solid fa-calendar mr-1 text-primary"></i> Tanggal Kunjungan
+                                        <i class="fa-solid fa-calendar mr-1 text-primary"></i> {{ __('Tickets.Form.Date') }}
                                     </label>
                                     <input type="hidden" name="visit_date" :value="selectedDate" required>
                                     
@@ -225,7 +224,7 @@
                                         @click.outside="open = false"
                                         class="w-full px-4 py-3 text-left rounded-xl bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all flex items-center justify-between"
                                     >
-                                        <span x-text="selectedLabel || 'Pilih tanggal kunjungan'" :class="selectedLabel ? '' : 'text-slate-400'"></span>
+                                        <span x-text="selectedLabel || '{{ __('Tickets.Form.SelectDate') }}'" :class="selectedLabel ? '' : 'text-slate-400'"></span>
                                         <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
                                     </button>
 
@@ -262,7 +261,7 @@
                                 <!-- Quantity -->
                                 <div>
                                     <label for="quantity" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        <i class="fa-solid fa-hashtag mr-1 text-primary"></i> Jumlah Tiket
+                                        <i class="fa-solid fa-hashtag mr-1 text-primary"></i> {{ __('Tickets.Form.Quantity') }}
                                     </label>
                                     <input type="number" name="quantity" id="quantity" x-model="quantity" required
                                            min="1" max="10"
@@ -272,17 +271,17 @@
                                 <!-- Notes -->
                                 <div>
                                     <label for="notes" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        <i class="fa-solid fa-sticky-note mr-1 text-primary"></i> Catatan <span class="text-slate-400 font-normal">(Opsional)</span>
+                                        <i class="fa-solid fa-sticky-note mr-1 text-primary"></i> {{ __('Tickets.Form.Notes') }} <span class="text-slate-400 font-normal">{{ __('Tickets.Form.NotesOptional') }}</span>
                                     </label>
                                     <textarea name="notes" id="notes" rows="3"
                                               class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all placeholder:text-slate-400 resize-none"
-                                              placeholder="Catatan tambahan...">{{ old('notes') }}</textarea>
+                                              placeholder="{{ __('Tickets.Form.NotesPlaceholder') }}">{{ old('notes') }}</textarea>
                                 </div>
 
                                 <!-- Total Price -->
                                 <div class="bg-gradient-to-r from-primary/10 to-indigo-500/10 rounded-2xl p-5 border border-primary/20">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Total Pembayaran</span>
+                                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">{{ __('Tickets.Form.TotalPayment') }}</span>
                                         <span class="text-lg font-bold text-primary" x-text="'Rp ' + (currentPrice * quantity).toLocaleString('id-ID')">
                                             Rp {{ number_format($ticket->price, 0, ',', '.') }}
                                         </span>
@@ -292,7 +291,7 @@
                                 <!-- Submit Button -->
                                 <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 flex items-center justify-center gap-2">
                                     <i class="fa-solid fa-check-circle"></i>
-                                    Pesan Tiket Sekarang
+                                    {{ __('Tickets.Form.SubmitButton') }}
                                 </button>
                             </div>
                         </form>

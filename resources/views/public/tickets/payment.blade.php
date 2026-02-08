@@ -1,13 +1,13 @@
 <x-public-layout :hideFooter="true">
     <div class="bg-gray-50 dark:bg-background-dark min-h-screen -mt-20 pt-32 pb-24">
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
             <nav class="flex text-xs md:text-sm text-gray-400 mb-6 space-x-2">
-                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Beranda</a>
+                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.Home') }}</a>
                 <span>/</span>
-                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">E-Tiket</a>
+                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.Index') }}</a>
                 <span>/</span>
-                <span class="text-gray-800 dark:text-gray-200 font-medium">Pembayaran</span>
+                <span class="text-gray-800 dark:text-gray-200 font-medium">{{ __('Tickets.Breadcrumb.Payment') }}</span>
             </nav>
 
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 md:p-8">
@@ -16,66 +16,58 @@
                     <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <i class="fa-solid fa-credit-card text-primary text-2xl"></i>
                     </div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">Pembayaran Tiket</h1>
-                    <p class="text-slate-500 dark:text-slate-400">Silakan lanjutkan pembayaran untuk menyelesaikan pesanan</p>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">{{ __('Tickets.Payment.Title') }}</h1>
+                    <p class="text-slate-500 dark:text-slate-400">{{ __('Tickets.Payment.Subtitle') }}</p>
                 </div>
 
                 <!-- Order Summary -->
-                <div class="bg-slate-50 dark:bg-slate-700/30 rounded-2xl p-4 md:p-5 mb-6">
-                    <h3 class="font-bold text-sm md:text-base text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-receipt text-primary"></i> Ringkasan Pesanan
+                <div class="bg-slate-50 dark:bg-slate-700/30 rounded-2xl p-6 mb-8">
+                    <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-primary"></i>
+                        {{ __('Tickets.Payment.SummaryTitle') }}
                     </h3>
                     
-                    <div class="space-y-2.5 md:space-y-3 text-sm">
-                        <div class="flex justify-between items-center gap-4">
-                            <span class="text-slate-500 dark:text-slate-400 shrink-0">No. Pesanan</span>
-                            <span class="font-bold text-slate-900 dark:text-white text-right truncate text-xs">{{ $order->order_number }}</span>
-                        </div>
-                        <div class="flex justify-between items-start gap-4">
-                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Tiket</span>
-                            <span class="font-semibold text-slate-900 dark:text-white text-right">{{ $order->ticket->name }}</span>
-                        </div>
-                        <div class="flex justify-between items-start gap-4">
-                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Destinasi</span>
-                            <span class="font-semibold text-slate-900 dark:text-white text-right">{{ $order->ticket->place->name }}</span>
-                        </div>
-                        <div class="flex justify-between items-start gap-4">
-                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Tanggal</span>
-                            <span class="font-semibold text-slate-900 dark:text-white text-right">{{ $order->visit_date->translatedFormat('d M Y') }}</span>
-                        </div>
-                        <div class="flex justify-between items-start gap-4">
-                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Jumlah</span>
-                            <span class="font-semibold text-slate-900 dark:text-white text-right">{{ $order->quantity }} tiket</span>
-                        </div>
-                        
-                        <div class="border-t border-slate-200 dark:border-slate-600 pt-3 mt-3">
-                            <div class="flex justify-between items-center gap-4">
-                                <span class="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300">Total</span>
-                                <span class="text-lg md:text-xl font-bold text-primary">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-start pb-4 border-b border-slate-200 dark:border-slate-600">
+                            <div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">{{ __('Tickets.Payment.OrderNumber') }}</p>
+                                <p class="font-bold text-slate-900 dark:text-white font-mono">{{ $order->order_number }}</p>
                             </div>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">{{ __('Tickets.Payment.Date') }}</p>
+                                <p class="font-bold text-slate-900 dark:text-white">{{ $order->visit_date->translatedFormat('d F Y') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">{{ __('Tickets.Payment.Ticket') }}</p>
+                                <p class="font-semibold text-slate-900 dark:text-white">{{ $order->ticket->name }}</p>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">{{ $order->ticket->place->name }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">{{ __('Tickets.Payment.Quantity') }}</p>
+                                <p class="font-bold text-slate-900 dark:text-white">{{ $order->quantity }} x Rp {{ number_format($order->total_price / $order->quantity, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-200 dark:border-slate-600 flex justify-between items-center">
+                            <span class="font-bold text-slate-900 dark:text-white">{{ __('Tickets.Payment.Total') }}</span>
+                            <span class="text-xl font-bold text-primary">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Payment Button -->
-                <div class="space-y-3">
-                    <button id="pay-button" 
-                            class="block w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-credit-card"></i>Bayar Sekarang
-                    </button>
-                    
-                    <a href="{{ route('tickets.my') }}" 
-                       class="block w-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-3 rounded-2xl transition-all duration-300 text-center">
-                        Bayar Nanti
-                    </a>
-                </div>
+                <button id="pay-button" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center gap-2 group">
+                    <span>{{ __('Tickets.Payment.PayNowButton') }}</span>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
 
-                <!-- Customer Info -->
-                <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
-                    <p class="text-sm text-slate-600 dark:text-slate-400 text-center">
-                        <i class="fa-solid fa-envelope mr-1 text-primary"></i>
-                        Invoice pembayaran juga telah dikirim ke email <strong class="text-slate-700 dark:text-slate-300">{{ $order->customer_email }}</strong>
-                    </p>
+                <div class="mt-4 text-center">
+                    <a href="{{ route('tickets.my') }}" class="text-slate-500 hover:text-primary text-sm font-medium transition-colors">
+                        {{ __('Tickets.Payment.PayLaterButton') }}
+                    </a>
                 </div>
             </div>
         </div>

@@ -20,3 +20,6 @@ wisatajepara
 # 6. Pengembangan lebih lanjut fitur e-ticketing
 # 7. Optimalisasi ukuran file gambar
 # 8. Update README.md
+
+
+dari hasil analisa, dalam sistem yang telah dibuat.. fitur bahasa inggris-indonesia masih dilakukan secara manual, bagaimana cara mengoptimalkannya? apakah ada library yang bisa membantu? sebagai contoh isi konten artikel yang dimana datanya dinamis bisa ditambahkan kapan saja dan pastinya dalam basaha indonesia oleh admin, bagaimana caranya bisa menerapkan fitur bahasa inggris-indonesia pada konten dinamis tersebut?
