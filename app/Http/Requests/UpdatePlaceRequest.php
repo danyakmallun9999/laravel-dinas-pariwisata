@@ -31,7 +31,6 @@ class UpdatePlaceRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
             'geometry' => ['nullable', 'string'],
-            'ticket_price' => ['nullable', 'string', 'max:255'],
             'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
             'opening_hours' => ['nullable', 'string', 'max:255'],
             'contact_info' => ['nullable', 'string', 'max:255'],

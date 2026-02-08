@@ -37,7 +37,7 @@ class Place extends Model
         'image_path',
         'latitude',
         'longitude',
-        'ticket_price',
+        'longitude',
         'opening_hours',
         'contact_info',
         'rating',

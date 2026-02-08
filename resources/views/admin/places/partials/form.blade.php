@@ -67,13 +67,8 @@
                 <x-input-error :messages="$errors->get('description')" class="mt-2" />
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Harga Tiket</label>
-                    <input type="text" name="ticket_price" value="{{ old('ticket_price', $place->ticket_price) }}"
-                        class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder="Contoh: Rp 15.000 / Gratis">
-                </div>
+            <div class="grid grid-cols-1 gap-4">
+                {{-- Ticket Price moved to E-Tickets --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Rating (0-5)</label>
                     <input type="number" step="0.1" min="0" max="5" name="rating" value="{{ old('rating', $place->rating) }}"

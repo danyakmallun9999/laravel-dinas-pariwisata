@@ -107,7 +107,7 @@ class PariwisataSeeder extends Seeder
                 $imagePath = $imageMapping[$item['nama_wisata']] ?? null;
 
                 // 4. Create or Update Place
-                Place::updateOrCreate(
+                $place = Place::updateOrCreate(
                     ['name' => $item['nama_wisata']], 
                     [
                         'category_id' => $category->id,
@@ -115,7 +115,6 @@ class PariwisataSeeder extends Seeder
                         'image_path' => $imagePath,
                         'description' => $item['deskripsi'] ?? null,
                         'address' => $item['lokasi'] ?? null,
-                        'ticket_price' => ($item['harga_tiket'] !== '-' ? $item['harga_tiket'] : null),
                         'opening_hours' => ($item['waktu_buka'] !== '-' ? $item['waktu_buka'] : null),
                         'latitude' => $lat, 
                         'longitude' => $lng,
@@ -129,6 +128,51 @@ class PariwisataSeeder extends Seeder
                         'contact_info' => null,
                     ]
                 );
+
+                // 5. Create Tickets if price info exists
+                if ($item['harga_tiket'] !== '-' && !empty($item['harga_tiket'])) {
+                    // Try to parse price, e.g. "Rp 5000" or "5000" or multiple lines
+                    // Simple heuristic: just create one generic ticket for now or split by newlines if sophisticated
+                    // The user prompt implies we should migrate this data.
+                    
+                    // Cleanup existing tickets for this place to avoid duplicates on re-seed
+                    $place->tickets()->delete();
+
+                    $prices = explode("\n", $item['harga_tiket']);
+                    foreach($prices as $priceStr) {
+                        $priceStr = trim($priceStr);
+                        if (empty($priceStr)) continue;
+
+                        // Extract number from string
+                        $priceValue = preg_replace('/[^0-9]/', '', $priceStr);
+                        $priceValue = (float) $priceValue;
+                        
+                        // Determine name (e.g. assume "Tiket Masuk" unless specifically named in string)
+                        $ticketName = "Tiket Masuk";
+                        if (stripos($priceStr, 'Anak') !== false) {
+                            $ticketName = "Tiket Anak";
+                        } elseif (stripos($priceStr, 'Dewasa') !== false) {
+                            $ticketName = "Tiket Dewasa";
+                        } elseif (stripos($priceStr, 'WNA') !== false) {
+                            $ticketName = "Tiket WNA";
+                        } elseif (stripos($priceStr, 'Weekend') !== false) {
+                            $ticketName = "Tiket Weekend";
+                        }
+
+                        // If price is 0, maybe don't create ticket or create free ticket?
+                        // Let's create it as 0
+                        
+                        \App\Models\Ticket::create([
+                            'place_id' => $place->id,
+                            'name' => $ticketName,
+                            'description' => $priceStr, // Keep original string as description
+                            'price' => $priceValue,
+                            'quota' => null, // Unlimited
+                            'valid_days' => 1,
+                            'is_active' => true,
+                        ]);
+                    }
+                }
 
                 $count++;
             } catch (\Throwable $e) {

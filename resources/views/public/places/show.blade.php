@@ -202,21 +202,6 @@
                                                     </div>
                                                 @endforeach
                                             </div>
-                                        @elseif($place->ticket_price)
-                                            <div class="bg-white dark:bg-slate-800/80 rounded-xl p-4 border border-slate-200/80 dark:border-slate-700/50">
-                                                <div class="flex flex-col gap-2">
-                                                    @foreach(explode("\n", $place->ticket_price) as $price)
-                                                        @if(trim($price))
-                                                            <div class="flex items-center gap-3 py-2 border-b border-dashed border-slate-100 dark:border-slate-700 last:border-0">
-                                                                <span class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                                                    <span class="material-symbols-outlined text-primary text-xs">sell</span>
-                                                                </span>
-                                                                <span class="text-sm text-slate-700 dark:text-slate-200 font-medium">{{ trim($price) }}</span>
-                                                            </div>
-                                                        @endif
-                                                    @endforeach
-                                                </div>
-                                            </div>
                                         @else
                                             <div class="bg-white dark:bg-slate-800/80 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700/50 text-center">
                                                 <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
