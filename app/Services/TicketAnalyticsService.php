@@ -17,7 +17,7 @@ class TicketAnalyticsService
         $today = Carbon::today();
 
         // Revenue today (paid orders only)
-        $revenue = TicketOrder::whereDate('paid_at', $today)
+        $revenue = TicketOrder::whereDate('payed_at', $today)
             ->where('status', 'paid')
             ->sum('total_price');
 
@@ -54,12 +54,12 @@ class TicketAnalyticsService
         $startDate = Carbon::today()->subDays($days - 1);
 
         $sales = TicketOrder::select(
-            DB::raw('DATE(paid_at) as date'),
+            DB::raw('DATE(payed_at) as date'),
             DB::raw('SUM(total_price) as total_revenue'),
             DB::raw('SUM(quantity) as total_tickets')
         )
             ->where('status', 'paid')
-            ->whereBetween('paid_at', [$startDate->startOfDay(), $endDate->endOfDay()])
+            ->whereBetween('payed_at', [$startDate->startOfDay(), $endDate->endOfDay()])
             ->groupBy('date')
             ->orderBy('date')
             ->get()
