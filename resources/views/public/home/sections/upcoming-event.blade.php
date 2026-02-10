@@ -1,7 +1,6 @@
 @if($upcomingEvent)
 <section class="relative w-full py-16 lg:py-24 overflow-hidden bg-white" id="upcoming-event"
     x-data="{
-    x-data="{
         getScrollAmount() {
             if (!$refs.container.firstElementChild) return 300;
             const itemWidth = $refs.container.firstElementChild.getBoundingClientRect().width;
@@ -182,10 +181,6 @@
                             <h4 class="font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors text-lg">
                                 {{ $event->title }}
                             </h4>
-                            <div class="flex items-center gap-2 text-slate-500 text-sm mb-3">
-                                <i class="fa-regular fa-clock text-primary/60"></i>
-                                <span>{{ \Carbon\Carbon::parse($event->start_date)->format('H:i') }} WIB</span>
-                            </div>
                             <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-50">
                                 <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Lokasi</span>
                                 <span class="text-xs font-bold text-slate-700 line-clamp-1 max-w-[60%] text-right">{{ $event->location }}</span>
