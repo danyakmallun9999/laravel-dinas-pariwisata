@@ -31,11 +31,12 @@ Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->n
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 Route::post('/auth/logout', [GoogleAuthController::class, 'logout'])->name('auth.user.logout');
 
-// E-Ticket routes (Public - no auth needed for browsing)
+// E-Ticket routes - listing (Public)
 Route::get('/e-tiket', [App\Http\Controllers\Public\TicketController::class, 'index'])->name('tickets.index');
-Route::get('/e-tiket/{ticket}', [App\Http\Controllers\Public\TicketController::class, 'show'])->name('tickets.show');
 
 // Protected E-Ticket routes - require Google authentication
+// IMPORTANT: These specific routes MUST be defined BEFORE the wildcard {ticket} route below,
+// otherwise /e-tiket/confirmation/xxx would be caught by /e-tiket/{ticket} and bypass auth.
 Route::middleware('auth.user')->group(function () {
     Route::post('/e-tiket/book', [App\Http\Controllers\Public\TicketController::class, 'book'])->name('tickets.book');
     Route::get('/e-tiket/confirmation/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'confirmation'])->name('tickets.confirmation');
@@ -46,6 +47,9 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/tiket-saya', [App\Http\Controllers\Public\TicketController::class, 'myTickets'])->name('tickets.my');
     Route::post('/tiket-saya/retrieve', [App\Http\Controllers\Public\TicketController::class, 'retrieveTickets'])->name('tickets.retrieve');
 });
+
+// E-Ticket detail (Public) - wildcard route MUST be last to avoid catching specific routes above
+Route::get('/e-tiket/{ticket}', [App\Http\Controllers\Public\TicketController::class, 'show'])->name('tickets.show');
 
 // Webhook route (no CSRF protection)
 Route::post('/webhooks/xendit', [App\Http\Controllers\WebhookController::class, 'handle'])->name('webhooks.xendit');
