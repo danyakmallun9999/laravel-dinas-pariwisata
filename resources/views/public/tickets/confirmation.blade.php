@@ -92,11 +92,8 @@
                         <i class="fa-solid fa-qrcode text-primary"></i> QR Code Tiket
                     </h3>
                     <div class="bg-white dark:bg-slate-800 inline-block p-4 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600">
-                        <div class="w-48 h-48 flex items-center justify-center">
-                            <div class="text-center">
-                                <i class="fa-solid fa-qrcode text-slate-400 text-6xl mb-2"></i>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">{{ $order->order_number }}</p>
-                            </div>
+        <div class="w-48 h-48 flex items-center justify-center bg-white p-2 rounded-xl">
+                            <div id="qrcode"></div>
                         </div>
                     </div>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mt-4">Tunjukkan QR code ini saat berkunjung</p>
@@ -144,4 +141,21 @@
             </div>
         </div>
     </div>
+    </div>
+
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new QRCode(document.getElementById("qrcode"), {
+                text: "{{ $order->order_number }}",
+                width: 170,
+                height: 170,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+    </script>
 </x-public-layout>
