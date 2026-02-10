@@ -9,8 +9,8 @@
             </nav>
 
             @php
-                $ticketsJSON = $tickets->map(function($ticket) {
-                    $imagePath = $ticket->place->image_path ?? '';
+                $placesJSON = $places->map(function($place) {
+                    $imagePath = $place->image_path ?? '';
                     $imageUrl = '';
                     if ($imagePath) {
                         if (str_starts_with($imagePath, 'http')) {
@@ -21,54 +21,51 @@
                             $imageUrl = asset('storage/' . $imagePath);
                         }
                     }
+                    
+                    // Categorize tickets
+                    $tickets = $place->tickets->filter(function($ticket) {
+                         return $ticket->is_active;
+                    })->map(function($ticket) {
+                         return [
+                             'id' => $ticket->id,
+                             'name' => $ticket->name,
+                             'type' => $ticket->type,
+                             'description' => $ticket->description,
+                             'price' => $ticket->price,
+                             'quota' => $ticket->quota,
+                             'valid_days' => $ticket->valid_days,
+                             'formatted_price' => number_format($ticket->price, 0, ',', '.'),
+                         ];
+                    })->values();
+
+                    $minPrice = $tickets->min('price');
+
                     return [
-                        'id' => $ticket->id,
-                        'name' => $ticket->name,
-                        'description' => $ticket->description,
-                        'price' => $ticket->price,
-                        'valid_days' => $ticket->valid_days,
-                        'quota' => $ticket->quota,
-                        'place_name' => $ticket->place->name,
-                        'place_slug' => $ticket->place->slug,
+                        'id' => $place->id,
+                        'name' => $place->name,
+                        'slug' => $place->slug, // Ensure slug is available
+                        'description' => $place->description, // Or truncated description
                         'image_url' => $imageUrl,
+                        'tickets' => $tickets,
+                        'min_price' => $minPrice,
+                        'formatted_min_price' => number_format($minPrice, 0, ',', '.'),
                     ];
                 });
             @endphp
 
             <div x-data="{
                 search: '',
-                currentPage: 1,
-                perPage: 9,
-                tickets: {{ Js::from($ticketsJSON) }},
-                get filteredTickets() {
-                    return this.tickets.filter(ticket => {
-                        const matchesSearch = this.search === '' || 
-                            ticket.name.toLowerCase().includes(this.search.toLowerCase()) ||
-                            ticket.place_name.toLowerCase().includes(this.search.toLowerCase());
-                        return matchesSearch;
+                places: {{ Js::from($placesJSON) }},
+                get filteredPlaces() {
+                    if (this.search === '') return this.places;
+                    return this.places.filter(place => {
+                        return place.name.toLowerCase().includes(this.search.toLowerCase());
                     });
-                },
-                get totalPages() {
-                    return Math.ceil(this.filteredTickets.length / this.perPage);
-                },
-                get paginatedTickets() {
-                    const start = (this.currentPage - 1) * this.perPage;
-                    return this.filteredTickets.slice(start, start + this.perPage);
-                },
-                get pages() {
-                    let pages = [];
-                    let start = Math.max(1, this.currentPage - 2);
-                    let end = Math.min(this.totalPages, start + 4);
-                    if (end - start < 4) start = Math.max(1, end - 4);
-                    for (let i = start; i <= end; i++) {
-                        if (i > 0) pages.push(i);
-                    }
-                    return pages;
                 },
                 formatPrice(price) {
                     return new Intl.NumberFormat('id-ID').format(price);
                 }
-            }" x-init="$watch('search', () => currentPage = 1)">
+            }">
 
                 <!-- Header -->
                 <div class="mb-10 border-b border-gray-100 dark:border-white/10 pb-8">
@@ -96,7 +93,7 @@
                         <input 
                             x-model="search"
                             type="text" 
-                            placeholder="{{ __('Tickets.SearchPlaceholder') }}" 
+                            placeholder="Cari destinasi wisata..."
                             class="w-full pl-12 pr-4 py-3.5 rounded-2xl border-none bg-slate-50 dark:bg-black/20 focus:bg-white dark:focus:bg-black/40 ring-1 ring-slate-200 dark:ring-white/10 focus:ring-2 focus:ring-primary text-slate-700 dark:text-white font-medium transition-all placeholder:text-slate-400"
                         >
                     </div>
@@ -112,84 +109,99 @@
                     </button>
                 </div>
 
-                <!-- Tickets Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[50vh]">
-                    <template x-for="ticket in paginatedTickets" :key="ticket.id">
-                        <a :href="`/e-tiket/${ticket.id}`" 
-                           class="group relative bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700 hover:-translate-y-2 flex flex-col h-full"
-                           x-transition:enter="transition ease-out duration-300"
-                           x-transition:enter-start="opacity-0 scale-95"
-                           x-transition:enter-end="opacity-100 scale-100">
+                <!-- Places Grid -->
+                <div class="grid grid-cols-1 gap-8 min-h-[50vh]">
+                    <template x-for="place in filteredPlaces" :key="place.id">
+                        <div x-data="{ expanded: false }" class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-100 dark:border-slate-700">
                             
-                            <!-- Image Section -->
-                            <div class="relative h-56 overflow-hidden">
-                                <template x-if="ticket.image_url">
-                                    <img :src="ticket.image_url" :alt="ticket.place_name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                                </template>
-                                <template x-if="!ticket.image_url">
-                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-indigo-500/20 text-primary">
-                                        <i class="fa-solid fa-ticket text-5xl"></i>
+                            <!-- Main Destination Card -->
+                            <div class="flex flex-col md:flex-row">
+                                <!-- Image -->
+                                <div class="w-full md:w-1/3 h-56 md:h-auto relative overflow-hidden group">
+                                     <template x-if="place.image_url">
+                                        <img :src="place.image_url" :alt="place.name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                    </template>
+                                    <template x-if="!place.image_url">
+                                        <div class="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-400">
+                                            <i class="fa-solid fa-image text-4xl"></i>
+                                        </div>
+                                    </template>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                </div>
+                                
+                                <!-- Content -->
+                                <div class="p-6 md:p-8 flex-1 flex flex-col justify-between relative">
+                                    <div>
+                                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+                                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors" x-text="place.name"></h3>
+                                            <div class="text-left sm:text-right shrink-0 bg-slate-50 dark:bg-slate-700/50 px-4 py-2 rounded-xl border border-slate-100 dark:border-slate-600">
+                                                <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5 uppercase tracking-wide">Mulai dari</div>
+                                                <div class="text-lg font-bold text-primary">Rp <span x-text="place.formatted_min_price"></span></div>
+                                            </div>
+                                        </div>
+                                        <p class="text-slate-600 dark:text-slate-300 mb-6 line-clamp-3 leading-relaxed" x-text="place.description"></p>
                                     </div>
-                                </template>
-                                
-                                <!-- Overlay Gradient -->
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent"></div>
-                                
-                                <!-- Price Badge -->
-                                <div class="absolute bottom-4 left-4 flex items-center gap-2">
-                                    <span class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-lg shadow-lg">
-                                        Rp <span x-text="formatPrice(ticket.price)"></span>
-                                    </span>
-                                </div>
-
-                                <!-- Valid Days Badge -->
-                                <div class="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur text-xs font-bold text-slate-700 dark:text-white shadow-sm border border-white/20">
-                                    <i class="fa-solid fa-calendar-check mr-1 text-primary"></i>
-                                    <span x-text="ticket.valid_days + ' {{ __('Tickets.Card.Day') }}'"></span>
-                                </div>
-                            </div>
-
-                            <!-- Content Section -->
-                            <div class="p-6 flex-1 flex flex-col">
-                                <div class="flex-1">
-                                    <!-- Place Name -->
-                                    <div class="text-xs font-bold uppercase tracking-wider text-primary mb-2" x-text="ticket.place_name"></div>
                                     
-                                    <!-- Ticket Name -->
-                                    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors" x-text="ticket.name"></h3>
-                                    
-                                    <!-- Description -->
-                                    <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-4 leading-relaxed" x-text="ticket.description || 'Nikmati pengalaman wisata terbaik di Jepara'"></p>
-                                </div>
-                                
-                                <!-- Footer -->
-                                <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-sm">
-                                    <template x-if="ticket.quota">
-                                        <div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                                            <i class="fa-solid fa-users"></i>
-                                            <span x-text="'{{ __('Tickets.Card.Quota') }}: ' + ticket.quota + '/{{ __('Tickets.Card.Day') }}'"></span>
+                                    <div class="flex items-center justify-between mt-auto pt-6 border-t border-slate-100 dark:border-slate-700">
+                                        <div class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                            <i class="fa-solid fa-ticket text-primary"></i>
+                                            <span x-text="place.tickets.length + ' Jenis Tiket Tersedia'"></span>
                                         </div>
-                                    </template>
-                                    <template x-if="!ticket.quota">
-                                        <div class="flex items-center gap-1.5 text-green-600">
-                                            <i class="fa-solid fa-infinity"></i>
-                                            <span>{{ __('Tickets.Card.Unlimited') }}</span>
-                                        </div>
-                                    </template>
-                                    
-                                    <div class="flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                                        <span>{{ __('Tickets.Card.Book') }}</span>
-                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <button 
+                                            @click="expanded = !expanded"
+                                            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300"
+                                            :class="expanded ? 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300' : 'bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/20 hover:shadow-primary/40'"
+                                        >
+                                            <span x-text="expanded ? 'Tutup' : 'Lihat Tiket'"></span>
+                                            <i class="fa-solid transition-transform duration-300" :class="expanded ? 'fa-chevron-up rotate-0' : 'fa-chevron-down'"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+
+                            <!-- Expandable Ticket List -->
+                            <div x-show="expanded" x-collapse class="border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 p-6 md:p-8">
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">Pilihan Tiket untuk <span x-text="place.name"></span></h4>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <template x-for="ticket in place.tickets" :key="ticket.id">
+                                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-6 hover:border-primary/50 transition-colors group/ticket">
+                                            <div class="flex-1">
+                                                <div class="flex flex-wrap items-center gap-2 mb-2">
+                                                    <h5 class="font-bold text-slate-800 dark:text-white text-lg group-hover/ticket:text-primary transition-colors" x-text="ticket.name"></h5>
+                                                    <span class="px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400" x-text="ticket.type"></span>
+                                                </div>
+                                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-3" x-text="ticket.description || 'Tiket masuk reguler'"></p>
+                                                <div class="flex flex-wrap gap-2">
+                                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-xs font-medium text-slate-600 dark:text-slate-300">
+                                                        <i class="fa-regular fa-clock text-slate-400"></i>
+                                                        <span x-text="ticket.valid_days + ' Hari'"></span>
+                                                    </span>
+                                                    <template x-if="ticket.quota">
+                                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 dark:bg-green-900/20 text-xs font-medium text-green-700 dark:text-green-400">
+                                                            <i class="fa-solid fa-users text-green-500"></i>
+                                                            <span x-text="'Kuota: ' + ticket.quota"></span>
+                                                        </span>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex flex-row sm:flex-col justify-between items-center sm:items-end gap-4 border-t sm:border-t-0 border-slate-100 dark:border-slate-700 pt-4 sm:pt-0 mt-2 sm:mt-0">
+                                                <div class="text-primary font-bold text-xl">Rp <span x-text="ticket.formatted_price"></span></div>
+                                                <a :href="`/e-tiket/${ticket.id}`" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm text-center hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors shadow-lg shadow-slate-900/20">
+                                                    Pilih
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
                     </template>
-                    
+
                     <!-- Empty State -->
-                    <div x-show="filteredTickets.length === 0" class="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-24" style="display: none;">
+                    <div x-show="filteredPlaces.length === 0" class="text-center py-24" style="display: none;">
                         <div class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                            <i class="fa-solid fa-ticket text-4xl"></i>
+                            <i class="fa-solid fa-map-location-dot text-4xl"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1">{{ __('Tickets.NoTicketsFound') }}</h3>
                         <p class="text-slate-500">{{ __('Tickets.NoTicketsSubtitle') }}</p>
@@ -197,33 +209,6 @@
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <div x-show="totalPages > 1" class="mt-12 flex justify-center items-center gap-2 pb-12">
-                    <button 
-                        @click="currentPage > 1 ? (currentPage--, window.scrollTo({ top: 0, behavior: 'smooth' })) : null"
-                        :disabled="currentPage === 1"
-                        class="size-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all shadow-sm"
-                    >
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-
-                    <template x-for="page in pages" :key="page">
-                        <button 
-                            @click="currentPage = page; window.scrollTo({ top: 0, behavior: 'smooth' })"
-                            x-text="page"
-                            class="size-10 rounded-xl border font-bold text-sm transition-all shadow-sm"
-                            :class="currentPage === page ? 'bg-primary border-primary text-white' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary'"
-                        ></button>
-                    </template>
-
-                    <button 
-                        @click="currentPage < totalPages ? (currentPage++, window.scrollTo({ top: 0, behavior: 'smooth' })) : null"
-                        :disabled="currentPage === totalPages"
-                        class="size-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all shadow-sm"
-                    >
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
             </div>
         </div>
     </div>

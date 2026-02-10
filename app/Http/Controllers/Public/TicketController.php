@@ -22,16 +22,20 @@ class TicketController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Ticket::with('place')->active();
+        $query = \App\Models\Place::whereHas('tickets', function($q) {
+            $q->active();
+        })->with(['tickets' => function($q) {
+            $q->active();
+        }]);
 
-        // Filter by place
+        // Filter by place (if needed, though we are now listing places)
         if ($request->filled('place_id')) {
-            $query->where('place_id', $request->place_id);
+            $query->where('id', $request->place_id);
         }
 
-        $tickets = $query->get();
+        $places = $query->get();
 
-        return view('public.tickets.index', compact('tickets'));
+        return view('public.tickets.index', compact('places'));
     }
 
     /**
