@@ -22,7 +22,7 @@
                         'slug' => $event->slug,
                         'description' => $event->description,
                         'location' => $event->location,
-                        'image_url' => $event->image ? Storage::url($event->image) : null,
+                        'image_url' => $event->image ? asset($event->image) : null,
                         'start_date_month' => $event->start_date->format('M'),
                         'start_date_day' => $event->start_date->format('d'),
                         'start_date_year' => $event->start_date->format('Y'),
@@ -216,9 +216,7 @@
                                             <img :src="event.image_url" :alt="event.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                         </template>
                                         <template x-if="!event.image_url">
-                                            <div class="flex items-center justify-center h-full text-gray-300">
-                                                <i class="fa-regular fa-image text-3xl"></i>
-                                            </div>
+                                            <img src="{{ asset('images/agenda/logo-agenda.png') }}" :alt="event.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                         </template>
                                         
                                         <!-- Simple Date Badge -->

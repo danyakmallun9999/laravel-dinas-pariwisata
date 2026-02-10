@@ -3,15 +3,13 @@
         <x-seo 
             :title="$event->title . ' - Agenda Jelajah Jepara'"
             :description="Str::limit(strip_tags($event->description), 150)"
-            :image="$event->image ? asset($event->image) : asset('images/logo-kura.png')"
+            :image="$event->image ? asset($event->image) : asset('images/agenda/logo-agenda.png')"
             type="article"
         />
     @endpush
     @section('meta_title', $event->title)
     @section('meta_description', Str::limit(strip_tags($event->description), 150))
-    @if($event->image)
-        @section('meta_image', Storage::url($event->image))
-    @endif
+    @section('meta_image', $event->image ? asset($event->image) : asset('images/agenda/logo-agenda.png'))
 
     <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-20">
         
@@ -32,13 +30,13 @@
                     <div class="flex-1 relative w-full flex items-start justify-start overflow-hidden perspective-[1000px]">
                         <div class="relative w-full h-full rounded-3xl overflow-hidden text-transparent">
                             @if($event->image)
-                                <img src="{{ Storage::url($event->image) }}" 
+                                <img src="{{ asset($event->image) }}" 
                                      alt="{{ $event->title }}" 
                                      class="w-full h-full object-cover transition-all duration-500 ease-in-out transform hover:scale-105">
                             @else
-                                <div class="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-6xl text-slate-300">event</span>
-                                </div>
+                                <img src="{{ asset('images/agenda/logo-agenda.png') }}" 
+                                     alt="{{ $event->title }}" 
+                                     class="w-full h-full object-cover transition-all duration-500 ease-in-out transform hover:scale-105">
                             @endif
                         </div>
                     </div>
@@ -93,7 +91,7 @@
                                     {{ __('Events.Detail.About') }}
                                 </h3>
                                 <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
-                                    {!! nl2br(e($event->description)) !!}
+                                    {!! $event->description !!}
                                 </div>
                             </section>
     

@@ -164,12 +164,11 @@
                         <!-- Image -->
                         <div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
                             @if($event->image)
-                                <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" 
+                                <img src="{{ asset($event->image) }}" alt="{{ $event->title }}" 
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-slate-300">
-                                    <i class="fa-regular fa-image text-3xl"></i>
-                                </div>
+                                <img src="{{ asset('images/agenda/logo-agenda.png') }}" alt="{{ $event->title }}" 
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @endif
                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-primary shadow-sm">
                                 {{ \Carbon\Carbon::parse($event->start_date)->format('d M') }}
