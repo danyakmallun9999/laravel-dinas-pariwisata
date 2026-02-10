@@ -25,6 +25,15 @@
     @endpush
 
     <div class="bg-luxury min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center p-6 text-stone-800 font-inter">
+        <!-- Breadcrumb -->
+        <nav class="w-full max-w-[400px] flex text-xs md:text-sm text-stone-500 mb-6 space-x-2 no-print">
+            <a href="{{ route('welcome') }}" class="hover:text-stone-800 transition-colors">{{ __('Tickets.Breadcrumb.Home') }}</a>
+            <span>/</span>
+            <a href="{{ route('tickets.my') }}" class="hover:text-stone-800 transition-colors">{{ __('Tickets.Breadcrumb.MyTickets') }}</a>
+            <span>/</span>
+            <span class="text-stone-800 font-medium font-inter">{{ __('Tickets.My.Download') }}</span>
+        </nav>
+
         <!-- Ticket Container -->
         <div class="max-w-[400px] w-full bg-white border border-stone-200 overflow-hidden relative ticket-card shadow-xl shadow-stone-200/50">
             
