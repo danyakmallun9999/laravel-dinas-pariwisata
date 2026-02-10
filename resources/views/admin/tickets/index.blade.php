@@ -14,7 +14,21 @@
                 <a href="{{ route('admin.tickets.create') }}" class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-sm font-medium text-sm">
                     <i class="fa-solid fa-plus mr-2"></i>Tambah Tiket
                 </a>
-            </div>
+        </div>
+        
+        <div class="mt-4">
+            <form action="{{ route('admin.tickets.index') }}" method="GET" class="relative">
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-1 max-w-md">
+                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" 
+                               name="search" 
+                               value="{{ request('search') }}" 
+                               placeholder="Cari nama tiket atau destinasi..." 
+                               class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm shadow-sm">
+                    </div>
+                </div>
+            </form>
         </div>
     </x-slot>
 

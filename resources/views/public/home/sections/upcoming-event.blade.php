@@ -1,13 +1,43 @@
 @if($upcomingEvent)
 <section class="relative w-full py-16 lg:py-24 overflow-hidden bg-white" id="upcoming-event"
     x-data="{
-        currentIndex: 0,
-        totalItems: {{ $nextEvents->count() }},
+    x-data="{
+        getScrollAmount() {
+            if (!$refs.container.firstElementChild) return 300;
+            const itemWidth = $refs.container.firstElementChild.getBoundingClientRect().width;
+            return itemWidth + 24; // Width + gap-6 (24px)
+        },
+        smoothScroll(direction) {
+            const container = $refs.container;
+            const scrollAmount = this.getScrollAmount();
+            const start = container.scrollLeft;
+            const target = direction === 'right' ? start + scrollAmount : start - scrollAmount;
+            const duration = 600;
+            const startTime = performance.now();
+
+            const animateScroll = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease-in-out Cubic
+                const ease = progress < 0.5 
+                    ? 4 * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                container.scrollLeft = start + (target - start) * ease;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateScroll);
+                }
+            };
+            
+            requestAnimationFrame(animateScroll);
+        },
         scrollLeft() { 
-            $refs.container.scrollBy({ left: -300, behavior: 'smooth' });
+            this.smoothScroll('left');
         },
         scrollRight() { 
-            $refs.container.scrollBy({ left: 300, behavior: 'smooth' });
+            this.smoothScroll('right');
         }
     }">
     

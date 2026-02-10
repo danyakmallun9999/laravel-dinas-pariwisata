@@ -13,11 +13,21 @@ class TicketController extends Controller
     /**
      * Display a listing of tickets.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tickets = Ticket::with('place')
-            ->latest()
-            ->paginate(15);
+        $query = Ticket::with('place')->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('place', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $tickets = $query->paginate(15)->withQueryString();
 
         return view('admin.tickets.index', compact('tickets'));
     }
