@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>E-Tiket #{{ $order->order_number }}</title>
+    <title>@lang('tickets.title'){{ $order->order_number }}</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,14 +32,14 @@
 <body class="bg-luxury min-h-screen flex flex-col items-center justify-center p-6 text-stone-800">
 
     <!-- Ticket Container -->
-    <div class="max-w-[400px] w-full bg-white shadow-2xl overflow-hidden relative ticket-card print:shadow-none">
+    <div class="max-w-[400px] w-full bg-white border border-stone-200 overflow-hidden relative ticket-card">
         
         <!-- Header / Brand Section -->
         <div class="bg-stone-900 text-white p-8 text-center relative overflow-hidden">
             <!-- Subtle Texture/Noise could go here -->
             <div class="relative z-10">
-                <p class="text-[10px] uppercase tracking-[0.3em] text-stone-400 mb-2">DINAS PARIWISATA</p>
-                <h1 class="text-3xl font-serif italic tracking-wide text-stone-50">E-Tiket Wisata</h1>
+                <p class="text-[10px] uppercase tracking-[0.3em] text-stone-400 mb-2">@lang('tickets.department')</p>
+                <h1 class="text-3xl font-serif italic tracking-wide text-stone-50">@lang('tickets.header')</h1>
                 <div class="w-16 h-px bg-stone-700 mx-auto mt-4"></div>
             </div>
             
@@ -56,7 +56,7 @@
              
              <!-- Primary Info -->
              <div class="text-center mb-8">
-                 <p class="text-stone-500 text-xs uppercase tracking-widest mb-1">Destinasi Wisata</p>
+                 <p class="text-stone-500 text-xs uppercase tracking-widest mb-1">@lang('tickets.destination')</p>
                  <h2 class="text-2xl font-serif font-bold text-stone-900 leading-tight">
                      {{ $order->ticket->place->name }}
                  </h2>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="text-center mb-8">
-                <p class="text-[10px] text-stone-400 tracking-widest uppercase mb-1">Kode Pesanan</p>
+                <p class="text-[10px] text-stone-400 tracking-widest uppercase mb-1">@lang('tickets.order_code')</p>
                 <p class="font-mono text-lg font-bold text-stone-700 tracking-wider">{{ $order->order_number }}</p>
                 <div class="mt-2 inline-block px-4 py-1 border border-stone-200 rounded-full">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
@@ -82,17 +82,17 @@
             <div class="grid grid-cols-2 gap-y-6 gap-x-4 border-t border-stone-100 pt-6">
                 
                 <div>
-                    <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">Tanggal Kunjungan</p>
+                    <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">@lang('tickets.visit_date')</p>
                     <p class="font-serif text-lg text-stone-800">{{ $order->visit_date->translatedFormat('d M Y') }}</p>
                 </div>
 
                 <div class="text-right">
-                    <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">Jumlah Pengunjung</p>
-                    <p class="font-serif text-lg text-stone-800">{{ $order->quantity }} Orang</p>
+                    <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">@lang('tickets.visitors')</p>
+                    <p class="font-serif text-lg text-stone-800">{{ $order->quantity }} @lang('tickets.people')</p>
                 </div>
 
                 <div class="col-span-2">
-                     <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">Tipe Tiket</p>
+                     <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">@lang('tickets.ticket_type')</p>
                      <div class="flex items-baseline gap-2">
                         <span class="font-serif text-lg text-stone-800">{{ $order->ticket->name }}</span>
                         <span class="text-xs text-stone-500 italic">({{ ucfirst($order->ticket->type) }})</span>
@@ -104,11 +104,11 @@
             <div class="mt-8 pt-6 border-t border-dashed border-stone-300">
                 <div class="flex justify-between items-end">
                     <div>
-                        <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">Pemesan</p>
+                        <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">@lang('tickets.customer')</p>
                         <p class="text-sm font-semibold text-stone-700">{{ $order->customer_name }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">Total Bayar</p>
+                        <p class="text-[10px] uppercase tracking-wider text-stone-400 font-medium mb-1">@lang('tickets.total_payment')</p>
                         <p class="font-serif text-2xl font-bold text-stone-900">RP {{ number_format($order->total_price, 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -117,19 +117,19 @@
         
         <!-- Footer / Decorative Bottom -->
         <div class="bg-stone-50 p-4 text-center border-t border-stone-200">
-            <p class="text-[10px] text-stone-400 italic font-serif">Terima kasih telah berkunjung ke Jepara.</p>
+            <p class="text-[10px] text-stone-400 italic font-serif">@lang('tickets.footer_thanks')</p>
         </div>
     </div>
 
     <!-- Actions Area -->
     <div class="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-[400px] no-print">
         <a href="{{ route('tickets.download-qr', $order->order_number) }}" 
-           class="flex-1 px-6 py-3 bg-white border border-stone-300 text-stone-600 text-xs font-bold uppercase tracking-widest hover:bg-stone-50 transition-colors text-center shadow-sm">
-            Save QR Code
+           class="flex-1 px-6 py-3 bg-white border border-stone-300 text-stone-600 text-xs font-bold uppercase tracking-widest hover:bg-stone-50 transition-colors text-center">
+            @lang('tickets.save_qr')
         </a>
         <button onclick="downloadTicketImage()" 
-                class="flex-1 px-6 py-3 bg-stone-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-stone-800 transition-colors shadow-lg shadow-stone-900/20">
-            Download E-Tiket
+                class="flex-1 px-6 py-3 bg-stone-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-stone-800 transition-colors">
+            @lang('tickets.download_pdf')
         </button>
     </div>
 
