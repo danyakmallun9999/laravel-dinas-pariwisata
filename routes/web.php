@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\BoundaryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -24,28 +25,36 @@ Route::get('/calendar-of-events/{event:slug}', [App\Http\Controllers\Public\Even
 Route::get('/budaya/{slug}', [WelcomeController::class, 'showCulture'])->name('culture.show');
 Route::get('/kuliner/{slug}', [WelcomeController::class, 'showCulinary'])->name('culinary.show');
 
-// E-Ticket routes (Public)
+// Google OAuth routes (for public users)
+Route::get('/auth/google/login', [GoogleAuthController::class, 'showLoginPage'])->name('auth.google.login');
+Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+Route::post('/auth/logout', [GoogleAuthController::class, 'logout'])->name('auth.user.logout');
+
+// E-Ticket routes (Public - no auth needed for browsing)
 Route::get('/e-tiket', [App\Http\Controllers\Public\TicketController::class, 'index'])->name('tickets.index');
 Route::get('/e-tiket/{ticket}', [App\Http\Controllers\Public\TicketController::class, 'show'])->name('tickets.show');
-Route::post('/e-tiket/book', [App\Http\Controllers\Public\TicketController::class, 'book'])->name('tickets.book');
-Route::get('/e-tiket/confirmation/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'confirmation'])->name('tickets.confirmation');
-Route::get('/tiket-saya', [App\Http\Controllers\Public\TicketController::class, 'myTickets'])->name('tickets.my');
-Route::post('/tiket-saya/retrieve', [App\Http\Controllers\Public\TicketController::class, 'retrieveTickets'])->name('tickets.retrieve');
-Route::get('/e-tiket/download/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'downloadTicket'])->name('tickets.download');
 
-// Payment routes
-Route::get('/e-tiket/payment/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'payment'])->name('tickets.payment');
-Route::get('/e-tiket/payment-success/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'paymentSuccess'])->name('tickets.payment.success');
-Route::get('/e-tiket/payment-failed/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'paymentFailed'])->name('tickets.payment.failed');
+// Protected E-Ticket routes - require Google authentication
+Route::middleware('auth.user')->group(function () {
+    Route::post('/e-tiket/book', [App\Http\Controllers\Public\TicketController::class, 'book'])->name('tickets.book');
+    Route::get('/e-tiket/confirmation/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'confirmation'])->name('tickets.confirmation');
+    Route::get('/e-tiket/download/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'downloadTicket'])->name('tickets.download');
+    Route::get('/e-tiket/payment/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'payment'])->name('tickets.payment');
+    Route::get('/e-tiket/payment-success/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'paymentSuccess'])->name('tickets.payment.success');
+    Route::get('/e-tiket/payment-failed/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'paymentFailed'])->name('tickets.payment.failed');
+    Route::get('/tiket-saya', [App\Http\Controllers\Public\TicketController::class, 'myTickets'])->name('tickets.my');
+    Route::post('/tiket-saya/retrieve', [App\Http\Controllers\Public\TicketController::class, 'retrieveTickets'])->name('tickets.retrieve');
+});
 
 // Webhook route (no CSRF protection)
 Route::post('/webhooks/xendit', [App\Http\Controllers\WebhookController::class, 'handle'])->name('webhooks.xendit');
 
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth:admin', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
     // Places routes
@@ -85,7 +94,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::delete('ticket-orders/{order}', [\App\Http\Controllers\Admin\TicketController::class, 'destroyOrder'])->name('tickets.orders.destroy');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

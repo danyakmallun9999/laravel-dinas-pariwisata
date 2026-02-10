@@ -11,10 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectTo(guests: '/sapujagat');
+        $middleware->alias([
+            'auth.user' => \App\Http\Middleware\EnsureUserAuthenticated::class,
+        ]);
+        
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
+        
         $middleware->validateCsrfTokens(except: [
             '/posts/upload-image', // Bypass CSRF for image uploads from Trix
         ]);

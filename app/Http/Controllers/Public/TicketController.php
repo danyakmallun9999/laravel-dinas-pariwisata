@@ -7,6 +7,7 @@ use App\Models\Ticket;
 use App\Models\TicketOrder;
 use App\Services\XenditService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
@@ -53,10 +54,23 @@ class TicketController extends Controller
     }
 
     /**
+     * Verify that the authenticated user owns the order.
+     */
+    private function verifyOrderOwnership(TicketOrder $order)
+    {
+        $user = Auth::guard('web')->user();
+        if ($user && $user->email !== $order->customer_email) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
+        }
+    }
+
+    /**
      * Process ticket booking.
      */
     public function book(Request $request)
     {
+        $user = Auth::guard('web')->user();
+
         $validated = $request->validate([
             'ticket_id' => 'required|exists:tickets,id',
             'customer_name' => 'required|string|max:255',
@@ -66,6 +80,9 @@ class TicketController extends Controller
             'quantity' => 'required|integer|min:1|max:10',
             'notes' => 'nullable|string|max:500',
         ]);
+
+        // Force customer email to match authenticated user
+        $validated['customer_email'] = $user->email;
 
         $ticket = Ticket::findOrFail($validated['ticket_id']);
 
@@ -108,6 +125,8 @@ class TicketController extends Controller
             ->where('order_number', $orderNumber)
             ->firstOrFail();
 
+        $this->verifyOrderOwnership($order);
+
         return view('public.tickets.confirmation', compact('order'));
     }
 
@@ -145,6 +164,8 @@ class TicketController extends Controller
             ->where('order_number', $orderNumber)
             ->firstOrFail();
 
+        $this->verifyOrderOwnership($order);
+
         // For now, just show the ticket view
         // You can implement PDF generation later with dompdf
         return view('public.tickets.download', compact('order'));
@@ -158,6 +179,8 @@ class TicketController extends Controller
         $order = TicketOrder::with('ticket.place')
             ->where('order_number', $orderNumber)
             ->firstOrFail();
+
+        $this->verifyOrderOwnership($order);
 
         // If already paid, redirect to confirmation
         if ($order->status === 'paid') {
@@ -187,6 +210,8 @@ class TicketController extends Controller
         $order = TicketOrder::with('ticket.place')
             ->where('order_number', $orderNumber)
             ->firstOrFail();
+
+        $this->verifyOrderOwnership($order);
 
         // Verify payment status with Xendit if still pending
         if ($order->status === 'pending' && $order->xendit_invoice_id) {
@@ -226,6 +251,8 @@ class TicketController extends Controller
         $order = TicketOrder::with('ticket.place')
             ->where('order_number', $orderNumber)
             ->firstOrFail();
+
+        $this->verifyOrderOwnership($order);
 
         return view('public.tickets.payment-failed', compact('order'));
     }
