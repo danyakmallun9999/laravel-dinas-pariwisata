@@ -62,7 +62,7 @@
                     {{-- Results count --}}
                     <div class="flex items-center justify-between mb-4 px-1">
                         <p class="text-sm text-slate-400">
-                            Menampilkan <span class="font-semibold text-slate-600 dark:text-white">{{ $orders->count() }}</span> pesanan
+                            {!! __('Tickets.My.ShowingOrders', ['count' => $orders->count()]) !!}
                         </p>
                     </div>
 
@@ -151,7 +151,7 @@
                         <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm mx-auto">{{ __('Tickets.My.NoTicketsSubtitle') }}</p>
                         <a href="{{ route('tickets.index') }}" class="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-colors text-sm inline-flex items-center gap-2">
                             <i class="fa-solid fa-store text-xs"></i>
-                            Beli Tiket Baru
+                            {{ __('Tickets.My.BuyNew') }}
                         </a>
                     </div>
                 @endif
@@ -163,7 +163,7 @@
                     </a>
                     <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                     <a href="{{ route('welcome') }}" class="text-slate-400 hover:text-primary font-medium inline-flex items-center gap-1.5 text-sm transition-colors">
-                        <i class="fa-solid fa-home text-xs"></i>Beranda
+                        <i class="fa-solid fa-home text-xs"></i>{{ __('Tickets.My.Home') }}
                     </a>
                 </div>
             </div>

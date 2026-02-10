@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketOrder;
 use App\Services\XenditService;
+use BaconQrCode\Common\ErrorCorrectionLevel;
+use BaconQrCode\Encoder\Encoder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -165,17 +167,64 @@ class TicketController extends Controller
     /**
      * Download ticket as PDF.
      */
+    /**
+     * Download ticket QR code as SVG.
+     */
+    /**
+     * Download ticket QR code as PNG.
+     */
     public function downloadTicket($orderNumber)
     {
-        $order = TicketOrder::with('ticket.place')
-            ->where('order_number', $orderNumber)
-            ->firstOrFail();
+        $order = TicketOrder::where('order_number', $orderNumber)->firstOrFail();
 
         $this->verifyOrderOwnership($order);
 
-        // For now, just show the ticket view
-        // You can implement PDF generation later with dompdf
-        return view('public.tickets.download', compact('order'));
+        // Generate QR Code Matrix
+        $matrix = Encoder::encode(
+            $order->order_number,
+            ErrorCorrectionLevel::H(),
+            'UTF-8'
+        )->getMatrix();
+
+        // Render using GD
+        $pixelSize = 10;
+        $borderSize = 4;
+        $matrixWidth = $matrix->getWidth();
+        $imageWidth = ($matrixWidth + ($borderSize * 2)) * $pixelSize;
+        
+        $image = imagecreate($imageWidth, $imageWidth);
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 30, 41, 59); // Slate-800 color
+
+        // Fill background
+        imagefill($image, 0, 0, $white);
+
+        // Draw QR code
+        for ($y = 0; $y < $matrixWidth; $y++) {
+            for ($x = 0; $x < $matrixWidth; $x++) {
+                if ($matrix->get($x, $y) === 1) {
+                    imagefilledrectangle(
+                        $image,
+                        ($x + $borderSize) * $pixelSize,
+                        ($y + $borderSize) * $pixelSize,
+                        ($x + $borderSize + 1) * $pixelSize,
+                        ($y + $borderSize + 1) * $pixelSize,
+                        $black
+                    );
+                }
+            }
+        }
+
+        // Capture output buffer
+        ob_start();
+        imagepng($image);
+        $imageData = ob_get_clean();
+        imagedestroy($image);
+
+        // Return as download
+        return response($imageData)
+            ->header('Content-Type', 'image/png')
+            ->header('Content-Disposition', 'attachment; filename="ticket-' . $order->order_number . '.png"');
     }
 
     /**
