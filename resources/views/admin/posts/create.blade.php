@@ -46,7 +46,7 @@
                                            id="title" 
                                            name="title" 
                                            value="{{ old('title') }}"
-                                           class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-lg font-medium placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                                           class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-lg font-medium placeholder-gray-400 focus:bg-white focus:ring-0 focus:border-gray-400 transition-all"
                                            placeholder="Masukkan judul yang menarik..."
                                            required 
                                            autofocus>
@@ -99,7 +99,7 @@
                                            id="title_en" 
                                            name="title_en" 
                                            value="{{ old('title_en') }}"
-                                           class="block w-full px-4 py-3 bg-white border border-blue-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                                           class="block w-full px-4 py-3 bg-white border border-blue-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-0 focus:border-gray-400 transition-all"
                                            placeholder="English title...">
                                     <x-input-error :messages="$errors->get('title_en')" class="mt-2" />
                                 </div>
@@ -264,7 +264,7 @@
                                     <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Jenis Posting</label>
                                     <select id="type" 
                                             name="type" 
-                                            class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                                            class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-0 focus:border-gray-400 transition-all">
                                         <option value="news" {{ old('type') == 'news' ? 'selected' : '' }}>🗞️ Berita</option>
                                         <option value="event" {{ old('type') == 'event' ? 'selected' : '' }}>📅 Agenda / Event</option>
                                     </select>
@@ -277,7 +277,7 @@
                                            id="published_at" 
                                            name="published_at" 
                                            value="{{ old('published_at') }}"
-                                           class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                                           class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-0 focus:border-gray-400 transition-all">
                                     <p class="text-xs text-gray-400 mt-1.5">Kosongkan untuk publish sekarang</p>
                                 </div>
 
