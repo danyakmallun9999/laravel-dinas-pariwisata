@@ -16,7 +16,23 @@
             
             <!-- Logo Area -->
             <div class="flex items-center gap-8">
-                <a class="flex items-center gap-3 group relative" href="{{ route('welcome') }}">
+                <!-- Mobile Language Switcher (Visible on mobile when menu open) -->
+                <div class="lg:hidden absolute left-0 top-0 bottom-0 flex items-center z-[60]" 
+                     x-show="mobileMenuOpen" 
+                     x-cloak 
+                     x-transition:enter="transition ease-out duration-300 delay-100" 
+                     x-transition:enter-start="opacity-0 -translate-x-2" 
+                     x-transition:enter-end="opacity-100 translate-x-0">
+                     <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-full p-1 border border-slate-200 dark:border-slate-700 shadow-sm ml-4">
+                        <a href="{{ route('lang.switch', 'id') }}" class="px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 {{ app()->getLocale() == 'id' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600' }}">ID</a>
+                        <a href="{{ route('lang.switch', 'en') }}" class="px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 {{ app()->getLocale() == 'en' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600' }}">EN</a>
+                     </div>
+                </div>
+
+                <!-- Logo (Hidden on mobile when menu open) -->
+                <a class="flex items-center gap-3 group relative transition-opacity duration-300" 
+                   :class="{ 'opacity-0 pointer-events-none absolute': mobileMenuOpen, 'opacity-100 relative': !mobileMenuOpen }"
+                   href="{{ route('welcome') }}">
                     <div class="relative transition-all duration-300 group-hover:scale-110 w-20 h-20">
                          <!-- Logo Image -->
                          <img src="{{ asset('images/logo-kura.png') }}" alt="Logo Kabupaten Jepara" class="w-full h-full object-contain filter">
@@ -192,7 +208,7 @@
             <!-- Mobile Menu Fullscreen Overlay -->
             <div x-show="mobileMenuOpen" 
                 x-cloak
-                class="fixed inset-0 min-h-screen w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl lg:hidden z-40 flex flex-col pt-24 px-8"
+                class="fixed inset-0 min-h-screen w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl lg:hidden z-40 flex flex-col pt-24 px-6 overflow-y-auto pb-8"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -200,63 +216,65 @@
                 x-transition:leave-start="opacity-100 scale-100"
                 x-transition:leave-end="opacity-0 scale-95"
                 x-cloak>
+
+                <!-- Language Switcher moved to Header -->
                 
-                <nav class="flex flex-col gap-2">
+                <nav class="flex flex-col gap-1">
                     @foreach([
                         ['label' => __('Nav.Home'), 'route' => 'welcome', 'active' => 'welcome'],
                         ['label' => __('Nav.Map'), 'route' => 'explore.map', 'active' => 'explore.map'],
-                        ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => 'places.*'],
-                        ['label' => __('Nav.Tickets'), 'route' => 'tickets.index', 'active' => 'tickets.*'],
-                        ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => 'events.public.*'],
-                        ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => 'posts.*']
+                        ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => ['places.index', 'places.show']],
+                        ['label' => __('Nav.Tickets'), 'route' => 'tickets.index', 'active' => ['tickets.index', 'tickets.show', 'tickets.buy', 'tickets.my']],
+                        ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => ['events.public.index', 'events.public.show']],
+                        ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => ['posts.index', 'posts.show']]
                     ] as $index => $link)
                     <a href="{{ route($link['route']) }}" 
-                       class="text-2xl font-bold flex items-center justify-between py-4 border-b border-slate-100 dark:border-slate-800 group"
-                       x-transition:enter="transition ease-out duration-300 delay-{{ $index * 100 }}ms"
+                       class="text-lg font-bold flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800 group"
+                       x-transition:enter="transition ease-out duration-300 delay-{{ $index * 75 }}ms"
                        x-transition:enter-start="opacity-0 translate-x-10"
                        x-transition:enter-end="opacity-100 translate-x-0">
                         <span class="{{ request()->routeIs($link['active']) ? 'text-primary' : 'text-slate-800 dark:text-white' }} group-hover:text-primary transition-colors">{{ $link['label'] }}</span>
-                        <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-transform group-hover:translate-x-2">arrow_forward</span>
+                        <span class="material-symbols-outlined text-sm text-slate-300 group-hover:text-primary transition-transform group-hover:translate-x-2">arrow_forward</span>
                     </a>
                     @endforeach
                 </nav>
 
                 <!-- Mobile Auth -->
-                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                     @auth('web')
-                        <div class="nav-profile mb-4">
-                            <div class="flex items-center gap-3 mb-4">
+                        <div class="nav-profile">
+                            <div class="flex items-center gap-3 mb-3">
                                 <img src="{{ Auth::guard('web')->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::guard('web')->user()->name) }}" 
                                      alt="Profile" 
-                                     class="w-10 h-10 rounded-full object-cover">
+                                     class="w-9 h-9 rounded-full object-cover">
                                 <div>
-                                    <p class="font-bold text-slate-900 dark:text-white">{{ Auth::guard('web')->user()->name }}</p>
+                                    <p class="font-bold text-sm text-slate-900 dark:text-white">{{ Auth::guard('web')->user()->name }}</p>
                                     <p class="text-xs text-slate-500">{{ Auth::guard('web')->user()->email }}</p>
                                 </div>
                             </div>
-                            <a href="{{ route('tickets.my') }}" class="block w-full py-3 px-4 bg-primary/10 text-primary font-bold rounded-xl mb-2 text-center">
-                                <i class="fa-solid fa-ticket mr-2"></i> Tiket Saya
-                            </a>
-                            <form method="POST" action="{{ route('auth.user.logout') }}">
-                                @csrf
-                                <button type="submit" class="w-full py-3 px-4 bg-red-50 text-red-600 font-bold rounded-xl text-center">
-                                    Keluar
-                                </button>
-                            </form>
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="{{ route('tickets.my') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-gradient-to-br from-primary/5 to-primary/10 text-primary rounded-xl text-center border border-primary/20 shadow-sm shadow-primary/10 active:scale-[0.97] transition-all duration-200">
+                                    <span class="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-ticket text-xs"></i>
+                                    </span>
+                                    <span class="text-xs font-bold">Tiket Saya</span>
+                                </a>
+                                <form method="POST" action="{{ route('auth.user.logout') }}" class="contents">
+                                    @csrf
+                                    <button type="submit" class="flex items-center justify-center gap-2 py-2 px-3 bg-gradient-to-br from-red-50 to-red-100/80 text-red-600 rounded-xl text-center border border-red-200/60 shadow-sm shadow-red-100/50 active:scale-[0.97] transition-all duration-200">
+                                        <span class="w-7 h-7 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                                        </span>
+                                        <span class="text-xs font-bold">Keluar</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     @else
-                        <a href="{{ route('auth.google') }}" class="block w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-xl text-center shadow-xl">
+                        <a href="{{ route('auth.google') }}" class="block w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl text-center shadow-xl">
                             <i class="fa-brands fa-google mr-2"></i> Login dengan Google
                         </a>
                     @endauth
-                </div>
-
-                <div class="mt-8">
-                     <p class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">{{ __('Nav.LanguageSettings') }}</p>
-                     <div class="flex gap-4">
-                        <a href="{{ route('lang.switch', 'id') }}" class="flex-1 py-3 rounded-xl border text-center font-bold transition-colors {{ app()->getLocale() == 'id' ? 'border-primary text-primary bg-primary/5' : 'border-slate-200 dark:border-slate-700 text-slate-500' }}">Bahasa Indonesia</a>
-                        <a href="{{ route('lang.switch', 'en') }}" class="flex-1 py-3 rounded-xl border text-center font-bold transition-colors {{ app()->getLocale() == 'en' ? 'border-primary text-primary bg-primary/5' : 'border-slate-200 dark:border-slate-700 text-slate-500' }}">English</a>
-                     </div>
                 </div>
             </div>
 

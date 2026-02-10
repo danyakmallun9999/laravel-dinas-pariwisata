@@ -944,11 +944,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-<<<<<<< HEAD
-    "file": "assets/app-f6f5N0Q4.css",
-=======
-    "file": "assets/app-BtiX35__.css",
->>>>>>> a68bbd8051d235f7edb0202895242394f3dd7529
+    "file": "assets/app-WieIm0EJ.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
