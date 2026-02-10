@@ -1,4 +1,25 @@
 <x-app-layout>
+    <style>
+        .tox-tinymce {
+            border: 1px solid #d1d5db !important; /* gray-300 */
+            border-radius: 0.75rem !important;
+        }
+        /* Override all focus states */
+        .tox-tinymce:focus,
+        .tox-tinymce.tox-edit-focus,
+        .tox-tinymce-focused,
+        .tox-tinymce:focus-within {
+            border-color: #9ca3af !important; /* gray-400 */
+            box-shadow: none !important;
+            outline: none !important;
+        }
+        
+        /* Remove blue outline on sticky toolbar mode */
+        .tox-tinymce--toolbar-sticky-on {
+             border-color: #9ca3af !important;
+             box-shadow: none !important;
+        }
+    </style>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
