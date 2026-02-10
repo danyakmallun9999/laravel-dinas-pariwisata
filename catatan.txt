@@ -18,7 +18,7 @@ wisatajepara
 # 7. Optimalisasi ukuran file gambar
 # 8. Update README.md
 # 9. Update ke breadcrum pada detail eveent, detail kuliner, detail destinasi
-# 10. Hilangkan GSAP pada folder errors
+# 10. Hilangkan GSAP pada folder errors dan dashboard tiket admin
 # 11. Role super admin
 # 12. Role admin
 # 13. Role pengelola tempat wisata
@@ -26,3 +26,6 @@ wisatajepara
 # 15. Hapus fitur Laporan di dashboard admin (lengkap hingga MVC-nya)
 # 16. Hapus dropdown pada E-Tiket, (langsung tampilkan semua beserta hirarkinya)
 # 17. Tambahkan fitur laporan keuangan yang advance pada E-tiket
+# 18. Kolom Media Sosial pada dashboard admin untuk tempat wisata (link sosial media dengan kolom dinamis) & hilangkan website URL
+
+
