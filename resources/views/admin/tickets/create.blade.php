@@ -91,22 +91,14 @@
                                 <option value="adult" {{ old('type') == 'adult' ? 'selected' : '' }}>Dewasa</option>
                                 <option value="child" {{ old('type') == 'child' ? 'selected' : '' }}>Anak-anak</option>
                                 <option value="foreigner" {{ old('type') == 'foreigner' ? 'selected' : '' }}>Mancanegara</option>
-                                <option value="vehicle" {{ old('type') == 'vehicle' ? 'selected' : '' }}>Kendaraan</option>
+
                             </select>
                             @error('type')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="md:col-span-2">
-                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label>
-                            <textarea name="description" id="description" rows="3" 
-                                      class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                                      placeholder="Deskripsi tiket (opsional)">{{ old('description') }}</textarea>
-                            @error('description')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+
                     </div>
                 </div>
 
@@ -199,27 +191,7 @@
                     </div>
                 </div>
 
-                <!-- Section: Syarat & Ketentuan -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
-                            <i class="fa-solid fa-file-lines"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-800">Syarat & Ketentuan</h3>
-                            <p class="text-xs text-gray-500">Aturan penggunaan tiket</p>
-                        </div>
-                    </div>
 
-                    <div>
-                        <textarea name="terms_conditions" id="terms_conditions" rows="4" 
-                                  class="w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                                  placeholder="Masukkan syarat dan ketentuan penggunaan tiket">{{ old('terms_conditions') }}</textarea>
-                        @error('terms_conditions')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
 
                 <!-- Submit Buttons -->
                 <div class="flex justify-end gap-3">

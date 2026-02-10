@@ -39,14 +39,13 @@ class TicketController extends Controller
         $validated = $request->validate([
             'place_id' => 'required|exists:places,id',
             'name' => 'required|string|max:255',
-            'type' => 'required|string|in:adult,child,foreigner,vehicle,general',
-            'description' => 'nullable|string',
+            'type' => 'required|string|in:adult,child,foreigner,general',
+
             'price' => 'required|numeric|min:0',
             'price_weekend' => 'nullable|numeric|min:0',
             'quota' => 'nullable|integer|min:1',
             'valid_days' => 'required|integer|min:1',
             'is_active' => 'boolean',
-            'terms_conditions' => 'nullable|string',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
@@ -83,14 +82,13 @@ class TicketController extends Controller
         $validated = $request->validate([
             'place_id' => 'required|exists:places,id',
             'name' => 'required|string|max:255',
-            'type' => 'required|string|in:adult,child,foreigner,vehicle,general',
-            'description' => 'nullable|string',
+
+            'type' => 'required|string|in:adult,child,foreigner,general',
             'price' => 'required|numeric|min:0',
             'price_weekend' => 'nullable|numeric|min:0',
             'quota' => 'nullable|integer|min:1',
             'valid_days' => 'required|integer|min:1',
             'is_active' => 'boolean',
-            'terms_conditions' => 'nullable|string',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
