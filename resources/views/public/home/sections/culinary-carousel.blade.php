@@ -1,158 +1,95 @@
     <!-- SECTION: Culinary -->
-    <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-6 lg:py-16 border-t border-surface-light dark:border-surface-dark" 
+    <div class="w-full bg-surface-light/30 dark:bg-surface-dark/20 py-6 lg:py-16 border-t border-surface-light dark:border-surface-dark"
          x-data="{
             currentIndex: 0,
-            autoplay: null,
-            scrollFrame: null,
-            originalsCount: 0,
-            
-            getGap() {
-                const container = $refs.foodContainer;
-                if (!container) return 32;
-                const style = window.getComputedStyle(container);
-                return parseInt(style.gap) || 0;
+            total: {{ count($culinaries) }},
+            autoplayInterval: null,
+            transitioning: false,
+            touchStartX: 0,
+            touchEndX: 0,
+            isDragging: false,
+            dragTriggered: false,
+
+            prev() {
+                if (this.transitioning) return;
+                this.transitioning = true;
+                this.currentIndex = (this.currentIndex - 1 + this.total) % this.total;
+                setTimeout(() => this.transitioning = false, 600);
             },
 
-            scrollLeft() { 
-                const container = $refs.foodContainer;
-                if (!container || !container.children.length) return;
-                const itemWidth = container.children[0].offsetWidth; 
-                const gap = this.getGap();
-                container.scrollBy({ left: -(itemWidth + gap), behavior: 'smooth' });
+            next() {
+                if (this.transitioning) return;
+                this.transitioning = true;
+                this.currentIndex = (this.currentIndex + 1) % this.total;
+                setTimeout(() => this.transitioning = false, 600);
+            },
+
+            goTo(index) {
+                if (this.transitioning || index === this.currentIndex) return;
+                this.transitioning = true;
+                this.currentIndex = index;
+                setTimeout(() => this.transitioning = false, 600);
+            },
+
+            prevIndex() {
+                return (this.currentIndex - 1 + this.total) % this.total;
+            },
+
+            nextIndex() {
+                return (this.currentIndex + 1) % this.total;
+            },
+
+            handleSwipeStart(e) {
+                this.touchStartX = e.type.includes('mouse') ? e.screenX : e.changedTouches[0].screenX;
+                this.isDragging = true;
+                this.dragTriggered = false;
                 this.stopAutoplay();
-                this.startAutoplay();
             },
 
-            scrollRight() { 
-                const container = $refs.foodContainer;
-                if (!container || !container.children.length) return;
-                const itemWidth = container.children[0].offsetWidth;
-                const gap = this.getGap();
-                container.scrollBy({ left: (itemWidth + gap), behavior: 'smooth' });
-                this.stopAutoplay();
-                this.startAutoplay();
-            },
-
-            scrollToIndex(index) {
-                const container = $refs.foodContainer;
-                if (!container || !container.children.length) return;
-                const targetIndex = this.originalsCount + index;
-                const targetElement = container.children[targetIndex];
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            handleSwipeMove(e) {
+                if (!this.isDragging) return;
+                const currentX = e.type.includes('mouse') ? e.screenX : e.changedTouches[0].screenX;
+                if (Math.abs(currentX - this.touchStartX) > 10) {
+                    this.dragTriggered = true;
                 }
-                this.stopAutoplay();
+            },
+
+            handleSwipeEnd(e) {
+                if (!this.isDragging) return;
+                this.isDragging = false;
+                const endX = e.type.includes('mouse') ? e.screenX : e.changedTouches[0].screenX;
+                const diff = this.touchStartX - endX;
+                
+                if (Math.abs(diff) > 50) {
+                    diff > 0 ? this.next() : this.prev();
+                    this.dragTriggered = true; // Confirm drag for click prevention
+                }
                 this.startAutoplay();
             },
 
-            updateActive() {
-                const container = $refs.foodContainer;
-                if (!container) return;
-                const containerCenter = container.scrollLeft + (container.clientWidth / 2);
-                
-                Array.from(container.children).forEach(child => {
-                    const childCenter = child.offsetLeft + (child.offsetWidth / 2);
-                    const distance = Math.abs(childCenter - containerCenter);
-                    const isSnapped = distance < (child.offsetWidth / 2); 
-                    child.setAttribute('data-snapped', isSnapped ? 'true' : 'false');
-                });
-            },
-
-            updateCurrentIndex() {
-                const container = $refs.foodContainer;
-                if (!container || !container.children.length) return;
-                
-                const containerCenter = container.scrollLeft + (container.clientWidth / 2);
-                let closestIndex = -1;
-                let minDistance = Infinity;
-                
-                Array.from(container.children).forEach((child, idx) => {
-                    const childCenter = child.offsetLeft + (child.offsetWidth / 2);
-                    const distance = Math.abs(childCenter - containerCenter);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestIndex = idx;
-                    }
-                });
-                
-                if (closestIndex !== -1) {
-                    const rawIndex = closestIndex - this.originalsCount;
-                    this.currentIndex = ((rawIndex % this.originalsCount) + this.originalsCount) % this.originalsCount;
+            handleClick(url) {
+                if (!this.dragTriggered) {
+                    window.location.href = url;
                 }
             },
 
             startAutoplay() {
-                // Autoplay disabled
+                this.stopAutoplay();
+                this.autoplayInterval = setInterval(() => this.next(), 5000);
             },
 
             stopAutoplay() {
-                if (this.autoplay) {
-                    clearInterval(this.autoplay);
-                    this.autoplay = null;
+                if (this.autoplayInterval) {
+                    clearInterval(this.autoplayInterval);
+                    this.autoplayInterval = null;
                 }
             },
 
             init() {
-                const container = $refs.foodContainer;
-                if (!container) return;
-                const originals = Array.from(container.children);
-                this.originalsCount = originals.length;
-                
-                // Clone for infinite scroll
-                originals.forEach(item => {
-                    const clone = item.cloneNode(true);
-                    clone.setAttribute('data-clone', 'true');
-                    clone.setAttribute('aria-hidden', 'true');
-                    container.appendChild(clone);
-                });
-                [...originals].reverse().forEach(item => {
-                    const clone = item.cloneNode(true);
-                    clone.setAttribute('data-clone', 'true');
-                    clone.setAttribute('aria-hidden', 'true');
-                    container.insertBefore(clone, container.firstChild);
-                });
-                
-                this.$nextTick(() => {
-                    const startItem = container.children[this.originalsCount];
-                    if (startItem) {
-                        container.scrollLeft = startItem.offsetLeft;
-                    }
-                    this.updateActive();
-                    this.updateCurrentIndex();
-                    this.startAutoplay();
-                    
-                    container.addEventListener('scroll', () => {
-                        if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
-                        this.scrollFrame = requestAnimationFrame(() => {
-                            this.updateActive();
-                            this.updateCurrentIndex();
-                            
-                            if (container.children.length < this.originalsCount * 3) return;
-                            const setB_StartElement = container.children[this.originalsCount];
-                            const setC_StartElement = container.children[this.originalsCount * 2];
-                            const setWidth = setC_StartElement.offsetLeft - setB_StartElement.offsetLeft;
-                            const scrollLeft = container.scrollLeft;
-                            
-                            if (scrollLeft >= setC_StartElement.offsetLeft) {
-                                container.scrollLeft -= setWidth;
-                            } else if (scrollLeft < setB_StartElement.offsetLeft - setWidth) {
-                                container.scrollLeft += setWidth;
-                            }
-                        });
-                    });
-                });
-                
-                window.addEventListener('resize', () => {
-                    if (window.innerWidth < 768) {
-                        this.stopAutoplay();
-                    } else {
-                        this.startAutoplay();
-                    }
-                });
+                this.startAutoplay();
             }
-         }"
-         >
-        
+         }">
+
         <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row items-end justify-between mb-6 md:mb-12 gap-4 md:gap-6 px-2 sm:px-0">
@@ -164,92 +101,104 @@
                         {{ __('Culinary.Subtitle') }}
                     </p>
                 </div>
-                
-                <!-- Navigation Buttons (Desktop Only) -->
-                <div class="hidden md:flex gap-2 shrink-0">
-                    <button @click="scrollLeft()"
-                        class="size-10 rounded-full border border-surface-light dark:border-white/10 flex items-center justify-center hover:bg-surface-light dark:hover:bg-white/5 text-text-light dark:text-text-dark transition-colors">
-                        <span class="material-symbols-outlined">chevron_left</span>
-                    </button>
-                    <button @click="scrollRight()"
-                        class="size-10 rounded-full border border-surface-light dark:border-white/10 flex items-center justify-center hover:bg-surface-light dark:hover:bg-white/5 text-text-light dark:text-text-dark transition-colors">
-                        <span class="material-symbols-outlined">chevron_right</span>
-                    </button>
-                </div>
             </div>
 
             <!-- Carousel Container -->
-            <div class="relative w-full group">
-                <div class="flex gap-3 md:gap-8 overflow-x-auto pb-8 md:pb-12 pt-2 md:pt-4 px-[2%] md:px-[20%] snap-x snap-mandatory scrollbar-hide scroll-smooth items-center" 
-                     style="scroll-snap-type: x mandatory;"
-                     x-ref="foodContainer">
-                
-                    @foreach($culinaries as $index => $culinary)
-                    <!-- Culinary Card -->
-                    <div class="culinary-card shrink-0 w-[94vw] md:w-[60vw] lg:w-[50vw] snap-center group relative rounded-2xl md:rounded-[2.5rem] overflow-hidden aspect-[4/3] md:aspect-[16/9] transition-all duration-500 scale-[0.97] data-[snapped=true]:scale-100 data-[snapped=true]:shadow-xl data-[snapped=true]:hover:shadow-2xl data-[snapped=true]:border data-[snapped=true]:border-white/10"
-                         style="scroll-snap-align: center; scroll-snap-stop: always;">
-                        
-                        <!-- Image -->
-                        <img src="{{ asset($culinary->image) }}" 
-                             alt="{{ $culinary->name }}" 
-                             class="w-full h-full object-cover transform transition-transform duration-700 [.group[data-snapped='true']:hover_&]:scale-110 contrast-110 saturate-110 brightness-105">
-                        
-                        <!-- Inactive Overlay -->
-                        <div class="absolute inset-0 bg-black/10 transition-opacity duration-500 group-data-[snapped=true]:opacity-0"></div>
-                        
-                        <!-- Gradient Removed as requested -->
-                        
-                        <!-- Gradient Overlay (Better for Mobile Legibility) -->
-                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-90 transition-opacity duration-500 pointer-events-none"></div>
+            <div class="relative w-full overflow-hidden rounded-3xl py-4 md:py-8 cursor-grab active:cursor-grabbing"
+                 @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()"
+                 @touchstart="handleSwipeStart($event)"
+                 @touchmove="handleSwipeMove($event)"
+                 @touchend="handleSwipeEnd($event)"
+                 @mousedown="handleSwipeStart($event)"
+                 @mousemove="handleSwipeMove($event)"
+                 @mouseup="handleSwipeEnd($event)">
 
-                        <!-- Content -->
-                        <div class="absolute inset-0 flex flex-col justify-end p-4 md:p-8 lg:p-12">
-                            <div class="transform transition-transform duration-500 group-data-[snapped=true]:translate-y-0 translate-y-4 opacity-0 group-data-[snapped=true]:opacity-100">
-                                <h3 class="text-white font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2 drop-shadow-lg">
-                                    {{ $culinary->name }}
-                                </h3>
-                                <p class="text-white/90 text-xs sm:text-sm md:text-base lg:text-lg mb-3 md:mb-5 leading-relaxed line-clamp-2 md:line-clamp-3 font-medium drop-shadow-md">
-                                    {{ $culinary->description }}
-                                </p>
-                                
-                                <!-- Read More Button -->
-                                <div>
-                                    <a href="{{ route('culinary.show', $culinary->slug) }}" 
-                                       class="inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-white text-primary text-xs md:text-sm font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105">
-                                        <span>{{ __('Culinary.Button.More') }}</span>
-                                        <span class="material-symbols-outlined text-base md:text-lg">arrow_forward</span>
+                <div class="relative mx-auto flex max-w-6xl items-center justify-center" style="min-height: 420px;">
+                    
+                    @foreach($culinaries as $index => $culinary)
+                    <div class="absolute w-full rounded-3xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+                         :class="{
+                            'z-10 opacity-100': currentIndex === {{ $index }},
+                            'z-[1] opacity-100': prevIndex() === {{ $index }} || nextIndex() === {{ $index }},
+                            'z-0 opacity-0 pointer-events-none': currentIndex !== {{ $index }} && prevIndex() !== {{ $index }} && nextIndex() !== {{ $index }}
+                         }"
+                         :style="currentIndex === {{ $index }}
+                            ? 'transform: translateX(0) scale(1); filter: none;'
+                            : (prevIndex() === {{ $index }}
+                                ? 'transform: translateX(-30%) scale(0.55); filter: blur(4px);'
+                                : (nextIndex() === {{ $index }}
+                                    ? 'transform: translateX(30%) scale(0.55); filter: blur(4px);'
+                                    : 'transform: translateX(0) scale(0.5); filter: blur(6px);'))
+                         ">
+                        <div class="mx-auto" :class="currentIndex === {{ $index }} ? 'max-w-4xl px-4 md:px-0' : 'max-w-3xl'">
+                            <div class="relative overflow-hidden rounded-3xl transition-shadow duration-700"
+                                 :class="currentIndex === {{ $index }} ? 'shadow-2xl cursor-pointer' : 'shadow-lg pointer-events-none'"
+                                 @click="currentIndex === {{ $index }} && handleClick('{{ route('culinary.show', $culinary->slug) }}')">
+                                <img src="{{ asset($culinary->image) }}"
+                                     alt="{{ $culinary->name }}"
+                                     class="h-[280px] md:h-[420px] w-full object-cover rounded-3xl transition-transform duration-700"
+                                     :class="currentIndex === {{ $index }} ? 'group-hover:scale-105' : ''">
+
+                                <!-- Gradient Overlay -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent transition-opacity duration-500"
+                                     :class="currentIndex === {{ $index }} ? 'opacity-100' : 'opacity-60'"></div>
+
+                                <!-- Text Content (only visible on active slide) -->
+                                <div class="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 text-white transition-all duration-500"
+                                     :class="currentIndex === {{ $index }} ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'">
+                                    <h3 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight drop-shadow-lg">
+                                        {{ $culinary->name }}
+                                    </h3>
+                                    <p class="mt-2 max-w-xl text-white/90 text-sm md:text-base line-clamp-2 leading-relaxed">
+                                        {{ $culinary->description }}
+                                    </p>
+                                    <a href="{{ route('culinary.show', $culinary->slug) }}"
+                                       class="mt-4 inline-flex items-center gap-2 rounded-full bg-sky-600 px-5 md:px-6 py-2 md:py-2.5 text-sm font-medium text-white hover:bg-sky-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                       @click.stop.prevent="handleClick('{{ route('culinary.show', $culinary->slug) }}')">
+                                        {{ __('Culinary.Button.More') }} →
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     @endforeach
+                </div>
 
-                </div>
-                
-                <!-- Dots Indicator -->
-                <div class="flex justify-center gap-2 mt-8">
-                    @foreach($culinaries as $index => $culinary)
-                    <button 
-                        @click="scrollToIndex({{ $index }})"
-                        :class="currentIndex === {{ $index }} ? 'w-8 bg-primary' : 'w-2 bg-gray-300 dark:bg-gray-600 hover:bg-primary/50'"
-                        class="h-2 rounded-full transition-all duration-300"
-                        aria-label="Go to slide {{ $index + 1 }}">
-                    </button>
-                    @endforeach
-                </div>
+                <!-- Navigation Arrows -->
+                <button @click="prev()"
+                        class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2.5 md:p-3 shadow-lg hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all">
+                    <svg class="w-5 h-5 md:w-6 md:h-6 text-slate-700 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button @click="next()"
+                        class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2.5 md:p-3 shadow-lg hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all">
+                    <svg class="w-5 h-5 md:w-6 md:h-6 text-slate-700 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Dots Indicator -->
+            <div class="flex justify-center gap-2 mt-4 md:mt-6">
+                @foreach($culinaries as $index => $culinary)
+                <button 
+                    @click="goTo({{ $index }})"
+                    :class="currentIndex === {{ $index }} ? 'w-6 bg-sky-600' : 'w-2 bg-slate-300 dark:bg-slate-600 hover:bg-sky-400'"
+                    class="h-2 rounded-full transition-all duration-300"
+                    aria-label="Go to slide {{ $index + 1 }}">
+                </button>
+                @endforeach
             </div>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
             
-            // Immediately set initial state via GSAP (faster than CSS)
             gsap.set(".culinary-header", { opacity: 0, y: 20 });
-            gsap.set(".culinary-card", { opacity: 0, y: 30 });
-            
-            // Header Animation - Super fast trigger
+
             ScrollTrigger.create({
                 trigger: ".culinary-header",
                 start: "top bottom-=50",
@@ -258,24 +207,6 @@
                         opacity: 1,
                         y: 0,
                         duration: 0.4,
-                        ease: "power1.out"
-                    });
-                }
-            });
-
-            // Cards Animation - Instant trigger when section visible
-            const culinaryCards = document.querySelectorAll('.culinary-card');
-            const section = document.querySelector('.culinary-header')?.closest('[class*="bg-surface"]');
-            
-            ScrollTrigger.create({
-                trigger: section || ".culinary-header",
-                start: "top bottom-=20",
-                onEnter: () => {
-                    gsap.to(culinaryCards, {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.35,
-                        stagger: 0.05,
                         ease: "power1.out"
                     });
                 }
