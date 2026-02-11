@@ -226,7 +226,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
 
                 <!-- Ticket Type Distribution -->
                 <div class="chart-card">
@@ -256,12 +256,58 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Occupancy Leaderboard -->
+                <div class="leaderboard-card">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">Top Destinasi</h3>
+                                <p class="text-xs text-gray-500">Hari ini</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200">
+                                <i class="fa-solid fa-trophy text-white"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            @forelse($occupancy as $index => $place)
+                                <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm
+                                        {{ $index == 0 ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' : '' }}
+                                        {{ $index == 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' : '' }}
+                                        {{ $index == 2 ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white' : '' }}
+                                        {{ $index > 2 ? 'bg-gray-100 text-gray-600' : '' }}">
+                                        {{ $index + 1 }}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">{{ Str::limit($place->name, 20) }}</span>
+                                            <span class="font-bold text-gray-800">{{ $place->sold }}</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                            <div class="h-2 rounded-full transition-all duration-1000 ease-out
+                                                {{ $index == 0 ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-blue-500' }}" 
+                                                 style="width: {{ ($place->sold / ($occupancy->max('sold') ?: 1)) * 100 }}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-8">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fa-solid fa-chart-simple text-2xl text-gray-400"></i>
+                                    </div>
+                                    <p class="text-gray-400 text-sm">Belum ada data hari ini</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Recent Transactions & Occupancy Leaderboard -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="mt-8">
                 <!-- Recent Orders -->
-                <div class="lg:col-span-2 table-card">
+                <div class="table-card">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <div class="p-6 border-b border-gray-100">
                             <div class="flex items-center justify-between">
@@ -327,52 +373,6 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Occupancy Leaderboard -->
-                <div class="leaderboard-card">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800">Top Destinasi</h3>
-                                <p class="text-xs text-gray-500">Hari ini</p>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200">
-                                <i class="fa-solid fa-trophy text-white"></i>
-                            </div>
-                        </div>
-                        <div class="space-y-4">
-                            @forelse($occupancy as $index => $place)
-                                <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
-                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm
-                                        {{ $index == 0 ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' : '' }}
-                                        {{ $index == 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' : '' }}
-                                        {{ $index == 2 ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white' : '' }}
-                                        {{ $index > 2 ? 'bg-gray-100 text-gray-600' : '' }}">
-                                        {{ $index + 1 }}
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex justify-between mb-1">
-                                            <span class="font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">{{ Str::limit($place->name, 20) }}</span>
-                                            <span class="font-bold text-gray-800">{{ $place->sold }}</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                            <div class="h-2 rounded-full transition-all duration-1000 ease-out
-                                                {{ $index == 0 ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-blue-500' }}" 
-                                                 style="width: {{ ($place->sold / ($occupancy->max('sold') ?: 1)) * 100 }}%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-8">
-                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <i class="fa-solid fa-chart-simple text-2xl text-gray-400"></i>
-                                    </div>
-                                    <p class="text-gray-400 text-sm">Belum ada data hari ini</p>
-                                </div>
-                            @endforelse
                         </div>
                     </div>
                 </div>
