@@ -70,13 +70,7 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::delete('/places/{place}', [AdminController::class, 'destroy'])->name('places.destroy');
     Route::delete('/places/images/{placeImage}', [AdminController::class, 'destroyImage'])->name('places.images.destroy');
 
-    // Boundaries routes
-    Route::resource('boundaries', BoundaryController::class);
-
-    // Reports routes
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::post('/reports/export/csv', [ReportController::class, 'exportCsv'])->name('reports.export.csv');
-    Route::match(['get', 'post'], '/reports/export/html', [ReportController::class, 'exportHtml'])->name('reports.export.html');
+    Route::delete('/places/images/{placeImage}', [AdminController::class, 'destroyImage'])->name('places.images.destroy');
 
     // Categories routes
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);

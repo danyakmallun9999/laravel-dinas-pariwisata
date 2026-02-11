@@ -42,7 +42,9 @@ class Place extends Model
         'opening_hours',
         'contact_info',
         'rating',
-        'website',
+        'rating',
+        // 'website', // Removed
+        'google_maps_link',
         'google_maps_link',
         'ownership_status',
         'manager',
@@ -106,5 +108,6 @@ class Place extends Model
     protected $casts = [
         'rides' => 'array',
         'facilities' => 'array',
+        'social_media' => 'array',
     ];
 }

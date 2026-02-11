@@ -329,10 +329,28 @@
                             <section class="p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800">
                                  <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-4">{{ __('Places.Contact') }}</h3>
                                  <div class="flex flex-wrap gap-4">
-                                    @if($place->social_media)
-                                        <a href="{{ $place->social_media }}" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-pink-500 text-white font-bold hover:bg-pink-600 transition-colors shadow-lg hover:shadow-pink-500/30">
+                                    @if($place->social_media && is_array($place->social_media))
+                                        @foreach($place->social_media as $social)
+                                            <a href="{{ $social['url'] ?? '#' }}" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-pink-500 text-white font-bold hover:bg-pink-600 transition-colors shadow-lg hover:shadow-pink-500/30">
+                                                @php
+                                                    $platform = strtolower($social['platform'] ?? '');
+                                                    $icon = 'fa-link';
+                                                    if (str_contains($platform, 'instagram') || $platform === 'ig') $icon = 'fa-instagram';
+                                                    elseif (str_contains($platform, 'facebook') || $platform === 'fb') $icon = 'fa-facebook';
+                                                    elseif (str_contains($platform, 'tiktok')) $icon = 'fa-tiktok';
+                                                    elseif (str_contains($platform, 'youtube')) $icon = 'fa-youtube';
+                                                    elseif (str_contains($platform, 'twitter') || $platform === 'x') $icon = 'fa-x-twitter';
+                                                    elseif (str_contains($platform, 'whatsapp') || $platform === 'wa') $icon = 'fa-whatsapp';
+                                                @endphp
+                                                <i class="fa-brands {{ $icon }} text-xl"></i>
+                                                <span>{{ $social['platform'] ?? 'Social Media' }}</span>
+                                                <span class="material-symbols-outlined text-sm">open_in_new</span>
+                                            </a>
+                                        @endforeach
+                                    @elseif(is_string($place->social_media))
+                                         <a href="{{ $place->social_media }}" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-pink-500 text-white font-bold hover:bg-pink-600 transition-colors shadow-lg hover:shadow-pink-500/30">
                                             <i class="fa-brands fa-instagram text-xl"></i>
-                                            <span>Instagram / Social Media</span>
+                                            <span>Social Media</span>
                                             <span class="material-symbols-outlined text-sm">open_in_new</span>
                                         </a>
                                     @endif

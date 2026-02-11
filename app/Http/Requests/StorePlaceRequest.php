@@ -33,14 +33,16 @@ class StorePlaceRequest extends FormRequest
             'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
             'opening_hours' => ['nullable', 'string', 'max:255'],
             'contact_info' => ['nullable', 'string', 'max:255'],
-            'website' => ['nullable', 'url', 'max:255'],
+            // 'website' => ['nullable', 'url', 'max:255'], // Removed
             'google_maps_link' => ['nullable', 'url', 'max:255'],
             'gallery_images.*' => ['nullable', 'image', 'max:2048'],
             'rides' => ['nullable', 'string'],
             'facilities' => ['nullable', 'string'],
             'ownership_status' => ['nullable', 'string'],
             'manager' => ['nullable', 'string'],
-            'social_media' => ['nullable', 'string'],
+            'social_media' => ['nullable', 'array'],
+            'social_media.*.platform' => ['required', 'string'],
+            'social_media.*.url' => ['required', 'url'],
         ];
 
         // Latitude/longitude required only if geometry not provided

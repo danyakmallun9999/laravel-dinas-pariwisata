@@ -148,52 +148,46 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Website URL</label>
-                        <input type="url" name="website" 
-                               value="{{ old('website', $place->website) }}"
-                               class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                               placeholder="https://example.com">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Link Google Maps</label>
-                        <input type="url" name="google_maps_link" 
-                               value="{{ old('google_maps_link', $place->google_maps_link) }}"
-                               class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                               placeholder="https://maps.app.goo.gl/...">
-                    </div>
-                </div>
-
-                <!-- Management Section -->
-                <div class="space-y-4">
-                    <h4 class="text-sm font-semibold text-gray-800 flex items-center gap-2 pb-2 border-b border-gray-100">
-                        <i class="fa-solid fa-building text-purple-500 text-xs"></i>
-                        Pengelolaan
-                    </h4>
+                    <!-- Website field removed -->
                     
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Status Kepemilikan</label>
-                            <input type="text" name="ownership_status" 
-                                   value="{{ old('ownership_status', $place->ownership_status) }}"
-                                   class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                   placeholder="Pemda, Swasta">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Pengelola</label>
-                            <input type="text" name="manager" 
-                                   value="{{ old('manager', $place->manager) }}"
-                                   class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                   placeholder="Nama pengelola">
-                        </div>
-                    </div>
-
-                    <div>
+                    
+                    <!-- Social Media Repeater -->
+                    <div x-data="{
+                        socials: {{ Illuminate\Support\Js::from(old('social_media', $place->social_media ?? [])) }},
+                        add() {
+                            this.socials.push({ platform: '', url: '' });
+                        },
+                        remove(index) {
+                            this.socials.splice(index, 1);
+                        }
+                    }">
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Media Sosial</label>
-                        <textarea name="social_media" rows="2"
-                                  class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                  placeholder="Info akun sosial media...">{{ old('social_media', $place->social_media) }}</textarea>
+                        
+                        <div class="space-y-2">
+                            <template x-for="(social, index) in socials" :key="index">
+                                <div class="flex gap-2 items-start">
+                                    <div class="w-1/3">
+                                        <input type="text" :name="`social_media[${index}][platform]`" x-model="social.platform" 
+                                            placeholder="Platform (e.g. IG)"
+                                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
+                                    </div>
+                                    <div class="flex-1">
+                                        <input type="url" :name="`social_media[${index}][url]`" x-model="social.url" 
+                                            placeholder="https://..."
+                                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
+                                    </div>
+                                    <button type="button" @click="remove(index)" 
+                                        class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                        <i class="fa-solid fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+
+                        <button type="button" @click="add()" 
+                            class="mt-2 text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus-circle"></i> Tambah Media Sosial
+                        </button>
                     </div>
                 </div>
 
