@@ -203,15 +203,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <template x-for="event in paginatedEvents" :key="event.id">
                             <a :href="`/calendar-of-events/${event.slug}`" 
-                               class="group block h-full transition-all duration-300"
+                               class="group block h-full transition-all duration-300 hover:-translate-y-1"
                                x-transition:enter="transition ease-out duration-300"
                                x-transition:enter-start="opacity-0 scale-95"
                                x-transition:enter-end="opacity-100 scale-100"
                             >
-                                <div class="h-full flex flex-col bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden hover:border-primary/50 dark:hover:border-primary/50 transition-colors duration-300 shadow-sm hover:shadow-lg">
+                                <div class="h-full flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
                                     
-                                    <!-- Image 16:9 -->
-                                    <div class="aspect-video w-full relative overflow-hidden bg-gray-100 dark:bg-white/5">
+                                    <!-- Image -->
+                                    <div class="relative w-full h-48 overflow-hidden bg-stone-100 dark:bg-slate-800">
                                         <template x-if="event.image_url">
                                             <img :src="event.image_url" :alt="event.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                         </template>
@@ -219,34 +219,29 @@
                                             <img src="{{ asset('images/agenda/logo-agenda.png') }}" :alt="event.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                         </template>
                                         
-                                        <!-- Simple Date Badge -->
-                                        <div class="absolute top-3 right-3 bg-white dark:bg-black/80 px-3 py-1.5 rounded shadow-sm text-center border border-gray-100 dark:border-white/10">
-                                            <div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide" x-text="event.start_date_month"></div>
-                                            <div class="text-xl font-bold text-gray-800 dark:text-white leading-none" x-text="event.start_date_day"></div>
+                                        <!-- Glassmorphic Date Badge (Top-Left) -->
+                                        <div class="absolute top-4 left-4 bg-white/90 dark:bg-black/70 backdrop-blur-sm px-3 py-2 rounded-xl text-center shadow-lg">
+                                            <div class="text-xl font-bold text-stone-800 dark:text-white leading-none" x-text="event.start_date_day"></div>
+                                            <div class="text-[10px] font-semibold tracking-widest text-stone-500 dark:text-stone-400 uppercase mt-0.5" x-text="event.start_date_month"></div>
                                         </div>
                                     </div>
 
                                     <!-- Content -->
-                                    <div class="p-5 flex flex-col flex-1">
-                                        <div class="flex items-center gap-2 mb-3">
-                                            <span class="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/5 px-2 py-0.5 rounded">{{ __('Events.Badge') }}</span>
-                                            <div class="text-xs text-gray-400 flex items-center gap-1">
-                                                    <i class="fa-regular fa-clock"></i>
-                                                    <span x-text="event.start_time"></span>
-                                            </div>
-                                        </div>
-
-                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2" x-text="event.title">
+                                    <div class="p-5 flex flex-col flex-1 space-y-2">
+                                        <h3 class="text-lg md:text-xl font-semibold text-stone-900 dark:text-white leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300" x-text="event.title">
                                         </h3>
 
-                                        <div class="text-sm text-gray-500 dark:text-gray-400 mb-4 flex items-start gap-1.5">
-                                            <i class="fa-solid fa-location-dot text-gray-400 mt-0.5"></i>
-                                            <span class="line-clamp-1" x-text="event.location"></span>
+                                        <div class="flex items-center gap-2 text-stone-600 dark:text-stone-400 text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 text-stone-400 dark:text-stone-500"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                            <span class="line-clamp-1" x-text="event.location || 'Jepara'"></span>
                                         </div>
 
-                                        <div class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-sm">
-                                            <span class="text-gray-400 group-hover:text-primary transition-colors">{{ __('Events.Card.ViewDetail') }}</span>
-                                            <i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-primary transition-colors -translate-x-1 group-hover:translate-x-0 duration-300"></i>
+                                        <p class="text-sm text-stone-500 dark:text-stone-400 line-clamp-2 pt-1" x-text="event.description ? event.description.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : ''"></p>
+
+                                        <div class="pt-3 mt-auto">
+                                            <span class="text-sm font-medium text-amber-700 dark:text-amber-500 group-hover:text-amber-800 dark:group-hover:text-amber-400 transition-colors duration-300 inline-flex items-center gap-1">
+                                                {{ __('Events.Card.ViewDetail') }} →
+                                            </span>
                                         </div>
                                     </div>
 
