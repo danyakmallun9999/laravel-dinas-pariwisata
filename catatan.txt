@@ -17,7 +17,7 @@ wisatajepara
 # 6. Pengembangan lebih lanjut fitur e-ticketing
 # 7. Optimalisasi ukuran file gambar
 # 8. Update README.md
-# 9. Update ke breadcrum pada detail eveent, detail kuliner, detail destinasi
+# 9. Update ke breadcrum pada detail eveent, detail kuliner, detail destinasi (done)
 # 10. Hilangkan GSAP pada folder errors dan dashboard tiket admin ( done )
 # 11. Role super admin
 # 12. Role admin
