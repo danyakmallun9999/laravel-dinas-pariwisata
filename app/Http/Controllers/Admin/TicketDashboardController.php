@@ -19,6 +19,7 @@ class TicketDashboardController extends Controller
     {
         $stats = $this->analyticsService->getDailyStats();
         $salesChart = $this->analyticsService->getSalesChartData(365);
+        $monthlySalesChart = $this->analyticsService->getMonthlySalesChartData(12);
         $ticketTypes = $this->analyticsService->getTicketTypeBreakdown();
         $occupancy = $this->analyticsService->getOccupancyByPlace();
         $recentTransactions = $this->analyticsService->getRecentTransactions();
@@ -26,6 +27,7 @@ class TicketDashboardController extends Controller
         return view('admin.tickets.dashboard', compact(
             'stats',
             'salesChart',
+            'monthlySalesChart',
             'ticketTypes',
             'occupancy',
             'recentTransactions'

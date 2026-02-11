@@ -33,6 +33,7 @@ class FinancialReportController extends Controller
 
         // Preload 365 days data for client-side filtering charts
         $salesChartData = $this->analyticsService->getSalesChartData(365);
+        $monthlySalesChartData = $this->analyticsService->getMonthlySalesChartData(12);
 
         return view('admin.reports.financial.index', compact(
             'summary',
@@ -41,7 +42,8 @@ class FinancialReportController extends Controller
             'ticketSales',
             'startDate',
             'endDate',
-            'salesChartData'
+            'salesChartData',
+            'monthlySalesChartData'
         ));
     }
 

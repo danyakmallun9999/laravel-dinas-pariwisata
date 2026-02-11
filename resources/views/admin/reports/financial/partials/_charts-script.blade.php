@@ -12,5 +12,8 @@
         chartLabels:   {!! json_encode($salesChartData['labels']) !!},
         chartRevenue:  {!! json_encode($salesChartData['revenue']) !!},
         chartTickets:  {!! json_encode($salesChartData['tickets']) !!},
+        monthlyLabels:   {!! json_encode($monthlySalesChartData['labels']) !!},
+        monthlyRevenue:  {!! json_encode($monthlySalesChartData['revenue']) !!},
+        monthlyTickets:  {!! json_encode($monthlySalesChartData['tickets']) !!},
     };
 </script>

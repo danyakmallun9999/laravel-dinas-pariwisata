@@ -51,6 +51,11 @@ let fullLabels = [];
 let fullRevenue = [];
 let fullTickets = [];
 
+// ── Monthly data (12 months) ──
+let monthlyLabels = [];
+let monthlyRevenue = [];
+let monthlyTickets = [];
+
 /**
  * Slice the last N days from full arrays.
  */
@@ -71,7 +76,7 @@ function buildAreaOptions({ seriesName, data, labels, color, yFormatter, tooltip
     return {
         series: [{ name: seriesName, data }],
         chart: {
-            type: 'area',
+            type: 'area', // Changed from area to bar if needed, but area works too
             height: height || 260,
             fontFamily: "'Inter', 'Segoe UI', sans-serif",
             toolbar: {
@@ -173,30 +178,56 @@ function initRevenueChart() {
     updateRevenueStats(slice);
 }
 
-function updateRevenueStats(slice) {
+function updateRevenueStats(slice, isMonthly = false) {
     const total = slice.revenue.reduce((a, b) => a + b, 0);
-    const days = slice.labels.length || 1;
+    const count = slice.labels.length || 1;
+    // For monthly view, slice.tickets is monthly totals. For daily view, it's daily totals.
     const txCount = slice.tickets.reduce((a, b) => a + b, 0);
     const max = Math.max(...slice.revenue);
 
     const el = (id) => document.getElementById(id);
     if (el('revTotal')) el('revTotal').textContent = formatRupiah(total);
-    if (el('revAvg')) el('revAvg').textContent = formatRupiah(Math.round(total / days));
+    if (el('revAvg')) {
+        // adjust label for avg
+        el('revAvg').textContent = formatRupiah(Math.round(total / count));
+        // optional: change label text from "Rata-rata/Hari" to "Rata-rata/Bulan" ??
+        // The HTML says "Rata-rata/Hari". We might want to update that text dynamically if strict correctness is needed.
+        // For now, let's keep it simple or update it via JS if element exists.
+        const avgLabel = el('revAvg').nextElementSibling;
+        if (avgLabel) avgLabel.textContent = isMonthly ? 'Rata-rata/Bulan' : 'Rata-rata/Hari';
+    }
     if (el('revTx')) el('revTx').textContent = txCount.toLocaleString('id-ID');
-    if (el('revMax')) el('revMax').textContent = formatRupiah(max);
+    if (el('revMax')) {
+        el('revMax').textContent = formatRupiah(max);
+        const maxLabel = el('revMax').nextElementSibling;
+        if (maxLabel) maxLabel.textContent = isMonthly ? 'Bulan Tertinggi' : 'Hari Tertinggi';
+    }
 }
 
 window.filterRevenueChart = function (period) {
     if (!revenueChart) return;
-    const days = PERIOD_DAYS[period] || 30;
-    const slice = sliceData(days);
+
+    let slice;
+    const isMonthly = period === '1T';
+
+    if (isMonthly) {
+        // Use monthly data
+        slice = {
+            labels: monthlyLabels,
+            revenue: monthlyRevenue,
+            tickets: monthlyTickets
+        };
+    } else {
+        const days = PERIOD_DAYS[period] || 30;
+        slice = sliceData(days);
+    }
 
     revenueChart.updateOptions({
         series: [{ name: 'Pendapatan', data: slice.revenue }],
         xaxis: { categories: slice.labels },
     }, true, true);
 
-    updateRevenueStats(slice);
+    updateRevenueStats(slice, isMonthly);
     const label = document.getElementById('revenuePeriodLabel');
     if (label) label.textContent = PERIOD_LABELS[period] || '';
 };
@@ -224,30 +255,58 @@ function initTicketChart() {
     updateTicketStats(slice);
 }
 
-function updateTicketStats(slice) {
+function updateTicketStats(slice, isMonthly = false) {
     const total = slice.tickets.reduce((a, b) => a + b, 0);
-    const days = slice.labels.length || 1;
-    const activeDays = slice.tickets.filter(v => v > 0).length;
+    const count = slice.labels.length || 1;
+    const activeCount = slice.tickets.filter(v => v > 0).length;
     const max = Math.max(...slice.tickets);
 
     const el = (id) => document.getElementById(id);
     if (el('txTotal')) el('txTotal').textContent = total.toLocaleString('id-ID');
-    if (el('txAvg')) el('txAvg').textContent = Math.round(total / days).toLocaleString('id-ID');
-    if (el('txDays')) el('txDays').textContent = activeDays + '/' + days;
-    if (el('txMax')) el('txMax').textContent = max.toLocaleString('id-ID');
+    if (el('txAvg')) {
+        el('txAvg').textContent = Math.round(total / count).toLocaleString('id-ID');
+        const avgLabel = el('txAvg').nextElementSibling;
+        if (avgLabel) avgLabel.textContent = isMonthly ? 'Rata-rata/Bulan' : 'Rata-rata/Hari';
+    }
+    if (el('txDays')) {
+        el('txDays').textContent = activeCount + '/' + count;
+        const activeLabel = el('txDays').nextElementSibling;
+        if (activeLabel) activeLabel.textContent = isMonthly ? 'Bulan Aktif' : 'Hari Aktif';
+    }
+    if (el('txMax')) {
+        el('txMax').textContent = max.toLocaleString('id-ID');
+        const maxLabel = el('txMax').nextElementSibling;
+        if (maxLabel) maxLabel.textContent = isMonthly ? 'Bulan Tertinggi' : 'Hari Tertinggi';
+    }
 }
 
 window.filterTicketChart = function (period) {
     if (!ticketChart) return;
-    const days = PERIOD_DAYS[period] || 30;
-    const slice = sliceData(days);
+
+    let slice;
+    const isMonthly = period === '1T';
+
+    if (isMonthly) {
+        slice = {
+            labels: monthlyLabels,
+            // Ticket chart uses 'tickets' array (which is transaction count or ticket count depending on context)
+            // In dashboard blades, 'tickets' variable is passed which is `total_tickets`.
+            // The monthlyTickets variable is also `total_tickets`.
+            tickets: monthlyTickets,
+            // We don't need revenue here but keep struct consistent
+            revenue: monthlyRevenue
+        };
+    } else {
+        const days = PERIOD_DAYS[period] || 30;
+        slice = sliceData(days);
+    }
 
     ticketChart.updateOptions({
         series: [{ name: 'Tiket Terjual', data: slice.tickets }],
         xaxis: { categories: slice.labels },
     }, true, true);
 
-    updateTicketStats(slice);
+    updateTicketStats(slice, isMonthly);
     const label = document.getElementById('ticketPeriodLabel');
     if (label) label.textContent = PERIOD_LABELS[period] || '';
 };
@@ -349,6 +408,11 @@ export function initDashboardCharts() {
     fullLabels = data.labels || [];
     fullRevenue = (data.revenue || []).map(Number);
     fullTickets = (data.tickets || []).map(Number);
+
+    // Store monthly data
+    monthlyLabels = data.monthlyLabels || [];
+    monthlyRevenue = (data.monthlyRevenue || []).map(Number);
+    monthlyTickets = (data.monthlyTickets || []).map(Number);
 
     initRevenueChart();
     initTicketChart();

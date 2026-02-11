@@ -386,6 +386,9 @@
             labels:          {!! json_encode($salesChart['labels']) !!},
             revenue:         {!! json_encode($salesChart['revenue']) !!},
             tickets:         {!! json_encode($salesChart['tickets']) !!},
+            monthlyLabels:   {!! json_encode($monthlySalesChart['labels']) !!},
+            monthlyRevenue:  {!! json_encode($monthlySalesChart['revenue']) !!},
+            monthlyTickets:  {!! json_encode($monthlySalesChart['tickets']) !!},
             ticketTypeLabels: {!! json_encode($ticketTypes->pluck('type')) !!},
             ticketTypeData:   {!! json_encode($ticketTypes->pluck('count')) !!},
         };

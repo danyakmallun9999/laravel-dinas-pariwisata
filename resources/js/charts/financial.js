@@ -52,6 +52,11 @@ let fullLabels = [];
 let fullRevenue = [];
 let fullTickets = [];
 
+// Monthly data
+let monthlyLabels = [];
+let monthlyRevenue = [];
+let monthlyTickets = [];
+
 /**
  * Destroy all chart instances.
  */
@@ -74,10 +79,16 @@ export function initFinancialCharts() {
     fullRevenue = (data.chartRevenue || data.dailyRevenue || []).map(Number);
     fullTickets = (data.chartTickets || data.dailyCounts || []).map(Number);
 
+    // Load monthly data
+    monthlyLabels = data.monthlyLabels || [];
+    monthlyRevenue = (data.monthlyRevenue || []).map(Number);
+    monthlyTickets = (data.monthlyTickets || []).map(Number);
+
     console.log('Financial Charts Init:', {
         labelsLen: fullLabels.length,
         revLen: fullRevenue.length,
-        txLen: fullTickets.length
+        txLen: fullTickets.length,
+        monthlyLen: monthlyLabels.length
     });
 
     // 1. Revenue & Transaction Charts (Interactive)
@@ -107,7 +118,7 @@ function buildAreaOptions({ seriesName, data, labels, color, yFormatter, tooltip
     return {
         series: [{ name: seriesName, data }],
         chart: {
-            type: 'area',
+            type: 'area', // or bar if preferred for monthly
             height: height || 260,
             fontFamily: "'Inter', 'Segoe UI', sans-serif",
             toolbar: {
@@ -204,30 +215,51 @@ function initRevenueChart() {
     updateRevenueStats(slice);
 }
 
-function updateRevenueStats(slice) {
+function updateRevenueStats(slice, isMonthly = false) {
     const total = slice.revenue.reduce((a, b) => a + b, 0);
-    const days = slice.labels.length || 1;
+    const count = slice.labels.length || 1;
+    // For monthly view, slice.tickets is monthly totals.
     const txCount = slice.tickets.reduce((a, b) => a + b, 0);
     const max = Math.max(...slice.revenue);
 
     const el = (id) => document.getElementById(id);
     if (el('revTotal')) el('revTotal').textContent = formatRupiah(total);
-    if (el('revAvg')) el('revAvg').textContent = formatRupiah(Math.round(total / days));
+    if (el('revAvg')) {
+        el('revAvg').textContent = formatRupiah(Math.round(total / count));
+        const avgLabel = el('revAvg').nextElementSibling;
+        if (avgLabel) avgLabel.textContent = isMonthly ? 'Avg/Bulan' : 'Avg/Hari';
+    }
     if (el('revTx')) el('revTx').textContent = txCount.toLocaleString('id-ID');
-    if (el('revMax')) el('revMax').textContent = formatRupiah(max);
+    if (el('revMax')) {
+        el('revMax').textContent = formatRupiah(max);
+        const maxLabel = el('revMax').nextElementSibling;
+        if (maxLabel) maxLabel.textContent = isMonthly ? 'Bulan Tertinggi' : 'Tertinggi'; // kept 'Tertinggi' mostly
+    }
 }
 
 window.filterFinancialRevenue = function (period) {
     if (!revenueChart) return;
-    const days = PERIOD_DAYS[period] || 30;
-    const slice = sliceData(days);
+
+    let slice;
+    const isMonthly = period === '1T';
+
+    if (isMonthly) {
+        slice = {
+            labels: monthlyLabels,
+            revenue: monthlyRevenue,
+            tickets: monthlyTickets
+        };
+    } else {
+        const days = PERIOD_DAYS[period] || 30;
+        slice = sliceData(days);
+    }
 
     revenueChart.updateOptions({
         series: [{ name: 'Pendapatan', data: slice.revenue }],
         xaxis: { categories: slice.labels },
     }, true, true);
 
-    updateRevenueStats(slice);
+    updateRevenueStats(slice, isMonthly);
     const label = document.getElementById('revenuePeriodLabel');
     if (label) label.textContent = PERIOD_LABELS[period] || '';
 };
@@ -255,30 +287,54 @@ function initTicketChart() {
     updateTicketStats(slice);
 }
 
-function updateTicketStats(slice) {
+function updateTicketStats(slice, isMonthly = false) {
     const total = slice.tickets.reduce((a, b) => a + b, 0);
-    const days = slice.labels.length || 1;
-    const activeDays = slice.tickets.filter(v => v > 0).length;
+    const count = slice.labels.length || 1;
+    const activeCount = slice.tickets.filter(v => v > 0).length;
     const max = Math.max(...slice.tickets);
 
     const el = (id) => document.getElementById(id);
     if (el('txTotal')) el('txTotal').textContent = total.toLocaleString('id-ID');
-    if (el('txAvg')) el('txAvg').textContent = Math.round(total / days).toLocaleString('id-ID');
-    if (el('txDays')) el('txDays').textContent = activeDays + '/' + days;
-    if (el('txMax')) el('txMax').textContent = max.toLocaleString('id-ID');
+    if (el('txAvg')) {
+        el('txAvg').textContent = Math.round(total / count).toLocaleString('id-ID');
+        const avgLabel = el('txAvg').nextElementSibling;
+        if (avgLabel) avgLabel.textContent = isMonthly ? 'Avg/Bulan' : 'Avg/Hari';
+    }
+    if (el('txDays')) {
+        el('txDays').textContent = activeCount + '/' + count;
+        const activeLabel = el('txDays').nextElementSibling;
+        if (activeLabel) activeLabel.textContent = isMonthly ? 'Bulan Aktif' : 'Hari Aktif';
+    }
+    if (el('txMax')) {
+        el('txMax').textContent = max.toLocaleString('id-ID');
+        const maxLabel = el('txMax').nextElementSibling;
+        if (maxLabel) maxLabel.textContent = isMonthly ? 'Bulan Tertinggi' : 'Tertinggi';
+    }
 }
 
 window.filterFinancialTickets = function (period) {
     if (!ticketChart) return;
-    const days = PERIOD_DAYS[period] || 30;
-    const slice = sliceData(days);
+
+    let slice;
+    const isMonthly = period === '1T';
+
+    if (isMonthly) {
+        slice = {
+            labels: monthlyLabels,
+            tickets: monthlyTickets,
+            revenue: monthlyRevenue // just for completeness
+        };
+    } else {
+        const days = PERIOD_DAYS[period] || 30;
+        slice = sliceData(days);
+    }
 
     ticketChart.updateOptions({
         series: [{ name: 'Transaksi', data: slice.tickets }],
         xaxis: { categories: slice.labels },
     }, true, true);
 
-    updateTicketStats(slice);
+    updateTicketStats(slice, isMonthly);
     const label = document.getElementById('ticketPeriodLabel');
     if (label) label.textContent = PERIOD_LABELS[period] || '';
 };
