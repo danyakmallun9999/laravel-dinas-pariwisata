@@ -74,6 +74,12 @@ export function initFinancialCharts() {
     fullRevenue = (data.chartRevenue || data.dailyRevenue || []).map(Number);
     fullTickets = (data.chartTickets || data.dailyCounts || []).map(Number);
 
+    console.log('Financial Charts Init:', {
+        labelsLen: fullLabels.length,
+        revLen: fullRevenue.length,
+        txLen: fullTickets.length
+    });
+
     // 1. Revenue & Transaction Charts (Interactive)
     initRevenueChart();
     initTicketChart();
@@ -145,6 +151,7 @@ function buildAreaOptions({ seriesName, data, labels, color, yFormatter, tooltip
             categories: labels,
             axisBorder: { show: false },
             axisTicks: { show: false },
+            tickAmount: 15,
             labels: {
                 style: { colors: '#9ca3af', fontSize: '10px' },
                 hideOverlappingLabels: true,
@@ -210,7 +217,7 @@ function updateRevenueStats(slice) {
     if (el('revMax')) el('revMax').textContent = formatRupiah(max);
 }
 
-window.filterRevenueChart = function (period) {
+window.filterFinancialRevenue = function (period) {
     if (!revenueChart) return;
     const days = PERIOD_DAYS[period] || 30;
     const slice = sliceData(days);
@@ -261,7 +268,7 @@ function updateTicketStats(slice) {
     if (el('txMax')) el('txMax').textContent = max.toLocaleString('id-ID');
 }
 
-window.filterTicketChart = function (period) {
+window.filterFinancialTickets = function (period) {
     if (!ticketChart) return;
     const days = PERIOD_DAYS[period] || 30;
     const slice = sliceData(days);

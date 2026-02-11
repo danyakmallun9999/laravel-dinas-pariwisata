@@ -118,6 +118,7 @@ function buildAreaOptions({ seriesName, data, labels, color, yFormatter, tooltip
             categories: labels,
             axisBorder: { show: false },
             axisTicks: { show: false },
+            tickAmount: 15,
             labels: {
                 style: { colors: '#9ca3af', fontSize: '10px' },
                 rotate: 0,

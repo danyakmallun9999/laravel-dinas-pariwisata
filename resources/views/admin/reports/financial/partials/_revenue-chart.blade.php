@@ -14,7 +14,7 @@
                 </div>
                 <div x-data="{ active: '1B' }" class="flex bg-gray-100 rounded-lg p-0.5">
                     <template x-for="p in ['1H', '1M', '1B', '1T']" :key="p">
-                        <button @click="active = p; window.filterRevenueChart(p)"
+                        <button @click="active = p; window.filterFinancialRevenue(p)"
                                 :class="active === p ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
                                 class="px-2.5 py-1.5 text-[11px] font-semibold rounded-md transition-all duration-200"
                                 x-text="p">
@@ -61,7 +61,7 @@
                 </div>
                 <div x-data="{ active: '1B' }" class="flex bg-gray-100 rounded-lg p-0.5">
                     <template x-for="p in ['1H', '1M', '1B', '1T']" :key="p">
-                        <button @click="active = p; window.filterTicketChart(p)"
+                        <button @click="active = p; window.filterFinancialTickets(p)"
                                 :class="active === p ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
                                 class="px-2.5 py-1.5 text-[11px] font-semibold rounded-md transition-all duration-200"
                                 x-text="p">
