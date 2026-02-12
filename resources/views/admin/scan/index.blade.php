@@ -288,6 +288,7 @@
             width: 100% !important;
             height: 100% !important;
             border-radius: 1rem; /* rounded-2xl */
+            transform: scaleX(-1) !important;
         }
     </style>
 </x-app-layout>
