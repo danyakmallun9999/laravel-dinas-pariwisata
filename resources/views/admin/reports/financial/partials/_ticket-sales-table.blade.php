@@ -1,9 +1,10 @@
 {{-- Ticket Sales Breakdown Table — Advanced --}}
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+{{-- Ticket Sales Breakdown Table — Advanced --}}
+<div class="bg-white rounded-[2rem] border border-gray-200 overflow-hidden">
     <div class="p-6 border-b border-gray-100">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-200">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center border-4 border-green-50">
                     <i class="fa-solid fa-receipt text-white text-sm"></i>
                 </div>
                 <div>

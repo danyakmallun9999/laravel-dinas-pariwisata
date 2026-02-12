@@ -1,10 +1,10 @@
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 h-full">
     {{-- Revenue Chart --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
+    <div class="bg-white rounded-[2rem] border border-gray-200 p-6 flex flex-col justify-between h-full">
         <div>
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-4 border-blue-50">
                         <i class="fa-solid fa-chart-line text-white text-sm"></i>
                     </div>
                     <div>
@@ -47,11 +47,11 @@
     </div>
 
     {{-- Transaction Chart --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
+    <div class="bg-white rounded-[2rem] border border-gray-200 p-6 flex flex-col justify-between h-full">
         <div>
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-200">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center border-4 border-emerald-50">
                         <i class="fa-solid fa-ticket text-white text-sm"></i>
                     </div>
                     <div>

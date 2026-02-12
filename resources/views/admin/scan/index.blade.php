@@ -8,9 +8,12 @@
             </div>
             <div class="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
                 <!-- Status Indicator -->
-                <div class="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
-                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                    <span class="text-xs font-medium text-slate-500">Camera Ready</span>
+                <div class="flex items-center gap-2 px-4 py-1.5 bg-white/80 border border-slate-200 rounded-full backdrop-blur-sm">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Camera Ready</span>
                 </div>
             </div>
         </div>
@@ -19,70 +22,86 @@
             <!-- Scanner Section -->
             <div class="md:col-span-2 space-y-4">
                 <!-- Camera Viewfinder -->
-                <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 relative overflow-hidden group">
+                <div class="bg-slate-900 p-1 rounded-[2rem] border border-slate-800 relative overflow-hidden group">
                     <!-- Scanner Container -->
-                    <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-100 min-h-[300px] md:min-h-[500px] relative z-0"></div>
+                    <div id="reader" class="w-full rounded-[1.8rem] overflow-hidden bg-black min-h-[300px] md:min-h-[500px] relative z-0"></div>
 
                     <!-- Camera Controls (Overlay) -->
-                    <div class="absolute top-4 right-4 z-20">
+                    <div class="absolute top-6 right-6 z-30">
                         <button @click="toggleScanner" 
-                                class="flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all shadow-lg backdrop-blur-sm"
-                                :class="isScanning ? 'bg-red-500/90 text-white hover:bg-red-600' : 'bg-emerald-500/90 text-white hover:bg-emerald-600'">
+                                class="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all backdrop-blur-md hover:scale-105 active:scale-95"
+                                :class="isScanning ? 'bg-red-500/90 text-white hover:bg-red-600 ring-1 ring-white/20' : 'bg-emerald-500/90 text-white hover:bg-emerald-600 ring-1 ring-white/20'">
                             <i class="fa-solid" :class="isScanning ? 'fa-video-slash' : 'fa-video'"></i>
-                            <span x-text="isScanning ? 'Matikan Kamera' : 'Hidupkan Kamera'"></span>
+                            <span x-text="isScanning ? 'Stop Kamera' : 'Mulai Kamera'"></span>
                         </button>
                     </div>
 
-                    <!-- Scanner Laser Overlay (Removed) -->
-                    <!-- The scanner works on the full video feed -->
-                    
-                    <!-- Error Message Overlay -->
-                    <div x-show="cameraError" x-cloak 
-                         class="absolute inset-0 flex items-center justify-center bg-slate-100 z-50 rounded-xl p-6 text-center">
-                        <div>
-                            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fa-solid fa-camera-slash text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 mb-2">Akses Kamera Bermasalah</h3>
-                            <p class="text-slate-500 text-sm mb-4" x-text="cameraError"></p>
-                            <button @click="startScanner" class="btn bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm">
-                                <i class="fa-solid fa-rotate-right mr-2"></i> Coba Lagi
-                            </button>
-                        </div>
+                    <!-- Scan Laser Animation -->
+                    <div x-show="isScanning" x-transition.opacity class="absolute inset-0 pointer-events-none z-10 overflow-hidden rounded-[1.8rem]">
+                        <div class="scan-laser"></div>
+                        <div class="scan-grid"></div>
                     </div>
                     
-                    <!-- Scan Guidelines Overlay -->
-                    <div class="absolute inset-0 pointer-events-none flex items-center justify-center translate-y-8 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <div class="w-64 h-64 border-2 border-white/50 rounded-3xl relative">
-                            <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-emerald-400 -mt-1 -ml-1 rounded-tl-xl"></div>
-                            <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-emerald-400 -mt-1 -mr-1 rounded-tr-xl"></div>
-                            <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-emerald-400 -mb-1 -ml-1 rounded-bl-xl"></div>
-                            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-emerald-400 -mb-1 -mr-1 rounded-br-xl"></div>
+                    <!-- Scanner Frame Guidelines -->
+                    <div x-show="isScanning" x-transition.opacity class="absolute inset-0 pointer-events-none flex items-center justify-center z-20">
+                        <div class="relative w-64 h-64 border border-white/20 rounded-3xl">
+                            <!-- Corners -->
+                            <div class="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-emerald-400 rounded-tl-3xl -mt-px -ml-px"></div>
+                            <div class="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-emerald-400 rounded-tr-3xl -mt-px -mr-px"></div>
+                            <div class="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-emerald-400 rounded-bl-3xl -mb-px -ml-px"></div>
+                            <div class="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-emerald-400 rounded-br-3xl -mb-px -mr-px"></div>
+                            
+                            <!-- Scanning Text -->
+                            <div class="absolute -bottom-12 left-0 right-0 text-center">
+                                <span class="bg-black/40 text-white/90 text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10">
+                                    Arahkan QR Code
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Message Overlay -->
+                    <div x-show="cameraError" x-cloak 
+                         class="absolute inset-0 flex items-center justify-center bg-slate-900/95 z-50 rounded-[1.8rem] p-8 text-center backdrop-blur-sm">
+                        <div class="max-w-xs">
+                            <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+                                <i class="fa-solid fa-camera-slash text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Akses Kamera Bermasalah</h3>
+                            <p class="text-slate-400 text-xs mb-6 leading-relaxed" x-text="cameraError"></p>
+                            <button @click="startScanner" class="w-full bg-white text-slate-900 font-bold rounded-xl px-4 py-2.5 text-xs hover:bg-slate-50 transition-colors">
+                                <i class="fa-solid fa-rotate-right mr-2"></i> Coba Lagi
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Manual Input Fallback -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-keyboard text-slate-400"></i> Manual Input / Upload
-                    </h3>
-                    <div class="flex flex-col md:flex-row gap-3">
-                        <form @submit.prevent="handleManualInput" class="flex-1 flex gap-2">
-                            <input type="text" x-model="manualInput" 
-                                class="form-input w-full rounded-xl border-slate-300 focus:border-indigo-500 focus:ring-indigo-500" 
-                                placeholder='Scan manual atau ketik kode...'>
-                            <button type="submit" class="btn bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl px-4">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
-                        </form>
-                        
-                        <!-- Upload Button -->
-                        <div class="relative">
-                            <input type="file" id="qr-input-file" accept="image/*" class="hidden" @change="handleFileUpload">
-                            <label for="qr-input-file" class="btn bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl px-4 cursor-pointer flex items-center gap-2 h-full">
-                                <i class="fa-solid fa-image"></i> Upload QR
-                            </label>
+                <div class="bg-white p-1 rounded-[2rem] border border-slate-200">
+                    <div class="p-5 rounded-[1.8rem] border border-slate-100 bg-slate-50/50">
+                        <h3 class="text-xs font-bold text-slate-500 mb-4 flex items-center gap-2 uppercase tracking-widest pl-1">
+                            <i class="fa-solid fa-keyboard text-indigo-500"></i> Manual Input
+                        </h3>
+                        <div class="flex flex-col md:flex-row gap-3">
+                            <form @submit.prevent="handleManualInput" class="flex-1 flex gap-2">
+                                <div class="relative flex-1">
+                                    <i class="fa-solid fa-barcode absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                                    <input type="text" x-model="manualInput" 
+                                        class="w-full pl-10 pr-4 py-3 rounded-2xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-white focus:bg-white transition-all font-mono text-sm shadow-sm" 
+                                        placeholder='Ketikan Kode Order...'>
+                                </div>
+                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-5 font-bold shadow-sm shadow-indigo-200 transition-all active:scale-95">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </form>
+                            
+                            <!-- Upload Button -->
+                            <div class="relative">
+                                <input type="file" id="qr-input-file" accept="image/*" class="hidden" @change="handleFileUpload">
+                                <label for="qr-input-file" class="bg-white border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 text-slate-600 hover:text-indigo-600 rounded-2xl px-5 cursor-pointer flex items-center justify-center gap-2 h-full font-semibold transition-all group shadow-sm text-sm">
+                                    <i class="fa-solid fa-image group-hover:scale-110 transition-transform text-slate-400 group-hover:text-indigo-500"></i> <span class="hidden sm:inline">Upload</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,26 +109,36 @@
 
             <!-- Recent Scans Sidebar -->
             <div class="md:col-span-1">
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 h-full">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Riwayat Scan Baru
-                    </h3>
-                    <div class="space-y-3">
+                <div class="bg-white p-1 rounded-[2rem] border border-slate-200 h-full">
+                    <div class="p-5 rounded-[1.8rem] border border-slate-100 bg-slate-50/50 h-full">
+                        <h3 class="text-xs font-bold text-slate-500 mb-6 flex items-center gap-2 uppercase tracking-widest pl-1">
+                            <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Riwayat Scan
+                        </h3>
+
+                    <div class="space-y-4 relative">
+                        <!-- Timeline line -->
+                        <div class="absolute left-[19px] top-2 bottom-2 w-0.5 bg-slate-100 z-0"></div>
+
                         <template x-if="recentScans.length === 0">
-                            <div class="text-center py-8 text-slate-400 text-sm">
-                                Belum ada scan
+                            <div class="text-center py-12 text-slate-400">
+                                <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa-solid fa-history text-2xl text-slate-300"></i>
+                                </div>
+                                <p class="text-sm">Belum ada riwayat scan</p>
                             </div>
                         </template>
-                        <template x-for="scan in recentScans" :key="scan.timestamp">
-                            <div class="p-3 rounded-xl border border-slate-100 flex items-start gap-3"
-                                :class="scan.valid ? 'bg-emerald-50/50' : 'bg-red-50/50'">
-                                <div class="mt-1">
-                                    <i class="fa-solid" :class="scan.valid ? 'fa-circle-check text-emerald-500' : 'fa-circle-xmark text-red-500'"></i>
+                        <template x-for="(scan, index) in recentScans" :key="scan.timestamp">
+                            <div class="relative z-10 flex items-start gap-4 group" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm border-2 transition-colors"
+                                    :class="scan.valid ? 'bg-emerald-50 border-emerald-100 text-emerald-500' : 'bg-red-50 border-red-100 text-red-500'">
+                                    <i class="fa-solid text-lg" :class="scan.valid ? 'fa-check' : 'fa-xmark'"></i>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-800" x-text="scan.ticketName || 'Unknown Ticket'"></p>
-                                    <p class="text-xs text-slate-500" x-text="scan.orderNumber"></p>
-                                    <p class="text-[10px] text-slate-400 mt-1" x-text="scan.time"></p>
+                                <div class="flex-1 min-w-0 bg-slate-50 rounded-2xl p-3 border border-slate-100 group-hover:border-indigo-100 group-hover:bg-indigo-50/30 transition-colors">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <p class="text-sm font-bold text-slate-800 truncate pr-2" x-text="scan.ticketName || 'Unknown Ticket'"></p>
+                                        <span class="text-[10px] font-mono text-slate-400 bg-white px-1.5 py-0.5 rounded-md border border-slate-100" x-text="scan.time"></span>
+                                    </div>
+                                    <p class="text-xs font-mono text-slate-500" x-text="scan.orderNumber"></p>
                                 </div>
                             </div>
                         </template>
@@ -214,10 +243,33 @@
     <!-- Note: html5-qrcode is now imported in the JS module -->
     
     <style>
-        @keyframes scan {
+        /* Laser Animation */
+        .scan-laser {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ef4444, transparent);
+            box-shadow: 0 0 15px #ef4444, 0 0 30px #ef4444;
+            top: 0%;
+            animation: scanning 2.5s ease-in-out infinite;
+            z-index: 15;
+            opacity: 0.8;
+        }
+
+        .scan-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 10;
+        }
+
+        @keyframes scanning {
             0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
             100% { top: 100%; opacity: 0; }
         }
         
@@ -235,7 +287,7 @@
             object-fit: cover !important;
             width: 100% !important;
             height: 100% !important;
-            border-radius: 0.75rem; /* rounded-xl */
+            border-radius: 1rem; /* rounded-2xl */
         }
     </style>
 </x-app-layout>

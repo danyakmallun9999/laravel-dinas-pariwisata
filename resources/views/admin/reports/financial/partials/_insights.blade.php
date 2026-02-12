@@ -63,9 +63,9 @@
 @endphp
 
 @if(count($insightCards) > 0)
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+<div class="bg-white rounded-[2rem] border border-gray-200 p-6">
     <div class="flex items-center gap-3 mb-5">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center border-4 border-amber-50">
             <i class="fa-solid fa-lightbulb text-white text-sm"></i>
         </div>
         <div>
@@ -76,8 +76,8 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         @foreach($insightCards as $card)
-            <div class="flex items-start gap-3 p-4 rounded-xl bg-{{ $card['color'] }}-50/50 border border-{{ $card['color'] }}-100/50 hover:shadow-md transition-all duration-300 group">
-                <div class="w-9 h-9 rounded-lg bg-{{ $card['color'] }}-100 text-{{ $card['color'] }}-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+            <div class="flex items-start gap-3 p-4 rounded-2xl bg-{{ $card['color'] }}-50/50 border border-{{ $card['color'] }}-100/50 hover:border-{{ $card['color'] }}-200 transition-all duration-300 group">
+                <div class="w-9 h-9 rounded-xl bg-{{ $card['color'] }}-100 text-{{ $card['color'] }}-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                     <i class="{{ $card['icon'] }} text-sm"></i>
                 </div>
                 <div class="min-w-0">

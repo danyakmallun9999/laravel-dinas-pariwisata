@@ -37,7 +37,7 @@
         if (s === fmt(y1) && e === fmt(now)) return 'year';
         return 'custom';
     }
-}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+}" class="bg-white rounded-[2rem] border border-gray-200 p-6">
 
     {{-- Quick Period Buttons --}}
     <div class="flex flex-wrap items-center gap-2 mb-4">

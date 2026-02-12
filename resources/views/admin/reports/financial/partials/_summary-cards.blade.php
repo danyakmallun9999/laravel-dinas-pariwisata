@@ -7,11 +7,11 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
     {{-- Pendapatan Kotor --}}
-    <div x-data="{ showTip: false }" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
+    <div x-data="{ showTip: false }" class="bg-white rounded-[2rem] border border-gray-200 p-6 relative overflow-hidden group hover:border-blue-200 transition-all duration-500">
         <div class="absolute -right-6 -top-6 w-28 h-28 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full opacity-40 group-hover:scale-150 transition-transform duration-700"></div>
         <div class="relative z-10">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-4 border-blue-50">
                     <i class="fa-solid fa-wallet text-white text-lg"></i>
                 </div>
                 <div class="relative">
@@ -38,11 +38,11 @@
     </div>
 
     {{-- Pendapatan Bersih --}}
-    <div x-data="{ showTip: false }" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
+    <div x-data="{ showTip: false }" class="bg-white rounded-[2rem] border border-gray-200 p-6 relative overflow-hidden group hover:border-emerald-200 transition-all duration-500">
         <div class="absolute -right-6 -top-6 w-28 h-28 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-full opacity-40 group-hover:scale-150 transition-transform duration-700"></div>
         <div class="relative z-10">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-200">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center border-4 border-emerald-50">
                     <i class="fa-solid fa-money-bill-wave text-white text-lg"></i>
                 </div>
                 <div class="relative">
@@ -78,11 +78,11 @@
     </div>
 
     {{-- Tiket Terjual --}}
-    <div x-data="{ showTip: false }" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
+    <div x-data="{ showTip: false }" class="bg-white rounded-[2rem] border border-gray-200 p-6 relative overflow-hidden group hover:border-purple-200 transition-all duration-500">
         <div class="absolute -right-6 -top-6 w-28 h-28 bg-gradient-to-br from-purple-100 to-purple-50 rounded-full opacity-40 group-hover:scale-150 transition-transform duration-700"></div>
         <div class="relative z-10">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg shadow-purple-200">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center border-4 border-purple-50">
                     <i class="fa-solid fa-ticket text-white text-lg"></i>
                 </div>
                 <div class="relative">

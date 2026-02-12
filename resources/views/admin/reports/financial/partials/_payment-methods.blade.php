@@ -1,7 +1,7 @@
 {{-- Payment Methods — Doughnut + Interactive Legend --}}
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+<div class="bg-white rounded-[2rem] border border-gray-200 p-6 h-full">
     <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center border-4 border-amber-50">
             <i class="fa-solid fa-credit-card text-white text-sm"></i>
         </div>
         <div>

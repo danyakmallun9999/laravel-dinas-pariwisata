@@ -10,7 +10,7 @@
             <!-- Date Display with Alpine -->
             <div x-data="{ showDateInfo: false }" class="relative">
                 <button @click="showDateInfo = !showDateInfo" 
-                        class="hidden md:flex items-center gap-2 text-sm text-gray-600 bg-white px-4 py-2.5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+                        class="hidden md:flex items-center gap-2 text-sm text-gray-600 bg-white px-5 py-2.5 rounded-full border border-gray-200 hover:bg-gray-50 transition-all duration-300">
                     <i class="fa-regular fa-calendar text-blue-500"></i>
                     <span>{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</span>
                     <i class="fa-solid fa-chevron-down text-xs text-gray-400" :class="showDateInfo && 'rotate-180'" style="transition: transform 0.2s"></i>
@@ -41,11 +41,11 @@
             <!-- Pulse Section (Stats) with GSAP animation targets -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Revenue Card -->
-                <div class="stat-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
+                <div class="stat-card bg-white rounded-[2rem] border border-gray-200 p-6 relative overflow-hidden group hover:border-green-200 transition-all duration-500">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-green-100 to-green-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-200">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center border-4 border-green-50">
                                 <i class="fa-solid fa-money-bill-wave text-white text-lg"></i>
                             </div>
                             @if($stats['revenue'] > 0)
@@ -65,11 +65,11 @@
                 </div>
 
                 <!-- Tickets Sold Card -->
-                <div class="stat-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
+                <div class="stat-card bg-white rounded-[2rem] border border-gray-200 p-6 relative overflow-hidden group hover:border-blue-200 transition-all duration-500">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-4 border-blue-50">
                                 <i class="fa-solid fa-ticket text-white text-lg"></i>
                             </div>
                         </div>
@@ -89,11 +89,11 @@
                 </div>
 
                 <!-- Active Visitors Card -->
-                <div class="stat-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
+                <div class="stat-card bg-white rounded-[2rem] border border-gray-200 p-6 relative overflow-hidden group hover:border-purple-200 transition-all duration-500">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-purple-100 to-purple-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg shadow-purple-200">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center border-4 border-purple-50">
                                 <i class="fa-solid fa-users-viewfinder text-white text-lg"></i>
                             </div>
                             <span class="relative flex h-3 w-3">
@@ -112,11 +112,11 @@
                 </div>
 
                 <!-- Pending Orders Card -->
-                <div class="stat-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-500">
+                <div class="stat-card bg-white rounded-[2rem] border border-gray-200 p-6 relative overflow-hidden group hover:border-amber-200 transition-all duration-500">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-200">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center border-4 border-amber-50">
                                 <i class="fa-solid fa-clock text-white text-lg"></i>
                             </div>
                         </div>
@@ -135,10 +135,10 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Revenue Trend Chart -->
                 <div class="chart-card">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+                    <div class="bg-white rounded-[2rem] border border-gray-200 p-6 h-full">
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-4 border-blue-50">
                                     <i class="fa-solid fa-chart-line text-white text-sm"></i>
                                 </div>
                                 <div>
@@ -181,10 +181,10 @@
 
                 <!-- Transaction Trend Chart -->
                 <div class="chart-card">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+                    <div class="bg-white rounded-[2rem] border border-gray-200 p-6 h-full">
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-200">
+                                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center border-4 border-emerald-50">
                                     <i class="fa-solid fa-ticket text-white text-sm"></i>
                                 </div>
                                 <div>
@@ -230,7 +230,7 @@
 
                 <!-- Ticket Type Distribution -->
                 <div class="chart-card">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+                    <div class="bg-white rounded-[2rem] border border-gray-200 p-6 h-full">
                         <div class="flex items-center justify-between mb-6">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-800">Distribusi Tiket</h3>
@@ -259,13 +259,13 @@
 
                 <!-- Occupancy Leaderboard -->
                 <div class="leaderboard-card">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+                    <div class="bg-white rounded-[2rem] border border-gray-200 p-6 h-full">
                         <div class="flex items-center justify-between mb-6">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-800">Top Destinasi</h3>
                                 <p class="text-xs text-gray-500">Hari ini</p>
                             </div>
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200">
+                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center border-4 border-amber-50">
                                 <i class="fa-solid fa-trophy text-white"></i>
                             </div>
                         </div>
@@ -308,7 +308,7 @@
             <div class="mt-8">
                 <!-- Recent Orders -->
                 <div class="table-card">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-[2rem] border border-gray-200 overflow-hidden">
                         <div class="p-6 border-b border-gray-100">
                             <div class="flex items-center justify-between">
                                 <div>
