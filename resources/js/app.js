@@ -31,6 +31,10 @@ import CultureSection from './components/culture-section';
 Alpine.plugin(intersect);
 Alpine.data('cultureSection', CultureSection);
 
+// Register QR Scanner
+import registerQrScanner from './pages/admin/scan';
+registerQrScanner(Alpine);
+
 window.Alpine = Alpine;
 
 Alpine.start();

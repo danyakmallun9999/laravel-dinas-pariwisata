@@ -20,7 +20,36 @@
             <div class="md:col-span-2 space-y-4">
                 <!-- Camera Viewfinder -->
                 <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 relative overflow-hidden group">
-                    <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-100 min-h-[300px] md:min-h-[500px]"></div>
+                    <!-- Scanner Container -->
+                    <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-100 min-h-[300px] md:min-h-[500px] relative z-0"></div>
+
+                    <!-- Camera Controls (Overlay) -->
+                    <div class="absolute top-4 right-4 z-20">
+                        <button @click="toggleScanner" 
+                                class="flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all shadow-lg backdrop-blur-sm"
+                                :class="isScanning ? 'bg-red-500/90 text-white hover:bg-red-600' : 'bg-emerald-500/90 text-white hover:bg-emerald-600'">
+                            <i class="fa-solid" :class="isScanning ? 'fa-video-slash' : 'fa-video'"></i>
+                            <span x-text="isScanning ? 'Matikan Kamera' : 'Hidupkan Kamera'"></span>
+                        </button>
+                    </div>
+
+                    <!-- Scanner Laser Overlay (Removed) -->
+                    <!-- The scanner works on the full video feed -->
+                    
+                    <!-- Error Message Overlay -->
+                    <div x-show="cameraError" x-cloak 
+                         class="absolute inset-0 flex items-center justify-center bg-slate-100 z-50 rounded-xl p-6 text-center">
+                        <div>
+                            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-camera-slash text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-2">Akses Kamera Bermasalah</h3>
+                            <p class="text-slate-500 text-sm mb-4" x-text="cameraError"></p>
+                            <button @click="startScanner" class="btn bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm">
+                                <i class="fa-solid fa-rotate-right mr-2"></i> Coba Lagi
+                            </button>
+                        </div>
+                    </div>
                     
                     <!-- Scan Guidelines Overlay -->
                     <div class="absolute inset-0 pointer-events-none flex items-center justify-center translate-y-8 opacity-0 group-hover:opacity-100 transition-all duration-300">
@@ -179,202 +208,34 @@
 
     </div>
 
-    <!-- Load HTML5-QRCode Library -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Load Modular Scan Script -->
 
-    <script>
-        function qrScanner() {
-            return {
-                scanner: null,
-                isScanning: true,
-                manualInput: '',
-                showModal: false,
-                isValid: false,
-                statusMessage: '',
-                scanData: {},
-                recentScans: [],
-                autoCloseTimeout: null,
 
-                init() {
-                    this.$nextTick(() => {
-                        this.startScanner();
-                    });
-                },
-
-                startScanner() {
-                    this.scanner = new Html5Qrcode("reader");
-                    // Config adjusted for better compatibility
-                    const config = { 
-                        fps: 15,
-                        aspectRatio: 1.0 
-                    };
-                    
-                    this.scanner.start({ facingMode: "environment" }, config, this.onScanSuccess.bind(this), this.onScanFailure.bind(this))
-                        .catch(err => {
-                            console.error("Error starting scanner", err);
-                            alert("Gagal mengakses kamera. Pastikan izin kamera diberikan.");
-                        });
-                },
-
-                onScanSuccess(decodedText, decodedResult) {
-                    if (this.showModal) return; 
-                    
-                    // Safely extract text if it's an object
-                    let validText = decodedText;
-                    if (typeof decodedText === 'object' && decodedText !== null) {
-                        validText = decodedText.decodedText || JSON.stringify(decodedText);
-                    }
-
-                    console.log("Scan Success:", validText); 
-                    this.scanner.pause();
-                    this.validateQr(validText);
-                },
-
-                // ... (onScanFailure)
-
-                async handleFileUpload(event) {
-                    const file = event.target.files[0];
-                    if (!file) return;
-
-                    const label = document.querySelector('label[for="qr-input-file"]');
-                    const originalText = label.innerHTML;
-                    label.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-                    
-                    try {
-                        if (this.scanner && this.scanner.isScanning) {
-                            await this.scanner.stop();
-                        }
-
-                        const scanResult = await this.scanner.scanFileV2(file, true);
-                        
-                        // Safely extract text
-                        let validText = scanResult;
-                        if (typeof scanResult === 'object' && scanResult !== null) {
-                            validText = scanResult.decodedText || JSON.stringify(scanResult);
-                        }
-                        
-                        console.log("File Scan Result:", validText);
-                        this.validateQr(validText);
-
-                    } catch (err) {
-                        console.error("File Scan Failed:", err);
-                        alert("Gagal membaca gambar QR! \nPastikan gambar jelas, kontras hitam-putih.\nError: " + err);
-                        
-                        if (!this.showModal) this.startScanner();
-                    } finally {
-                        label.innerHTML = originalText;
-                        event.target.value = '';
-                    }
-                },
-
-                async validateQr(qrData) {
-                    try {
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                        if (!csrfToken) {
-                            alert("Error: CSRF Token Missing. Silakan refresh halaman.");
-                            return;
-                        }
-
-                        const response = await fetch('{{ route("admin.scan.store") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ qr_data: qrData })
-                        });
-
-                        // Handle non-JSON response (Server Error)
-                        const contentType = response.headers.get("content-type");
-                        if (!contentType || !contentType.includes("application/json")) {
-                            const text = await response.text();
-                            console.error("Server Error Response:", text);
-                            throw new Error("Server Error (500). Cek console untuk detail.");
-                        }
-
-                        const result = await response.json();
-
-                        if (response.ok) {
-                            this.handleResult(true, result.message, result.data);
-                        } else {
-                            // Use data from backend if available
-                            const errorData = result.data || {};
-                            // Fallback for order number if not in data but in detail (backward compat)
-                            if (!errorData.order_number && result.detail?.order_number) {
-                                errorData.order_number = result.detail.order_number;
-                            }
-                            
-                            this.handleResult(false, result.message, errorData);
-                        }
-
-                    } catch (error) {
-                        console.error("Validation Error:", error);
-                        // Show specific error instead of generic "Network Error"
-                        // Pass scanned data so it appears in history
-                        this.handleResult(false, "System Error: " + error.message, { order_number: qrData });
-                        
-                        // Resume if paused
-                        /*
-                        if (this.scanner.getState() === 2) { 
-                             this.scanner.resume();
-                        }*/
-                    }
-                },
-
-                handleManualInput() {
-                    const input = this.manualInput.trim();
-                    if(!input) return;
-                    
-                    // Try to simulate JSON structure if user just typed order number
-                    let dataToSend = input;
-                    if (!input.startsWith('{')) {
-                        dataToSend = JSON.stringify({ order_number: input });
-                    }
-                    
-                    this.validateQr(dataToSend);
-                },
-
-                handleResult(valid, message, data) {
-                    this.isValid = valid;
-                    this.statusMessage = message;
-                    this.scanData = data || {};
-                    this.showModal = true;
-                    this.manualInput = ''; // Clear input
-
-                    // Audio Feedback
-                    const audio = document.getElementById(valid ? 'scan-success' : 'scan-error');
-                    if(audio) {
-                        audio.currentTime = 0;
-                        audio.play().catch(e => console.log('Audio play failed', e));
-                    }
-
-                    // Add to history
-                    this.recentScans.unshift({
-                        valid: valid,
-                        ticketName: data.ticket_name || 'N/A',
-                        orderNumber: data.order_number || 'Unknown',
-                        time: new Date().toLocaleTimeString(),
-                        timestamp: Date.now()
-                    });
-                    if (this.recentScans.length > 5) this.recentScans.pop();
-
-                    // Auto close logic
-                    if (this.autoCloseTimeout) clearTimeout(this.autoCloseTimeout);
-                    
-                    // Auto-close only if valid, or force manual close if invalid for better attention? 
-                    // Let's auto-close both for speed, but longer for error
-                    const delay = valid ? 3000 : 4000;
-                    // this.autoCloseTimeout = setTimeout(() => this.closeModal(), delay);
-                },
-
-                closeModal() {
-                    this.showModal = false;
-                    if (this.state === 'paused' || !this.scanner.isScanning) {
-                         this.scanner.resume(); 
-                    }
-                }
-            }
+    <!-- Note: html5-qrcode is now imported in the JS module -->
+    
+    <style>
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
         }
-    </script>
+        
+        /* Force hide html5-qrcode overlays */
+        #reader__scan_region {
+            display: none !important;
+        }
+        #reader div[style*="border"] {
+            /* This targets the border box added by library sometimes */
+            display: none !important;
+        }
+        
+        /* Ensure video covers the container */
+        #reader video {
+            object-fit: cover !important;
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+    </style>
 </x-app-layout>
