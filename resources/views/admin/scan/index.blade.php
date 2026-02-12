@@ -24,7 +24,7 @@
                 <!-- Camera Viewfinder -->
                 <div class="bg-slate-900 p-1 rounded-[2rem] border border-slate-800 relative overflow-hidden group">
                     <!-- Scanner Container -->
-                    <div id="reader" class="w-full rounded-[1.8rem] overflow-hidden bg-black min-h-[300px] md:min-h-[500px] relative z-0"></div>
+                    <div id="reader" class="w-full rounded-[1.8rem] overflow-hidden bg-black h-[300px] md:h-[500px] relative z-0"></div>
 
                     <!-- Camera Controls (Overlay) -->
                     <div class="absolute top-6 right-6 z-30">

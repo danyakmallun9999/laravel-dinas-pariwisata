@@ -9,7 +9,7 @@ export class CameraScanner {
         this.config = {
             fps: 30,
             qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0
+            // aspectRatio: 1.0 // Commented out to prevent stretching
         };
     }
 
