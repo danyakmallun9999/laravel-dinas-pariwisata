@@ -85,10 +85,54 @@
                 }
             },
 
+            getItemClass(index) {
+                if (this.currentIndex === index) {
+                    return 'z-20 opacity-100 scale-100'; 
+                } else if (this.prevIndex() === index || this.nextIndex() === index) {
+                    return 'z-10 opacity-100 scale-55';
+                } else {
+                    return 'z-0 opacity-0 scale-50 pointer-events-none';
+                }
+            },
+
+            getItemStyle(index) {
+                const isCurrent = this.currentIndex === index;
+                const isPrev = this.prevIndex() === index;
+                const isNext = this.nextIndex() === index;
+
+                let transform = 'translateX(0) scale(0.5)';
+                let filter = 'blur(6px)';
+                let zIndexDelay = '0s';
+
+                if (isCurrent) {
+                    transform = 'translateX(0) scale(1)';
+                    filter = 'none';
+                    zIndexDelay = '0s'; 
+                } else if (isPrev) {
+                    transform = 'translateX(-30%) scale(0.55)';
+                    filter = 'blur(4px)';
+                    zIndexDelay = '350ms'; 
+                } else if (isNext) {
+                    transform = 'translateX(30%) scale(0.55)';
+                    filter = 'blur(4px)';
+                    zIndexDelay = '350ms'; 
+                }
+
+                return `transform: ${transform}; filter: ${filter}; transition-delay: 0s, 0s, 0s, ${zIndexDelay};`;
+            },
+
             init() {
                 this.startAutoplay();
             }
          }">
+
+        <style>
+            .carousel-transition {
+                transition-property: transform, filter, opacity, z-index;
+                transition-duration: 700ms, 700ms, 700ms, 0s;
+                transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1), cubic-bezier(0.25, 0.1, 0.25, 1), cubic-bezier(0.25, 0.1, 0.25, 1), linear;
+            }
+        </style>
 
         <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <!-- Header Section -->
@@ -116,20 +160,9 @@
                 <div class="relative mx-auto flex max-w-6xl items-center justify-center" style="min-height: 420px;">
                     
                     @foreach($culinaries as $index => $culinary)
-                    <div class="absolute w-full rounded-3xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-                         :class="{
-                            'z-10 opacity-100': currentIndex === {{ $index }},
-                            'z-[1] opacity-100': prevIndex() === {{ $index }} || nextIndex() === {{ $index }},
-                            'z-0 opacity-0 pointer-events-none': currentIndex !== {{ $index }} && prevIndex() !== {{ $index }} && nextIndex() !== {{ $index }}
-                         }"
-                         :style="currentIndex === {{ $index }}
-                            ? 'transform: translateX(0) scale(1); filter: none;'
-                            : (prevIndex() === {{ $index }}
-                                ? 'transform: translateX(-30%) scale(0.55); filter: blur(4px);'
-                                : (nextIndex() === {{ $index }}
-                                    ? 'transform: translateX(30%) scale(0.55); filter: blur(4px);'
-                                    : 'transform: translateX(0) scale(0.5); filter: blur(6px);'))
-                         ">
+                    <div class="absolute w-full rounded-3xl overflow-hidden carousel-transition"
+                         :class="getItemClass({{ $index }})"
+                         :style="getItemStyle({{ $index }})">
                         <div class="mx-auto" :class="currentIndex === {{ $index }} ? 'max-w-4xl px-4 md:px-0' : 'max-w-3xl'">
                             <div class="relative overflow-hidden rounded-3xl transition-shadow duration-700"
                                  :class="currentIndex === {{ $index }} ? 'shadow-2xl cursor-pointer' : 'shadow-lg pointer-events-none'"
