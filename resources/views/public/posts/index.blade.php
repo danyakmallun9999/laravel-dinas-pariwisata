@@ -87,7 +87,7 @@
                             {{ Str::limit(strip_tags($post->translated_content), 120) }}
                         </p>
                         
-                        <a href="{{ route('posts.show', $post) }}" class="inline-flex items-center text-sm font-bold text-primary group-hover:underline decoration-2 underline-offset-4">
+                        <a href="{{ route('posts.show', $post) }}" class="inline-flex items-center text-sm font-bold text-primary">
                             {{ __('News.Button.ReadMore') }}
                             <span class="material-symbols-outlined text-base ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
                         </a>

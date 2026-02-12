@@ -87,11 +87,11 @@
 
             getItemClass(index) {
                 if (this.currentIndex === index) {
-                    return 'z-20 opacity-100 scale-100'; 
+                    return 'z-50 opacity-100'; 
                 } else if (this.prevIndex() === index || this.nextIndex() === index) {
-                    return 'z-10 opacity-100 scale-55';
+                    return 'z-30 opacity-100';
                 } else {
-                    return 'z-0 opacity-0 scale-50 pointer-events-none';
+                    return 'z-0 opacity-0 pointer-events-none';
                 }
             },
 
@@ -111,11 +111,11 @@
                 } else if (isPrev) {
                     transform = 'translateX(-30%) scale(0.55)';
                     filter = 'blur(4px)';
-                    zIndexDelay = '350ms'; 
+                    zIndexDelay = '0s'; 
                 } else if (isNext) {
                     transform = 'translateX(30%) scale(0.55)';
                     filter = 'blur(4px)';
-                    zIndexDelay = '350ms'; 
+                    zIndexDelay = '0s'; 
                 }
 
                 return `transform: ${transform}; filter: ${filter}; transition-delay: 0s, 0s, 0s, ${zIndexDelay};`;
@@ -199,13 +199,13 @@
 
                 <!-- Navigation Arrows -->
                 <button @click="prev()"
-                        class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2.5 md:p-3 shadow-lg hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all">
+                        class="hidden md:block absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-[60] rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2.5 md:p-3 shadow-lg hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all">
                     <svg class="w-5 h-5 md:w-6 md:h-6 text-slate-700 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
                 <button @click="next()"
-                        class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2.5 md:p-3 shadow-lg hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all">
+                        class="hidden md:block absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-[60] rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-2.5 md:p-3 shadow-lg hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all">
                     <svg class="w-5 h-5 md:w-6 md:h-6 text-slate-700 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                     </svg>

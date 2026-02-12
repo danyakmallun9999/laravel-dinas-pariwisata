@@ -48,6 +48,9 @@
     {{-- History & Legends Section --}}
     @include('public.home.sections.history-legends')
 
+    {{-- Culinary Carousel Section --}}
+    @include('public.home.sections.culinary-carousel')
+
     {{-- Culture Section --}}
     @include('public.home.sections.culture')
 
@@ -57,8 +60,7 @@
     {{-- Tourism Carousel Section --}}
     @include('public.home.sections.tourism-carousel')
 
-    {{-- Culinary Carousel Section --}}
-    @include('public.home.sections.culinary-carousel')
+
 
     {{-- News Section --}}
     @include('public.home.sections.news')
