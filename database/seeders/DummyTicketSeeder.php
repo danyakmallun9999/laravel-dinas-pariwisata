@@ -30,11 +30,11 @@ class DummyTicketSeeder extends Seeder
         $this->command->info('🔄 Seeding dummy ticket ecosystem…');
         $this->command->newLine();
 
-        // ── 1. Categories ──
+        // ── 1. Categories (Load Existing) ──
         $categories = $this->seedCategories();
 
         // ── 2. Destinations (Places) ──
-        $places = $this->seedPlaces($categories);
+        $places = $this->seedPlaces();
 
         // ── 3. Tickets ──
         $tickets = $this->seedTickets($places);
@@ -62,68 +62,30 @@ class DummyTicketSeeder extends Seeder
      |  1. Categories
      |================================================================ */
 
-    private function seedCategories(): array
+    private function seedCategories()
     {
-        $items = [
-            ['name' => 'Wisata Alam',    'slug' => 'wisata-alam'],
-            ['name' => 'Wisata Budaya',  'slug' => 'wisata-budaya'],
-            ['name' => 'Wisata Religi',  'slug' => 'wisata-religi'],
-            ['name' => 'Wisata Kuliner', 'slug' => 'wisata-kuliner'],
-        ];
+        // Hanya ambil kategori yang sudah ada di database (dari CategorySeeder)
+        $categories = Category::all()->keyBy('slug');
+        
+        $this->command->info('   📁 Categories loaded: '.$categories->count());
 
-        $result = [];
-        foreach ($items as $item) {
-            $result[$item['slug']] = Category::firstOrCreate(
-                ['slug' => $item['slug']],
-                $item
-            );
-        }
-        $this->command->info('   📁 Categories: '.count($result));
-
-        return $result;
+        return $categories;
     }
 
     /* ================================================================
      |  2. Destinations (Places)
      |================================================================ */
 
-    private function seedPlaces(array $categories): \Illuminate\Support\Collection
+    private function seedPlaces(): \Illuminate\Support\Collection
     {
-        $destinations = [
-            // Wisata Alam
-            ['name' => 'Pantai Kartini',          'slug' => 'pantai-kartini',           'cat' => 'wisata-alam',    'lat' => -6.5881, 'lng' => 110.6683, 'address' => 'Jl. Pantai Kartini, Bulu, Jepara'],
-            ['name' => 'Pantai Bandengan',         'slug' => 'pantai-bandengan',          'cat' => 'wisata-alam',    'lat' => -6.5539, 'lng' => 110.6481, 'address' => 'Bandengan, Jepara'],
-            ['name' => 'Pulau Karimunjawa',        'slug' => 'pulau-karimunjawa',         'cat' => 'wisata-alam',    'lat' => -5.8641, 'lng' => 110.4388, 'address' => 'Karimunjawa, Jepara'],
-            ['name' => 'Pantai Teluk Awur',        'slug' => 'pantai-teluk-awur',         'cat' => 'wisata-alam',    'lat' => -6.6111, 'lng' => 110.6808, 'address' => 'Telukawur, Tahunan, Jepara'],
-            ['name' => 'Air Terjun Songgolangit',  'slug' => 'air-terjun-songgolangit',   'cat' => 'wisata-alam',    'lat' => -6.6700, 'lng' => 110.8100, 'address' => 'Bucu, Kembang, Jepara'],
-            // Wisata Budaya
-            ['name' => 'Museum RA Kartini',        'slug' => 'museum-ra-kartini',         'cat' => 'wisata-budaya',  'lat' => -6.5928, 'lng' => 110.6743, 'address' => 'Jl. Alun-alun No.1, Jepara'],
-            ['name' => 'Benteng Portugis',         'slug' => 'benteng-portugis',           'cat' => 'wisata-budaya',  'lat' => -6.5765, 'lng' => 110.6450, 'address' => 'Banyumanis, Donorojo, Jepara'],
-            // Wisata Religi
-            ['name' => 'Masjid Agung Baitul Makmur', 'slug' => 'masjid-agung-baitul-makmur', 'cat' => 'wisata-religi', 'lat' => -6.5930, 'lng' => 110.6720, 'address' => 'Jl. KH Wachid Hasyim, Jepara'],
-            // Wisata Kuliner
-            ['name' => 'Taman Kuliner Jepara',     'slug' => 'taman-kuliner-jepara',      'cat' => 'wisata-kuliner', 'lat' => -6.5925, 'lng' => 110.6690, 'address' => 'Jl. Veteran, Jepara'],
-            ['name' => 'Pasar Ikan Jepara',        'slug' => 'pasar-ikan-jepara',         'cat' => 'wisata-kuliner', 'lat' => -6.5850, 'lng' => 110.6650, 'address' => 'Jl. Pelabuhan, Jepara'],
-        ];
-
-        foreach ($destinations as $d) {
-            Place::firstOrCreate(
-                ['slug' => $d['slug']],
-                [
-                    'name' => $d['name'],
-                    'slug' => $d['slug'],
-                    'category_id' => $categories[$d['cat']]->id,
-                    'address' => $d['address'],
-                    'latitude' => $d['lat'],
-                    'longitude' => $d['lng'],
-                    'description' => 'Destinasi wisata populer di Kabupaten Jepara. '.$d['name'].' menawarkan pengalaman unik bagi pengunjung dari berbagai kalangan.',
-                    'rating' => rand(38, 49) / 10,
-                ]
-            );
+        // 1. Panggil PariwisataSeeder jika belum ada data tempat
+        if (Place::count() === 0) {
+            $this->call(PariwisataSeeder::class);
         }
 
+        // 2. Ambil semua tempat yang tersedia
         $places = Place::all();
-        $this->command->info('   📍 Places: '.$places->count());
+        $this->command->info('   📍 Places loaded: '.$places->count());
 
         return $places;
     }
