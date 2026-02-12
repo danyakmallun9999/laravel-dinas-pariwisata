@@ -944,7 +944,11 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
+<<<<<<< HEAD
     "file": "assets/app-DmfTNt_A.css",
+=======
+    "file": "assets/app-fqo5cN94.css",
+>>>>>>> f67c467 (ok)
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
