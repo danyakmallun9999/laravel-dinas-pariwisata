@@ -19,38 +19,38 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Stats Overview -->
             <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100">
                             <i class="fa-solid fa-map-location-dot text-blue-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-                            <p class="text-sm text-gray-500">Total Lokasi</p>
+                            <p class="text-sm text-gray-500 font-medium">Total Lokasi</p>
                             <p class="text-xs text-gray-400">Semua destinasi</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center border border-green-100">
                             <i class="fa-solid fa-star text-green-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ number_format($stats['avg_rating'], 1) }}</p>
-                            <p class="text-sm text-gray-500">Rata-rata Rating</p>
+                            <p class="text-sm text-gray-500 font-medium">Rata-rata Rating</p>
                             <p class="text-xs text-gray-400">Dari semua lokasi</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center border border-purple-100">
                             <i class="fa-solid fa-images text-purple-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $stats['with_photo'] }}</p>
-                            <p class="text-sm text-gray-500">Dengan Foto</p>
+                            <p class="text-sm text-gray-500 font-medium">Dengan Foto</p>
                             <p class="text-xs text-gray-400">Sudah ada gambar</p>
                         </div>
                     </div>
@@ -104,42 +104,43 @@
             </div>
 
             <!-- Main Table Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" id="table-wrapper">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full">
-                        <thead>
-                            <tr class="border-b border-gray-100">
-                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/50">Lokasi</th>
-                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/50">Kategori</th>
-                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/50">Alamat</th>
-                                <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/50">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @forelse ($places as $place)
-                                <tr class="hover:bg-gray-50/50 transition-colors group">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-4">
-                                            <div class="flex-shrink-0 h-14 w-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 border border-gray-200/50 shadow-sm">
-                                                @if($place->image_path)
-                                                    <img src="{{ asset($place->image_path) }}" class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" alt="{{ $place->name }}">
-                                                @else
-                                                    <div class="h-full w-full flex items-center justify-center text-gray-300">
-                                                        <i class="fa-solid fa-image text-xl"></i>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="min-w-0 flex-1">
-                                                <a href="{{ route('admin.places.edit', $place) }}" class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors line-clamp-1">
-                                                    {{ $place->name }}
-                                                </a>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    @if($place->rating)
-                                                        <span class="inline-flex items-center gap-1 text-xs text-amber-600 font-medium">
-                                                            <i class="fa-solid fa-star text-[10px]"></i>
-                                                            {{ number_format($place->rating, 1) }}
-                                                        </span>
+            <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                <div class="rounded-[2rem] border border-gray-100 overflow-hidden bg-white" id="table-wrapper">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="border-b border-gray-100 bg-gray-50/50">
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Lokasi</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kategori</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Alamat</th>
+                                    <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @forelse ($places as $place)
+                                    <tr class="hover:bg-blue-50/30 transition-colors group {{ $loop->even ? 'bg-gray-50/30' : 'bg-white' }}">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex-shrink-0 h-14 w-20 rounded-2xl overflow-hidden bg-gray-50 border border-gray-200/50">
+                                                    @if($place->image_path)
+                                                        <img src="{{ asset($place->image_path) }}" class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" alt="{{ $place->name }}">
+                                                    @else
+                                                        <div class="h-full w-full flex items-center justify-center text-gray-300">
+                                                            <i class="fa-solid fa-image text-xl"></i>
+                                                        </div>
                                                     @endif
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <a href="{{ route('admin.places.edit', $place) }}" class="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors line-clamp-1">
+                                                        {{ $place->name }}
+                                                    </a>
+                                                    <div class="flex items-center gap-2 mt-1">
+                                                        @if($place->rating)
+                                                            <span class="inline-flex items-center gap-1 text-xs text-amber-600 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-100">
+                                                                <i class="fa-solid fa-star text-[10px]"></i>
+                                                                {{ number_format($place->rating, 1) }}
+                                                            </span>
+                                                        @endif
                                                     @if($place->name_en)
                                                         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 bg-blue-50 rounded">
                                                             <i class="fa-solid fa-language"></i> EN
@@ -149,12 +150,12 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white shadow-sm" style="background-color: {{ $place->category->color }}">
-                                            <i class="{{ $place->category->icon_class ?? 'fa-solid fa-tag' }} text-[10px] opacity-80"></i>
-                                            {{ $place->category->name }}
-                                        </span>
-                                    </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg text-white border border-white/20" style="background-color: {{ $place->category->color }}">
+                                                <i class="{{ $place->category->icon_class ?? 'fa-solid fa-tag' }} text-[10px] opacity-90"></i>
+                                                {{ $place->category->name }}
+                                            </span>
+                                        </td>
                                     <td class="px-6 py-4">
                                         <div class="max-w-xs">
                                             @if($place->address)
@@ -227,4 +228,5 @@
             </div>
         </div>
     </div>
+</div>
 </x-app-layout>

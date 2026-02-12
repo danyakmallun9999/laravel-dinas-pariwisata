@@ -24,7 +24,7 @@
             @include('admin.reports.financial.partials._summary-cards')
 
             {{-- 3. Revenue Trend Chart (Full Width) --}}
-            <div class="h-[420px]">
+            <div class="h-auto xl:h-[450px]">
                 @include('admin.reports.financial.partials._revenue-chart')
             </div>
 

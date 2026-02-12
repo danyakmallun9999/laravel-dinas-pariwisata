@@ -19,38 +19,38 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Stats Overview -->
             <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-violet-50 rounded-2xl flex items-center justify-center border border-violet-100">
                             <i class="fa-solid fa-calendar-days text-violet-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-                            <p class="text-sm text-gray-500">Total Event</p>
+                            <p class="text-sm text-gray-500 font-medium">Total Event</p>
                             <p class="text-xs text-gray-400">Semua data tersimpan</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100">
                             <i class="fa-solid fa-check-circle text-emerald-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $stats['published'] }}</p>
-                            <p class="text-sm text-gray-500">Dipublikasikan</p>
+                            <p class="text-sm text-gray-500 font-medium">Dipublikasikan</p>
                             <p class="text-xs text-gray-400">Tampil di kalender publik</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
                             <i class="fa-solid fa-clock text-amber-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $stats['upcoming'] }}</p>
-                            <p class="text-sm text-gray-500">Akan Datang</p>
+                            <p class="text-sm text-gray-500 font-medium">Akan Datang</p>
                             <p class="text-xs text-gray-400">Event mulai hari ini atau nanti</p>
                         </div>
                     </div>
@@ -103,10 +103,10 @@
             </div>
 
             <!-- Events Table -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="overflow-x-auto" id="table-wrapper">
+            <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                <div class="rounded-[2rem] border border-gray-100 overflow-hidden bg-white" id="table-wrapper">
                     <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-gray-50/80">
+                        <thead class="bg-gray-50/50">
                             <tr>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Event</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Waktu & Lokasi</th>
@@ -116,10 +116,10 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse($events as $event)
-                            <tr class="hover:bg-gray-50/50 transition-colors group">
+                            <tr class="hover:bg-violet-50/30 transition-colors group {{ $loop->even ? 'bg-gray-50/30' : 'bg-white' }}">
                                 <td class="px-6 py-5">
                                     <div class="flex items-center gap-4">
-                                        <div class="flex-shrink-0 h-14 w-14 rounded-xl overflow-hidden bg-gradient-to-br from-violet-100 to-purple-100 border border-violet-200/50 flex items-center justify-center">
+                                        <div class="flex-shrink-0 h-14 w-14 rounded-2xl overflow-hidden bg-violet-50 border border-violet-100 flex items-center justify-center">
                                             <div class="text-center">
                                                 <span class="text-[10px] font-bold text-violet-600 uppercase tracking-wider">{{ $event->start_date->isoFormat('MMM') }}</span>
                                                 <p class="text-lg font-bold text-violet-800 -mt-0.5">{{ $event->start_date->format('d') }}</p>
@@ -209,7 +209,7 @@
                 </div>
                 
                 @if($events->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/30">
                     {{ $events->links() }}
                 </div>
                 @endif

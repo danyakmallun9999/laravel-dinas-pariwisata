@@ -19,36 +19,36 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Stats Overview -->
             <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100">
                             <i class="fa-solid fa-newspaper text-blue-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $posts->total() }}</p>
-                            <p class="text-sm text-gray-500">Total Postingan</p>
+                            <p class="text-sm text-gray-500 font-medium">Total Postingan</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100">
                             <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $posts->where('is_published', true)->count() }}</p>
-                            <p class="text-sm text-gray-500">Dipublikasikan</p>
+                            <p class="text-sm text-gray-500 font-medium">Dipublikasikan</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
                             <i class="fa-solid fa-file-pen text-amber-600 text-lg"></i>
                         </div>
                         <div>
                             <p class="text-2xl font-bold text-gray-900">{{ $posts->where('is_published', false)->count() }}</p>
-                            <p class="text-sm text-gray-500">Draft</p>
+                            <p class="text-sm text-gray-500 font-medium">Draft</p>
                         </div>
                     </div>
                 </div>
@@ -78,49 +78,51 @@
                     }
                 }"
             >
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <div class="relative group flex-1">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i class="fa-solid fa-search text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="p-4 rounded-[2rem] border border-gray-100 bg-gray-50/30">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="relative group flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-search text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
+                                </div>
+                                <input 
+                                    type="text" 
+                                    x-model="query"
+                                    @input.debounce.500ms="updateList()"
+                                    class="block w-full pl-11 pr-10 py-3 border-0 bg-white rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:bg-white sm:text-sm transition-all placeholder-gray-400 shadow-sm" 
+                                    placeholder="Cari judul postingan..."
+                                >
+                                <button 
+                                    type="button" 
+                                    x-show="query.length > 0" 
+                                    @click="query = ''; updateList()"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
+                                    style="display: none;"
+                                >
+                                    <i class="fa-solid fa-circle-xmark"></i>
+                                </button>
                             </div>
-                            <input 
-                                type="text" 
-                                x-model="query"
-                                @input.debounce.500ms="updateList()"
-                                class="block w-full pl-11 pr-10 py-3 border-0 bg-gray-50 rounded-xl text-gray-900 focus:ring-2 focus:ring-blue-500/20 focus:bg-white sm:text-sm transition-all placeholder-gray-400" 
-                                placeholder="Cari judul postingan..."
+                            <select 
+                                x-model="type"
+                                class="border-0 bg-white rounded-xl text-gray-700 focus:ring-2 focus:ring-blue-500/20 focus:bg-white sm:text-sm transition-all py-3 pl-4 pr-10 w-full sm:w-48 shadow-sm"
+                                @change="updateList()"
                             >
-                            <button 
-                                type="button" 
-                                x-show="query.length > 0" 
-                                @click="query = ''; updateList()"
-                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 cursor-pointer transition-colors"
-                                style="display: none;"
-                            >
-                                <i class="fa-solid fa-circle-xmark"></i>
-                            </button>
+                                <option value="">Semua Tipe</option>
+                                <option value="news">🗞️ Berita</option>
+                                <option value="event">📅 Agenda</option>
+                            </select>
                         </div>
-                        <select 
-                            x-model="type"
-                            class="border-0 bg-gray-50 rounded-xl text-gray-700 focus:ring-2 focus:ring-blue-500/20 focus:bg-white sm:text-sm transition-all py-3 pl-4 pr-10 w-full sm:w-48"
-                            @change="updateList()"
-                        >
-                            <option value="">Semua Tipe</option>
-                            <option value="news">🗞️ Berita</option>
-                            <option value="event">📅 Agenda</option>
-                        </select>
                     </div>
                 </div>
             </div>
 
             <!-- Table Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div id="table-wrapper">
+            <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                <div class="rounded-[2rem] border border-gray-100 overflow-hidden bg-white" id="table-wrapper">
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-100">
+                                <tr class="bg-gray-50/50 border-b border-gray-100">
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Konten</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Tipe</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Tanggal</th>
@@ -128,12 +130,12 @@
                                     <th class="px-6 py-4 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody class="divide-y divide-gray-100">
                                 @forelse ($posts as $post)
-                                    <tr class="hover:bg-blue-50/50 transition-colors duration-200 group">
+                                    <tr class="hover:bg-blue-50/30 transition-colors duration-200 group {{ $loop->even ? 'bg-gray-50/30' : 'bg-white' }}">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-4">
-                                                <div class="flex-shrink-0 h-16 w-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-100">
+                                                <div class="flex-shrink-0 h-16 w-24 rounded-2xl overflow-hidden bg-gray-50 border border-gray-200/50">
                                                     @if($post->image_path)
                                                         <img src="{{ $post->image_path }}" class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" alt="">
                                                     @else
@@ -233,7 +235,7 @@
                     </div>
 
                     @if($posts->hasPages())
-                        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+                        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/30">
                             {{ $posts->links() }}
                         </div>
                     @endif
