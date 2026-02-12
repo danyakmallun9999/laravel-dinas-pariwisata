@@ -28,4 +28,3 @@ wisatajepara
 # 17. Tambahkan fitur laporan keuangan yang advance pada E-tiket (done)
 # 18. Kolom Media Sosial pada dashboard admin untuk tempat wisata (link sosial media dengan kolom dinamis) & hilangkan website URL ( done )
 
-
