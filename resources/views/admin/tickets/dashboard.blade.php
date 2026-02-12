@@ -131,49 +131,102 @@
                 </div>
             </div>
 
-            <!-- Charts Section with Alpine.js interactivity -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Sales Trend Chart -->
-                <div class="lg:col-span-2 chart-card">
+            <!-- Charts Section: Revenue & Transactions (Separate) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Revenue Trend Chart -->
+                <div class="chart-card">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
                         <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800">Tren Penjualan</h3>
-                                <p class="text-xs text-gray-500">30 hari terakhir</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                                    <i class="fa-solid fa-chart-line text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">Pendapatan</h3>
+                                    <p class="text-xs text-gray-500" id="revenuePeriodLabel">30 hari terakhir</p>
+                                </div>
                             </div>
-                            <div x-data="{ activeTab: 'revenue' }" class="flex bg-gray-100 rounded-lg p-1">
-                                <button @click="activeTab = 'revenue'; updateChart('revenue')" 
-                                        :class="activeTab === 'revenue' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'"
-                                        class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200">
-                                    Revenue
-                                </button>
-                                <button @click="activeTab = 'tickets'; updateChart('tickets')" 
-                                        :class="activeTab === 'tickets' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'"
-                                        class="px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-200">
-                                    Tiket
-                                </button>
+                            <div x-data="{ active: '1B' }" class="flex bg-gray-100 rounded-lg p-0.5">
+                                <template x-for="p in ['1H', '1M', '1B', '1T']" :key="p">
+                                    <button @click="active = p; window.filterRevenueChart(p)"
+                                            :class="active === p ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'"
+                                            class="px-2.5 py-1.5 text-[11px] font-semibold rounded-md transition-all duration-200"
+                                            x-text="p">
+                                    </button>
+                                </template>
                             </div>
                         </div>
-                        <div class="relative w-full h-72">
-                            <canvas id="salesChart"></canvas>
-                        </div>
-                        <!-- Quick Stats -->
-                        <div class="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
+                        <div id="revenueChart"></div>
+                        <!-- Revenue Quick Stats -->
+                        <div class="grid grid-cols-4 gap-3 mt-5 pt-5 border-t border-gray-100" id="revenueStats">
                             <div class="text-center">
-                                <div class="text-lg font-bold text-gray-800">Rp {{ number_format(array_sum($salesChart['revenue']), 0, ',', '.') }}</div>
-                                <div class="text-xs text-gray-500">Total 30 Hari</div>
+                                <div class="text-sm font-bold text-gray-800" id="revTotal">-</div>
+                                <div class="text-[10px] text-gray-500">Total Periode</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-lg font-bold text-gray-800">Rp {{ number_format(array_sum($salesChart['revenue']) / 30, 0, ',', '.') }}</div>
-                                <div class="text-xs text-gray-500">Rata-rata/Hari</div>
+                                <div class="text-sm font-bold text-gray-800" id="revAvg">-</div>
+                                <div class="text-[10px] text-gray-500">Rata-rata/Hari</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-lg font-bold text-gray-800">{{ number_format(array_sum($salesChart['tickets'])) }}</div>
-                                <div class="text-xs text-gray-500">Total Tiket</div>
+                                <div class="text-sm font-bold text-gray-800" id="revTx">-</div>
+                                <div class="text-[10px] text-gray-500">Total Transaksi</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm font-bold text-emerald-600" id="revMax">-</div>
+                                <div class="text-[10px] text-gray-500">Hari Tertinggi</div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Transaction Trend Chart -->
+                <div class="chart-card">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-200">
+                                    <i class="fa-solid fa-ticket text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">Transaksi Tiket</h3>
+                                    <p class="text-xs text-gray-500" id="ticketPeriodLabel">30 hari terakhir</p>
+                                </div>
+                            </div>
+                            <div x-data="{ active: '1B' }" class="flex bg-gray-100 rounded-lg p-0.5">
+                                <template x-for="p in ['1H', '1M', '1B', '1T']" :key="p">
+                                    <button @click="active = p; window.filterTicketChart(p)"
+                                            :class="active === p ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'"
+                                            class="px-2.5 py-1.5 text-[11px] font-semibold rounded-md transition-all duration-200"
+                                            x-text="p">
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                        <div id="ticketChart"></div>
+                        <!-- Ticket Quick Stats -->
+                        <div class="grid grid-cols-4 gap-3 mt-5 pt-5 border-t border-gray-100" id="ticketStats">
+                            <div class="text-center">
+                                <div class="text-sm font-bold text-gray-800" id="txTotal">-</div>
+                                <div class="text-[10px] text-gray-500">Total Tiket</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm font-bold text-gray-800" id="txAvg">-</div>
+                                <div class="text-[10px] text-gray-500">Rata-rata/Hari</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm font-bold text-gray-800" id="txDays">-</div>
+                                <div class="text-[10px] text-gray-500">Hari Aktif</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm font-bold text-emerald-600" id="txMax">-</div>
+                                <div class="text-[10px] text-gray-500">Hari Tertinggi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
 
                 <!-- Ticket Type Distribution -->
                 <div class="chart-card">
@@ -184,14 +237,7 @@
                                 <p class="text-xs text-gray-500">Berdasarkan tipe</p>
                             </div>
                         </div>
-                        <div class="relative w-48 h-48 mx-auto">
-                            <canvas id="ticketTypeChart"></canvas>
-                            <!-- Center text -->
-                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <div class="text-2xl font-black text-gray-800">{{ $ticketTypes->sum('count') }}</div>
-                                <div class="text-xs text-gray-500">Total</div>
-                            </div>
-                        </div>
+                        <div id="ticketTypeChart" class="mx-auto"></div>
                         <!-- Legend -->
                         <div class="mt-6 space-y-3">
                             @php $colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']; @endphp
@@ -210,12 +256,58 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Occupancy Leaderboard -->
+                <div class="leaderboard-card">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">Top Destinasi</h3>
+                                <p class="text-xs text-gray-500">Hari ini</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200">
+                                <i class="fa-solid fa-trophy text-white"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            @forelse($occupancy as $index => $place)
+                                <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm
+                                        {{ $index == 0 ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' : '' }}
+                                        {{ $index == 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' : '' }}
+                                        {{ $index == 2 ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white' : '' }}
+                                        {{ $index > 2 ? 'bg-gray-100 text-gray-600' : '' }}">
+                                        {{ $index + 1 }}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">{{ Str::limit($place->name, 20) }}</span>
+                                            <span class="font-bold text-gray-800">{{ $place->sold }}</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                            <div class="h-2 rounded-full transition-all duration-1000 ease-out
+                                                {{ $index == 0 ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-blue-500' }}" 
+                                                 style="width: {{ ($place->sold / ($occupancy->max('sold') ?: 1)) * 100 }}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-8">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fa-solid fa-chart-simple text-2xl text-gray-400"></i>
+                                    </div>
+                                    <p class="text-gray-400 text-sm">Belum ada data hari ini</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Recent Transactions & Occupancy Leaderboard -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="mt-8">
                 <!-- Recent Orders -->
-                <div class="lg:col-span-2 table-card">
+                <div class="table-card">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <div class="p-6 border-b border-gray-100">
                             <div class="flex items-center justify-between">
@@ -284,69 +376,24 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Occupancy Leaderboard -->
-                <div class="leaderboard-card">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800">Top Destinasi</h3>
-                                <p class="text-xs text-gray-500">Hari ini</p>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200">
-                                <i class="fa-solid fa-trophy text-white"></i>
-                            </div>
-                        </div>
-                        <div class="space-y-4">
-                            @forelse($occupancy as $index => $place)
-                                <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
-                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm
-                                        {{ $index == 0 ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' : '' }}
-                                        {{ $index == 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' : '' }}
-                                        {{ $index == 2 ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white' : '' }}
-                                        {{ $index > 2 ? 'bg-gray-100 text-gray-600' : '' }}">
-                                        {{ $index + 1 }}
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex justify-between mb-1">
-                                            <span class="font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">{{ Str::limit($place->name, 20) }}</span>
-                                            <span class="font-bold text-gray-800">{{ $place->sold }}</span>
-                                        </div>
-                                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                            <div class="h-2 rounded-full transition-all duration-1000 ease-out
-                                                {{ $index == 0 ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-blue-500' }}" 
-                                                 style="width: {{ ($place->sold / ($occupancy->max('sold') ?: 1)) * 100 }}%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-8">
-                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <i class="fa-solid fa-chart-simple text-2xl text-gray-400"></i>
-                                    </div>
-                                    <p class="text-gray-400 text-sm">Belum ada data hari ini</p>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- GSAP & Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    {{-- Dashboard Data Injection for ApexCharts --}}
     <script>
-        // Chart.js instances
-        let salesChartInstance = null;
-        const salesData = {
-            labels: @json($salesChart['labels']),
-            revenue: @json($salesChart['revenue']),
-            tickets: @json($salesChart['tickets'])
+        window.__dashboardData = {
+            labels:          {!! json_encode($salesChart['labels']) !!},
+            revenue:         {!! json_encode($salesChart['revenue']) !!},
+            tickets:         {!! json_encode($salesChart['tickets']) !!},
+            monthlyLabels:   {!! json_encode($monthlySalesChart['labels']) !!},
+            monthlyRevenue:  {!! json_encode($monthlySalesChart['revenue']) !!},
+            monthlyTickets:  {!! json_encode($monthlySalesChart['tickets']) !!},
+            ticketTypeLabels: {!! json_encode($ticketTypes->pluck('type')) !!},
+            ticketTypeData:   {!! json_encode($ticketTypes->pluck('count')) !!},
         };
 
-        // Alpine.js data
+        // Alpine.js data (kept for x-data binding)
         function dashboardData() {
             return {
                 initAnimations() {
@@ -354,138 +401,5 @@
                 }
             }
         }
-
-        // Update chart function (called by Alpine)
-        function updateChart(type) {
-            if (!salesChartInstance) return;
-            
-            const data = type === 'revenue' ? salesData.revenue : salesData.tickets;
-            const label = type === 'revenue' ? 'Revenue (Rp)' : 'Tiket Terjual';
-            const color = type === 'revenue' ? '#3b82f6' : '#10b981';
-            
-            salesChartInstance.data.datasets[0].data = data;
-            salesChartInstance.data.datasets[0].label = label;
-            salesChartInstance.data.datasets[0].borderColor = color;
-            
-            // Update gradient
-            const ctx = salesChartInstance.ctx;
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, type === 'revenue' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)');
-            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-            salesChartInstance.data.datasets[0].backgroundColor = gradient;
-            
-            salesChartInstance.update('active');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Sales Trend Chart
-            const salesCtx = document.getElementById('salesChart').getContext('2d');
-            const salesGradient = salesCtx.createLinearGradient(0, 0, 0, 400);
-            salesGradient.addColorStop(0, 'rgba(59, 130, 246, 0.15)');
-            salesGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-            salesChartInstance = new Chart(salesCtx, {
-                type: 'line',
-                data: {
-                    labels: salesData.labels,
-                    datasets: [{
-                        label: 'Revenue (Rp)',
-                        data: salesData.revenue,
-                        borderColor: '#3b82f6',
-                        backgroundColor: salesGradient,
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#3b82f6',
-                        pointBorderWidth: 3,
-                        pointHoverBackgroundColor: '#3b82f6',
-                        pointHoverBorderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1f2937',
-                            titleColor: '#f9fafb',
-                            bodyColor: '#f9fafb',
-                            padding: 12,
-                            cornerRadius: 8,
-                            displayColors: false,
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Rp ' + context.raw.toLocaleString('id-ID');
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            border: { display: false },
-                            grid: { 
-                                color: '#f3f4f6',
-                                drawBorder: false
-                            },
-                            ticks: { 
-                                color: '#9ca3af',
-                                font: { size: 11 },
-                                callback: function(value) { 
-                                    return 'Rp ' + value.toLocaleString('id-ID', {notation: 'compact'}); 
-                                } 
-                            }
-                        },
-                        x: {
-                            border: { display: false },
-                            grid: { display: false },
-                            ticks: { 
-                                color: '#9ca3af',
-                                font: { size: 11 },
-                                maxRotation: 0
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Ticket Type Doughnut Chart
-            const typeCtx = document.getElementById('ticketTypeChart').getContext('2d');
-            new Chart(typeCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: @json($ticketTypes->pluck('type')),
-                    datasets: [{
-                        data: @json($ticketTypes->pluck('count')),
-                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
-                        borderWidth: 0,
-                        hoverOffset: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1f2937',
-                            titleColor: '#f9fafb',
-                            bodyColor: '#f9fafb',
-                            padding: 12,
-                            cornerRadius: 8
-                        }
-                    }
-                }
-            });
-        });
     </script>
 </x-app-layout>

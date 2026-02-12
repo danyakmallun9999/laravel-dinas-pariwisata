@@ -18,6 +18,12 @@ window.maplibregl = maplibregl;
 import Chart from 'chart.js/auto';
 window.Chart = Chart;
 
+// Financial Report — ApexCharts
+import './charts/financial';
+
+// Ticket Dashboard — ApexCharts
+import './charts/dashboard';
+
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';
 import CultureSection from './components/culture-section';

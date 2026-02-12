@@ -944,7 +944,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-D6EHVDhS.css",
+    "file": "assets/app-DmfTNt_A.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -962,7 +962,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-CCGp48Bd.js",
+    "file": "assets/app-DxBBRZjH.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

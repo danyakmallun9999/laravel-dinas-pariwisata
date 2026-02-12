@@ -1,0 +1,127 @@
+Saya ingin mengimplementasikan sistem RBAC (Role-Based Access Control) pada aplikasi E-Tiket berbasis Laravel.
+
+Saat ini kebutuhan client hanya mencakup dua role:
+
+Super Admin
+
+Admin
+
+Namun, sistem harus dirancang sejak awal agar scalable dan mendukung penambahan role baru di masa depan, khususnya role Pengelola Wisata, tanpa perlu refactor besar.
+
+Tolong bantu saya merancang arsitektur RBAC yang:
+
+1. Menggunakan Permission-Based System
+
+Role hanya sebagai wadah permission.
+
+Tidak menggunakan hardcoded role checking (misalnya if role == admin).
+
+Direkomendasikan menggunakan spatie/laravel-permission.
+
+2. Definisikan Role yang Dibutuhkan
+
+Buat struktur untuk:
+
+super_admin
+
+admin
+
+pengelola_wisata (disiapkan untuk masa depan, belum diaktifkan)
+
+3. Definisikan Permission Secara Modular
+
+Kelompokkan permission berdasarkan modul sistem:
+
+User Management
+
+Destinasi Wisata
+
+Event
+
+E-Tiket
+
+Laporan Keuangan
+
+System Settings
+
+Gunakan pendekatan granular seperti:
+
+manage users
+
+manage all destinations
+
+manage own destinations
+
+view all financial reports
+
+view own financial reports
+
+export financial reports
+
+manage settings
+
+4. Buat Pembagian Akses Antar Role
+
+Super Admin:
+
+Akses penuh ke semua modul
+
+Manajemen user dan role
+
+Akses audit log
+
+Akses pengaturan sistem dan fee/pajak
+
+Export laporan
+
+Admin:
+
+Mengelola konten (destinasi, event, berita)
+
+Mengelola tiket dan pesanan
+
+Melihat laporan keuangan global (tanpa konfigurasi sistem)
+
+Tidak bisa mengelola user
+
+Tidak bisa mengubah pengaturan sistem
+
+Pengelola Wisata (untuk implementasi masa depan):
+
+Hanya bisa mengelola destinasi miliknya sendiri
+
+Hanya bisa melihat laporan keuangan miliknya sendiri
+
+Tidak bisa melihat data global
+
+Tidak bisa mengelola user
+
+5. Siapkan Konsep Ownership (Future-Ready)
+
+Pastikan struktur database mendukung:
+
+Relasi antara user dan destinasi (misalnya user_id sebagai owner)
+
+Filter data berbasis kepemilikan (multi-tenant ringan)
+
+6. Implementasi Teknis yang Diminta
+
+Struktur migration yang diperlukan
+
+Seeder untuk role dan permission
+
+Contoh middleware atau policy untuk pembatasan akses
+
+Contoh query untuk filtering data berdasarkan ownership
+
+Rekomendasi best practice agar sistem tetap clean dan scalable
+
+Pastikan arsitektur yang dirancang:
+
+Clean
+
+Scalable
+
+Tidak hardcoded
+
+Siap untuk ekspansi role di masa depan

@@ -160,6 +160,11 @@
                        class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.orders') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
                        <span class="{{ request()->routeIs('admin.tickets.orders') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Pesanan Masuk</span>
                     </a>
+
+                    <a href="{{ route('admin.reports.financial.index') }}" 
+                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.reports.financial.*') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       <span class="{{ request()->routeIs('admin.reports.financial.*') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Laporan Keuangan</span>
+                    </a>
                 </div>
             </div>
 

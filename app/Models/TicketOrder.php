@@ -12,6 +12,7 @@ class TicketOrder extends Model
 
     protected $fillable = [
         'ticket_id',
+        'user_id', // Added
         'order_number',
         'customer_name',
         'customer_email',
@@ -19,6 +20,9 @@ class TicketOrder extends Model
         'visit_date',
         'quantity',
         'total_price',
+        'tax_amount', // Added
+        'app_fee', // Added
+        'discount_amount', // Added
         'status',
         'payment_method',
         'qr_code',
@@ -33,13 +37,20 @@ class TicketOrder extends Model
         'customer_city',
         'payment_gateway_ref',
         'refund_status',
+        'refund_amount', // Added
+        'refunded_at', // Added
     ];
 
     protected $casts = [
         'visit_date' => 'date',
         'total_price' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
+        'app_fee' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'refund_amount' => 'decimal:2',
         'unit_price' => 'decimal:2',
-        'paid_at' => 'datetime',
+        'payed_at' => 'datetime',
+        'refunded_at' => 'datetime',
         'check_in_time' => 'datetime',
     ];
 
@@ -66,6 +77,22 @@ class TicketOrder extends Model
     public function ticket()
     {
         return $this->belongsTo(Ticket::class);
+    }
+
+    /**
+     * Get the user that owns the order.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the transactions for the order.
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
     /**

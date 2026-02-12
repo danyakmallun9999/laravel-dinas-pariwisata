@@ -90,6 +90,12 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::get('ticket-orders', [\App\Http\Controllers\Admin\TicketController::class, 'orders'])->name('tickets.orders');
     Route::post('ticket-orders/{order}/status', [\App\Http\Controllers\Admin\TicketController::class, 'updateOrderStatus'])->name('tickets.orders.updateStatus');
     Route::delete('ticket-orders/{order}', [\App\Http\Controllers\Admin\TicketController::class, 'destroyOrder'])->name('tickets.orders.destroy');
+
+    // Financial Reports
+    Route::prefix('reports/financial')->name('reports.financial.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\FinancialReportController::class, 'index'])->name('index');
+        Route::get('/export', [\App\Http\Controllers\Admin\FinancialReportController::class, 'export'])->name('export');
+    });
 });
 
 Route::middleware('auth:admin')->group(function () {
