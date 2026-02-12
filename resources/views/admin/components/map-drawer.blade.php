@@ -96,7 +96,7 @@
 
     <!-- Map Container (Flex-1 to fill space) -->
     <div class="flex-1 relative min-h-[300px] rounded-2xl overflow-hidden border border-gray-200">
-        <div x-ref="mapContainer" class="absolute inset-0 w-full h-full bg-gray-100"></div>
+        <div x-ref="mapContainer" class="absolute inset-0 w-full h-full bg-gray-100 z-10"></div>
     </div>
 
     <!-- Bottom Section: Nav, Inputs, Preview -->
