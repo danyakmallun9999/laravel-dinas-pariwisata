@@ -2,15 +2,16 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-gray-500 mb-0.5">Admin Panel</p>
-                <h2 class="font-bold text-2xl text-gray-900 leading-tight">
+                <p class="hidden md:block text-sm text-gray-500 mb-0.5">Admin Panel</p>
+                <h2 class="font-bold text-xl md:text-2xl text-gray-900 leading-tight">
                     Berita & Agenda
                 </h2>
             </div>
             <a href="{{ route('admin.posts.create') }}" 
-               class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-sm text-white hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5">
+               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-xs md:text-sm text-white hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5">
                 <i class="fa-solid fa-plus text-xs"></i>
-                Buat Baru
+                <span class="hidden md:inline">Buat Baru</span>
+                <span class="md:hidden">Baru</span>
             </a>
         </div>
     </x-slot>
@@ -119,7 +120,8 @@
             <!-- Table Card -->
             <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                 <div class="rounded-[2rem] border border-gray-100 overflow-hidden bg-white" id="table-wrapper">
-                    <div class="overflow-x-auto">
+                    <!-- Desktop Table -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="min-w-full">
                             <thead>
                                 <tr class="bg-gray-50/50 border-b border-gray-100">
@@ -232,6 +234,86 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile Cards (Stacked View) -->
+                    <div class="md:hidden space-y-4 p-4">
+                        @forelse ($posts as $post)
+                            <div class="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm relative">
+                                <div class="flex gap-4">
+                                    <!-- Image -->
+                                    <div class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                                        @if($post->image_path)
+                                            <img src="{{ $post->image_path }}" class="w-full h-full object-cover" alt="">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-gray-300">
+                                                <i class="fa-regular fa-image text-xl"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-start mb-1">
+                                            @if($post->type == 'event')
+                                                <span class="inline-flex text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                                                    Agenda
+                                                </span>
+                                            @else
+                                                <span class="inline-flex text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
+                                                    Berita
+                                                </span>
+                                            @endif
+                                            
+                                            <div class="text-[10px] text-gray-400">{{ $post->published_at ? $post->published_at->format('d M') : 'Draft' }}</div>
+                                        </div>
+                                        
+                                        <h3 class="font-bold text-gray-900 line-clamp-2 mb-1 text-sm">{{ $post->title }}</h3>
+                                        
+                                        @if($post->author)
+                                            <p class="text-xs text-gray-500 flex items-center gap-1">
+                                                <i class="fa-solid fa-user-pen text-[10px]"></i>
+                                                {{ $post->author }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <!-- Actions & Status -->
+                                <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
+                                    <div>
+                                        @if($post->is_published)
+                                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                Tayang
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-gray-500">
+                                                <i class="fa-solid fa-file-lines"></i>
+                                                Draft
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('admin.posts.edit', $post) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 rounded-lg">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-10">
+                                <i class="fa-regular fa-newspaper text-3xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500 text-sm">Tidak ada postingan</p>
+                            </div>
+                        @endforelse
                     </div>
 
                     @if($posts->hasPages())

@@ -27,11 +27,13 @@
             .preload * { transition: none !important; }
             
             /* Sidebar Toggle Logic */
-            .toggle-maximize { display: none !important; }
-            .toggle-minimize { display: flex !important; }
-            
-            .sidebar-minimized .toggle-maximize { display: flex !important; }
-            .sidebar-minimized .toggle-minimize { display: none !important; }
+            @media (min-width: 768px) {
+                .toggle-maximize { display: none !important; }
+                .toggle-minimize { display: flex !important; }
+                
+                .sidebar-minimized .toggle-maximize { display: flex !important; }
+                .sidebar-minimized .toggle-minimize { display: none !important; }
+            }
         </style>
         <script>
             if (localStorage.getItem('sidebarMinimized') === 'true') {
@@ -40,30 +42,71 @@
         </script>
     </head>
     <body class="font-sans antialiased text-gray-900 bg-gray-50 preload" 
-          x-data="{ sidebarMinimized: localStorage.getItem('sidebarMinimized') === 'true' }" 
-          x-init="$watch('sidebarMinimized', value => {
-              localStorage.setItem('sidebarMinimized', value);
-              document.documentElement.classList.toggle('sidebar-minimized', value);
-          }); window.addEventListener('load', () => document.body.classList.remove('preload'))">
+          x-data="{ 
+              sidebarMinimized: localStorage.getItem('sidebarMinimized') === 'true',
+              mobileSidebarOpen: false,
+              screenWidth: window.innerWidth,
+              get isDesktop() { return this.screenWidth >= 768; },
+              get isSidebarMini() { return this.sidebarMinimized && this.isDesktop; }
+          }"
+          x-init="window.addEventListener('resize', () => screenWidth = window.innerWidth);
+                  $watch('sidebarMinimized', value => {
+                      localStorage.setItem('sidebarMinimized', value);
+                      document.documentElement.classList.toggle('sidebar-minimized', value);
+                  }); 
+                  window.addEventListener('load', () => document.body.classList.remove('preload'))"
+      :class="{'overflow-hidden': mobileSidebarOpen}">
         <div class="flex h-screen overflow-hidden">
             <!-- Sidebar -->
-            <aside class="flex-shrink-0 z-30 transition-all duration-300 ease-in-out w-[var(--sidebar-width)]">
+            <aside class="flex-shrink-0 z-50 transition-all duration-300 ease-in-out w-0 md:w-[var(--sidebar-width)]">
                 @include('layouts.sidebar')
             </aside>
 
             <!-- Main Content -->
             <div class="flex-1 flex flex-col overflow-hidden relative">
-                <!-- Top Header (Optional, mostly for mobile toggle placeholder if needed, or breadcrumbs) -->
-                <!-- For now, we keep it clean as sidebar handles nav -->
+                <!-- Top Header (Mobile Only) -->
+                <header class="md:hidden bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sticky top-0 z-[40]">
+                    <div class="flex items-center gap-3">
+                        <button @click="mobileSidebarOpen = !mobileSidebarOpen" class="text-gray-500 hover:text-gray-700 focus:outline-none p-2 -ml-2 rounded-lg hover:bg-gray-50">
+                            <i class="fa-solid fa-bars text-xl"></i>
+                        </button>
+                        <span class="font-bold text-gray-800 text-lg">Admin Panel</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm border border-blue-200">
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        </div>
+                    </div>
+                </header>
 
                 <!-- Page Content -->
                 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-white">
                     @isset($header)
-                        <header class="bg-white sticky top-0 z-20 h-20 flex items-center border-b border-gray-200">
-                            <div class="w-full px-4 sm:px-6 lg:px-8">
-                                {{ $header }}
+                        <div x-data="{ mobileHeaderOpen: false }" class="sticky top-0 z-30 bg-white ">
+                            <!-- Mobile Toggle Bar -->
+                            <div class="md:hidden flex justify-between items-center px-4 py-2 bg-white border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors relative z-40"
+                                 @click="mobileHeaderOpen = !mobileHeaderOpen">
+                                <div class="flex items-center gap-2">
+                                     <div class="w-1 h-4 bg-blue-500 rounded-full"></div>
+                                     <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Menu Halaman</span>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 transition-colors"
+                                     :class="mobileHeaderOpen ? 'bg-blue-50 text-blue-600' : ''">
+                                     <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300" :class="mobileHeaderOpen ? 'rotate-180' : ''"></i>
+                                </div>
                             </div>
-                        </header>
+
+                            <!-- Header Content -->
+                            <header class="bg-white border-b border-gray-200 transition-all duration-300 origin-top md:h-20 md:!flex md:items-center md:!opacity-100 md:!visible"
+                                    x-show="mobileHeaderOpen"
+                                    x-collapse
+                                    style="display: none;"
+                                    :class="mobileHeaderOpen ? 'block' : 'hidden md:!flex'">
+                                <div class="w-full px-4 sm:px-6 lg:px-8 py-4 md:py-0">
+                                    {{ $header }}
+                                </div>
+                            </header>
+                        </div>
                     @endisset
 
                     @if(isset($slot) && $slot->isNotEmpty())

@@ -2,13 +2,14 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-gray-500">E-Tiket</p>
-                <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
+                <p class="hidden md:block text-sm text-gray-500">E-Tiket</p>
+                <h2 class="font-semibold text-xl md:text-2xl text-gray-800 leading-tight">
                     Tambah Tiket Baru
                 </h2>
             </div>
-            <a href="{{ route('admin.tickets.index') }}" class="inline-flex items-center px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm">
-                <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
+            <a href="{{ route('admin.tickets.index') }}" class="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm">
+                <i class="fa-solid fa-arrow-left text-xs md:text-sm"></i>
+                <span class="hidden md:inline">Kembali</span>
             </a>
         </div>
     </x-slot>

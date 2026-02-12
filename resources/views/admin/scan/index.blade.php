@@ -62,7 +62,7 @@
 
                     <!-- Error Message Overlay -->
                     <div x-show="cameraError" x-cloak 
-                         class="absolute inset-0 flex items-center justify-center bg-slate-900/95 z-50 rounded-[1.8rem] p-8 text-center backdrop-blur-sm">
+                         class="absolute inset-0 flex items-center justify-center bg-slate-900/95 z-30 rounded-[1.8rem] p-8 text-center backdrop-blur-sm">
                         <div class="max-w-xs">
                             <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-500/20">
                                 <i class="fa-solid fa-camera-slash text-2xl"></i>

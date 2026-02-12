@@ -12,14 +12,14 @@
     }
 @endphp
 
-<form action="{{ $action }}" method="POST" enctype="multipart/form-data" class="flex h-[calc(100vh-80px)]">
+<form action="{{ $action }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-80px)] pb-20 lg:pb-0">
     @csrf
     @if ($method !== 'POST')
         @method($method)
     @endif
 
     <!-- Left Side: Form Inputs (40%) -->
-    <div class="w-2/5 bg-white border-r border-gray-200 flex flex-col z-10">
+    <div class="w-full lg:w-2/5 bg-white border-r border-gray-200 flex flex-col z-10 h-auto lg:h-full">
         <div class="flex-1 overflow-y-auto">
             <!-- Header -->
             <div class="sticky top-0 z-10 bg-white border-b border-gray-100 px-5 py-3">
@@ -384,8 +384,8 @@
             </div>
         </div>
 
-        <!-- Footer Actions -->
-        <div class="p-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between gap-3">
+        <!-- Footer Actions (Desktop Only) -->
+        <div class="hidden lg:flex p-4 border-t border-gray-200 bg-gray-50 items-center justify-between gap-3">
             <a href="{{ route('admin.places.index') }}"
                class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-white text-sm font-medium flex items-center gap-2">
                 <i class="fa-solid fa-arrow-left text-xs"></i>Batal
@@ -398,7 +398,7 @@
     </div>
 
     <!-- Right Side: Map (60%) -->
-    <div class="w-3/5 bg-gray-100 relative">
+    <div class="w-full h-96 lg:h-auto lg:w-3/5 bg-gray-100 relative">
         <div class="absolute inset-0 p-4">
             @include('admin.components.map-drawer', [
                 'drawType' => 'point',
@@ -408,6 +408,18 @@
                 'height' => 'h-full',
             ])
         </div>
+    </div>
+
+    <!-- Footer Actions (Mobile Only) -->
+    <div class="lg:hidden p-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between gap-3 fixed bottom-0 left-0 right-0 z-[1200] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <a href="{{ route('admin.places.index') }}"
+           class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left text-xs"></i>Batal
+        </a>
+        <button type="submit"
+                class="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors text-sm flex items-center gap-2">
+            <i class="fa-solid fa-check text-xs"></i>{{ $submitLabel }}
+        </button>
     </div>
 </form>
 

@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-gray-500 mb-0.5">Admin Panel</p>
-                <h2 class="font-bold text-2xl text-gray-900 leading-tight">
+                <p class="hidden md:block text-sm text-gray-500 mb-0.5">Admin Panel</p>
+                <h2 class="font-bold text-xl md:text-2xl text-gray-900 leading-tight">
                     Laporan Keuangan
                 </h2>
             </div>

@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-gray-500">Admin Panel</p>
-                <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
+                <p class="hidden md:block text-sm text-gray-500">Admin Panel</p>
+                <h2 class="font-semibold text-xl md:text-2xl text-gray-800 leading-tight">
                     Ticket Dashboard
                 </h2>
             </div>
@@ -309,7 +309,7 @@
                 <!-- Recent Orders -->
                 <div class="table-card">
                     <div class="bg-white rounded-[2rem] border border-gray-200 overflow-hidden">
-                        <div class="p-6 border-b border-gray-100">
+                        <div class="p-4 md:p-6 border-b border-gray-100">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <h3 class="text-lg font-bold text-gray-800">Transaksi Terbaru</h3>
@@ -320,7 +320,9 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="overflow-x-auto">
+                        
+                        <!-- Desktop Table -->
+                        <div class="hidden md:block overflow-x-auto">
                             <table class="w-full">
                                 <thead class="bg-gray-50 text-gray-600 text-xs font-semibold uppercase tracking-wider">
                                     <tr>
@@ -373,6 +375,50 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile Stacked Cards -->
+                        <div class="md:hidden space-y-3 p-4">
+                            @forelse($recentTransactions as $transaction)
+                                <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <div class="text-xs font-mono font-bold text-gray-700 bg-white px-2 py-1 rounded border border-gray-200 inline-block mb-1">
+                                                {{ Str::limit($transaction->order_number, 12) }}
+                                            </div>
+                                            <div class="text-[10px] text-gray-400">{{ $transaction->created_at->diffForHumans() }}</div>
+                                        </div>
+                                        @if($transaction->status == 'paid')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700">
+                                                Paid
+                                            </span>
+                                        @elseif($transaction->status == 'pending')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700">
+                                                Pending
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-200 text-gray-700">
+                                                {{ ucfirst($transaction->status) }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    
+                                    <h4 class="text-sm font-bold text-gray-900 mb-0.5">{{ $transaction->ticket->place->name ?? '-' }}</h4>
+                                    <div class="flex justify-between items-end mt-2">
+                                        <div class="text-xs text-gray-500">
+                                            <i class="fa-solid fa-user mr-1"></i> {{ $transaction->customer_name }}
+                                        </div>
+                                        <div class="text-sm font-bold text-blue-600">
+                                            Rp {{ number_format($transaction->total_price, 0, ',', '.') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-8 text-gray-400">
+                                    <i class="fa-solid fa-inbox text-3xl mb-2"></i>
+                                    <p class="text-sm">Belum ada transaksi hari ini</p>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>

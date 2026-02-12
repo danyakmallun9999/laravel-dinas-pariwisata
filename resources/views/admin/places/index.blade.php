@@ -2,15 +2,16 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm text-gray-500 mb-0.5">Admin Panel</p>
-                <h2 class="font-bold text-2xl text-gray-900 leading-tight">
+                <p class="hidden md:block text-sm text-gray-500 mb-0.5">Admin Panel</p>
+                <h2 class="font-bold text-xl md:text-2xl text-gray-900 leading-tight">
                     Destinasi Wisata
                 </h2>
             </div>
             <a href="{{ route('admin.places.create') }}" 
-               class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-sm text-white  hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5">
+               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-xs md:text-sm text-white hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5">
                 <i class="fa-solid fa-plus text-xs"></i>
-                Tambah Lokasi
+                <span class="hidden md:inline">Tambah Lokasi</span>
+                <span class="md:hidden">Tambah</span>
             </a>
         </div>
     </x-slot>
@@ -106,7 +107,9 @@
             <!-- Main Table Card -->
             <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                 <div class="rounded-[2rem] border border-gray-100 overflow-hidden bg-white" id="table-wrapper">
-                    <div class="overflow-x-auto">
+                    
+                    <!-- Desktop Table -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="min-w-full">
                             <thead>
                                 <tr class="border-b border-gray-100 bg-gray-50/50">
@@ -216,10 +219,75 @@
                                     </td>
                                 </tr>
                             @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <!-- Mobile Cards (Stacked View) -->
+                    <div class="md:hidden space-y-4 p-4">
+                        @forelse ($places as $place)
+                            <div class="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm relative">
+                                <div class="flex gap-4">
+                                    <!-- Image -->
+                                    <div class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                                        @if($place->image_path)
+                                            <img src="{{ asset($place->image_path) }}" class="w-full h-full object-cover" alt="{{ $place->name }}">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-gray-300">
+                                                <i class="fa-solid fa-image text-xl"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-start">
+                                            <span class="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold rounded-lg text-white mb-2" style="background-color: {{ $place->category->color }}">
+                                                {{ $place->category->name }}
+                                            </span>
+                                            @if($place->rating)
+                                                <span class="flex items-center text-xs font-bold text-amber-500 gap-1">
+                                                    <i class="fa-solid fa-star"></i> {{ number_format($place->rating, 1) }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        
+                                        <h3 class="font-bold text-gray-900 line-clamp-1 mb-1">{{ $place->name }}</h3>
+                                        
+                                        @if($place->address)
+                                            <p class="text-xs text-gray-500 flex items-center gap-1 line-clamp-1">
+                                                <i class="fa-solid fa-location-dot text-red-400"></i>
+                                                {{ $place->address }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div class="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-gray-50">
+                                    <a href="{{ route('places.show', $place) }}" target="_blank" class="px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg">
+                                        Lihat
+                                    </a>
+                                    <a href="{{ route('admin.places.edit', $place) }}" class="px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg">
+                                        Edit
+                                    </a>
+                                    <form action="{{ route('admin.places.destroy', $place) }}" method="POST" class="delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="px-3 py-2 text-xs font-medium text-red-600 bg-red-50 rounded-lg">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-10">
+                                <i class="fa-solid fa-map-location-dot text-3xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500 text-sm">Tidak ada lokasi</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
                 @if($places->hasPages())
                     <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/30">
                         {{ $places->links() }}

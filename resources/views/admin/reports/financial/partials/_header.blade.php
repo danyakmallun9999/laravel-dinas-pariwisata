@@ -37,50 +37,68 @@
         if (s === fmt(y1) && e === fmt(now)) return 'year';
         return 'custom';
     }
-}" class="bg-white rounded-[2rem] border border-gray-200 p-6">
+}" class="bg-white rounded-[2rem] border border-gray-200 p-4 md:p-6">
 
-    {{-- Quick Period Buttons --}}
-    <div class="flex flex-wrap items-center gap-2 mb-4">
-        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-1">Periode:</span>
-        <template x-for="[key, label] in [['today','Hari Ini'],['week','Minggu Ini'],['month','Bulan Ini'],['year','Tahun Ini']]">
-            <button type="button" @click="setRange(key)"
-                :class="activeQuick() === key
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-                class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
-                x-text="label">
-            </button>
-        </template>
-        <span :class="activeQuick() === 'custom' ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' : 'bg-gray-50 text-gray-500'"
-              class="px-3 py-1.5 rounded-lg text-xs font-semibold">
-            <i class="fa-solid fa-sliders mr-1 text-[10px]"></i>Custom
-        </span>
+    {{-- Quick Period Buttons (Horizontal Scroll on Mobile) --}}
+    <div class="mb-6">
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Periode</label>
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 scrollbar-hide">
+            <template x-for="[key, label] in [['today','Hari Ini'],['week','Minggu Ini'],['month','Bulan Ini'],['year','Tahun Ini']]">
+                <button type="button" @click="setRange(key)"
+                    :class="activeQuick() === key
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 ring-2 ring-blue-600 ring-offset-1'
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
+                    class="flex-none px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 whitespace-nowrap"
+                    x-text="label">
+                </button>
+            </template>
+            <span :class="activeQuick() === 'custom' ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' : 'bg-gray-50 text-gray-500 border border-gray-200'"
+                  class="flex-none px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center">
+                <i class="fa-solid fa-sliders mr-1.5 text-[10px]"></i>Custom
+            </span>
+        </div>
     </div>
 
     {{-- Date Range + Export --}}
     <form x-ref="filterForm" action="{{ route('admin.reports.financial.index') }}" method="GET"
-          class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          class="space-y-4 lg:space-y-0 lg:flex lg:items-center lg:gap-4">
 
-        <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 flex-1 sm:flex-none">
-            <i class="fa-regular fa-calendar text-blue-500 text-sm"></i>
-            <input type="date" name="start_date" x-model="startDate"
-                class="border-0 bg-transparent text-sm text-gray-700 focus:ring-0 p-0 w-[7.5rem]">
-            <i class="fa-solid fa-arrow-right text-gray-300 text-[10px]"></i>
-            <input type="date" name="end_date" x-model="endDate"
-                class="border-0 bg-transparent text-sm text-gray-700 focus:ring-0 p-0 w-[7.5rem]">
+        <!-- Date Inputs -->
+        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-1.5 flex flex-col sm:flex-row items-center gap-0 sm:gap-2">
+            <div class="relative w-full sm:w-auto flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-regular fa-calendar text-gray-400 text-xs"></i>
+                </div>
+                <input type="date" name="start_date" x-model="startDate"
+                    class="block w-full pl-9 pr-3 py-2 text-sm border-0 bg-transparent rounded-xl focus:ring-2 focus:ring-blue-500 transition-shadow">
+            </div>
+            
+            <div class="hidden sm:block text-gray-300">
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </div>
+            <div class="sm:hidden w-full h-px bg-gray-200 my-1"></div>
+
+            <div class="relative w-full sm:w-auto flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-regular fa-calendar text-gray-400 text-xs"></i>
+                </div>
+                <input type="date" name="end_date" x-model="endDate"
+                    class="block w-full pl-9 pr-3 py-2 text-sm border-0 bg-transparent rounded-xl focus:ring-2 focus:ring-blue-500 transition-shadow">
+            </div>
         </div>
 
-        <div class="flex items-center gap-2 sm:ml-auto">
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-2 gap-3 lg:flex lg:ml-auto">
             <button type="submit"
-                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-sm text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
+                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-semibold text-sm hover:bg-blue-700 transition-all shadow-sm shadow-blue-200">
                 <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                Terapkan
+                <span>Filter</span>
             </button>
 
             <a href="{{ route('admin.reports.financial.export', request()->all()) }}"
-                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl font-semibold text-sm text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
+                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-200">
                 <i class="fa-solid fa-file-arrow-down text-xs"></i>
-                Export
+                <span>Export</span>
             </a>
         </div>
     </form>
