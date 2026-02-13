@@ -21,7 +21,10 @@ class SampleAdminSeeder extends Seeder
             'email_verified_at' => now(),
             'is_admin' => true,
         ]);
-        $adminWisata->assignRole('admin_wisata');
+        $roleWisata = \Spatie\Permission\Models\Role::where('name', 'admin_wisata')->where('guard_name', 'admin')->first();
+        if ($roleWisata) {
+            $adminWisata->assignRole($roleWisata);
+        }
         $this->command->info('Admin Wisata created: wisata@jepara.go.id / password');
 
         // Admin Berita - News and events manager
@@ -32,7 +35,10 @@ class SampleAdminSeeder extends Seeder
             'email_verified_at' => now(),
             'is_admin' => true,
         ]);
-        $adminBerita->assignRole('admin_berita');
+        $roleBerita = \Spatie\Permission\Models\Role::where('name', 'admin_berita')->where('guard_name', 'admin')->first();
+        if ($roleBerita) {
+            $adminBerita->assignRole($roleBerita);
+        }
         $this->command->info('Admin Berita created: berita@jepara.go.id / password');
     }
 }

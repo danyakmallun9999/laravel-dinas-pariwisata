@@ -67,7 +67,7 @@
             @if(auth()->user()->hasAnyPermission(['view all destinations', 'view own destinations']))
             <a href="{{ route('admin.places.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.places.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-               :class="isSidebarMini ? 'justify-center' : ''>
+               :class="isSidebarMini ? 'justify-center' : ''">
                 <i class="fa-solid fa-map-location-dot w-5 text-center {{ request()->routeIs('admin.places.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Destinasi Wisata</span>
                  <!-- Tooltip -->
@@ -85,7 +85,7 @@
             @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
             <a href="{{ route('admin.posts.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.posts.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-               :class="isSidebarMini ? 'justify-center' : ''>
+               :class="isSidebarMini ? 'justify-center' : ''">
                 <i class="fa-solid fa-newspaper w-5 text-center {{ request()->routeIs('admin.posts.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Berita</span>
                  <!-- Tooltip -->
@@ -166,7 +166,7 @@
             @can('manage categories')
             <a href="{{ route('admin.categories.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.categories.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-               :class="isSidebarMini ? 'justify-center' : ''>
+               :class="isSidebarMini ? 'justify-center' : ''">
                 <i class="fa-solid fa-tags w-5 text-center {{ request()->routeIs('admin.categories.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
                 <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Kategori</span>
                  <!-- Tooltip -->

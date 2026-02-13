@@ -16,7 +16,7 @@ class AssignOwnershipSeeder extends Seeder
     public function run(): void
     {
         // Get the super admin user
-        $superAdmin = User::role('super_admin')->first();
+        $superAdmin = User::role('super_admin', 'admin')->first();
 
         if (!$superAdmin) {
             $this->command->error('Super Admin not found! Please run AdminUserSeeder first.');

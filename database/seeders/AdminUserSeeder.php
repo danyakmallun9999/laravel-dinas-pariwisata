@@ -22,7 +22,10 @@ class AdminUserSeeder extends Seeder
         ]);
 
         // Assign super_admin role
-        $admin->assignRole('super_admin');
+        $role = \Spatie\Permission\Models\Role::where('name', 'super_admin')->where('guard_name', 'admin')->first();
+        if ($role) {
+            $admin->assignRole($role);
+        }
 
         $this->command->info('Super Admin created: admin@jepara.go.id');
     }
