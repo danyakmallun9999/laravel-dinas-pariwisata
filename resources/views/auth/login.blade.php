@@ -30,9 +30,8 @@
                         <div class="h-8 w-[1px] bg-white/30"></div>
                         <p class="text-xs font-bold uppercase tracking-[0.2em] text-white/90 font-display">Official Admin Portal</p>
                     </div>
-                    <h2 class="text-4xl md:text-5xl font-black text-white font-display leading-tight mb-4">
-                        Dinas Pariwisata dan Kebudayaan<br>
-                        <span class="text-primary">Kabupaten Jepara</span>
+                    <h2 class="text-5xl md:text-6xl font-bold text-white font-['Caveat'] leading-tight mb-4">
+                        Jelajah <span class="text-primary">Jepara</span>
                     </h2>
                     <p class="text-lg text-white/70 max-w-lg font-medium leading-relaxed">
                         Kelola destinasi wisata, event budaya, dan informasi publik untuk memajukan pariwisata Jepara yang mendunia.
@@ -42,7 +41,9 @@
         </div>
 
         <!-- Right Side: Login Form -->
-        <div class="flex items-center justify-center p-8 sm:p-12 lg:p-16 bg-white dark:bg-surface-dark relative">
+        <div class="flex items-center justify-center p-8 sm:p-12 lg:p-16 bg-white dark:bg-surface-dark relative overflow-hidden">
+
+
             <!-- Decorative Elements -->
             <div class="absolute top-0 right-0 p-8 opacity-50 pointer-events-none">
                  <div class="w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>

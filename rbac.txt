@@ -74,17 +74,26 @@ Akses pengaturan sistem dan fee/pajak
 
 Export laporan
 
-Admin:
-
-Mengelola konten (destinasi, event, berita)
-
-Mengelola tiket dan pesanan
-
 Melihat laporan keuangan global (tanpa konfigurasi sistem)
 
+Admin:
+1.admin Wisata
+Mengelola konten (destinasi,maps,etiket)
+Mengelola tiket dan pesanan
 Tidak bisa mengelola user
-
 Tidak bisa mengubah pengaturan sistem
+
+2.admin berita
+Mengelola konten ( event, berita)
+Tidak bisa mengelola user
+Tidak bisa mengubah pengaturan sistem
+
+
+
+
+
+
+
 
 Pengelola Wisata (untuk implementasi masa depan):
 

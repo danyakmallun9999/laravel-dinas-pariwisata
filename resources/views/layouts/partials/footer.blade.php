@@ -1,5 +1,10 @@
-<footer class="bg-[#1a1c23] text-white/80 pt-16 pb-8 border-t border-white/5">
-    <div class="max-w-7xl mx-auto px-6 md:px-10">
+<footer class="relative bg-[#1a1c23] text-white/80 pt-16 pb-8 border-t border-white/5 overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 z-0 opacity-10 pointer-events-none bg-no-repeat bg-contain bg-right-bottom md:bg-right" 
+         style="background-image: url('{{ asset('images/footer/ukirr.png') }}');">
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-10">
         <!-- Top Section: Brand & Navigation -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-16">
             
