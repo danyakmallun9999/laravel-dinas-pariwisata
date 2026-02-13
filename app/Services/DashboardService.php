@@ -119,16 +119,16 @@ class DashboardService
             'ticket_revenue' => (clone $ticketOrdersQuery)->where('status', 'paid')->sum('total_price'),
             
             // Visitor Analytics
-            'total_visitors' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])->sum('quantity'),
-            'visitors_this_month' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])
+            'total_visitors' => (clone $ticketOrdersQuery)->where('status', 'used')->sum('quantity'),
+            'visitors_this_month' => (clone $ticketOrdersQuery)->where('status', 'used')
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->sum('quantity'),
-            'visitors_last_month' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])
+            'visitors_last_month' => (clone $ticketOrdersQuery)->where('status', 'used')
                 ->whereMonth('created_at', now()->subMonth()->month)
                 ->whereYear('created_at', now()->subMonth()->year)
                 ->sum('quantity'),
-            'visitors_today' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])
+            'visitors_today' => (clone $ticketOrdersQuery)->where('status', 'used')
                 ->whereDate('created_at', today())
                 ->sum('quantity'),
             
@@ -159,7 +159,7 @@ class DashboardService
             // Top Destinations by ticket sales
             'top_destinations' => Place::withCount(['tickets as total_sales' => function($query) {
                 $query->join('ticket_orders', 'tickets.id', '=', 'ticket_orders.ticket_id')
-                    ->whereIn('ticket_orders.status', ['paid', 'used']);
+                    ->where('ticket_orders.status', 'used');
             }])
             ->when(!$viewAllPlaces, function($query) use ($userId) {
                  return $query->where('created_by', $userId);
@@ -202,7 +202,7 @@ class DashboardService
 
             // Top Visitor Origins (by City/Kecamatan)
             'top_visitor_origins' => TicketOrder::select('customer_city', \DB::raw('SUM(quantity) as total_visitors'))
-                ->whereIn('status', ['paid', 'used'])
+                ->where('status', 'used')
                 ->when(!$viewAllTickets, function($q) use ($userId) {
                     $q->whereHas('ticket.place', function($subQ) use ($userId) {
                         $subQ->where('created_by', $userId);
@@ -301,7 +301,7 @@ class DashboardService
         $trends = TicketOrder::query()
             ->join('tickets', 'ticket_orders.ticket_id', '=', 'tickets.id')
             ->join('places', 'tickets.place_id', '=', 'places.id')
-            ->whereIn('ticket_orders.status', ['paid', 'used'])
+            ->where('ticket_orders.status', 'used')
             ->whereYear('ticket_orders.created_at', now()->year)
             ->when(!$viewAllPlaces, function($q) use ($userId) {
                 $q->where('places.created_by', $userId);
@@ -365,7 +365,7 @@ class DashboardService
         $trends = TicketOrder::query()
             ->join('tickets', 'ticket_orders.ticket_id', '=', 'tickets.id')
             ->join('places', 'tickets.place_id', '=', 'places.id')
-            ->whereIn('ticket_orders.status', ['paid', 'used'])
+            ->where('ticket_orders.status', 'used')
             ->whereYear('ticket_orders.created_at', '>=', now()->subYear()->year)
             ->when(!$viewAllPlaces, function($q) use ($userId) {
                 $q->where('places.created_by', $userId);

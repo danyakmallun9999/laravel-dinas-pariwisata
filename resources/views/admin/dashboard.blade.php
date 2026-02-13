@@ -22,6 +22,8 @@
 
             <!-- Welcome Banner (Compact & Elegant) -->
             <!-- Welcome Banner (Compact & Elegant) -->
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30">
                     <div>
@@ -987,6 +989,8 @@
             </div>
 
         </div>
+        </div>
+    </div>
     </div>
 
     <!-- Chart Script -->
