@@ -42,130 +42,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Featured Upcoming Event (Added per user request) -->
-            @if($stats['featured_event'])
-            <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200 overflow-hidden" 
-                 x-data="{ 
-                    days: 0, 
-                    hours: 0, 
-                    minutes: 0, 
-                    seconds: 0,
-                    target: new Date('{{ $stats['featured_event']->start_date->toIso8601String() }}').getTime(),
-                    update() {
-                        const now = new Date().getTime();
-                        const dist = this.target - now;
-                        if (dist < 0) return;
-                        this.days = Math.floor(dist / (1000 * 60 * 60 * 24));
-                        this.hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        this.minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-                        this.seconds = Math.floor((dist % (1000 * 60)) / 1000);
-                    }
-                 }" 
-                 x-init="update(); setInterval(() => update(), 1000)">
-                <div class="relative rounded-[2rem] border border-gray-100 bg-gray-50/30 overflow-hidden">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
-                        <!-- Left View: Image & Badge -->
-                        <div class="lg:col-span-5 relative h-64 lg:h-auto min-h-[300px]">
-                            @if($stats['featured_event']->image)
-                                <img src="{{ asset('storage/' . $stats['featured_event']->image) }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $stats['featured_event']->title }}">
-                            @else
-                                <div class="absolute inset-0 bg-gray-100 flex items-center justify-center">
-                                    <img src="{{ asset('images/agenda/logo-agenda.png') }}" class="w-full h-full object-cover opacity-50" alt="Default Agenda">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
-                                </div>
-                            @endif
-                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
-                            
-                            <!-- Overlay Content -->
-                            <div class="absolute bottom-6 left-6 right-6">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-md mb-3 border border-purple-400/50">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                                    Event Terdekat
-                                </span>
-                                <h3 class="text-2xl font-bold text-white leading-tight drop-shadow-md">
-                                    {{ $stats['featured_event']->title }}
-                                </h3>
-                            </div>
-                        </div>
 
-                        <!-- Right View: Details & Countdown -->
-                        <div class="lg:col-span-7 p-8 lg:p-10 flex flex-col justify-center">
-                            <!-- Countdown Grid -->
-                            <div class="grid grid-cols-4 gap-4 mb-8">
-                                <template x-for="(val, label) in { 'Hari': days, 'Jam': hours, 'Menit': minutes, 'Detik': seconds }" :key="label">
-                                    <div class="flex flex-col items-center">
-                                        <div class="w-full aspect-square flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 mb-2">
-                                            <span class="text-2xl lg:text-3xl font-black text-purple-600" x-text="String(val).padStart(2, '0')"></span>
-                                        </div>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest" x-text="label"></span>
-                                    </div>
-                                </template>
-                            </div>
-
-                            <!-- Meta Info -->
-                            <div class="space-y-4 mb-8">
-                                <div class="flex flex-wrap gap-6">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 border border-purple-100">
-                                            <i class="fa-solid fa-calendar-day"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Tanggal</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $stats['featured_event']->start_date->isoFormat('D MMMM Y') }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100">
-                                            <i class="fa-solid fa-clock"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Waktu Mulai</p>
-                                            <p class="text-sm font-bold text-gray-700">{{ $stats['featured_event']->start_date->format('H:i') }} WIB</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 border border-orange-100">
-                                        <i class="fa-solid fa-location-dot"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Lokasi</p>
-                                        <p class="text-sm font-bold text-gray-700 line-clamp-1">{{ $stats['featured_event']->location }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Action -->
-                            <div class="flex items-center gap-4">
-                                <a href="{{ route('admin.events.edit', $stats['featured_event']) }}" class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-purple-200 hover:shadow-purple-300">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                    Kelola Event Ini
-                                </a>
-                                <a href="{{ route('admin.events.index') }}" class="px-6 py-3.5 bg-white text-gray-600 hover:text-blue-600 border border-gray-200 hover:border-blue-200 rounded-2xl text-sm font-bold transition-all">
-                                    Lihat Semua
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-
-
-            <!-- Post View Trends Chart (Moved from bottom) -->
-            @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
-            <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
-                <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-gray-800">Grafik Pembaca (30 Hari Terakhir)</h3>
-                    </div>
-                    <div class="h-[300px] relative">
-                        <canvas id="postViewsChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            @endif
 
 
 
@@ -653,6 +530,97 @@
             </div>
             @endif
 
+
+            <!-- Row 4: Timeline & Charts (Moved Here) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Featured Upcoming Event -->
+                @if($stats['featured_event'])
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200 overflow-hidden" 
+                     x-data="{ 
+                        days: 0, 
+                        hours: 0, 
+                        minutes: 0, 
+                        seconds: 0,
+                        target: new Date('{{ $stats['featured_event']->start_date->toIso8601String() }}').getTime(),
+                        update() {
+                            const now = new Date().getTime();
+                            const dist = this.target - now;
+                            if (dist < 0) return;
+                            this.days = Math.floor(dist / (1000 * 60 * 60 * 24));
+                            this.hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            this.minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+                            this.seconds = Math.floor((dist % (1000 * 60)) / 1000);
+                        }
+                     }" 
+                     x-init="update(); setInterval(() => update(), 1000)">
+                    <div class="relative rounded-[2rem] border border-gray-100 bg-gray-50/30 overflow-hidden h-full">
+                        <div class="flex flex-col h-full">
+                             <!-- Image Section (Fixed height for consistency) -->
+                            <div class="relative h-48 lg:h-56">
+                                @if($stats['featured_event']->image)
+                                    <img src="{{ asset('storage/' . $stats['featured_event']->image) }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $stats['featured_event']->title }}">
+                                @else
+                                    <div class="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                                        <img src="{{ asset('images/agenda/logo-agenda.png') }}" class="w-full h-full object-cover opacity-50" alt="Default Agenda">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
+                                    </div>
+                                @endif
+                                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
+                                
+                                <!-- Overlay Content -->
+                                <div class="absolute bottom-6 left-6 right-6">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-md mb-3 border border-purple-400/50">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                        Event Terdekat
+                                    </span>
+                                    <h3 class="text-xl font-bold text-white leading-tight drop-shadow-md line-clamp-1">
+                                        {{ $stats['featured_event']->title }}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <!-- Details Section -->
+                            <div class="p-6 flex-1 flex flex-col justify-between">
+                                <!-- Countdown Grid -->
+                                <div class="grid grid-cols-4 gap-2 mb-6">
+                                    <template x-for="(val, label) in { 'Hari': days, 'Jam': hours, 'Menit': minutes, 'Detik': seconds }" :key="label">
+                                        <div class="flex flex-col items-center">
+                                            <div class="w-full aspect-square flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-100 mb-1">
+                                                <span class="text-lg lg:text-xl font-black text-purple-600" x-text="String(val).padStart(2, '0')"></span>
+                                            </div>
+                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest" x-text="label"></span>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Action -->
+                                <div class="flex items-center gap-3">
+                                    <a href="{{ route('admin.events.edit', $stats['featured_event']) }}" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-200 hover:shadow-purple-300">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        Kelola
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Post View Trends Chart -->
+                @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-gray-800">Grafik Pembaca</h3>
+                            <span class="text-xs text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full">30 Hari Terakhir</span>
+                        </div>
+                        <div class="h-[300px] relative">
+                            <canvas id="postViewsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </div>
 
 
             <!-- Berita & Agenda Breakdown (Admin Berita Only) -->
