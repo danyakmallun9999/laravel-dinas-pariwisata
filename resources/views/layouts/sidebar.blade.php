@@ -196,21 +196,7 @@
             </a>
             @endcan
 
-            @can('scan tickets')
-            <a href="{{ route('admin.scan.index') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.scan.index') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-               :class="isSidebarMini ? 'justify-center' : ''">
-                <i class="fa-solid fa-qrcode w-5 text-center {{ request()->routeIs('admin.scan.index') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
-                <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Scan Barcode</span>
-                 <!-- Tooltip -->
-                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
-                     x-show="isSidebarMini" 
-                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     style="display: none;">
-                    Scan Barcode
-                </div>
-            </a>
-            @endcan
+
 
             <!-- E-Tiket Parent (Static Expanded) -->
             @if(auth()->user()->can('view all tickets') || auth()->user()->hasAnyPermission(['view all financial reports', 'view own financial reports', 'view own tickets']))

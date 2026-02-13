@@ -63,6 +63,8 @@ class FinancialReportController extends Controller
         $salesChartData = $this->analyticsService->getSalesChartData(365, $userIdFilter);
         $monthlySalesChartData = $this->analyticsService->getMonthlySalesChartData(12, $userIdFilter);
 
+
+        
         return view('admin.reports.financial.index', compact(
             'summary',
             'dailyTrend',

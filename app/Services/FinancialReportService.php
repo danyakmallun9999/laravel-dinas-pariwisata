@@ -59,6 +59,9 @@ class FinancialReportService
      */
     public function getDailyTrend($startDate, $endDate, $userId = null)
     {
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+
         return TicketOrder::whereBetween('paid_at', [$startDate, $endDate])
             ->whereIn('status', ['paid', 'used'])
             ->when($userId, function($q) use ($userId) {
@@ -77,6 +80,9 @@ class FinancialReportService
      */
     public function getByPaymentMethod($startDate, $endDate, $userId = null)
     {
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+
         return TicketOrder::whereBetween('paid_at', [$startDate, $endDate])
             ->whereIn('status', ['paid', 'used'])
             ->when($userId, function($q) use ($userId) {
@@ -99,6 +105,9 @@ class FinancialReportService
      */
     public function getByTicket($startDate, $endDate, $userId = null)
     {
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+
         return TicketOrder::whereBetween('paid_at', [$startDate, $endDate])
             ->whereIn('status', ['paid', 'used'])
             ->when($userId, function($q) use ($userId) {
