@@ -92,6 +92,7 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::post('/posts/translate', [\App\Http\Controllers\Admin\TranslationController::class, 'translate'])->name('posts.translate');
     Route::resource('posts', \App\Http\Controllers\PostController::class);
     Route::post('/events/translate', [\App\Http\Controllers\Admin\TranslationController::class, 'translate'])->name('events.translate');
+    Route::get('/events/calendar', [\App\Http\Controllers\Admin\EventController::class, 'calendar'])->name('events.calendar');
     Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
 
     // Ticket routes

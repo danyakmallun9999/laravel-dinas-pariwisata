@@ -18,7 +18,10 @@ class DashboardService
     public function getDashboardStats(): array
     {
         $user = auth()->user();
-        $viewAll = $user->can('view all destinations');
+        $viewAllPlaces = $user->can('view all destinations');
+        $viewAllPosts = $user->can('view all posts');
+        $viewAllEvents = $user->can('view all events');
+        $viewAllTickets = $user->can('view all tickets');
         $userId = $user->id;
 
         // Base queries
@@ -29,14 +32,22 @@ class DashboardService
         $eventsQuery = Event::query();
         $ticketOrdersQuery = TicketOrder::query();
 
-        // Apply filters if not super admin/global viewer
-        if (! $viewAll) {
+        // Apply filters
+        if (! $viewAllPlaces) {
             $placesQuery->where('created_by', $userId);
+        }
+        
+        if (! $viewAllPosts) {
             $postsQuery->where('created_by', $userId);
+        }
+        
+        if (! $viewAllEvents) {
             $eventsQuery->where('created_by', $userId);
+        }
 
+        if (! $viewAllTickets) {
             // For tickets, we need to join with tickets table and then places table to filter by place owner
-            $ticketOrdersQuery->whereHas('ticket.place', function ($q) use ($userId) {
+            $ticketOrdersQuery->whereHas('ticket.place', function($q) use ($userId) {
                 $q->where('created_by', $userId);
             });
         }
@@ -46,72 +57,94 @@ class DashboardService
             'places_count' => $placesQuery->count(),
             'infrastructures_count' => $infrastructuresQuery->count(),
             'land_uses_count' => $landUsesQuery->count(),
-
+            
             // Categories - filter places count within categories
-            'categories' => Category::withCount(['places' => function ($q) use ($viewAll, $userId) {
-                if (! $viewAll) {
+            'categories' => Category::withCount(['places' => function($q) use ($viewAllPlaces, $userId) {
+                if (! $viewAllPlaces) {
                     $q->where('created_by', $userId);
                 }
             }])->get(),
-
-            'top_categories' => Category::withCount(['places' => function ($q) use ($viewAll, $userId) {
-                if (! $viewAll) {
+            
+            'top_categories' => Category::withCount(['places' => function($q) use ($viewAllPlaces, $userId) {
+                if (! $viewAllPlaces) {
                     $q->where('created_by', $userId);
                 }
             }])->orderBy('places_count', 'desc')->take(3)->get(),
-
+            
             'infrastructure_types' => Infrastructure::selectRaw('type, COUNT(*) as count, SUM(length_meters) as total_length')
                 ->groupBy('type')
                 ->get(),
-
+                
             'land_use_types' => LandUse::selectRaw('type, COUNT(*) as count, SUM(area_hectares) as total_area')
                 ->groupBy('type')
                 ->get(),
-
+                
             'total_land_use_area' => LandUse::sum('area_hectares'),
             'total_infrastructure_length' => Infrastructure::sum('length_meters'),
-
-            'recent_places' => $placesQuery->latest()->take(5)->with('category')->get(), // Clone query if needed for multiple uses, but here it's fine
+            
+            'recent_places' => $placesQuery->latest()->take(5)->with('category')->get(), 
             'recent_infrastructures' => Infrastructure::latest()->take(5)->get(),
             'recent_land_uses' => LandUse::latest()->take(5)->get(),
-            'posts_count' => Post::count(),
-            'posts_published' => Post::where('is_published', true)->count(),
-            'posts_draft' => Post::where('is_published', false)->count(),
-            'events_count' => Event::count(),
-            'events_upcoming' => Event::where('start_date', '>=', now())->count(),
-            'events_past' => Event::where('end_date', '<', now())->count(),
-            'recent_posts' => Post::latest('published_at')->take(5)->get(),
-            'upcoming_events' => Event::where('start_date', '>=', now())->orderBy('start_date')->take(5)->get(),
-            'ticket_orders_count' => TicketOrder::count(),
-            'ticket_orders_pending' => TicketOrder::where('status', 'pending')->count(),
-            'ticket_orders_paid' => TicketOrder::where('status', 'paid')->count(),
-            'ticket_revenue' => TicketOrder::whereIn('status', ['paid', 'used'])->sum('total_price'),
-
+            
+            'posts_count' => $postsQuery->count(),
+            'posts_published' => (clone $postsQuery)->where('is_published', true)->count(),
+            'posts_draft' => (clone $postsQuery)->where('is_published', false)->count(),
+            
+            'events_count' => $eventsQuery->count(),
+            'events_upcoming' => (clone $eventsQuery)->where('start_date', '>=', now())->count(),
+            'events_past' => (clone $eventsQuery)->where('end_date', '<', now())->count(),
+            
+            'recent_posts' => (clone $postsQuery)->latest('published_at')->take(5)->get(),
+            'upcoming_events' => (clone $eventsQuery)->where('start_date', '>=', now())->orderBy('start_date')->take(5)->get(),
+             'this_month_events' => (clone $eventsQuery)
+                ->whereMonth('start_date', now()->month)
+                ->whereYear('start_date', now()->year)
+                ->orderBy('start_date')
+                ->get()
+                ->groupBy(function($date) {
+                    return \Carbon\Carbon::parse($date->start_date)->format('j'); // Group by day (1-31)
+                }),
+            
+            'featured_event' => (clone $eventsQuery)
+                ->where('start_date', '>=', now())
+                ->where('is_published', true)
+                ->orderBy('start_date')
+                ->first(),
+            
+            'ticket_orders_count' => $ticketOrdersQuery->count(),
+            'ticket_orders_pending' => (clone $ticketOrdersQuery)->where('status', 'pending')->count(),
+            'ticket_orders_paid' => (clone $ticketOrdersQuery)->where('status', 'paid')->count(),
+            'ticket_revenue' => (clone $ticketOrdersQuery)->where('status', 'paid')->sum('total_price'),
+            
             // Visitor Analytics
-            'total_visitors' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])->sum('quantity'),
-            'visitors_this_month' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])
+            'total_visitors' => (clone $ticketOrdersQuery)->where('status', 'used')->sum('quantity'),
+            'visitors_this_month' => (clone $ticketOrdersQuery)->where('status', 'used')
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->sum('quantity'),
-            'visitors_last_month' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])
+            'visitors_last_month' => (clone $ticketOrdersQuery)->where('status', 'used')
                 ->whereMonth('created_at', now()->subMonth()->month)
                 ->whereYear('created_at', now()->subMonth()->year)
                 ->sum('quantity'),
-            'visitors_today' => (clone $ticketOrdersQuery)->whereIn('status', ['paid', 'used'])
+            'visitors_today' => (clone $ticketOrdersQuery)->where('status', 'used')
                 ->whereDate('created_at', today())
                 ->sum('quantity'),
-
+            
             // Revenue Metrics
-            'revenue_this_month' => TicketOrder::whereIn('status', ['paid', 'used'])
+            'revenue_this_month' => (clone $ticketOrdersQuery)->where('status', 'paid')
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->sum('total_price'),
-            'revenue_last_month' => TicketOrder::whereIn('status', ['paid', 'used'])
+            'revenue_last_month' => (clone $ticketOrdersQuery)->where('status', 'paid')
                 ->whereMonth('created_at', now()->subMonth()->month)
                 ->whereYear('created_at', now()->subMonth()->year)
                 ->sum('total_price'),
-            'average_order_value' => TicketOrder::whereIn('status', ['paid', 'used'])->count() > 0
-                ? TicketOrder::whereIn('status', ['paid', 'used'])->sum('total_price') / TicketOrder::whereIn('status', ['paid', 'used'])->count()
+            'revenue_today' => (clone $ticketOrdersQuery)->where('status', 'paid')
+                ->whereDate('created_at', today())
+                ->sum('total_price'),
+            
+            'average_order_value' => (clone $ticketOrdersQuery)->where('status', 'paid')->count() > 0 
+                ? (clone $ticketOrdersQuery)->where('status', 'paid')->sum('total_price') / (clone $ticketOrdersQuery)->where('status', 'paid')->count()
                 : 0,
 
             // Booking Trends (Last 7 days)
@@ -125,24 +158,24 @@ class DashboardService
             // This requires a bit more complex query modification for filtering
             'top_destinations' => Place::withCount(['tickets as total_sales' => function ($query) {
                 $query->join('ticket_orders', 'tickets.id', '=', 'ticket_orders.ticket_id')
-                    ->whereIn('ticket_orders.status', ['paid', 'used']);
+                    ->where('ticket_orders.status', 'used');
             }])
-                ->when(! $viewAll, function ($query) use ($userId) {
-                    return $query->where('created_by', $userId);
-                })
-                ->with('category')
-                ->orderBy('total_sales', 'desc')
-                ->take(5)
-                ->get(),
+            ->when(!$viewAllPlaces, function($query) use ($userId) {
+                 return $query->where('created_by', $userId);
+            })
+            ->with('category')
+            ->orderBy('total_sales', 'desc')
+            ->take(5)
+            ->get(),
 
-            'visitation_trends' => $this->getVisitationTrends($viewAll, $userId),
-            'yearly_visitation_trends' => $this->getYearlyVisitationTrends($viewAll, $userId),
+            'visitation_trends' => $this->getVisitationTrends($viewAllPlaces, $userId),
+            'yearly_visitation_trends' => $this->getYearlyVisitationTrends($viewAllPlaces, $userId),
 
             // Recent Orders (Transactions)
-            'recent_orders' => TicketOrder::with(['ticket.place', 'user']) // Assuming user relation exists or just name
+            'recent_orders' => TicketOrder::with(['ticket.place', 'user']) 
                 ->whereIn('status', ['paid', 'used'])
-                ->when(! $viewAll, function ($q) use ($userId) {
-                    $q->whereHas('ticket.place', function ($subQ) use ($userId) {
+                ->when(!$viewAllTickets, function($q) use ($userId) {
+                    $q->whereHas('ticket.place', function($subQ) use ($userId) {
                         $subQ->where('created_by', $userId);
                     });
                 })
@@ -153,11 +186,11 @@ class DashboardService
             // Top Selling Tickets
             'top_tickets' => \App\Models\Ticket::with('place')
                 ->where('is_active', true)
-                ->withSum(['orders as total_sold' => function ($q) {
+                ->withSum(['orders as total_sold' => function($q) {
                     $q->whereIn('status', ['paid', 'used']);
                 }], 'quantity')
-                ->when(! $viewAll, function ($q) use ($userId) {
-                    $q->whereHas('place', function ($subQ) use ($userId) {
+                ->when(!$viewAllTickets, function($q) use ($userId) {
+                    $q->whereHas('place', function($subQ) use ($userId) {
                         $subQ->where('created_by', $userId);
                     });
                 })
@@ -168,9 +201,9 @@ class DashboardService
 
             // Top Visitor Origins (by City/Kecamatan)
             'top_visitor_origins' => TicketOrder::select('customer_city', \DB::raw('SUM(quantity) as total_visitors'))
-                ->whereIn('status', ['paid', 'used'])
-                ->when(! $viewAll, function ($q) use ($userId) {
-                    $q->whereHas('ticket.place', function ($subQ) use ($userId) {
+                ->where('status', 'used')
+                ->when(!$viewAllTickets, function($q) use ($userId) {
+                    $q->whereHas('ticket.place', function($subQ) use ($userId) {
                         $subQ->where('created_by', $userId);
                     });
                 })
@@ -181,16 +214,57 @@ class DashboardService
                 ->get(),
 
             // Weekly Revenue Trend (Last 7 Days)
-            'weekly_revenue' => $this->getWeeklyRevenueTrend($viewAll, $userId),
+            'weekly_revenue' => $this->getWeeklyRevenueTrend($viewAllTickets, $userId),
+
+            // Top Posts (Konten Terlaris)
+            'top_posts' => Post::withCount('visits')
+                ->when(!$viewAllPosts, function($q) use ($userId) {
+                    $q->where('created_by', $userId);
+                })
+                ->orderBy('visits_count', 'desc')
+                ->take(5)
+                ->get(),
+
+            // Reader Graph (Grafik Pembaca) - Last 30 Days
+            'post_view_trends' => $this->getPostViewTrends($viewAllPosts, $userId),
         ];
 
         return $stats;
     }
 
     /**
+     * Get post view trends for the last 30 days.
+     */
+    private function getPostViewTrends($viewAllPosts, $userId)
+    {
+        $days = collect();
+        for ($i = 29; $i >= 0; $i--) {
+            $days->put(now()->subDays($i)->format('Y-m-d'), 0);
+        }
+
+        $views = \App\Models\Visit::query()
+            ->join('posts', 'visits.post_id', '=', 'posts.id')
+            ->selectRaw('DATE(visits.created_at) as date, count(*) as count')
+            ->where('visits.created_at', '>=', now()->subDays(29)->startOfDay())
+            ->when(!$viewAllPosts, function($q) use ($userId) {
+                $q->where('posts.created_by', $userId);
+            })
+            ->groupBy('date')
+            ->get()
+            ->pluck('count', 'date');
+
+        $data = $days->merge($views);
+
+        return [
+            'labels' => $data->keys()->map(fn($date) => \Carbon\Carbon::parse($date)->translatedFormat('d M'))->values(),
+            'data' => $data->values(),
+        ];
+    }
+
+    /**
      * Get weekly revenue trend for the last 7 days.
      */
-    private function getWeeklyRevenueTrend($viewAll, $userId)
+    private function getWeeklyRevenueTrend($viewAllTickets, $userId)
     {
         $days = collect();
         for ($i = 6; $i >= 0; $i--) {
@@ -198,13 +272,13 @@ class DashboardService
         }
 
         $revenue = TicketOrder::select(
-            \DB::raw('DATE(created_at) as date'),
-            \DB::raw('SUM(total_price) as total_revenue')
-        )
+                \DB::raw('DATE(created_at) as date'),
+                \DB::raw('SUM(total_price) as total_revenue')
+            )
             ->whereIn('status', ['paid', 'used'])
             ->where('created_at', '>=', now()->subDays(6)->startOfDay())
-            ->when(! $viewAll, function ($q) use ($userId) {
-                $q->whereHas('ticket.place', function ($subQ) use ($userId) {
+            ->when(!$viewAllTickets, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
                     $subQ->where('created_by', $userId);
                 });
             })
@@ -215,20 +289,20 @@ class DashboardService
         $data = $days->merge($revenue);
 
         return [
-            'labels' => $data->keys()->map(fn ($date) => \Carbon\Carbon::parse($date)->translatedFormat('d M'))->values(),
+            'labels' => $data->keys()->map(fn($date) => \Carbon\Carbon::parse($date)->translatedFormat('d M'))->values(),
             'data' => $data->values(),
         ];
     }
 
-    private function getVisitationTrends(bool $viewAll, int $userId): array
+    private function getVisitationTrends(bool $viewAllPlaces, int $userId): array
     {
         // Fetch raw data
         $trends = TicketOrder::query()
             ->join('tickets', 'ticket_orders.ticket_id', '=', 'tickets.id')
             ->join('places', 'tickets.place_id', '=', 'places.id')
-            ->whereIn('ticket_orders.status', ['paid', 'used'])
+            ->where('ticket_orders.status', 'used')
             ->whereYear('ticket_orders.created_at', now()->year)
-            ->when(! $viewAll, function ($q) use ($userId) {
+            ->when(!$viewAllPlaces, function($q) use ($userId) {
                 $q->where('places.created_by', $userId);
             })
             ->selectRaw('places.id, places.name, MONTH(ticket_orders.created_at) as month, SUM(ticket_orders.quantity) as total_visitors')
@@ -237,30 +311,30 @@ class DashboardService
 
         // Organize by Place
         $placeData = [];
-        foreach ($trends as $trend) {
-            if (! isset($placeData[$trend->id])) {
+        foreach($trends as $trend) {
+            if(!isset($placeData[$trend->id])) {
                 $placeData[$trend->id] = [
                     'name' => $trend->name,
-                    'data' => array_fill(1, 12, 0),
+                    'data' => array_fill(1, 12, 0)
                 ];
             }
-            $placeData[$trend->id]['data'][$trend->month] = (int) $trend->total_visitors;
+            $placeData[$trend->id]['data'][$trend->month] = (int)$trend->total_visitors;
         }
 
         // If no data, return structure with empty datasets
         if (empty($placeData)) {
             return [
                 'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'],
-                'datasets' => [],
+                'datasets' => []
             ];
         }
 
         // Format for Chart.js
         $datasets = [];
         $colors = [
-            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', 
             '#ec4899', '#6366f1', '#14b8a6', '#f97316', '#06b6d4',
-            '#84cc16', '#a855f7', '#d946ef', '#f43f5e', '#64748b',
+            '#84cc16', '#a855f7', '#d946ef', '#f43f5e', '#64748b'
         ];
         $colorIndex = 0;
 
@@ -280,19 +354,19 @@ class DashboardService
 
         return [
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'],
-            'datasets' => $datasets,
+            'datasets' => $datasets
         ];
     }
 
-    private function getYearlyVisitationTrends(bool $viewAll, int $userId): array
+    private function getYearlyVisitationTrends(bool $viewAllPlaces, int $userId): array
     {
         // Fetch raw data (From last year onwards)
         $trends = TicketOrder::query()
             ->join('tickets', 'ticket_orders.ticket_id', '=', 'tickets.id')
             ->join('places', 'tickets.place_id', '=', 'places.id')
-            ->whereIn('ticket_orders.status', ['paid', 'used'])
+            ->where('ticket_orders.status', 'used')
             ->whereYear('ticket_orders.created_at', '>=', now()->subYear()->year)
-            ->when(! $viewAll, function ($q) use ($userId) {
+            ->when(!$viewAllPlaces, function($q) use ($userId) {
                 $q->where('places.created_by', $userId);
             })
             ->selectRaw('places.id, places.name, YEAR(ticket_orders.created_at) as year, SUM(ticket_orders.quantity) as total_visitors')
@@ -303,33 +377,33 @@ class DashboardService
         // Get years range (Last year to 5 years in future)
         $currentYear = now()->year;
         $years = range($currentYear - 1, $currentYear + 5);
-
+        
         // Organize by Place
         $placeData = [];
-        foreach ($trends as $trend) {
-            if (! isset($placeData[$trend->id])) {
+        foreach($trends as $trend) {
+            if(!isset($placeData[$trend->id])) {
                 $placeData[$trend->id] = [
                     'name' => $trend->name,
-                    'data' => array_fill_keys($years, 0),
+                    'data' => array_fill_keys($years, 0)
                 ];
             }
-            $placeData[$trend->id]['data'][$trend->year] = (int) $trend->total_visitors;
+            $placeData[$trend->id]['data'][$trend->year] = (int)$trend->total_visitors;
         }
 
         // If no data, return structure with empty datasets
         if (empty($placeData)) {
             return [
                 'labels' => $years,
-                'datasets' => [],
+                'datasets' => []
             ];
         }
 
         // Format for Chart.js
         $datasets = [];
         $colors = [
-            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', 
             '#ec4899', '#6366f1', '#14b8a6', '#f97316', '#06b6d4',
-            '#84cc16', '#a855f7', '#d946ef', '#f43f5e', '#64748b',
+            '#84cc16', '#a855f7', '#d946ef', '#f43f5e', '#64748b'
         ];
         $colorIndex = 0;
 
@@ -349,7 +423,7 @@ class DashboardService
 
         return [
             'labels' => $years,
-            'datasets' => $datasets,
+            'datasets' => $datasets
         ];
     }
 }

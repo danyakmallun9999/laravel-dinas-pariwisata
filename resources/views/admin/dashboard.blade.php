@@ -20,12 +20,10 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
+            <!-- Welcome Banner (Compact & Elegant) -->
+            <!-- Welcome Banner (Compact & Elegant) -->
+    <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-            
-            <!-- Welcome Banner -->
-            <!-- Welcome Banner (Compact & Elegant) -->
-            <!-- Welcome Banner (Compact & Elegant) -->
             <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30">
                     <div>
@@ -45,32 +43,8 @@
                 </div>
             </div>
 
-            <!-- Visitation Trends Chart -->
-            <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
-                <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <h3 class="text-lg font-bold text-gray-800">Grafik Jumlah Pengunjung</h3>
-                            <span class="text-xs text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200" id="chartPeriodLabel">
-                                 {{ date('Y') }}
-                            </span>
-                        </div>
-                        
-                        <!-- Toggle Buttons -->
-                        <div class="bg-gray-200/50 p-1 rounded-xl flex items-center self-start sm:self-auto">
-                            <button onclick="switchChartMode('monthly')" id="btn-monthly" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-white text-blue-600">
-                                Bulanan
-                            </button>
-                            <button onclick="switchChartMode('yearly')" id="btn-yearly" class="px-4 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-700 transition-all">
-                                Tahunan
-                            </button>
-                        </div>
-                    </div>
-                    <div class="relative w-full h-80">
-                        <canvas id="visitationChart"></canvas>
-                    </div>
-                </div>
-            </div>
+
+
 
             <!-- Quick Actions -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -122,6 +96,110 @@
                 </a>
                 @endcanany
                 @endunlessrole
+            </div>
+
+
+
+            <!-- Main Statistics (Moved) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Places -->
+                @canany('view all destinations', 'view own destinations')
+                    @php
+                        $isSinglePlaceManager = !auth()->user()->can('view all destinations') && $stats['places_count'] === 1;
+                    @endphp
+
+                    @if($isSinglePlaceManager)
+                        <!-- Single Place Manager View -->
+                        <a href="{{ route('admin.places.index') }}" class="group bg-blue-600 p-1 rounded-[2.5rem] border border-blue-500 hover:scale-[1.02] transition-transform duration-300">
+                            <div class="p-6 rounded-[2rem] border border-white/10 bg-gradient-to-br from-blue-600 to-indigo-700 h-full relative overflow-hidden">
+                                <!-- Decoration -->
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                                <div class="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full -ml-12 -mb-12 blur-xl"></div>
+                                
+                                <div class="relative z-10 flex flex-col h-full justify-between">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="w-12 h-12 rounded-2xl bg-white/20 text-white flex items-center justify-center text-xl backdrop-blur-sm">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </div>
+                                        <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-white/20 text-white backdrop-blur-md border border-white/10">Lola Wisata</span>
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-white mb-1">Kelola Wisata Saya</h3>
+                                        <p class="text-blue-100 text-sm">Update info, foto, dan tiket destinasi Anda satu pintu.</p>
+                                    </div>
+
+                                    <div class="mt-4 flex items-center gap-2 text-white/80 text-xs font-medium">
+                                        <span>Klik untuk edit</span>
+                                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    @else
+                        <!-- Standard View -->
+                        <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                            <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl border border-blue-200">
+                                        <i class="fa-solid fa-map-marked-alt"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">+{{ $stats['places_count'] > 0 ? 'Active' : '0' }}</span>
+                                </div>
+                                <h3 class="text-3xl font-bold text-gray-800">{{ $stats['places_count'] }}</h3>
+                                <p class="text-sm text-gray-500 font-medium">Destinasi Wisata</p>
+                            </div>
+                        </div>
+                    @endif
+                @endcanany
+
+                <!-- Posts -->
+                @canany('view all posts', 'view own posts')
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl border border-purple-200">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-purple-50 text-purple-600 border border-purple-100">News</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800">{{ $stats['posts_count'] }}</h3>
+                        <p class="text-sm text-gray-500 font-medium">Berita & Artikel</p>
+                    </div>
+                </div>
+                @endcanany
+
+                <!-- Events -->
+                @canany('view all events', 'view own events')
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl border border-orange-200">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-orange-50 text-orange-600 border border-orange-100">Events</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800">{{ $stats['events_count'] }}</h3>
+                        <p class="text-sm text-gray-500 font-medium">Agenda Kegiatan</p>
+                    </div>
+                </div>
+                @endcanany
+
+                <!-- Categories -->
+                @canany('manage categories')
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl border border-pink-200">
+                                <i class="fa-solid fa-tags"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-pink-50 text-pink-600 border border-pink-100">Types</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800">{{ \App\Models\Category::count() }}</h3>
+                        <p class="text-sm text-gray-500 font-medium">Kategori Wisata</p>
+                    </div>
+                </div>
+                @endcanany
             </div>
 
             <!-- Admin Wisata Enhanced Dashboard -->
@@ -452,107 +530,98 @@
             </div>
             @endif
 
-            <!-- Main Statistics -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Places -->
-                @canany('view all destinations', 'view own destinations')
-                    @php
-                        $isSinglePlaceManager = !auth()->user()->can('view all destinations') && $stats['places_count'] === 1;
-                    @endphp
 
-                    @if($isSinglePlaceManager)
-                        <!-- Single Place Manager View -->
-                        <a href="{{ route('admin.places.index') }}" class="group bg-blue-600 p-1 rounded-[2.5rem] border border-blue-500 hover:scale-[1.02] transition-transform duration-300">
-                            <div class="p-6 rounded-[2rem] border border-white/10 bg-gradient-to-br from-blue-600 to-indigo-700 h-full relative overflow-hidden">
-                                <!-- Decoration -->
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                                <div class="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full -ml-12 -mb-12 blur-xl"></div>
+            <!-- Row 4: Timeline & Charts (Moved Here) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Featured Upcoming Event -->
+                @if($stats['featured_event'])
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200 overflow-hidden" 
+                     x-data="{ 
+                        days: 0, 
+                        hours: 0, 
+                        minutes: 0, 
+                        seconds: 0,
+                        target: new Date('{{ $stats['featured_event']->start_date->toIso8601String() }}').getTime(),
+                        update() {
+                            const now = new Date().getTime();
+                            const dist = this.target - now;
+                            if (dist < 0) return;
+                            this.days = Math.floor(dist / (1000 * 60 * 60 * 24));
+                            this.hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            this.minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+                            this.seconds = Math.floor((dist % (1000 * 60)) / 1000);
+                        }
+                     }" 
+                     x-init="update(); setInterval(() => update(), 1000)">
+                    <div class="relative rounded-[2rem] border border-gray-100 bg-gray-50/30 overflow-hidden h-full">
+                        <div class="flex flex-col h-full">
+                             <!-- Image Section (Fixed height for consistency) -->
+                            <div class="relative h-48 lg:h-56">
+                                @if($stats['featured_event']->image)
+                                    <img src="{{ asset('storage/' . $stats['featured_event']->image) }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $stats['featured_event']->title }}">
+                                @else
+                                    <div class="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                                        <img src="{{ asset('images/agenda/logo-agenda.png') }}" class="w-full h-full object-cover opacity-50" alt="Default Agenda">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
+                                    </div>
+                                @endif
+                                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
                                 
-                                <div class="relative z-10 flex flex-col h-full justify-between">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <div class="w-12 h-12 rounded-2xl bg-white/20 text-white flex items-center justify-center text-xl backdrop-blur-sm">
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                <!-- Overlay Content -->
+                                <div class="absolute bottom-6 left-6 right-6">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-md mb-3 border border-purple-400/50">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                        Event Terdekat
+                                    </span>
+                                    <h3 class="text-xl font-bold text-white leading-tight drop-shadow-md line-clamp-1">
+                                        {{ $stats['featured_event']->title }}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <!-- Details Section -->
+                            <div class="p-6 flex-1 flex flex-col justify-between">
+                                <!-- Countdown Grid -->
+                                <div class="grid grid-cols-4 gap-2 mb-6">
+                                    <template x-for="(val, label) in { 'Hari': days, 'Jam': hours, 'Menit': minutes, 'Detik': seconds }" :key="label">
+                                        <div class="flex flex-col items-center">
+                                            <div class="w-full aspect-square flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-100 mb-1">
+                                                <span class="text-lg lg:text-xl font-black text-purple-600" x-text="String(val).padStart(2, '0')"></span>
+                                            </div>
+                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest" x-text="label"></span>
                                         </div>
-                                        <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-white/20 text-white backdrop-blur-md border border-white/10">Lola Wisata</span>
-                                    </div>
-                                    
-                                    <div>
-                                        <h3 class="text-2xl font-bold text-white mb-1">Kelola Wisata Saya</h3>
-                                        <p class="text-blue-100 text-sm">Update info, foto, dan tiket destinasi Anda satu pintu.</p>
-                                    </div>
+                                    </template>
+                                </div>
 
-                                    <div class="mt-4 flex items-center gap-2 text-white/80 text-xs font-medium">
-                                        <span>Klik untuk edit</span>
-                                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                                    </div>
+                                <!-- Action -->
+                                <div class="flex items-center gap-3">
+                                    <a href="{{ route('admin.events.edit', $stats['featured_event']) }}" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-200 hover:shadow-purple-300">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        Kelola
+                                    </a>
                                 </div>
                             </div>
-                        </a>
-                    @else
-                        <!-- Standard View -->
-                        <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
-                            <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl border border-blue-200">
-                                        <i class="fa-solid fa-map-marked-alt"></i>
-                                    </div>
-                                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">+{{ $stats['places_count'] > 0 ? 'Active' : '0' }}</span>
-                                </div>
-                                <h3 class="text-3xl font-bold text-gray-800">{{ $stats['places_count'] }}</h3>
-                                <p class="text-sm text-gray-500 font-medium">Destinasi Wisata</p>
-                            </div>
                         </div>
-                    @endif
-                @endcanany
-
-                <!-- Posts -->
-                @canany('view all posts', 'view own posts')
-                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
-                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl border border-purple-200">
-                                <i class="fa-solid fa-newspaper"></i>
-                            </div>
-                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-purple-50 text-purple-600 border border-purple-100">News</span>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-800">{{ $stats['posts_count'] }}</h3>
-                        <p class="text-sm text-gray-500 font-medium">Berita & Artikel</p>
                     </div>
                 </div>
-                @endcanany
+                @endif
 
-                <!-- Events -->
-                @canany('view all events', 'view own events')
+                <!-- Post View Trends Chart -->
+                @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
                 <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl border border-orange-200">
-                                <i class="fa-solid fa-calendar-days"></i>
-                            </div>
-                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-orange-50 text-orange-600 border border-orange-100">Events</span>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-gray-800">Grafik Pembaca</h3>
+                            <span class="text-xs text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full">30 Hari Terakhir</span>
                         </div>
-                        <h3 class="text-3xl font-bold text-gray-800">{{ $stats['events_count'] }}</h3>
-                        <p class="text-sm text-gray-500 font-medium">Agenda Kegiatan</p>
+                        <div class="h-[300px] relative">
+                            <canvas id="postViewsChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                @endcanany
-
-                <!-- Categories -->
-                @canany('manage categories')
-                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
-                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl border border-pink-200">
-                                <i class="fa-solid fa-tags"></i>
-                            </div>
-                            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-pink-50 text-pink-600 border border-pink-100">Types</span>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-800">{{ \App\Models\Category::count() }}</h3>
-                        <p class="text-sm text-gray-500 font-medium">Kategori Wisata</p>
-                    </div>
-                </div>
-                @endcanany
+                @endif
             </div>
+
 
             <!-- Berita & Agenda Breakdown (Admin Berita Only) -->
             @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts', 'view all events', 'view own events']))
@@ -643,9 +712,44 @@
             </div>
             @endif
 
-            <!-- Ticket Orders Status (Admin Wisata Only) -->
-            @can('view all tickets')
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+
+            <!-- Row 5: Top Posts & Ticket Status (Side-by-Side) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <!-- Top Posts -->
+                @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
+                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-gray-800">Konten Terlaris</h3>
+                        </div>
+                        <div class="space-y-4">
+                            @forelse($stats['top_posts'] ?? [] as $post)
+                            <div class="flex items-center gap-4 p-3 rounded-2xl bg-white border border-gray-100 hover:shadow-sm transition-shadow">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-gray-500 bg-gray-50 border border-gray-100">
+                                    #{{ $loop->iteration }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-bold text-gray-800 text-sm truncate" title="{{ $post->title }}">{{ $post->title }}</h4>
+                                    <p class="text-xs text-gray-500">
+                                        {{ $post->visits_count }} views
+                                    </p>
+                                </div>
+                                <a href="{{ route('posts.show', $post->slug) }}" target="_blank" class="text-gray-400 hover:text-blue-600">
+                                    <i class="fa-solid fa-up-right-from-square text-xs"></i>
+                                </a>
+                            </div>
+                            @empty
+                            <p class="text-gray-500 text-sm italic text-center py-4">Belum ada data kunjungan.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Ticket Orders Status -->
+                @can('view all tickets')
                 <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
@@ -689,7 +793,6 @@
                     </div>
                 </div>
             </div>
-            @endcan
 
             <!-- Content Grid 1: Chart & Upcoming Events -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -734,39 +837,44 @@
                 </div>
                 @endcanany
 
-                <!-- Upcoming Events Widget -->
-                @canany('view all events', 'view own events')
-                <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
-                    <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-bold text-gray-800">Agenda Terdekat</h3>
-                            <a href="{{ route('admin.events.index') }}" class="text-sm text-blue-600 hover:underline">Lihat Semua</a>
-                        </div>
-                        <div class="space-y-4">
-                            @forelse($stats['upcoming_events'] as $event)
-                                <div class="flex gap-4 items-start group">
-                                    <div class="flex flex-col items-center bg-white rounded-2xl p-2 min-w-[3.5rem] border border-gray-100 group-hover:border-blue-200 transition-colors">
-                                        <span class="text-xs font-bold text-red-500 uppercase">{{ $event->start_date->isoFormat('MMM') }}</span>
-                                        <span class="text-xl font-bold text-gray-800">{{ $event->start_date->isoFormat('DD') }}</span>
+                <!-- Right Column: Events -->
+                <div class="space-y-6">
+                    <!-- Upcoming Events Widget -->
+                    @canany('view all events', 'view own events')
+                    <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
+                        <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-gray-800">Agenda Terdekat</h3>
+                                <a href="{{ route('admin.events.index') }}" class="text-sm text-blue-600 hover:underline">Lihat Semua</a>
+                            </div>
+                            <div class="space-y-4">
+                                @forelse($stats['upcoming_events'] as $event)
+                                    <div class="flex gap-4 items-start group">
+                                        <div class="flex flex-col items-center bg-white rounded-2xl p-2 min-w-[3.5rem] border border-gray-100 group-hover:border-blue-200 transition-colors">
+                                            <span class="text-xs font-bold text-red-500 uppercase">{{ $event->start_date->isoFormat('MMM') }}</span>
+                                            <span class="text-xl font-bold text-gray-800">{{ $event->start_date->isoFormat('DD') }}</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-gray-800 line-clamp-1 group-hover:text-blue-600 transition-colors">{{ $event->title }}</h4>
+                                            <p class="text-xs text-gray-500 mb-1 line-clamp-1">{{ $event->location }}</p>
+                                            <span class="text-[0.65rem] bg-white border border-gray-100 text-gray-500 px-2 py-0.5 rounded-full inline-block">
+                                                {{ $event->start_date->diffForHumans() }}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 class="font-bold text-gray-800 line-clamp-1 group-hover:text-blue-600 transition-colors">{{ $event->title }}</h4>
-                                        <p class="text-xs text-gray-500 mb-1 line-clamp-1">{{ $event->location }}</p>
-                                        <span class="text-[0.65rem] bg-white border border-gray-100 text-gray-500 px-2 py-0.5 rounded-full inline-block">
-                                            {{ $event->start_date->diffForHumans() }}
-                                        </span>
+                                @empty
+                                    <div class="text-center py-8 text-gray-400">
+                                        <i class="fa-regular fa-calendar-xmark text-3xl mb-2"></i>
+                                        <p class="text-sm">Belum ada agenda terdekat.</p>
                                     </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-8 text-gray-400">
-                                    <i class="fa-regular fa-calendar-xmark text-3xl mb-2"></i>
-                                    <p class="text-sm">Belum ada agenda terdekat.</p>
-                                </div>
-                            @endforelse
+                                @endforelse
+                            </div>
                         </div>
                     </div>
+                    @endcanany
+                
+
                 </div>
-                @endcanany
             </div>
 
 
@@ -851,6 +959,8 @@
             </div>
 
         </div>
+        </div>
+    </div>
     </div>
 
     <!-- Chart Script -->
@@ -1061,6 +1171,56 @@
                                         return 'Rp ' + value;
                                     }
                                 }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Post Views Chart
+            const postViewsCtx = document.getElementById('postViewsChart');
+            if (postViewsCtx) {
+                new Chart(postViewsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: @json($stats['post_view_trends']['labels'] ?? []),
+                        datasets: [{
+                            label: 'Pembaca',
+                            data: @json($stats['post_view_trends']['data'] ?? []),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#8b5cf6',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#8b5cf6',
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#1e293b',
+                                padding: 12,
+                                cornerRadius: 8,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { borderDash: [2, 2], color: '#f1f5f9' },
+                                ticks: { precision: 0 }
                             },
                             x: {
                                 grid: { display: false }
