@@ -14,9 +14,30 @@ class FileService
      */
     public function upload(UploadedFile $file, string $directory, string $disk = 'public'): string
     {
-        // Use default from env if not specified, but here we default to 'public' as arg
         $disk = env('FILESYSTEM_DISK', $disk);
-        $path = $file->store($directory, $disk);
+        
+        // Check if file is an image
+        if (str_starts_with($file->getMimeType(), 'image/')) {
+            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $image = $manager->read($file);
+            
+            // Resize if width > 1200
+            if ($image->width() > 1200) {
+                $image->scale(width: 1200);
+            }
+            
+            // Encode to WebP for optimization
+            $encoded = $image->toWebp(quality: 80);
+            
+            // Generate unique filename with webp extension
+            $filename = pathinfo($file->hashName(), PATHINFO_FILENAME) . '.webp';
+            $path = $directory . '/' . $filename;
+            
+            Storage::disk($disk)->put($path, (string) $encoded);
+        } else {
+            // Non-image files, just store normally
+            $path = $file->store($directory, $disk);
+        }
 
         return Storage::disk($disk)->url($path);
     }

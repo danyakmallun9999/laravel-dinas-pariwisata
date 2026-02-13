@@ -12,12 +12,13 @@
         "php": "^8.2",
         "anhskohbo/no-captcha": "^3.7",
         "bacon/bacon-qr-code": "^3.0",
+        "intervention/image": "^3.11",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "stichoza/google-translate-php": "^5.3",
-        "midtrans/midtrans-php": "^2.5"
+        "midtrans/midtrans-php": "^2.5",
+        "stichoza/google-translate-php": "^5.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
