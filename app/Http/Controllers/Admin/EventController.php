@@ -20,6 +20,26 @@ class EventController extends Controller
         $this->fileService = $fileService;
     }
 
+    public function calendar(Request $request): View
+    {
+        $this->authorize('viewAny', Event::class);
+        
+        $year = $request->get('year', now()->year);
+        
+        $query = Event::query()
+            ->whereYear('start_date', $year);
+
+        if (!auth()->user()->can('view all events')) {
+            $query->where('created_by', auth()->id());
+        }
+
+        $eventsByMonth = $query->orderBy('start_date')
+            ->get()
+            ->groupBy(fn($event) => $event->start_date->month);
+
+        return view('admin.events.calendar', compact('eventsByMonth', 'year'));
+    }
+
     public function index(Request $request): View
     {
         $this->authorize('viewAny', Event::class);

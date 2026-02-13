@@ -1,4 +1,23 @@
 <div class="flex flex-col h-full">
+    @php
+        $user = Auth::user();
+        $brandLabel = 'JelajahJepara';
+        $brandSub = '';
+        
+        if ($user->hasRole('super_admin')) {
+            $brandLabel = 'SUPER ADMIN';
+        } elseif ($user->hasRole('admin_wisata')) {
+            $brandLabel = 'ADMIN WISATA';
+        } elseif ($user->hasRole('admin_berita')) {
+            $brandLabel = 'ADMIN BERITA';
+        } elseif ($user->hasRole('pengelola_wisata')) {
+             $place = $user->ownedPlaces()->first();
+             $placeName = $place ? $place->name : '';
+             $brandLabel = 'PENGELOLA WISATA';
+             $brandSub = $placeName;
+        }
+    @endphp
+
     <!-- Sidebar Backdrop -->
     <div x-show="mobileSidebarOpen" 
          @click="mobileSidebarOpen = false"
@@ -19,7 +38,16 @@
         <div class="flex items-center h-16 md:h-20 border-b border-gray-200 px-4 transition-all duration-300" :class="isSidebarMini ? 'justify-center' : 'justify-between'">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group">
                 <img x-show="isSidebarMini" src="{{ asset('images/logo-kura.png') }}" class="w-10 h-10 object-contain transition flex-shrink-0" alt="Logo">
-                <span x-show="!isSidebarMini" class="font-bold text-xl text-gray-800 tracking-tight whitespace-nowrap transition-opacity duration-300">Jelajah<span class="text-blue-600">Jepara</span></span>
+                <div x-show="!isSidebarMini" class="flex flex-col justify-center transition-opacity duration-300">
+                    @if($brandLabel === 'JelajahJepara')
+                        <span class="font-bold text-xl text-gray-800 tracking-tight whitespace-nowrap">Jelajah<span class="text-blue-600">Jepara</span></span>
+                    @else
+                        <span class="font-bold text-sm text-gray-800 tracking-tight whitespace-normal uppercase leading-tight">{{ $brandLabel }}</span>
+                        @if($brandSub)
+                            <span class="text-[10px] font-semibold text-blue-600 uppercase leading-tight mt-0.5 truncate max-w-[170px]" title="{{ $brandSub }}">{{ $brandSub }}</span>
+                        @endif
+                    @endif
+                </div>
             </a>
             
             <!-- Toggle Button (Desktop) -->
@@ -117,19 +145,39 @@
             @endif
 
             @if(auth()->user()->hasAnyPermission(['view all events', 'view own events']))
-            <a href="{{ route('admin.events.index') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.events.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-               :class="isSidebarMini ? 'justify-center' : ''">
-                <i class="fa-solid fa-calendar-days w-5 text-center {{ request()->routeIs('admin.events.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
-                <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Events</span>
-                 <!-- Tooltip -->
-                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
-                     x-show="isSidebarMini" 
-                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
-                     style="display: none;">
-                    Events
+            <div x-data="{ eventsOpen: {{ request()->routeIs('admin.events.*') ? 'true' : 'false' }} }" class="relative">
+                <button @click="eventsOpen = !eventsOpen" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.events.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+                        :class="isSidebarMini ? 'justify-center' : ''">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-calendar-days w-5 text-center {{ request()->routeIs('admin.events.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
+                        <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Events</span>
+                    </div>
+                    <i x-show="!isSidebarMini" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300" :class="eventsOpen ? 'rotate-180' : ''"></i>
+
+                    <!-- Tooltip -->
+                    <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
+                         x-show="isSidebarMini" 
+                         class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                         style="display: none;">
+                        Events
+                    </div>
+                </button>
+
+                <!-- Submenu -->
+                <div x-show="eventsOpen && !isSidebarMini" 
+                     x-collapse
+                     class="pl-4 pr-3 py-1 space-y-1 relative ml-2.5 border-l-2 border-gray-100">
+                    <a href="{{ route('admin.events.index') }}" 
+                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.events.index') || request()->routeIs('admin.events.create') || request()->routeIs('admin.events.edit') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       <span class="{{ request()->routeIs('admin.events.index') || request()->routeIs('admin.events.create') || request()->routeIs('admin.events.edit') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Daftar Event</span>
+                    </a>
+                    <a href="{{ route('admin.events.calendar') }}" 
+                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.events.calendar') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       <span class="{{ request()->routeIs('admin.events.calendar') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Kalender Tahunan</span>
+                    </a>
                 </div>
-            </a>
+            </div>
             @endif
 
             @can('scan tickets')
@@ -221,6 +269,7 @@
                 </div>
             </a>
             @endcan
+
 
 
 
