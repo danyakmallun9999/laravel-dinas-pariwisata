@@ -129,6 +129,6 @@ Proyek ini memiliki struktur folder standar Laravel dengan beberapa modul kustom
 **Dikembangkan dengan ❤️ oleh Mahasiswa Magang Unisnu Jepara - Teknik Informatika**
 *Bekerja sama dengan Dinas Pariwisata dan Kebudayaan Kabupaten Jepara*
 
-![Banner Project](/public/images/logo-kura.png)
+<p align="center"><img src="/public/images/logo-kura.png" width="40" alt="Logo Kura"></p>
 
 © 2026 **Jelajah Jepara**. All Rights Reserved.
