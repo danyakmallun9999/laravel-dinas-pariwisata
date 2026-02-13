@@ -47,7 +47,7 @@ class DashboardService
             'ticket_orders_count' => TicketOrder::count(),
             'ticket_orders_pending' => TicketOrder::where('status', 'pending')->count(),
             'ticket_orders_paid' => TicketOrder::where('status', 'paid')->count(),
-            'ticket_revenue' => TicketOrder::where('status', 'paid')->sum('total_price'),
+            'ticket_revenue' => TicketOrder::whereIn('status', ['paid', 'used'])->sum('total_price'),
             
             // Visitor Analytics
             'total_visitors' => TicketOrder::whereIn('status', ['paid', 'used'])->sum('quantity'),
@@ -61,16 +61,16 @@ class DashboardService
                 ->sum('quantity'),
             
             // Revenue Metrics
-            'revenue_this_month' => TicketOrder::where('status', 'paid')
+            'revenue_this_month' => TicketOrder::whereIn('status', ['paid', 'used'])
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->sum('total_price'),
-            'revenue_last_month' => TicketOrder::where('status', 'paid')
+            'revenue_last_month' => TicketOrder::whereIn('status', ['paid', 'used'])
                 ->whereMonth('created_at', now()->subMonth()->month)
                 ->whereYear('created_at', now()->subMonth()->year)
                 ->sum('total_price'),
-            'average_order_value' => TicketOrder::where('status', 'paid')->count() > 0 
-                ? TicketOrder::where('status', 'paid')->sum('total_price') / TicketOrder::where('status', 'paid')->count()
+            'average_order_value' => TicketOrder::whereIn('status', ['paid', 'used'])->count() > 0 
+                ? TicketOrder::whereIn('status', ['paid', 'used'])->sum('total_price') / TicketOrder::whereIn('status', ['paid', 'used'])->count()
                 : 0,
             
             // Booking Trends (Last 7 days)

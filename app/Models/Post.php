@@ -62,4 +62,12 @@ class Post extends Model
     {
         return $query->where('created_by', $userId);
     }
+
+    /**
+     * Get the visits for the post.
+     */
+    public function visits(): HasMany
+    {
+        return $this->hasMany(\App\Models\Visit::class);
+    }
 }

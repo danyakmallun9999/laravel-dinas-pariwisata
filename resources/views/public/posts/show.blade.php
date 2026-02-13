@@ -143,34 +143,53 @@
                             </div>
                         </div>
 
-                        <!-- Tourism Stats Section -->
-                        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 p-8 md:p-12 text-white shadow-xl">
-                            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-primary/20 blur-3xl"></div>
-                            <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl"></div>
-                            
-                            <div class="relative z-10">
-                                <h3 class="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-yellow-400">tour</span>
-                                    Wisata Jepara {{ $tourismStats['year'] }}
-                                </h3>
-                                <p class="text-gray-400 mb-8 max-w-xl">Data statistik kunjungan wisatawan ke Kabupaten Jepara tahun ini. Mari dukung pariwisata lokal!</p>
+                        <!-- Tourism Stats Section - Redesigned Minimalist -->
+                        <!-- Tourism Stats Section - Redesigned Minimalist -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-3xl overflow-hidden">
+                            <div class="p-8 md:p-10">
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                                    <div>
+                                        <h3 class="text-2xl font-serif font-bold text-gray-900 flex items-center gap-3">
+                                            <span class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                                                <i class="fa-solid fa-map-location-dot text-blue-600 text-sm"></i>
+                                            </span>
+                                            Wisata Jepara {{ $tourismStats['year'] }}
+                                        </h3>
+                                        <p class="text-gray-500 text-sm mt-2 ml-11">Data statistik resmi pariwisata terkini.</p>
+                                    </div>
+                                    <div class="px-4 py-1.5 rounded-full bg-green-50 border border-green-100 text-green-700 text-xs font-bold flex items-center gap-2">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                                        Live Data
+                                    </div>
+                                </div>
 
-                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                                    <!-- Total Visitors Card -->
-                                    <div class="lg:col-span-1 bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10 text-center">
-                                        <p class="text-sm text-gray-300 font-medium mb-2 uppercase tracking-widest">Total Wisatawan</p>
-                                        <p class="text-5xl font-black text-yellow-400 tracking-tight my-4">{{ number_format($tourismStats['total_visitors']) }}</p>
-                                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold">
-                                            <i class="fa-solid fa-arrow-trend-up"></i>
-                                            <span>Year to Date</span>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                                    <!-- Total Tiket Terjual -->
+                                    <div class="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tiket Terjual</p>
+                                        <div class="flex items-end gap-2">
+                                            <p class="text-4xl font-black text-gray-900 tracking-tight">{{ number_format($tourismStats['total_sold']) }}</p>
+                                            <span class="text-sm text-gray-500 mb-1.5">tiket</span>
                                         </div>
                                     </div>
 
-                                    <!-- Monthly Chart -->
-                                    <div class="lg:col-span-2 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/5">
-                                        <div class="relative h-64 w-full">
-                                            <canvas id="tourismChart"></canvas>
+                                    <!-- Total Pengunjung (Check-in) -->
+                                    <div class="bg-blue-50/50 rounded-2xl p-6 border border-blue-100">
+                                        <p class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Total Pengunjung</p>
+                                        <div class="flex items-end gap-2">
+                                            <p class="text-4xl font-black text-blue-600 tracking-tight">{{ number_format($tourismStats['total_visitors']) }}</p>
+                                            <span class="text-sm text-blue-500 mb-1.5">orang</span>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <!-- Chart Area -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h4 class="text-sm font-bold text-gray-900">Tren Kunjungan Bulanan</h4>
+                                    </div>
+                                    <div class="relative h-64 w-full">
+                                        <canvas id="tourismChart"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -181,11 +200,10 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
             // Configuration for charts
             Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.scale.grid.color = 'rgba(148, 163, 184, 0.1)';
+            Chart.defaults.color = '#64748b'; // Slate-500
+            Chart.defaults.scale.grid.color = 'rgba(226, 232, 240, 0.6)'; // Slate-200
 
             // 1. Article Views Chart (Line)
             const viewsCtx = document.getElementById('viewsChart').getContext('2d');
@@ -201,20 +219,20 @@
                     datasets: [{
                         label: 'Pembaca',
                         data: viewsData.map(d => d.count),
-                        borderColor: '#0ea5e9', // Blue-500
+                        borderColor: '#3b82f6', // Blue-500
                         backgroundColor: (context) => {
                             const ctx = context.chart.ctx;
                             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-                            gradient.addColorStop(0, 'rgba(14, 165, 233, 0.2)');
-                            gradient.addColorStop(1, 'rgba(14, 165, 233, 0)');
+                            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.1)'); // Blue-500 low opacity
+                            gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
                             return gradient;
                         },
-                        borderWidth: 3,
+                        borderWidth: 2,
                         pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#0ea5e9',
+                        pointBorderColor: '#3b82f6',
                         pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
                         fill: true,
                         tension: 0.4
                     }]
@@ -228,18 +246,20 @@
                             backgroundColor: '#1e293b',
                             titleColor: '#f8fafc',
                             bodyColor: '#f8fafc',
-                            padding: 12,
-                            cornerRadius: 8,
+                            padding: 10,
+                            cornerRadius: 6,
                             displayColors: false,
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            border: { display: false },
                             ticks: { precision: 0 }
                         },
                         x: {
-                            grid: { display: false }
+                            grid: { display: false },
+                            border: { display: false }
                         }
                     }
                 }
@@ -261,11 +281,12 @@
                 data: {
                     labels: months,
                     datasets: [{
-                        label: 'Wisatawan',
+                        label: 'Pengunjung',
                         data: monthlyVisitors,
-                        backgroundColor: '#facc15', // Yellow-400
+                        backgroundColor: '#3b82f6', // Blue-500
                         borderRadius: 4,
-                        hoverBackgroundColor: '#fbbf24',
+                        barThickness: 12, // Thinner bars for elegance
+                        hoverBackgroundColor: '#2563eb', // Blue-600
                     }]
                 },
                 options: {
@@ -274,14 +295,14 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: '#000000',
+                            backgroundColor: '#1e293b',
                             titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            padding: 12,
-                            cornerRadius: 8,
+                            bodyColor: '#cbd5e1',
+                            padding: 10,
+                            cornerRadius: 6,
                             callbacks: {
                                 label: function(context) {
-                                    return new Intl.NumberFormat('id-ID').format(context.raw) + ' Wisatawan';
+                                    return new Intl.NumberFormat('id-ID').format(context.raw) + ' Tiket';
                                 }
                             }
                         }
@@ -289,12 +310,13 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: '#9ca3af' }
+                            border: { display: false },
+                            ticks: { color: '#94a3b8', font: { size: 11 } }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#9ca3af' }
+                            border: { display: false },
+                            ticks: { color: '#94a3b8', font: { size: 11 } }
                         }
                     }
                 }

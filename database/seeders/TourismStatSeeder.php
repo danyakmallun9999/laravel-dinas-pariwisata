@@ -16,9 +16,6 @@ class TourismStatSeeder extends Seeder
         $months = range(1, 12);
 
         foreach ($months as $month) {
-            // Only seed up to current month if strict, but for demo let's seed all or up to now
-            if ($month > now()->month) break;
-
             TourismStat::updateOrCreate(
                 ['month' => $month, 'year' => $currentYear],
                 ['visitors' => rand(5000, 15000)]
