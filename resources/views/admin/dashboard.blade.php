@@ -225,7 +225,8 @@
 
             <div class="space-y-8">
                 <!-- Key Metrics with Growth Indicators -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Row 1: Traffic & Bookings -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Total Visitors -->
                     <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-1 rounded-[2.5rem] border border-blue-100">
                         <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
@@ -252,6 +253,43 @@
                         </div>
                     </div>
 
+                    <!-- Today's Visitors -->
+                    <div class="bg-gradient-to-br from-rose-50 to-pink-50 p-1 rounded-[2.5rem] border border-rose-100">
+                        <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-rose-500/30">
+                                    <i class="fa-solid fa-person-walking-luggage"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700">
+                                    Today
+                                </span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ number_format($stats['visitors_today']) }}</h3>
+                            <p class="text-sm text-gray-600 font-medium">Pengunjung Hari Ini</p>
+                            <p class="text-xs text-rose-500 mt-2">Orang berkunjung</p>
+                        </div>
+                    </div>
+
+                    <!-- Total Bookings -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-1 rounded-[2.5rem] border border-purple-100">
+                        <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-purple-500/30">
+                                    <i class="fa-solid fa-ticket"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700">
+                                    {{ $stats['ticket_orders_count'] > 0 ? number_format(($stats['ticket_orders_paid'] / $stats['ticket_orders_count']) * 100, 0) : 0 }}% paid
+                                </span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ number_format($stats['ticket_orders_count']) }}</h3>
+                            <p class="text-sm text-gray-600 font-medium">Total Pesanan</p>
+                            <p class="text-xs text-gray-500 mt-2">{{ $stats['ticket_orders_pending'] }} menunggu pembayaran</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Financial Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Total Revenue -->
                     <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-1 rounded-[2.5rem] border border-emerald-100">
                         <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
@@ -278,40 +316,6 @@
                         </div>
                     </div>
 
-                    <!-- Total Bookings -->
-                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-1 rounded-[2.5rem] border border-purple-100">
-                        <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-purple-500/30">
-                                    <i class="fa-solid fa-ticket"></i>
-                                </div>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700">
-                                    {{ $stats['ticket_orders_count'] > 0 ? number_format(($stats['ticket_orders_paid'] / $stats['ticket_orders_count']) * 100, 0) : 0 }}% paid
-                                </span>
-                            </div>
-                            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ number_format($stats['ticket_orders_count']) }}</h3>
-                            <p class="text-sm text-gray-600 font-medium">Total Pesanan</p>
-                            <p class="text-xs text-gray-500 mt-2">{{ $stats['ticket_orders_pending'] }} menunggu pembayaran</p>
-                        </div>
-                    </div>
-
-                    <!-- Average Order Value -->
-                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-1 rounded-[2.5rem] border border-amber-100">
-                        <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-amber-500/30">
-                                    <i class="fa-solid fa-chart-line"></i>
-                                </div>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
-                                    <i class="fa-solid fa-star"></i> AVG
-                                </span>
-                            </div>
-                            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ $formatCurrency($stats['average_order_value']) }}</h3>
-                            <p class="text-sm text-gray-600 font-medium">Rata-rata Transaksi</p>
-                            <p class="text-xs text-gray-500 mt-2">Per pesanan tiket</p>
-                        </div>
-                    </div>
-
                     <!-- Today's Revenue -->
                     <div class="bg-gradient-to-br from-cyan-50 to-teal-50 p-1 rounded-[2.5rem] border border-cyan-100">
                         <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
@@ -329,20 +333,20 @@
                         </div>
                     </div>
 
-                    <!-- Today's Visitors -->
-                    <div class="bg-gradient-to-br from-rose-50 to-pink-50 p-1 rounded-[2.5rem] border border-rose-100">
+                    <!-- Average Order Value -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-1 rounded-[2.5rem] border border-amber-100">
                         <div class="p-6 rounded-[2rem] bg-white/80 backdrop-blur-sm h-full">
                             <div class="flex items-start justify-between mb-4">
-                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-rose-500/30">
-                                    <i class="fa-solid fa-person-walking-luggage"></i>
+                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-amber-500/30">
+                                    <i class="fa-solid fa-chart-line"></i>
                                 </div>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700">
-                                    Today
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                                    <i class="fa-solid fa-star"></i> AVG
                                 </span>
                             </div>
-                            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ number_format($stats['visitors_today']) }}</h3>
-                            <p class="text-sm text-gray-600 font-medium">Pengunjung Hari Ini</p>
-                            <p class="text-xs text-rose-500 mt-2">Orang berkunjung</p>
+                            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ $formatCurrency($stats['average_order_value']) }}</h3>
+                            <p class="text-sm text-gray-600 font-medium">Rata-rata Transaksi</p>
+                            <p class="text-xs text-gray-500 mt-2">Per pesanan tiket</p>
                         </div>
                     </div>
                 </div>
