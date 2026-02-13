@@ -78,6 +78,9 @@ class TicketController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
+            'customer_country' => 'required|string|max:100',
+            'customer_province' => 'nullable|string|max:100',
+            'customer_city' => 'nullable|string|max:100',
             'visit_date' => 'required|date|after_or_equal:today',
             'quantity' => 'required|integer|min:1|max:10',
             'notes' => 'nullable|string|max:500',
@@ -85,8 +88,25 @@ class TicketController extends Controller
 
         // Force customer email to match authenticated user
         $validated['customer_email'] = $user->email;
+        $validated['user_id'] = $user->id;
 
         $ticket = Ticket::findOrFail($validated['ticket_id']);
+
+        // Resolve Location Names if Indonesia
+        if ($validated['customer_country'] === 'Indonesia') {
+            if (!empty($validated['customer_province'])) {
+                $province = \Laravolt\Indonesia\Models\Province::find($validated['customer_province']);
+                $validated['customer_province'] = $province ? $province->name : $validated['customer_province'];
+            }
+            if (!empty($validated['customer_city'])) {
+                // Check if it's an ID (numeric) or "Lainnya" custom text
+                if (is_numeric($validated['customer_city'])) {
+                     $city = \Laravolt\Indonesia\Models\City::find($validated['customer_city']);
+                     $validated['customer_city'] = $city ? $city->name : $validated['customer_city'];
+                }
+                // If it's text (custom input), keep as is
+            }
+        }
 
         // Check if ticket is available
         if (!$ticket->isAvailableOn($validated['visit_date'], $validated['quantity'])) {

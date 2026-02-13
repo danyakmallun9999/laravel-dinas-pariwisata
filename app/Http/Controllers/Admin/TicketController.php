@@ -185,4 +185,51 @@ class TicketController extends Controller
 
         return back()->with('success', "Pesanan {$orderNumber} berhasil dihapus!");
     }
+
+    /**
+     * Display ticket sales history (paid & used orders).
+     */
+    public function history(Request $request)
+    {
+        $query = TicketOrder::with(['ticket.place', 'user']);
+
+        // Role-based filtering: Pengelola Wisata only sees orders for their places
+        if (!auth()->user()->can('view all tickets') && !auth()->user()->hasRole('super_admin')) {
+            $query->whereHas('ticket.place', function($q) {
+                $q->where('created_by', auth()->id());
+            });
+        }
+
+        // Default to paid/used status, but allow filtering
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        } else {
+            $query->whereIn('status', ['paid', 'used']);
+        }
+
+        // Filter by date
+        if ($request->filled('date')) {
+            $query->whereDate('visit_date', $request->date);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_email', 'like', "%{$search}%");
+            });
+        }
+
+        // Calculate stats before pagination
+        $statsQuery = clone $query;
+        $totalQty = $statsQuery->sum('quantity');
+        $totalRevenue = $statsQuery->sum('total_price');
+        $totalTransactions = $statsQuery->count();
+
+        $orders = $query->latest()->paginate(20)->withQueryString();
+
+        return view('admin.tickets.history', compact('orders', 'totalQty', 'totalRevenue', 'totalTransactions'));
+    }
 }

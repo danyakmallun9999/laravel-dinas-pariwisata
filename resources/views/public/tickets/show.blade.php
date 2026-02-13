@@ -250,6 +250,128 @@
                                            placeholder="{{ __('Tickets.Form.PhonePlaceholder') }}">
                                 </div>
 
+                                <!-- Origin Fields -->
+                                <div class="space-y-4" x-data="{
+                                    country: '{{ old('customer_country', 'Indonesia') }}',
+                                    province: '{{ old('customer_province', '') }}',
+                                    city: '{{ old('customer_city', '') }}',
+                                    otherCity: '',
+                                    countries: ['Indonesia', 'Malaysia', 'Singapura', 'Thailand', 'Filipina', 'Australia', 'Amerika Serikat', 'Inggris', 'Jepang', 'Korea Selatan', 'China', 'Lainnya'],
+                                    provinces: [],
+                                    cities: [],
+                                    isLoadingProvinces: false,
+                                    isLoadingCities: false,
+                                    
+                                    async init() {
+                                        if (this.country === 'Indonesia') {
+                                            await this.fetchProvinces();
+                                            if (this.province) {
+                                                await this.fetchCities(this.province);
+                                            }
+                                        }
+                                    },
+                                    
+                                    async fetchProvinces() {
+                                        this.isLoadingProvinces = true;
+                                        try {
+                                            const response = await fetch('/api/locations/provinces');
+                                            this.provinces = await response.json();
+                                        } catch (e) {
+                                            console.error('Gagal mengambil data provinsi:', e);
+                                        } finally {
+                                            this.isLoadingProvinces = false;
+                                        }
+                                    },
+                                    
+                                    async fetchCities(provinceId) {
+                                        if (!provinceId) {
+                                            this.cities = [];
+                                            return;
+                                        }
+                                        this.isLoadingCities = true;
+                                        try {
+                                            const response = await fetch(`/api/locations/cities?province_id=${provinceId}`);
+                                            this.cities = await response.json();
+                                        } catch (e) {
+                                            console.error('Gagal mengambil data kota:', e);
+                                        } finally {
+                                            this.isLoadingCities = false;
+                                        }
+                                    },
+                                    
+                                    handleCountryChange() {
+                                        if (this.country === 'Indonesia') {
+                                            this.fetchProvinces();
+                                        } else {
+                                            this.province = '';
+                                            this.city = '';
+                                        }
+                                    },
+                                    
+                                    handleProvinceChange() {
+                                        this.city = '';
+                                        this.fetchCities(this.province);
+                                    }
+                                }">
+                                    <div>
+                                        <label for="customer_country" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                            <i class="fa-solid fa-globe mr-1 text-primary"></i> Negara Asal
+                                        </label>
+                                        <select name="customer_country" id="customer_country" x-model="country" @change="handleCountryChange" required
+                                                @guest('web') disabled @endguest
+                                                class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all disabled:opacity-50">
+                                            <template x-for="c in countries" :key="c">
+                                                <option :value="c" x-text="c" :selected="country === c"></option>
+                                            </template>
+                                        </select>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" x-show="country === 'Indonesia'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2">
+                                        <div>
+                                            <label for="customer_province" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                                <i class="fa-solid fa-map mr-1 text-primary"></i> Provinsi
+                                                <i class="fa-solid fa-circle-notch fa-spin ml-2 text-primary" x-show="isLoadingProvinces" style="display: none;"></i>
+                                            </label>
+                                            <select id="customer_province" x-model="province" @change="handleProvinceChange"
+                                                    :required="country === 'Indonesia'"
+                                                    @guest('web') disabled @endguest
+                                                    class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all disabled:opacity-50">
+                                                <option value="">Pilih Provinsi</option>
+                                                <template x-for="p in provinces" :key="p.id">
+                                                    <option :value="p.id" x-text="p.name" :selected="province == p.id"></option>
+                                                </template>
+                                            </select>
+                                            <!-- Send Name instead of ID -->
+                                            <input type="hidden" name="customer_province" :value="province ? (provinces.find(p => p.id == province)?.name || '') : ''">
+                                        </div>
+                                        <div>
+                                            <label for="customer_city_select" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                                <i class="fa-solid fa-city mr-1 text-primary"></i> Kabupaten/Kota
+                                                <i class="fa-solid fa-circle-notch fa-spin ml-2 text-primary" x-show="isLoadingCities" style="display: none;"></i>
+                                            </label>
+                                            <div class="space-y-2">
+                                                <select id="customer_city_select" x-model="city"
+                                                        :required="country === 'Indonesia'"
+                                                        @guest('web') disabled @endguest
+                                                        class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all disabled:opacity-50">
+                                                    <option value="">Pilih Kota</option>
+                                                    <template x-for="ct in cities" :key="ct.id">
+                                                        <option :value="ct.name" x-text="ct.name" :selected="city === ct.name"></option>
+                                                    </template>
+                                                    <option value="Lainnya">Lainnya...</option>
+                                                </select>
+                                                
+                                                <!-- Value sent to server -->
+                                                <input type="hidden" name="customer_city" :value="city === 'Lainnya' ? otherCity : city">
+                                                
+                                                <input type="text" x-show="city === 'Lainnya'" x-model="otherCity"
+                                                       placeholder="Masukkan nama kota"
+                                                       class="w-full px-4 py-3 rounded-xl border-none bg-slate-50 dark:bg-slate-700/50 ring-1 ring-slate-200 dark:ring-slate-600 focus:ring-2 focus:ring-primary text-slate-900 dark:text-white font-medium transition-all placeholder:text-slate-400 mt-2">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Visit Date (Custom Dropdown) -->
                                 <div class="relative">
                                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">

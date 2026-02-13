@@ -37,6 +37,8 @@ class TicketOrder extends Model
         'check_in_time',
         'unit_price',
         'customer_city',
+        'customer_country',
+        'customer_province',
         'payment_gateway_ref',
         'refund_status',
         'refund_amount', // Added

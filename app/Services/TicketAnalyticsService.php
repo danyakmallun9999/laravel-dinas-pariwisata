@@ -48,7 +48,7 @@ class TicketAnalyticsService
     /**
      * Get sales chart data for the last 30 days.
      */
-    public function getSalesChartData($days = 30)
+    public function getSalesChartData($days = 30, $userId = null)
     {
         $endDate = Carbon::today();
         $startDate = Carbon::today()->subDays($days - 1);
@@ -59,6 +59,11 @@ class TicketAnalyticsService
             DB::raw('SUM(quantity) as total_tickets')
         )
             ->whereIn('status', ['paid', 'used'])
+            ->when($userId, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                    $subQ->where('created_by', $userId);
+                });
+            })
             ->whereBetween('paid_at', [$startDate->startOfDay(), $endDate->endOfDay()])
             ->groupBy('date')
             ->orderBy('date')
@@ -90,7 +95,7 @@ class TicketAnalyticsService
     /**
      * Get monthly sales chart data for the last 12 months (1 Year View).
      */
-    public function getMonthlySalesChartData($months = 12)
+    public function getMonthlySalesChartData($months = 12, $userId = null)
     {
         $endDate = Carbon::today()->endOfMonth();
         $startDate = Carbon::today()->startOfMonth()->subMonths($months - 1);
@@ -102,6 +107,11 @@ class TicketAnalyticsService
             DB::raw('SUM(quantity) as total_tickets')
         )
             ->whereIn('status', ['paid', 'used'])
+            ->when($userId, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                    $subQ->where('created_by', $userId);
+                });
+            })
             ->whereBetween('paid_at', [$startDate, $endDate])
             ->groupBy('year', 'month')
             ->orderBy('year')

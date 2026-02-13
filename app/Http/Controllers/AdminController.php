@@ -42,13 +42,19 @@ class AdminController extends Controller
 
     public function index(): View
     {
-        $places = Place::with('category')->latest()->paginate(10);
+        $query = Place::with('category')->latest();
+
+        if (!auth()->user()->can('view all destinations')) {
+            $query->where('created_by', auth()->id());
+        }
+
+        $places = $query->paginate(10);
         $stats = $this->dashboardService->getDashboardStats();
 
         return view('admin.dashboard', compact('places', 'stats'));
     }
 
-    public function placesIndex(Request $request): View
+    public function placesIndex(Request $request): View|RedirectResponse
     {
         $this->authorize('viewAny', Place::class);
         
@@ -57,6 +63,14 @@ class AdminController extends Controller
         // Filter by ownership if user doesn't have global access
         if (!auth()->user()->can('view all destinations')) {
             $query->where('created_by', auth()->id());
+
+            // Redirect single-place managers directly to edit page if only one place exists
+            // This streamlines their workflow as they manage only one entity
+            $count = (clone $query)->count();
+            if ($count === 1 && !$request->filled('search') && !$request->wantsJson()) {
+                $place = $query->first();
+                return redirect()->route('admin.places.edit', $place);
+            }
         }
 
         if ($request->filled('search')) {
@@ -168,7 +182,11 @@ class AdminController extends Controller
         
         $categories = Category::orderBy('name')->get();
 
-        return view('admin.places.edit', compact('categories', 'place'));
+        // Check if user is a single place manager to adjust view logic (e.g. back button)
+        $isSinglePlaceManager = !auth()->user()->can('view all destinations') && 
+                                Place::where('created_by', auth()->id())->count() === 1;
+
+        return view('admin.places.edit', compact('categories', 'place', 'isSinglePlaceManager'));
     }
 
     public function update(UpdatePlaceRequest $request, Place $place): RedirectResponse|JsonResponse

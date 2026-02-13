@@ -12,13 +12,18 @@ class FinancialReportService
     /**
      * Get financial summary for a date range.
      */
-    public function getSummary($startDate, $endDate)
+    public function getSummary($startDate, $endDate, $userId = null)
     {
         $startDate = Carbon::parse($startDate)->startOfDay();
         $endDate = Carbon::parse($endDate)->endOfDay();
 
-        $orders = TicketOrder::whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('status', ['paid', 'used']);
+        $orders = TicketOrder::whereBetween('paid_at', [$startDate, $endDate])
+            ->whereIn('status', ['paid', 'used'])
+            ->when($userId, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                    $subQ->where('created_by', $userId);
+                });
+            });
 
         // Gross Revenue (Total paid by customers)
         $grossRevenue = $orders->sum('total_price');
@@ -52,11 +57,16 @@ class FinancialReportService
     /**
      * Get daily revenue trend.
      */
-    public function getDailyTrend($startDate, $endDate)
+    public function getDailyTrend($startDate, $endDate, $userId = null)
     {
-        return TicketOrder::whereBetween('created_at', [$startDate, $endDate])
+        return TicketOrder::whereBetween('paid_at', [$startDate, $endDate])
             ->whereIn('status', ['paid', 'used'])
-            ->selectRaw('DATE(created_at) as date, SUM(total_price) as revenue, COUNT(*) as count')
+            ->when($userId, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                    $subQ->where('created_by', $userId);
+                });
+            })
+            ->selectRaw('DATE(paid_at) as date, SUM(total_price) as revenue, COUNT(*) as count')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
@@ -65,10 +75,15 @@ class FinancialReportService
     /**
      * Get revenue by payment method.
      */
-    public function getByPaymentMethod($startDate, $endDate)
+    public function getByPaymentMethod($startDate, $endDate, $userId = null)
     {
-        return TicketOrder::whereBetween('created_at', [$startDate, $endDate])
+        return TicketOrder::whereBetween('paid_at', [$startDate, $endDate])
             ->whereIn('status', ['paid', 'used'])
+            ->when($userId, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                    $subQ->where('created_by', $userId);
+                });
+            })
             ->select(
                 DB::raw('COALESCE(payment_channel, payment_method_detail, payment_method) as payment_method'),
                 DB::raw('SUM(total_price) as revenue'),
@@ -82,10 +97,15 @@ class FinancialReportService
     /**
      * Get revenue by Ticket (Wisata/Event).
      */
-    public function getByTicket($startDate, $endDate)
+    public function getByTicket($startDate, $endDate, $userId = null)
     {
-        return TicketOrder::whereBetween('created_at', [$startDate, $endDate])
+        return TicketOrder::whereBetween('paid_at', [$startDate, $endDate])
             ->whereIn('status', ['paid', 'used'])
+            ->when($userId, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                    $subQ->where('created_by', $userId);
+                });
+            })
             ->with('ticket.place')
             ->select('ticket_id', DB::raw('SUM(total_price) as revenue'), DB::raw('SUM(quantity) as tickets_sold'))
             ->groupBy('ticket_id')

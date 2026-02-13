@@ -20,20 +20,48 @@ class FinancialReportController extends Controller
 
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
+        $period = $request->input('period', 'month');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $summary = $this->financialService->getSummary($startDate, $endDate);
-        // $dailyTrend is now replaced by salesChartData for the main charts, 
-        // but we might keep it if needed for export or other logic. 
-        // For the "Trend" charts we use the 365-day preload.
-        $dailyTrend = $this->financialService->getDailyTrend($startDate, $endDate); 
-        $paymentMethods = $this->financialService->getByPaymentMethod($startDate, $endDate);
-        $ticketSales = $this->financialService->getByTicket($startDate, $endDate);
+        if ($period && $period !== 'custom') {
+            $endDate = Carbon::now()->toDateString();
+            switch ($period) {
+                case 'day':
+                    $startDate = Carbon::now()->toDateString();
+                    break;
+                case 'week':
+                    $startDate = Carbon::now()->startOfWeek()->toDateString();
+                    break;
+                case 'month':
+                    $startDate = Carbon::now()->startOfMonth()->toDateString();
+                    break;
+                case 'year':
+                    $startDate = Carbon::now()->startOfYear()->toDateString();
+                    break;
+            }
+        } else {
+            // Fallback defaults if not provided
+            $startDate = $startDate ?: Carbon::now()->startOfMonth()->toDateString();
+            $endDate = $endDate ?: Carbon::now()->endOfMonth()->toDateString();
+        }
+
+        $user = auth()->user();
+        $userIdFilter = null;
+
+        // If user can only view own reports, filter by their ID
+        if (!$user->can('view all financial reports') && $user->can('view own financial reports')) {
+            $userIdFilter = $user->id;
+        }
+
+        $summary = $this->financialService->getSummary($startDate, $endDate, $userIdFilter);
+        $dailyTrend = $this->financialService->getDailyTrend($startDate, $endDate, $userIdFilter);
+        $paymentMethods = $this->financialService->getByPaymentMethod($startDate, $endDate, $userIdFilter);
+        $ticketSales = $this->financialService->getByTicket($startDate, $endDate, $userIdFilter);
 
         // Preload 365 days data for client-side filtering charts
-        $salesChartData = $this->analyticsService->getSalesChartData(365);
-        $monthlySalesChartData = $this->analyticsService->getMonthlySalesChartData(12);
+        $salesChartData = $this->analyticsService->getSalesChartData(365, $userIdFilter);
+        $monthlySalesChartData = $this->analyticsService->getMonthlySalesChartData(12, $userIdFilter);
 
         return view('admin.reports.financial.index', compact(
             'summary',
@@ -42,6 +70,7 @@ class FinancialReportController extends Controller
             'ticketSales',
             'startDate',
             'endDate',
+            'period',
             'salesChartData',
             'monthlySalesChartData'
         ));
@@ -49,14 +78,48 @@ class FinancialReportController extends Controller
 
     public function export(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
+        $period = $request->input('period', 'month');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $transactions = \App\Models\TicketOrder::whereBetween('created_at', [
+        if ($period && $period !== 'custom') {
+            $endDate = Carbon::now()->toDateString();
+            switch ($period) {
+                case 'day':
+                    $startDate = Carbon::now()->toDateString();
+                    break;
+                case 'week':
+                    $startDate = Carbon::now()->startOfWeek()->toDateString();
+                    break;
+                case 'month':
+                    $startDate = Carbon::now()->startOfMonth()->toDateString();
+                    break;
+                case 'year':
+                    $startDate = Carbon::now()->startOfYear()->toDateString();
+                    break;
+            }
+        } else {
+            $startDate = $startDate ?: Carbon::now()->startOfMonth()->toDateString();
+            $endDate = $endDate ?: Carbon::now()->endOfMonth()->toDateString();
+        }
+
+        $user = auth()->user();
+        $userIdFilter = null;
+
+        if (!$user->can('view all financial reports') && $user->can('view own financial reports')) {
+            $userIdFilter = $user->id;
+        }
+
+        $transactions = \App\Models\TicketOrder::whereBetween('paid_at', [
                 Carbon::parse($startDate)->startOfDay(),
                 Carbon::parse($endDate)->endOfDay()
             ])
             ->where('status', 'paid')
+            ->when($userIdFilter, function($q) use ($userIdFilter) {
+                $q->whereHas('ticket.place', function($subQ) use ($userIdFilter) {
+                    $subQ->where('created_by', $userIdFilter);
+                });
+            })
             ->with(['ticket', 'user'])
             ->get();
 
@@ -74,7 +137,6 @@ class FinancialReportController extends Controller
                 'Customer Email',
                 'Quantity',
                 'Unit Price',
-                'Total Price',
                 'Total Price',
                 'Status'
             ]);

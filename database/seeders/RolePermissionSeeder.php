@@ -74,7 +74,7 @@ class RolePermissionSeeder extends Seeder
 
         // Create all permissions with 'admin' guard
         foreach ($permissions as $permission) {
-            Permission::create([
+            Permission::firstOrCreate([
                 'name' => $permission,
                 'guard_name' => 'admin', // Use 'admin' guard for admin panel
             ]);
@@ -83,18 +83,18 @@ class RolePermissionSeeder extends Seeder
         // Create roles and assign permissions
 
         // 1. Super Admin - Full access to everything
-        $superAdmin = Role::create([
+        $superAdmin = Role::firstOrCreate([
             'name' => 'super_admin',
             'guard_name' => 'admin',
         ]);
-        $superAdmin->givePermissionTo(Permission::all());
+        $superAdmin->syncPermissions(Permission::all());
 
         // 2. Admin Wisata - Tourism content and tickets
-        $adminWisata = Role::create([
+        $adminWisata = Role::firstOrCreate([
             'name' => 'admin_wisata',
             'guard_name' => 'admin',
         ]);
-        $adminWisata->givePermissionTo([
+        $adminWisata->syncPermissions([
             // Destinations - full access
             'view all destinations',
             'create destinations',
@@ -119,11 +119,11 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // 3. Admin Berita - News and events content
-        $adminBerita = Role::create([
+        $adminBerita = Role::firstOrCreate([
             'name' => 'admin_berita',
             'guard_name' => 'admin',
         ]);
-        $adminBerita->givePermissionTo([
+        $adminBerita->syncPermissions([
             // Events - full access
             'view all events',
             'create events',
@@ -138,11 +138,11 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // 4. Pengelola Wisata - Tourism manager (future role, prepared but not assigned to anyone yet)
-        $pengelolaWisata = Role::create([
+        $pengelolaWisata = Role::firstOrCreate([
             'name' => 'pengelola_wisata',
             'guard_name' => 'admin',
         ]);
-        $pengelolaWisata->givePermissionTo([
+        $pengelolaWisata->syncPermissions([
             // Destinations - own only
             'view own destinations',
             'create destinations',
@@ -150,7 +150,8 @@ class RolePermissionSeeder extends Seeder
             'delete own destinations',
 
             // E-Tickets - view related to own destinations
-            'view all tickets', // Will be filtered by destination ownership in controller
+            // 'view all tickets', // REMOVED: Should only use barcode
+            'scan tickets',
 
             // Financial Reports - own only
             'view own financial reports',

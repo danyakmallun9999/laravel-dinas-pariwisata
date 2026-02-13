@@ -61,6 +61,24 @@
             </a>
 
 
+            @role('super_admin')
+            <p x-show="!isSidebarMini" class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2 transition-opacity duration-300">Manajemen User</p>
+            <div x-show="isSidebarMini" class="border-t border-gray-100 my-2"></div>
+
+            <a href="{{ route('admin.users.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.users.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+               :class="isSidebarMini ? 'justify-center' : ''">
+                <i class="fa-solid fa-users-gear w-5 text-center {{ request()->routeIs('admin.users.*') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
+                <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Admin</span>
+                 <!-- Tooltip -->
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
+                     x-show="isSidebarMini" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     style="display: none;">
+                    Kelola Admin
+                </div>
+            </a>
+            @endrole
             <p x-show="!isSidebarMini" class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2 transition-opacity duration-300">Manajemen Pariwisata</p>
             <div x-show="isSidebarMini" class="border-t border-gray-100 my-2"></div>
 
@@ -114,8 +132,24 @@
             </a>
             @endif
 
+            @can('scan tickets')
+            <a href="{{ route('admin.scan.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.scan.index') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+               :class="isSidebarMini ? 'justify-center' : ''">
+                <i class="fa-solid fa-qrcode w-5 text-center {{ request()->routeIs('admin.scan.index') ? 'text-blue-600' : 'text-gray-400' }} text-lg"></i>
+                <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300">Scan Barcode</span>
+                 <!-- Tooltip -->
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
+                     x-show="isSidebarMini" 
+                     class="fixed left-[5.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     style="display: none;">
+                    Scan Barcode
+                </div>
+            </a>
+            @endcan
+
             <!-- E-Tiket Parent (Static Expanded) -->
-            @can('view all tickets')
+            @if(auth()->user()->can('view all tickets') || auth()->user()->hasAnyPermission(['view all financial reports', 'view own financial reports', 'view own tickets']))
             <div class="relative">
                 <div class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600"
                     :class="isSidebarMini ? 'justify-center' : 'justify-between'">
@@ -138,6 +172,7 @@
                 <div x-show="!isSidebarMini" 
                      class="pl-4 pr-3 py-1 space-y-1 relative ml-2.5 border-l-2 border-gray-100">
                     
+                    @can('view all tickets')
                     <a href="{{ route('admin.tickets.dashboard') }}" 
                        class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.dashboard') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
                        <span class="{{ request()->routeIs('admin.tickets.dashboard') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Dashboard</span>
@@ -152,6 +187,14 @@
                        class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.orders') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
                        <span class="{{ request()->routeIs('admin.tickets.orders') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Pesanan Masuk</span>
                     </a>
+                    @endcan
+
+                    @if(auth()->user()->hasAnyPermission(['view all tickets', 'view own destinations']))
+                    <a href="{{ route('admin.tickets.history') }}" 
+                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.history') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                       <span class="{{ request()->routeIs('admin.tickets.history') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Riwayat Penjualan</span>
+                    </a>
+                    @endif
 
                     @if(auth()->user()->hasAnyPermission(['view all financial reports', 'view own financial reports']))
                     <a href="{{ route('admin.reports.financial.index') }}" 
@@ -161,7 +204,7 @@
                     @endif
                 </div>
             </div>
-            @endcan
+            @endif
 
             @can('manage categories')
             <a href="{{ route('admin.categories.index') }}" 

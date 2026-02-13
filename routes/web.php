@@ -68,6 +68,9 @@ Route::get('/dashboard', function () {
 Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
+    // Users routes
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+
     // Places routes
     Route::get('/places', [AdminController::class, 'placesIndex'])->name('places.index');
     Route::get('/places/create', [AdminController::class, 'create'])->name('places.create');
@@ -97,6 +100,7 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::get('ticket-orders', [\App\Http\Controllers\Admin\TicketController::class, 'orders'])->name('tickets.orders');
     Route::post('ticket-orders/{order}/status', [\App\Http\Controllers\Admin\TicketController::class, 'updateOrderStatus'])->name('tickets.orders.updateStatus');
     Route::delete('ticket-orders/{order}', [\App\Http\Controllers\Admin\TicketController::class, 'destroyOrder'])->name('tickets.orders.destroy');
+    Route::get('ticket-history', [\App\Http\Controllers\Admin\TicketController::class, 'history'])->name('tickets.history');
 
     // QR Scan routes
     Route::get('/scan', [App\Http\Controllers\Admin\ScanController::class, 'index'])->name('scan.index');
@@ -122,5 +126,11 @@ Route::get('lang/{locale}', function ($locale) {
     }
     return back();
 })->name('lang.switch');
+
+// Location API routes
+Route::prefix('api/locations')->name('api.locations.')->group(function () {
+    Route::get('/provinces', [App\Http\Controllers\Public\LocationController::class, 'provinces'])->name('provinces');
+    Route::get('/cities', [App\Http\Controllers\Public\LocationController::class, 'cities'])->name('cities');
+});
 
 require __DIR__.'/auth.php';
