@@ -55,121 +55,133 @@
                     <input type="hidden" name="bank" x-model="bank">
 
                     <!-- E-Wallet & QRIS -->
-                    <div class="mb-6">
-                        <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <div class="mb-8">
+                        <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                             <i class="fa-solid fa-wallet text-primary"></i>
                             E-Wallet & QRIS
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <!-- QRIS -->
                             <button type="button" @click="selectMethod('qris')"
-                                :class="paymentType === 'qris' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-slate-200 dark:border-slate-600 hover:border-primary/50'"
-                                class="relative flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all duration-200 cursor-pointer group">
-                                <div class="w-16 h-16 flex items-center justify-center">
-                                    <img src="{{ asset('images/payment/kiris.png') }}" alt="QRIS" class="w-full h-full object-contain">
+                                :class="paymentType === 'qris' 
+                                    ? 'border-gray-800 bg-gray-50 dark:bg-gray-800/50 ring-0' 
+                                    : 'border-slate-200 dark:border-slate-700 hover:border-gray-400 bg-white dark:bg-slate-800'"
+                                class="relative flex flex-col items-center justify-between gap-4 p-6 rounded-2xl border transition-all duration-200 cursor-pointer group h-full overflow-hidden">
+                                
+                                <div class="flex-1 flex items-center justify-center w-full py-2 z-10">
+                                    <div class="w-20 h-20 relative transition-opacity duration-200 group-hover:opacity-80">
+                                        <img src="{{ asset('images/payment/qris.png') }}" alt="QRIS" class="w-full h-full object-contain transition-all duration-300">
+                                    </div>
                                 </div>
-                                <div class="text-center">
-                                    <p class="font-bold text-sm text-slate-900 dark:text-white">QRIS</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">Semua e-wallet</p>
+                                
+                                <div class="text-center w-full z-10">
+                                    <p class="font-medium text-sm text-slate-900 dark:text-white mb-1 transition-colors group-hover:text-gray-800 dark:group-hover:text-gray-200">QRIS</p>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wide">Scan e-wallet</p>
                                 </div>
-                                <div x-show="paymentType === 'qris'" class="absolute top-2 right-2">
-                                    <i class="fa-solid fa-circle-check text-primary text-lg"></i>
+
+                                <!-- Minimalist Selection Indicator -->
+                                <div class="absolute top-4 right-4 transition-all duration-200" 
+                                     :class="paymentType === 'qris' ? 'opacity-100' : 'opacity-0'">
+                                     <div class="w-5 h-5 bg-gray-900 text-white rounded-full flex items-center justify-center">
+                                        <i class="fa-solid fa-check text-[10px]"></i>
+                                     </div>
                                 </div>
                             </button>
 
                             <!-- GoPay -->
                             <button type="button" @click="selectMethod('gopay')"
-                                :class="paymentType === 'gopay' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-slate-200 dark:border-slate-600 hover:border-primary/50'"
-                                class="relative flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all duration-200 cursor-pointer group">
-                                <div class="w-16 h-16 flex items-center justify-center">
-                                    <img src="{{ asset('images/payment/gopi.png') }}" alt="GoPay" class="w-full h-full object-contain">
+                                :class="paymentType === 'gopay' 
+                                    ? 'border-[#00AED6] bg-[#00AED6]/5 ring-0' 
+                                    : 'border-slate-200 dark:border-slate-700 hover:border-[#00AED6]/50 bg-white dark:bg-slate-800'"
+                                class="relative flex flex-col items-center justify-between gap-4 p-6 rounded-2xl border transition-all duration-200 cursor-pointer group h-full overflow-hidden">
+                                
+                                <div class="flex-1 flex items-center justify-center w-full py-2 z-10">
+                                    <div class="w-20 h-20 relative transition-opacity duration-200 group-hover:opacity-80">
+                                        <img src="{{ asset('images/payment/gopay.png') }}" alt="GoPay" class="w-full h-full object-contain transition-all duration-300">
+                                    </div>
                                 </div>
-                                <div class="text-center">
-                                    <p class="font-bold text-sm text-slate-900 dark:text-white">GoPay</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">QR & Deeplink</p>
+                                
+                                <div class="text-center w-full z-10">
+                                    <p class="font-medium text-sm text-slate-900 dark:text-white mb-1 transition-colors group-hover:text-[#00AED6]" :class="paymentType === 'gopay' ? 'text-[#00AED6]' : ''">GoPay</p>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wide">Instant Checkout</p>
                                 </div>
-                                <div x-show="paymentType === 'gopay'" class="absolute top-2 right-2">
-                                    <i class="fa-solid fa-circle-check text-primary text-lg"></i>
+
+                                <div class="absolute top-4 right-4 transition-all duration-200" 
+                                     :class="paymentType === 'gopay' ? 'opacity-100' : 'opacity-0'">
+                                     <div class="w-5 h-5 bg-[#00AED6] text-white rounded-full flex items-center justify-center">
+                                        <i class="fa-solid fa-check text-[10px]"></i>
+                                     </div>
                                 </div>
                             </button>
 
                             <!-- ShopeePay -->
                             <button type="button" @click="selectMethod('shopeepay')"
-                                :class="paymentType === 'shopeepay' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-slate-200 dark:border-slate-600 hover:border-primary/50'"
-                                class="relative flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all duration-200 cursor-pointer group">
-                                <div class="w-16 h-16 flex items-center justify-center">
-                                    <img src="{{ asset('images/payment/sopipi.png') }}" alt="ShopeePay" class="w-full h-full object-contain">
+                                :class="paymentType === 'shopeepay' 
+                                    ? 'border-[#EE4D2D] bg-[#EE4D2D]/5 ring-0' 
+                                    : 'border-slate-200 dark:border-slate-700 hover:border-[#EE4D2D]/50 bg-white dark:bg-slate-800'"
+                                class="relative flex flex-col items-center justify-between gap-4 p-6 rounded-2xl border transition-all duration-200 cursor-pointer group h-full overflow-hidden">
+                                
+                                <div class="flex-1 flex items-center justify-center w-full py-2 z-10">
+                                    <div class="w-20 h-20 relative transition-opacity duration-200 group-hover:opacity-80">
+                                        <img src="{{ asset('images/payment/shopeepay.png') }}" alt="ShopeePay" class="w-full h-full object-contain transition-all duration-300">
+                                    </div>
                                 </div>
-                                <div class="text-center">
-                                    <p class="font-bold text-sm text-slate-900 dark:text-white">ShopeePay</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">Deeplink</p>
+                                
+                                <div class="text-center w-full z-10">
+                                    <p class="font-medium text-sm text-slate-900 dark:text-white mb-1 transition-colors group-hover:text-[#EE4D2D]" :class="paymentType === 'shopeepay' ? 'text-[#EE4D2D]' : ''">ShopeePay</p>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wide">Instant Checkout</p>
                                 </div>
-                                <div x-show="paymentType === 'shopeepay'" class="absolute top-2 right-2">
-                                    <i class="fa-solid fa-circle-check text-primary text-lg"></i>
+
+                                <div class="absolute top-4 right-4 transition-all duration-200" 
+                                     :class="paymentType === 'shopeepay' ? 'opacity-100' : 'opacity-0'">
+                                     <div class="w-5 h-5 bg-[#EE4D2D] text-white rounded-full flex items-center justify-center">
+                                        <i class="fa-solid fa-check text-[10px]"></i>
+                                     </div>
                                 </div>
                             </button>
                         </div>
                     </div>
 
                     <!-- Virtual Account -->
-                    <div class="mb-8">
+                    <div class="mb-8 relative">
                         <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-building-columns text-primary"></i>
                             Virtual Account (Transfer Bank)
+                            <span class="bg-yellow-100 text-yellow-700 text-[10px] py-0.5 px-2 rounded-full font-bold border border-yellow-200">
+                                <i class="fa-solid fa-clock mr-1"></i> Segera Hadir
+                            </span>
                         </h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        
+                        <!-- Overlay for disabled state -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-60 grayscale select-none pointer-events-none filter">
                             <!-- BCA -->
-                            <button type="button" @click="selectMethod('bank_transfer', 'bca')"
-                                :class="paymentType === 'bank_transfer' && bank === 'bca' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-slate-200 dark:border-slate-600 hover:border-primary/50'"
-                                class="relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer group">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-700 to-blue-900 rounded-xl flex items-center justify-center shadow-lg shadow-blue-700/20">
-                                    <span class="text-white font-bold text-xs">BCA</span>
-                                </div>
-                                <p class="font-bold text-sm text-slate-900 dark:text-white">BCA</p>
-                                <div x-show="paymentType === 'bank_transfer' && bank === 'bca'" class="absolute top-2 right-2">
-                                    <i class="fa-solid fa-circle-check text-primary text-lg"></i>
-                                </div>
+                            <button type="button" disabled
+                                class="relative flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 cursor-not-allowed group h-24">
+                                <img src="{{ asset('images/payment/bca.png') }}" alt="BCA" class="h-8 w-auto object-contain">
                             </button>
 
                             <!-- BNI -->
-                            <button type="button" @click="selectMethod('bank_transfer', 'bni')"
-                                :class="paymentType === 'bank_transfer' && bank === 'bni' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-slate-200 dark:border-slate-600 hover:border-primary/50'"
-                                class="relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer group">
-                                <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-                                    <span class="text-white font-bold text-xs">BNI</span>
-                                </div>
-                                <p class="font-bold text-sm text-slate-900 dark:text-white">BNI</p>
-                                <div x-show="paymentType === 'bank_transfer' && bank === 'bni'" class="absolute top-2 right-2">
-                                    <i class="fa-solid fa-circle-check text-primary text-lg"></i>
-                                </div>
+                            <button type="button" disabled
+                                class="relative flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 cursor-not-allowed group h-24">
+                                <img src="{{ asset('images/payment/bni.png') }}" alt="BNI" class="h-8 w-auto object-contain">
                             </button>
 
                             <!-- BRI -->
-                            <button type="button" @click="selectMethod('bank_transfer', 'bri')"
-                                :class="paymentType === 'bank_transfer' && bank === 'bri' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-slate-200 dark:border-slate-600 hover:border-primary/50'"
-                                class="relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer group">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                                    <span class="text-white font-bold text-xs">BRI</span>
-                                </div>
-                                <p class="font-bold text-sm text-slate-900 dark:text-white">BRI</p>
-                                <div x-show="paymentType === 'bank_transfer' && bank === 'bri'" class="absolute top-2 right-2">
-                                    <i class="fa-solid fa-circle-check text-primary text-lg"></i>
-                                </div>
+                            <button type="button" disabled
+                                class="relative flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 cursor-not-allowed group h-24">
+                                <img src="{{ asset('images/payment/bri.png') }}" alt="BRI" class="h-8 w-auto object-contain">
                             </button>
 
                             <!-- Mandiri -->
-                            <button type="button" @click="selectMethod('echannel')"
-                                :class="paymentType === 'echannel' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-slate-200 dark:border-slate-600 hover:border-primary/50'"
-                                class="relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer group">
-                                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
-                                    <span class="text-white font-bold text-[10px] leading-tight text-center">Man<br>diri</span>
-                                </div>
-                                <p class="font-bold text-sm text-slate-900 dark:text-white">Mandiri</p>
-                                <div x-show="paymentType === 'echannel'" class="absolute top-2 right-2">
-                                    <i class="fa-solid fa-circle-check text-primary text-lg"></i>
-                                </div>
+                            <button type="button" disabled
+                                class="relative flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 cursor-not-allowed group h-24">
+                                <img src="{{ asset('images/payment/mandiri.png') }}" alt="Mandiri" class="h-8 w-auto object-contain">
                             </button>
                         </div>
+                        
+                        <p class="text-xs text-slate-400 mt-2 italic text-center sm:text-left">
+                            * Metode pembayaran ini sedang dalam pengembangan dan akan tersedia segera.
+                        </p>
                     </div>
 
                     <!-- Secure Payment Badge -->
