@@ -178,9 +178,13 @@
                                     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                                     const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                                     for (let i = 0; i < 30; i++) {
-                                        const d = new Date();
+                                    const d = new Date('{{ now()->setTimezone('Asia/Jakarta')->startOfDay()->toIso8601String() }}');
                                         d.setDate(d.getDate() + i);
-                                        const value = d.toISOString().split('T')[0];
+                                        // Use local date components to avoid UTC shift issues
+                                        const yearVal = d.getFullYear();
+                                        const monthVal = String(d.getMonth() + 1).padStart(2, '0');
+                                        const dateVal = String(d.getDate()).padStart(2, '0');
+                                        const value = `${yearVal}-${monthVal}-${dateVal}`;
                                         const dayName = days[d.getDay()];
                                         const date = d.getDate();
                                         const month = months[d.getMonth()];
