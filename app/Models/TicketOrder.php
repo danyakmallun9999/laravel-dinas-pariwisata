@@ -201,4 +201,57 @@ class TicketOrder extends Model
             default => 'Unknown',
         };
     }
+
+    /**
+     * Get status-specific UI configuration for dynamic rendering.
+     */
+    public function getStatusConfigAttribute(): array
+    {
+        $base = [
+            'paid' => [
+                'bg' => 'bg-green-50 dark:bg-green-900/20',
+                'border' => 'border-green-200 dark:border-green-800',
+                'iconBg' => 'bg-green-100 dark:bg-green-900/40',
+                'iconColor' => 'text-green-500',
+                'title' => 'Pembayaran Berhasil',
+                'subtitle' => 'Tiket siap digunakan',
+                'showQr' => true,
+                'animation' => 'scale',
+            ],
+            'pending' => [
+                'bg' => 'bg-yellow-50 dark:bg-yellow-900/20',
+                'border' => 'border-yellow-200 dark:border-yellow-800',
+                'iconBg' => 'bg-yellow-100 dark:bg-yellow-900/40',
+                'iconColor' => 'text-yellow-500',
+                'title' => 'Menunggu Pembayaran',
+                'subtitle' => 'Selesaikan pembayaran sebelum waktu habis',
+                'showQr' => false,
+                'animation' => 'pulse',
+            ],
+            'cancelled' => [
+                'bg' => 'bg-red-50 dark:bg-red-900/20',
+                'border' => 'border-red-200 dark:border-red-800',
+                'iconBg' => 'bg-red-100 dark:bg-red-900/40',
+                'iconColor' => 'text-red-500',
+                'title' => 'Pesanan Dibatalkan',
+                'subtitle' => 'Tiket tidak dapat digunakan',
+                'showQr' => false,
+                'animation' => 'fade',
+            ],
+            'used' => [
+                'bg' => 'bg-blue-50 dark:bg-blue-900/20',
+                'border' => 'border-blue-200 dark:border-blue-800',
+                'iconBg' => 'bg-blue-100 dark:bg-blue-900/40',
+                'iconColor' => 'text-blue-500',
+                'title' => 'Tiket Sudah Digunakan',
+                'subtitle' => $this->check_in_time
+                    ? 'Digunakan pada ' . $this->check_in_time->translatedFormat('d F Y, H:i')
+                    : 'Tiket telah digunakan',
+                'showQr' => true,
+                'animation' => 'fade',
+            ],
+        ];
+
+        return $base[$this->status] ?? $base['cancelled'];
+    }
 }
