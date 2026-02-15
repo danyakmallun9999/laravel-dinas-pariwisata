@@ -39,6 +39,8 @@ Route::get('/e-tiket', [App\Http\Controllers\Public\TicketController::class, 'in
 Route::middleware('auth.user')->prefix('tiket-saya')->group(function () {
     Route::get('/', [App\Http\Controllers\Public\TicketController::class, 'myTickets'])->name('tickets.my');
     Route::post('/book', [App\Http\Controllers\Public\TicketController::class, 'book'])->name('tickets.book');
+    Route::get('/book/checkout', [App\Http\Controllers\Public\TicketController::class, 'checkout'])->name('tickets.checkout');
+    Route::post('/book/checkout', [App\Http\Controllers\Public\TicketController::class, 'processCheckout'])->name('tickets.process-checkout');
     Route::get('/confirmation/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'confirmation'])->name('tickets.confirmation');
     Route::get('/download/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'downloadTicket'])->name('tickets.download');
     Route::get('/download-qr/{orderNumber}', [App\Http\Controllers\Public\TicketController::class, 'downloadQrCode'])->name('tickets.download-qr');

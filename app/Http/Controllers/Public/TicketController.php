@@ -10,6 +10,7 @@ use BaconQrCode\Common\ErrorCorrectionLevel;
 use BaconQrCode\Encoder\Encoder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
@@ -124,11 +125,83 @@ class TicketController extends Controller
         $validated['payment_method'] = 'midtrans';
         $validated['expiry_time'] = now()->addMinutes(2); // Set expiry to 2 mins for testing
 
-        // Create order
-        $order = TicketOrder::create($validated);
+        // Store booking data in session instead of creating order
+        session(['ticket_booking' => $validated]);
 
-        // Redirect to payment method selection
-        return redirect()->route('tickets.payment', $order->order_number);
+        // Redirect to checkout page
+        return redirect()->route('tickets.checkout');
+    }
+
+    /**
+     * Show checkout page (step 2).
+     */
+    public function checkout()
+    {
+        $booking = session('ticket_booking');
+
+        if (! $booking) {
+            return redirect()->route('tickets.index');
+        }
+
+        $ticket = Ticket::with('place')->findOrFail($booking['ticket_id']);
+
+        return view('user.tickets.checkout', compact('booking', 'ticket'));
+    }
+
+    /**
+     * Process checkout (step 3) — Create Order & Charge
+     */
+    public function processCheckout(Request $request)
+    {
+        $request->validate([
+            'payment_type' => 'required|in:qris,gopay,shopeepay,bank_transfer,echannel',
+            'bank' => 'required_if:payment_type,bank_transfer|nullable|in:bca,bni,bri',
+        ]);
+
+        $booking = session('ticket_booking');
+
+        if (! $booking) {
+            return redirect()->route('tickets.index')->with('error', 'Sesi pemesanan habis, silakan ulang kembali.');
+        }
+
+        $paymentType = $request->input('payment_type');
+        $bank = $request->input('bank');
+
+        try {
+            return DB::transaction(function () use ($booking, $paymentType, $bank) {
+                // Create Order
+                $order = TicketOrder::create($booking);
+
+                // Charge Midtrans
+                $response = $this->midtransService->createCoreCharge($order, $paymentType, $bank);
+                $paymentData = $this->midtransService->extractPaymentData($response, $paymentType, $bank);
+
+                // Update Order with Payment Info
+                $order->update([
+                    'payment_gateway_id' => $response->transaction_id ?? null, // Depends on response structure
+                    'payment_method_detail' => $paymentType,
+                    'payment_channel' => $bank ?? $paymentType,
+                    'payment_info' => $paymentData,
+                    'expiry_time' => $response->expiry_time ?? now()->addMinutes(2),
+                ]);
+
+                // Store payment data in session for status page
+                session()->put("payment_data.{$order->order_number}", $paymentData);
+
+                // Clear booking session
+                session()->forget('ticket_booking');
+
+                return redirect()->route('tickets.payment.status', $order->order_number);
+            });
+
+        } catch (\Exception $e) {
+            Log::error('Checkout failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'Gagal memproses pesanan: '.$e->getMessage());
+        }
     }
 
     /**
@@ -314,9 +387,9 @@ class TicketController extends Controller
         // Render using GD
         // Target approx 500px for display
         $matrixWidth = $matrix->getWidth();
-        $borderSize = 4; 
+        $borderSize = 4;
         $totalModules = $matrixWidth + ($borderSize * 2);
-        
+
         $pixelSize = (int) (500 / $totalModules);
         $imageWidth = $totalModules * $pixelSize;
 
