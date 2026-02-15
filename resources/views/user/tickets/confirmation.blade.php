@@ -316,15 +316,19 @@
                          ────────────────────────────────────────── --}}
                     <div class="space-y-3 no-print" x-data="{ showCancelConfirm: false }">
                         @if($order->status === 'pending')
+                            @if(isset($order->payment_info))
+                            <a href="{{ route('tickets.payment.status', $order->order_number) }}"
+                               class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 flex items-center justify-center gap-2 text-sm">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" /></svg>
+                                Bayar
+                            </a>
+                            @else
                             <a href="{{ route('tickets.payment', $order->order_number) }}"
                                class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 flex items-center justify-center gap-2 text-sm">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" /></svg>
-                                @if(isset($order->payment_info))
-                                    Instruksi / Ganti Metode
-                                @else
-                                    Bayar Sekarang
-                                @endif
+                                Bayar Sekarang
                             </a>
+                            @endif
                             <div class="flex gap-3">
                                 <button onclick="
                                     this.innerHTML = '<svg class=\'w-4 h-4 animate-spin\' fill=\'none\' viewBox=\'0 0 24 24\'><circle class=\'opacity-25\' cx=\'12\' cy=\'12\' r=\'10\' stroke=\'currentColor\' stroke-width=\'4\'></circle><path class=\'opacity-75\' fill=\'currentColor\' d=\'M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z\'></path></svg> Mengecek...';
