@@ -7,7 +7,7 @@
             type="article"
         />
     @endpush
-    <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-20">
+    <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-4">
         
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col lg:flex-row">

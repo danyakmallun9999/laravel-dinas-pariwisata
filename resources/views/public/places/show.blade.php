@@ -7,13 +7,13 @@
             type="article"
         />
     @endpush
-    <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-20">
+    <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-4">
         
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col lg:flex-row">
                 
                 <!-- Left Side: Sticky Visuals (50%) -->
-                <div class="lg:w-1/2 lg:h-screen lg:sticky lg:top-0 relative bg-white dark:bg-slate-950 z-10 group flex flex-col p-4 lg:pl-16 lg:pr-8 lg:pt-24" 
+                <div class="lg:w-1/2 lg:h-screen lg:sticky lg:top-0 relative bg-white dark:bg-slate-950 z-10 group flex flex-col lg:overflow-hidden p-4 lg:pl-16 lg:pr-8 lg:pt-24" 
                      @php
                          $uniqueGalleryImages = collect([]);
                          if ($place->image_path) {
@@ -94,7 +94,7 @@
                     </div>
     
                     <!-- Main Image Area -->
-                    <div class="relative w-full aspect-[4/3] overflow-hidden perspective-[1000px]">
+                    <div class="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[60vh] overflow-hidden perspective-[1000px]">
                         <div class="relative w-full h-full rounded-3xl overflow-hidden text-transparent cursor-pointer" @click="openLightbox(activeImage)">
                             <template x-if="activeImage">
                                 <img :src="activeImage" 
@@ -166,10 +166,10 @@
                         </button>
 
                         <!-- Lightbox Image -->
-                        <div class="relative z-10 max-w-[95vw] max-h-[85vh] sm:max-w-[90vw] sm:max-h-[90vh] flex items-center justify-center">
+                        <div class="relative z-10 w-full h-full max-w-[90vw] max-h-[80vh] flex items-center justify-center pointer-events-none">
                             <img :src="images[lightboxIndex]" 
                                  :alt="'{{ $place->translated_name }} - Foto ' + (lightboxIndex + 1)"
-                                 class="max-w-full max-h-[85vh] sm:max-h-[90vh] object-contain rounded-lg shadow-2xl select-none">
+                                 class="w-auto h-auto max-w-full max-h-full object-contain rounded-lg shadow-2xl select-auto pointer-events-auto">
                         </div>
 
                         <!-- Thumbnail Strip -->

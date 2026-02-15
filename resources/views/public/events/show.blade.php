@@ -11,7 +11,7 @@
     @section('meta_description', Str::limit(strip_tags($event->description), 150))
     @section('meta_image', $event->image ? asset($event->image) : asset('images/agenda/logo-agenda.png'))
 
-    <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-20">
+    <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-4">
         
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col lg:flex-row">
