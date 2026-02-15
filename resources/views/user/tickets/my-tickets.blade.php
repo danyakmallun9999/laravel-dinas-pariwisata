@@ -91,43 +91,52 @@
 
                     <div class="space-y-5">
                         @foreach($orders as $order)
+                            @php
+                                $now = now();
+                                $expiry = $order->expiry_time;
+                                $isExpired = $order->status === 'pending' && $expiry && $now->greaterThan($expiry);
+                                $remainingMs = $expiry && !$isExpired ? $now->diffInMilliseconds($expiry) : 0;
+                            @endphp
+
                             @if($order->status == 'pending')
                                 {{-- ═══════════════════════════════════════ --}}
                                 {{-- PENDING CARD: Minimalist ticket design --}}
                                 {{-- ═══════════════════════════════════════ --}}
-                                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden">
-                                    {{-- TOP: Main ticket section --}}
-                                    <div class="p-5 pb-4"
-                                         x-data="{ 
-                                            expiry: new Date('{{ $order->expiry_time ?? $order->created_at->addMinutes(60) }}').getTime(),
-                                            remaining: 0,
-                                            timer: null,
-                                            format(ms) {
-                                                if (ms <= 0) return '00:00:00';
-                                                const h = Math.floor(ms / 3600000);
-                                                const m = Math.floor((ms % 3600000) / 60000);
-                                                const s = Math.floor((ms % 60000) / 1000);
-                                                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                                            },
-                                            init() {
-                                                this.update();
-                                                this.timer = setInterval(() => this.update(), 1000);
-                                            },
-                                            update() {
-                                                const now = new Date().getTime();
-                                                this.remaining = this.expiry - now;
-                                                if (this.remaining <= 0) clearInterval(this.timer);
+                                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                                     x-data="{ 
+                                        remaining: {{ $remainingMs }},
+                                        timer: null,
+                                        format(ms) {
+                                            if (ms <= 0) return '00:00:00';
+                                            const h = Math.floor(ms / 3600000);
+                                            const m = Math.floor((ms % 3600000) / 60000);
+                                            const s = Math.floor((ms % 60000) / 1000);
+                                            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                                        },
+                                        init() {
+                                            if (this.remaining > 0) {
+                                                const endTime = new Date().getTime() + this.remaining;
+                                                this.timer = setInterval(() => {
+                                                    const now = new Date().getTime();
+                                                    this.remaining = Math.max(0, endTime - now);
+                                                    if (this.remaining <= 0) clearInterval(this.timer);
+                                                }, 1000);
                                             }
-                                         }"
-                                         x-init="init()">
-                                        
+                                        }
+                                     }"
+                                     x-init="init()">
+                                    
+                                    {{-- TOP: Main ticket section --}}
+                                    <div class="p-5 pb-4">
                                         {{-- Header: Status & Countdown --}}
                                         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
-                                                <i class="fa-solid fa-clock text-[9px]"></i>
-                                                {{ $order->status_label }}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap 
+                                                {{ $isExpired ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' }}">
+                                                <i class="fa-solid {{ $isExpired ? 'fa-circle-exclamation' : 'fa-clock' }} text-[9px]"></i>
+                                                {{ $isExpired ? 'Kadaluwarsa' : $order->status_label }}
                                             </span>
-                                            <div class="flex items-center gap-1.5 text-xs font-medium text-yellow-600 dark:text-yellow-500">
+                                            
+                                            <div x-show="remaining > 0" class="flex items-center gap-1.5 text-xs font-medium text-yellow-600 dark:text-yellow-500">
                                                 <span>Sisa Waktu:</span>
                                                 <span class="font-mono font-bold bg-yellow-50 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded" x-text="format(remaining)"></span>
                                             </div>
@@ -137,21 +146,48 @@
                                         <p class="font-bold text-base text-slate-900 dark:text-white leading-snug">{{ $order->ticket->place->name }}</p>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-4 truncate">{{ $order->ticket->name }} · <span class="capitalize">{{ $order->ticket->type }}</span></p>
 
-                                        {{-- Payment Method (if persisted) --}}
-                                        @if($order->payment_method_detail)
-                                        <div class="mb-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg p-2.5 border border-slate-100 dark:border-slate-700">
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold mb-1">Metode Pembayaran</p>
-                                            <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                                @if($order->payment_method_detail === 'bank_transfer')
-                                                    <i class="fa-solid fa-building-columns text-slate-400"></i> Bank {{ strtoupper($order->payment_channel) }}
-                                                @elseif($order->payment_method_detail === 'gopay')
-                                                    <i class="fa-brands fa-google-pay text-slate-400"></i> GoPay
-                                                @elseif($order->payment_method_detail === 'qris')
-                                                    <i class="fa-solid fa-qrcode text-slate-400"></i> QRIS
-                                                @else
-                                                    <i class="fa-regular fa-credit-card text-slate-400"></i> {{ ucfirst($order->payment_method_detail) }}
-                                                @endif
-                                            </p>
+                                        {{-- Payment Method & Details --}}
+                                        @if($order->payment_method_detail && !$isExpired)
+                                        <div class="mb-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">Metode Pembayaran</span>
+                                                <span class="text-xs font-bold text-slate-700 dark:text-slate-300">
+                                                    @if($order->payment_method_detail === 'bank_transfer')
+                                                        Bank {{ strtoupper($order->payment_channel) }}
+                                                    @else
+                                                        {{ ucfirst($order->payment_method_detail) }}
+                                                    @endif
+                                                </span>
+                                            </div>
+
+                                            {{-- INLINE PAYMENT DETAILS (VA / QR) --}}
+                                            @if(isset($order->payment_info['va_number']))
+                                                <div class="bg-white dark:bg-slate-800 rounded-lg p-2.5 border border-slate-200 dark:border-slate-600 flex items-center justify-between gap-2">
+                                                    <span class="font-mono text-base font-bold text-slate-800 dark:text-white tracking-wider truncate">{{ $order->payment_info['va_number'] }}</span>
+                                                    <button onclick="navigator.clipboard.writeText('{{ $order->payment_info['va_number'] }}'); alert('Nomor VA disalin!')" class="text-primary hover:bg-slate-50 p-1.5 rounded-md transition-colors" title="Salin VA">
+                                                        <i class="fa-solid fa-copy"></i>
+                                                    </button>
+                                                </div>
+                                            @elseif(isset($order->payment_info['bill_key']))
+                                                <div class="bg-white dark:bg-slate-800 rounded-lg p-2.5 border border-slate-200 dark:border-slate-600 relative">
+                                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                                        <span class="text-[10px] text-slate-400">Bill Key</span>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="font-mono text-sm font-bold text-slate-800 dark:text-white">{{ $order->payment_info['bill_key'] }}</span>
+                                                            <button onclick="navigator.clipboard.writeText('{{ $order->payment_info['bill_key'] }}')" class="text-primary text-xs"><i class="fa-solid fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center justify-between gap-2">
+                                                        <span class="text-[10px] text-slate-400">Biller Code</span>
+                                                        <span class="font-mono text-sm font-bold text-slate-800 dark:text-white">{{ $order->payment_info['biller_code'] }}</span>
+                                                    </div>
+                                                </div>
+                                            @elseif(isset($order->payment_info['qr_url']))
+                                                <div class="text-center pt-1">
+                                                    <img src="{{ $order->payment_info['qr_url'] }}" alt="QR Code" class="h-32 w-32 object-contain mx-auto rounded-lg border border-slate-200 bg-white p-2">
+                                                    <p class="text-[10px] text-slate-400 mt-1">Scan untuk membayar</p>
+                                                </div>
+                                            @endif
                                         </div>
                                         @endif
 
@@ -175,44 +211,48 @@
 
                                     {{-- BOTTOM: Actions stub --}}
                                     <div class="px-5 py-3" x-data="{ showCancelConfirm: false }">
-                                        <div class="flex gap-2 mb-2">
-                                            @if(isset($order->payment_info))
-                                                <a href="{{ route('tickets.confirmation', $order->order_number) }}" 
+                                        @if(!$isExpired)
+                                            <div class="flex gap-2 mb-2">
+                                                <a href="{{ route('tickets.payment.status', $order->order_number) }}" 
                                                    class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-center font-semibold py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 shadow-sm shadow-yellow-500/20">
-                                                    <i class="fa-solid fa-receipt text-xs"></i> Lihat Instruksi
+                                                    <i class="fa-solid fa-credit-card text-xs"></i> Bayar Sekarang
                                                 </a>
-                                            @else
-                                                <a href="{{ route('tickets.payment', $order->order_number) }}" 
-                                                   class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-center font-semibold py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 shadow-sm shadow-yellow-500/20">
-                                                    <i class="fa-solid fa-credit-card text-xs"></i> Bayar
+                                                <button @click="
+                                                    $el.innerHTML = '<i class=\'fa-solid fa-spinner fa-spin text-xs\'></i> Cek...';
+                                                    $el.disabled = true;
+                                                    fetch('{{ route('tickets.check-status', $order->order_number) }}')
+                                                        .then(r => r.json())
+                                                        .then(d => {
+                                                            if(d.status === 'paid') { window.location.reload(); }
+                                                            else { 
+                                                                $el.innerHTML = '<i class=\'fa-solid fa-circle-info text-xs\'></i> ' + d.message;
+                                                                setTimeout(() => { $el.innerHTML = '<i class=\'fa-solid fa-arrows-rotate text-xs\'></i> Cek Status'; $el.disabled = false; }, 3000);
+                                                            }
+                                                        })
+                                                        .catch(() => { $el.innerHTML = '<i class=\'fa-solid fa-arrows-rotate text-xs\'></i> Cek Status'; $el.disabled = false; });
+                                                " class="flex-1 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 text-center font-semibold py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600 w-1/3 max-w-[100px]">
+                                                    <i class="fa-solid fa-arrows-rotate text-xs"></i> Cek
+                                                </button>
+                                            </div>
+                                        @else
+                                            <div class="mb-2">
+                                                <a href="{{ route('tickets.show', $order->ticket->slug ?? 'id') }}" class="w-full bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-center font-semibold py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600">
+                                                    <i class="fa-solid fa-redo text-xs"></i> Pesan Ulang
                                                 </a>
-                                            @endif
-                                            <button @click="
-                                                $el.innerHTML = '<i class=\'fa-solid fa-spinner fa-spin text-xs\'></i> Cek...';
-                                                $el.disabled = true;
-                                                fetch('{{ route('tickets.check-status', $order->order_number) }}')
-                                                    .then(r => r.json())
-                                                    .then(d => {
-                                                        if(d.status === 'paid') { window.location.reload(); }
-                                                        else { 
-                                                            $el.innerHTML = '<i class=\'fa-solid fa-circle-info text-xs\'></i> ' + d.message;
-                                                            setTimeout(() => { $el.innerHTML = '<i class=\'fa-solid fa-arrows-rotate text-xs\'></i> Cek Status'; $el.disabled = false; }, 3000);
-                                                        }
-                                                    })
-                                                    .catch(() => { $el.innerHTML = '<i class=\'fa-solid fa-arrows-rotate text-xs\'></i> Cek Status'; $el.disabled = false; });
-                                            " class="flex-1 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 text-center font-semibold py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600">
-                                                <i class="fa-solid fa-arrows-rotate text-xs"></i> Cek Status
-                                            </button>
-                                        </div>
+                                            </div>
+                                        @endif
+
                                         <div class="flex gap-2">
                                             <a href="{{ route('tickets.confirmation', $order->order_number) }}" 
                                                class="flex-1 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 text-center font-semibold py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600">
                                                 <i class="fa-solid fa-eye text-xs"></i> {{ __('Tickets.My.ViewDetail') }}
                                             </a>
+                                            @if(!$isExpired)
                                             <button @click="showCancelConfirm = true"
-                                                class="flex-1 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 text-center font-semibold py-2.5 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 border border-red-200 dark:border-red-800">
-                                                <i class="fa-solid fa-xmark text-xs"></i> Batalkan
+                                                class="bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 text-center font-semibold py-2.5 px-4 rounded-xl transition-all text-sm flex items-center justify-center gap-1.5 border border-red-200 dark:border-red-800">
+                                                <i class="fa-solid fa-xmark text-xs"></i>
                                             </button>
+                                            @endif
                                         </div>
 
                                         {{-- Cancel Confirmation Modal --}}
@@ -251,7 +291,7 @@
                                 {{-- ═══════════════════════════════════════ --}}
                                 {{-- PAID/USED CARD: Physical ticket design --}}
                                 {{-- ═══════════════════════════════════════ --}}
-                                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+                                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                                     {{-- TOP: Main ticket section --}}
                                     <div class="p-5 pb-4">
                                         {{-- Status badge on its own line --}}
