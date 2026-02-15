@@ -65,7 +65,20 @@ class WelcomeController extends Controller
         $lastUpdate = Place::latest('updated_at')->first()?->updated_at;
 
         // Fetch Data via Repository/Models
-        $places = $this->placeRepository->getPopular(6);
+        $topDestinations = [
+            'Taman Nasional Karimunjawa',
+            'Pulau Panjang',
+            'Pantai Kartini',
+            'Pantai Tirta Samudra (Bandengan)',
+            'Gua Manik',
+            'Jepara Ourland Park'
+        ];
+
+        $places = Place::whereIn('name', $topDestinations)
+            ->get()
+            ->sortBy(function ($place) use ($topDestinations) {
+                return array_search($place->name, $topDestinations);
+            });
         $posts = Post::where('is_published', true)->latest('published_at')->take(3)->get();
 
         // Fetch Static Data
