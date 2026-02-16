@@ -63,7 +63,10 @@ class TicketController extends Controller
             $order->checkAutoCancel();
         });
 
-        return view('user.tickets.my-tickets', compact('orders'));
+        return response()->view('user.tickets.my-tickets', compact('orders'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     /**
@@ -87,7 +90,10 @@ class TicketController extends Controller
             $order->checkAutoCancel();
         });
 
-        return view('user.tickets.my-tickets', compact('orders'));
+        return response()->view('user.tickets.my-tickets', compact('orders'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     /**

@@ -3,7 +3,7 @@
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
             <nav class="flex text-xs md:text-sm text-gray-400 mb-6 space-x-2">
-                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">Beranda</a>
+                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">E-Tickets</a>
                 <span>/</span>
                 <a href="{{ route('tickets.my') }}" class="hover:text-primary transition-colors">Tiket Saya</a>
                 <span>/</span>

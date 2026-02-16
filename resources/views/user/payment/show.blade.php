@@ -9,7 +9,7 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Breadcrumb — compact, single-line, horizontally scrollable on mobile --}}
             <nav class="flex text-[11px] sm:text-xs md:text-sm text-gray-400/80 sm:text-gray-400 mb-3 sm:mb-6 space-x-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.Home') }}</a>
+                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">E-Tickets</a>
                 <span>/</span>
                 <a href="{{ route('tickets.my') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.MyTickets') }}</a>
                 <span>/</span>

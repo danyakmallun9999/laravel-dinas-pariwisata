@@ -3,7 +3,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Breadcrumb --}}
             <nav class="flex text-xs md:text-sm text-gray-400 mb-6 space-x-2">
-                <a href="{{ route('welcome') }}" class="hover:text-primary transition-colors">{{ __('Tickets.Breadcrumb.Home') }}</a>
+                <a href="{{ route('tickets.index') }}" class="hover:text-primary transition-colors">E-Tickets</a>
                 <span>/</span>
                 <span class="text-gray-800 dark:text-gray-200 font-medium">{{ __('Tickets.Breadcrumb.MyTickets') }}</span>
             </nav>
@@ -617,6 +617,17 @@
 
 @if($orders->count() > 0)
 <script>
+// Force reload when navigating back
+window.addEventListener( "pageshow", function ( event ) {
+  var historyTraversal = event.persisted || 
+                         ( typeof window.performance != "undefined" && 
+                              window.performance.navigation.type === 2 );
+  if ( historyTraversal ) {
+    // Handle page restore.
+    window.location.reload();
+  }
+});
+
 function ticketList() {
     const statusCounts = {
         all: {{ $orders->count() }},

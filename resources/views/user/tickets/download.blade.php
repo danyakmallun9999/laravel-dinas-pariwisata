@@ -27,7 +27,7 @@
     <div class="bg-luxury min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center p-6 text-slate-800 font-inter">
         <!-- Breadcrumb -->
         <nav class="w-full max-w-[400px] flex text-xs md:text-sm text-slate-500 mb-6 space-x-2 no-print">
-            <a href="{{ route('welcome') }}" class="hover:text-blue-600 transition-colors">{{ __('Tickets.Breadcrumb.Home') }}</a>
+            <a href="{{ route('tickets.index') }}" class="hover:text-blue-600 transition-colors">E-Tickets</a>
             <span>/</span>
             <a href="{{ route('tickets.my') }}" class="hover:text-blue-600 transition-colors">{{ __('Tickets.Breadcrumb.MyTickets') }}</a>
             <span>/</span>
