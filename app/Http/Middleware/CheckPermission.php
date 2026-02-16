@@ -17,14 +17,20 @@ class CheckPermission
     public function handle(Request $request, Closure $next, ...$permissions): Response
     {
         // ISO-01: Use $request->user() to resolve from the guard set by auth middleware
-        // auth() without guard resolves default 'web' guard — wrong for admin routes
         $user = $request->user();
 
         if (!$user) {
             abort(403, 'Unauthorized - Not authenticated.');
         }
 
-        if (!$user->hasAnyPermission($permissions)) {
+        // Split permissions on '|' (pipe) to support OR syntax in route definitions
+        // e.g. permission:view all financial reports|view own financial reports
+        $allPermissions = [];
+        foreach ($permissions as $permission) {
+            $allPermissions = array_merge($allPermissions, explode('|', $permission));
+        }
+
+        if (!$user->hasAnyPermission($allPermissions)) {
             abort(403, 'Unauthorized - Insufficient permissions.');
         }
 

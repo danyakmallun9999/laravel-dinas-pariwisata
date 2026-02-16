@@ -115,8 +115,11 @@ class BookingController extends Controller
                 $pricePerTicket = $ticket->getPriceForDate($booking['visit_date']);
                 $totalPrice = $pricePerTicket * $booking['quantity'];
 
-                // Create order — guarded fields set explicitly
-                $order = TicketOrder::create($booking);
+                // Create order — use forceFill for guarded financial fields
+                // total_price, unit_price, status are intentionally guarded from mass assignment
+                // but safe to set here because values are calculated server-side
+                $order = new TicketOrder();
+                $order->fill($booking);
                 $order->total_price = $totalPrice;
                 $order->unit_price = $pricePerTicket;
                 $order->status = 'pending';
@@ -139,8 +142,21 @@ class BookingController extends Controller
             });
 
         } catch (\Exception $e) {
-            Log::error('Checkout processing failed', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Gagal memproses pesanan: '.$e->getMessage());
+            Log::error('Checkout processing failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
+            ]);
+
+            // SECURITY: Never expose raw exception/SQL messages to public users
+            $userMessage = 'Gagal memproses pesanan. Silakan coba lagi atau hubungi admin.';
+
+            // Only show specific message for known safe exceptions
+            if (str_contains($e->getMessage(), 'Kuota tiket tidak mencukupi')) {
+                $userMessage = $e->getMessage();
+            }
+
+            return redirect()->back()->with('error', $userMessage);
         }
     }
 

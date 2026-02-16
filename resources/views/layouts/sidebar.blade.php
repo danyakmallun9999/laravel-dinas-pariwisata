@@ -1,6 +1,6 @@
 <div class="flex flex-col h-full">
     @php
-        $user = Auth::user();
+        $user = auth('admin')->user();
         $brandLabel = 'JelajahJepara';
         $brandSub = '';
         
@@ -287,11 +287,11 @@
             <div x-data="{ userOpen: false }" class="relative">
                 <button @click="userOpen = !userOpen" class="flex items-center gap-3 w-full hover:bg-gray-50 p-2 rounded-lg transition" :class="isSidebarMini ? 'justify-center' : ''">
                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold flex-shrink-0">
-                        {{ substr(Auth::user()->name, 0, 1) }}
+                        {{ substr(auth('admin')->user()->name, 0, 1) }}
                     </div>
                     <div x-show="!isSidebarMini" class="flex-1 text-left overflow-hidden">
-                        <p class="text-sm font-semibold text-gray-800 truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
+                        <p class="text-sm font-semibold text-gray-800 truncate">{{ auth('admin')->user()->name }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ auth('admin')->user()->email }}</p>
                     </div>
                     <i x-show="!isSidebarMini" class="fa-solid fa-chevron-up text-xs text-gray-400 transition-transform" :class="{'rotate-180': userOpen}"></i>
                 </button>

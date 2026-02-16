@@ -17,12 +17,20 @@ class TicketDashboardController extends Controller
 
     public function index()
     {
-        $stats = $this->analyticsService->getDailyStats();
-        $salesChart = $this->analyticsService->getSalesChartData(365);
-        $monthlySalesChart = $this->analyticsService->getMonthlySalesChartData(12);
-        $ticketTypes = $this->analyticsService->getTicketTypeBreakdown();
-        $occupancy = $this->analyticsService->getOccupancyByPlace();
-        $recentTransactions = $this->analyticsService->getRecentTransactions();
+        $user = auth('admin')->user();
+        $userIdFilter = null;
+
+        // Pengelola wisata only sees data from their own destinations
+        if (!$user->can('view all tickets')) {
+            $userIdFilter = $user->id;
+        }
+
+        $stats = $this->analyticsService->getDailyStats($userIdFilter);
+        $salesChart = $this->analyticsService->getSalesChartData(365, $userIdFilter);
+        $monthlySalesChart = $this->analyticsService->getMonthlySalesChartData(12, $userIdFilter);
+        $ticketTypes = $this->analyticsService->getTicketTypeBreakdown($userIdFilter);
+        $occupancy = $this->analyticsService->getOccupancyByPlace($userIdFilter);
+        $recentTransactions = $this->analyticsService->getRecentTransactions(5, $userIdFilter);
 
         return view('admin.tickets.dashboard', compact(
             'stats',

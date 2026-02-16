@@ -116,8 +116,12 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
         Route::get('/tickets/dashboard', [App\Http\Controllers\Admin\TicketDashboardController::class, 'index'])->name('tickets.dashboard');
         Route::resource('tickets', \App\Http\Controllers\Admin\TicketController::class);
         Route::get('ticket-orders', [\App\Http\Controllers\Admin\TicketController::class, 'orders'])->name('tickets.orders');
-        Route::get('ticket-history', [\App\Http\Controllers\Admin\TicketController::class, 'history'])->name('tickets.history');
     });
+
+    // Riwayat Penjualan — accessible by users with view all tickets OR view own financial reports
+    Route::middleware('permission:view all tickets|view own financial reports')
+        ->get('ticket-history', [\App\Http\Controllers\Admin\TicketController::class, 'history'])
+        ->name('tickets.history');
 
     // HIGH-01: QR Scan routes — require explicit 'scan tickets' permission
     Route::middleware('permission:scan tickets')->group(function () {

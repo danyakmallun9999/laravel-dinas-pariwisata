@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Laravolt\Indonesia\Models\Province;
 use Laravolt\Indonesia\Models\City;
 
@@ -16,7 +17,8 @@ class LocationController extends Controller
             $provinces = Province::orderBy('name', 'asc')->get();
             return response()->json($provinces);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            Log::error('Failed to fetch provinces', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Gagal memuat data provinsi.'], 500);
         }
     }
 
@@ -58,7 +60,8 @@ class LocationController extends Controller
 
             return response()->json($cities);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            Log::error('Failed to fetch cities', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Gagal memuat data kota.'], 500);
         }
     }
 }

@@ -106,7 +106,7 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             Log::error('Payment processing failed', ['order' => $orderNumber, 'error' => $e->getMessage()]);
             return redirect()->route('payment.show', $orderNumber)
-                ->with('error', 'Gagal memproses pembayaran: '.$e->getMessage());
+                ->with('error', 'Gagal memproses pembayaran. Silakan coba lagi atau hubungi admin.');
         }
     }
 

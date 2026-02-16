@@ -12,29 +12,37 @@ class TicketAnalyticsService
     /**
      * Get daily statistics for the dashboard pulse.
      */
-    public function getDailyStats()
+    public function getDailyStats($userId = null)
     {
         $today = Carbon::today();
+
+        $ownerScope = function($q) use ($userId) {
+            $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                $subQ->where('created_by', $userId);
+            });
+        };
 
         // Revenue today (paid orders only)
         $revenue = TicketOrder::whereDate('paid_at', $today)
             ->whereIn('status', ['paid', 'used'])
+            ->when($userId, $ownerScope)
             ->sum('total_price');
 
-        // Tickets sold today (paid + pending count as sold for occupancy? active tickets)
-        // Usually revenue counts 'paid', but occupancy counts 'valid' tickets for today
-        // Let's count sold = paid tickets created today
+        // Tickets sold today
         $ticketsSold = TicketOrder::whereDate('created_at', $today)
             ->whereIn('status', ['paid', 'used'])
+            ->when($userId, $ownerScope)
             ->sum('quantity');
 
         // Active Visitors (checked in today)
         $activeVisitors = TicketOrder::whereDate('check_in_time', $today)
+            ->when($userId, $ownerScope)
             ->sum('quantity');
 
         // Pending Orders (Potential revenue)
         $pendingOrders = TicketOrder::whereDate('created_at', $today)
             ->where('status', 'pending')
+            ->when($userId, $ownerScope)
             ->count();
 
         return [
@@ -148,9 +156,13 @@ class TicketAnalyticsService
     /**
      * Get ticket type breakdown.
      */
-    public function getTicketTypeBreakdown()
+    public function getTicketTypeBreakdown($userId = null)
     {
         return TicketOrder::join('tickets', 'ticket_orders.ticket_id', '=', 'tickets.id')
+            ->when($userId, function($q) use ($userId) {
+                $q->join('places', 'tickets.place_id', '=', 'places.id')
+                  ->where('places.created_by', $userId);
+            })
             ->select('tickets.type', DB::raw('SUM(ticket_orders.quantity) as count'))
             ->whereIn('ticket_orders.status', ['paid', 'used'])
             ->groupBy('tickets.type')
@@ -160,11 +172,8 @@ class TicketAnalyticsService
     /**
      * Get occupancy rate by place.
      */
-    public function getOccupancyByPlace()
+    public function getOccupancyByPlace($userId = null)
     {
-        // This is complex because quota is per ticket/place per day.
-        // Simplified: Get total tickets sold for today per place vs Place capacity (if exists)
-        // For now, let's just return tickets sold per place for today
         $today = Carbon::today();
 
         return DB::table('ticket_orders')
@@ -173,6 +182,9 @@ class TicketAnalyticsService
             ->select('places.name', DB::raw('SUM(ticket_orders.quantity) as sold'))
             ->whereIn('ticket_orders.status', ['paid', 'used'])
             ->whereDate('ticket_orders.visit_date', $today)
+            ->when($userId, function($q) use ($userId) {
+                $q->where('places.created_by', $userId);
+            })
             ->groupBy('places.name')
             ->orderByDesc('sold')
             ->limit(5)
@@ -182,9 +194,14 @@ class TicketAnalyticsService
     /**
      * Get recent transactions.
      */
-    public function getRecentTransactions($limit = 5)
+    public function getRecentTransactions($limit = 5, $userId = null)
     {
         return TicketOrder::with(['ticket.place'])
+            ->when($userId, function($q) use ($userId) {
+                $q->whereHas('ticket.place', function($subQ) use ($userId) {
+                    $subQ->where('created_by', $userId);
+                });
+            })
             ->latest()
             ->limit($limit)
             ->get();
