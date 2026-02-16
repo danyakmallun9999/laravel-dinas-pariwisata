@@ -40,7 +40,8 @@ class WebhookController extends Controller
             ]);
             
             // Return 200 to prevent Midtrans from retrying
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 200);
+            // Do not expose internal error messages to external callers
+            return response()->json(['success' => false], 200);
         }
     }
 }

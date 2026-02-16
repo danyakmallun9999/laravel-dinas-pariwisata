@@ -23,9 +23,15 @@ class User extends Authenticatable
         'email',
         'password',
         'google_id',
-        'is_admin',
         'avatar',
+        'email_verified_at',
     ];
+
+    /**
+     * The attributes that should be guarded from mass assignment.
+     * is_admin must never be mass-assignable to prevent privilege escalation.
+     */
+    protected $guarded = ['is_admin'];
 
     /**
      * The attributes that should be hidden for serialization.

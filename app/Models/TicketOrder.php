@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class TicketOrder extends Model
@@ -115,7 +116,8 @@ class TicketOrder extends Model
     }
 
     /**
-     * Generate unique ticket number.
+     * Generate unique ticket number (atomic, race-safe).
+     * Uses DB transaction + lockForUpdate to prevent duplicate generation.
      */
     public function generateTicketNumber()
     {
@@ -123,18 +125,37 @@ class TicketOrder extends Model
             return $this->ticket_number;
         }
 
-        do {
-            // Format: TIX-{RandomString}-{CheckSum}
-            // Shorter than order number, optimized for scanning
-            $random = strtoupper(Str::random(8));
-            $ticketNumber = 'TIX-'.$random;
-        } while (self::where('ticket_number', $ticketNumber)->exists());
+        return DB::transaction(function () {
+            // Re-fetch with lock to prevent concurrent generation
+            $order = self::lockForUpdate()->find($this->id);
 
-        $this->ticket_number = $ticketNumber;
-        $this->qr_code = $ticketNumber; // QR Code now stores Ticket Number
-        $this->save();
+            // Double-check after acquiring lock (another process may have generated it)
+            if ($order->ticket_number) {
+                return $order->ticket_number;
+            }
 
-        return $ticketNumber;
+            $maxRetries = 10;
+            for ($i = 0; $i < $maxRetries; $i++) {
+                // 12-char random for higher entropy (62^12 ≈ 3.2 × 10^21)
+                $random = strtoupper(Str::random(12));
+                $ticketNumber = 'TIX-' . $random;
+
+                // Check uniqueness before save
+                if (!self::where('ticket_number', $ticketNumber)->exists()) {
+                    $order->ticket_number = $ticketNumber;
+                    $order->qr_code = $ticketNumber;
+                    $order->save();
+
+                    // Update the current instance
+                    $this->ticket_number = $ticketNumber;
+                    $this->qr_code = $ticketNumber;
+
+                    return $ticketNumber;
+                }
+            }
+
+            throw new \RuntimeException('Failed to generate unique ticket number after ' . $maxRetries . ' retries');
+        });
     }
 
     /**

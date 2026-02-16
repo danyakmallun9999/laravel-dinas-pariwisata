@@ -61,8 +61,10 @@ Route::middleware('auth.user')->prefix('tiket-saya')->group(function () {
 // E-Ticket detail (Public) - wildcard route MUST be last to avoid catching specific routes above
 Route::get('/e-tiket/{ticket}', [App\Http\Controllers\Public\TicketController::class, 'show'])->name('tickets.show');
 
-// Webhook route (no CSRF protection)
-Route::post('/webhooks/midtrans', [App\Http\Controllers\WebhookController::class, 'handle'])->name('webhooks.midtrans');
+// Webhook route (no CSRF protection, rate-limited to prevent DoS)
+Route::post('/webhooks/midtrans', [App\Http\Controllers\WebhookController::class, 'handle'])
+    ->middleware('throttle:60,1')
+    ->name('webhooks.midtrans');
 
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
@@ -108,7 +110,9 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
 
     // QR Scan routes
     Route::get('/scan', [App\Http\Controllers\Admin\ScanController::class, 'index'])->name('scan.index');
-    Route::post('/scan', [App\Http\Controllers\Admin\ScanController::class, 'store'])->name('scan.store');
+    Route::post('/scan', [App\Http\Controllers\Admin\ScanController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('scan.store');
 
     // Financial Reports
     Route::prefix('reports/financial')->name('reports.financial.')->group(function () {

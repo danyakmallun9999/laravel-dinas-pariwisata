@@ -169,6 +169,14 @@ class TicketController extends Controller
 
         try {
             return DB::transaction(function () use ($booking, $paymentType, $bank) {
+                // Lock the ticket row to prevent concurrent oversell (CRIT-03)
+                $ticket = Ticket::lockForUpdate()->findOrFail($booking['ticket_id']);
+
+                // Re-verify quota inside the lock — prevents race condition
+                if (!$ticket->isAvailableOn($booking['visit_date'], $booking['quantity'])) {
+                    throw new \Exception('Kuota tiket tidak mencukupi. Silakan pilih tanggal lain.');
+                }
+
                 // Create Order
                 $order = TicketOrder::create($booking);
 

@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\TicketOrder;
+use App\Models\WebhookLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
 use Midtrans\CoreApi;
@@ -262,7 +264,8 @@ class MidtransService
             $notificationData = $request->all();
 
             Log::info('Midtrans notification received', [
-                'body' => $notificationData,
+                'order_id' => $notificationData['order_id'] ?? 'unknown',
+                'transaction_status' => $notificationData['transaction_status'] ?? 'unknown',
             ]);
 
             // Verify signature
@@ -272,27 +275,32 @@ class MidtransService
             }
 
             $orderId = $notificationData['order_id'] ?? '';
+            $transactionId = $notificationData['transaction_id'] ?? '';
             $transactionStatus = $notificationData['transaction_status'] ?? '';
             $fraudStatus = $notificationData['fraud_status'] ?? 'accept';
             $paymentType = $notificationData['payment_type'] ?? null;
+
+            // HIGH-03: Idempotency check — reject duplicate transaction_id
+            if ($transactionId && WebhookLog::where('transaction_id', $transactionId)->exists()) {
+                Log::info('Duplicate webhook ignored', ['transaction_id' => $transactionId]);
+                return true;
+            }
+
+            // Log the webhook for idempotency
+            if ($transactionId) {
+                WebhookLog::create([
+                    'transaction_id' => $transactionId,
+                    'order_id' => $orderId,
+                    'transaction_status' => $transactionStatus,
+                    'payload' => $notificationData,
+                ]);
+            }
 
             // Extract order number from order_id (format: TICKET-{orderNumber}-{timestamp} or TICKET-{orderNumber})
             if (preg_match('/^TICKET-(.+)-\d+$/', $orderId, $matches)) {
                 $orderNumber = $matches[1];
             } else {
                 $orderNumber = str_replace('TICKET-', '', $orderId);
-            }
-            $order = TicketOrder::where('order_number', $orderNumber)->first();
-
-            if (!$order) {
-                Log::warning('Order not found for Midtrans notification', ['order_number' => $orderNumber]);
-                return false;
-            }
-
-            // Already paid — skip processing
-            if ($order->status === 'paid') {
-                Log::info('Order already marked as paid', ['order_number' => $orderNumber]);
-                return true;
             }
 
             // Determine outcome based on transaction_status
@@ -305,52 +313,71 @@ class MidtransService
                     return true;
                 }
 
-                $order->update([
-                    'status' => 'paid',
-                    'paid_at' => now(),
-                    'payment_method_detail' => $paymentType,
-                    'payment_channel' => $notificationData['bank'] ?? $notificationData['store'] ?? $paymentType,
-                ]);
+                // HIGH-02: Atomic payment confirmation with DB transaction + lock
+                DB::transaction(function () use ($orderNumber, $paymentType, $notificationData, $transactionStatus) {
+                    $order = TicketOrder::where('order_number', $orderNumber)
+                        ->lockForUpdate()
+                        ->first();
 
-                // Generate Ticket Number
-                $order->generateTicketNumber();
+                    if (!$order) {
+                        Log::warning('Order not found', ['order_number' => $orderNumber]);
+                        return;
+                    }
 
-                Log::info('Order marked as paid via Midtrans', [
-                    'order_number' => $orderNumber,
-                    'payment_type' => $paymentType,
-                    'transaction_status' => $transactionStatus,
-                ]);
+                    // Already paid — skip (idempotency inside lock)
+                    if ($order->status === 'paid') {
+                        Log::info('Order already paid', ['order_number' => $orderNumber]);
+                        return;
+                    }
+
+                    $order->update([
+                        'status' => 'paid',
+                        'paid_at' => now(),
+                        'payment_method_detail' => $paymentType,
+                        'payment_channel' => $notificationData['bank'] ?? $notificationData['store'] ?? $paymentType,
+                    ]);
+
+                    // Generate Ticket Number (also uses lock internally)
+                    $order->generateTicketNumber();
+
+                    Log::info('Order marked as paid via Midtrans', [
+                        'order_number' => $orderNumber,
+                        'payment_type' => $paymentType,
+                        'transaction_status' => $transactionStatus,
+                    ]);
+                });
             } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
-                $order->update([
-                    'status' => 'cancelled',
-                ]);
-
-                Log::info('Order cancelled via Midtrans', [
-                    'order_number' => $orderNumber,
-                    'transaction_status' => $transactionStatus,
-                ]);
+                $order = TicketOrder::where('order_number', $orderNumber)->first();
+                if ($order) {
+                    $order->update(['status' => 'cancelled']);
+                    Log::info('Order cancelled via Midtrans', [
+                        'order_number' => $orderNumber,
+                        'transaction_status' => $transactionStatus,
+                    ]);
+                }
             } elseif ($transactionStatus === 'pending') {
-                $paymentData = $this->extractPaymentData((object) $notificationData, $paymentType, $notificationData['bank'] ?? null);
-                
-                $order->update([
-                    'payment_method_detail' => $paymentType,
-                    'payment_channel' => $notificationData['bank'] ?? $notificationData['store'] ?? $paymentType,
-                    'payment_info' => $paymentData,
-                    'expiry_time' => $notificationData['expiry_time'] ?? null,
-                ]);
+                $order = TicketOrder::where('order_number', $orderNumber)->first();
+                if ($order) {
+                    $paymentData = $this->extractPaymentData((object) $notificationData, $paymentType, $notificationData['bank'] ?? null);
 
-                Log::info('Order payment pending - details persisted', [
-                    'order_number' => $orderNumber,
-                    'transaction_status' => $transactionStatus,
-                    'payment_type' => $paymentType,
-                ]);
+                    $order->update([
+                        'payment_method_detail' => $paymentType,
+                        'payment_channel' => $notificationData['bank'] ?? $notificationData['store'] ?? $paymentType,
+                        'payment_info' => $paymentData,
+                        'expiry_time' => $notificationData['expiry_time'] ?? null,
+                    ]);
+
+                    Log::info('Order payment pending', [
+                        'order_number' => $orderNumber,
+                        'transaction_status' => $transactionStatus,
+                    ]);
+                }
             }
 
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to handle Midtrans notification', [
                 'error' => $e->getMessage(),
-                'data' => $request->all(),
             ]);
             return false;
         }

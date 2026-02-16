@@ -21,7 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         
         $middleware->validateCsrfTokens(except: [
-            '/posts/upload-image', // Bypass CSRF for image uploads from Trix
             '/webhooks/midtrans',  // Bypass CSRF for Midtrans payment notifications
         ]);
     })

@@ -68,6 +68,9 @@ class GoogleAuthController extends Controller
             // Log the user in using the 'web' guard
             Auth::guard('web')->login($user);
 
+            // Regenerate session to prevent session fixation
+            request()->session()->regenerate();
+
             // Redirect to intended URL or default to my tickets page
             return redirect()->intended(route('tickets.my'));
 
