@@ -24,7 +24,7 @@ class TicketController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Ticket::with('place')->latest();
+        $query = Ticket::with('place')->withCount('orders')->latest();
 
         if ($request->filled('search')) {
             $search = $request->search;

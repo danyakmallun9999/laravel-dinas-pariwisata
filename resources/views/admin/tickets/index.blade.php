@@ -15,7 +15,7 @@
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
-                           placeholder="Cari tiket..." 
+                           placeholder="Cari tiket / destinasi..." 
                            class="w-full pl-9 pr-4 py-2 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm placeholder-gray-400 transition-all">
                 </form>
 
@@ -63,7 +63,10 @@
                             <thead class="bg-gray-50/50">
                                 <tr>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tiket</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Destinasi</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Tipe</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Harga</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Kuota</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Terjual</th>
                                     <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
@@ -72,44 +75,90 @@
                             <tbody class="divide-y divide-gray-100">
                                 @forelse($tickets as $ticket)
                                 <tr class="hover:bg-blue-50/30 transition-colors group {{ $loop->even ? 'bg-gray-50/30' : 'bg-white' }}">
+                                    {{-- Nama Tiket --}}
                                     <td class="px-6 py-5">
-                                        <div class="flex items-center gap-4">
-                                            <div class="flex-shrink-0 h-14 w-14 rounded-2xl overflow-hidden bg-blue-50 border border-blue-100 flex items-center justify-center">
-                                                <i class="fa-solid fa-ticket text-blue-500 text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex-shrink-0 h-11 w-11 rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
+                                                @if($ticket->place && $ticket->place->image_path)
+                                                    <img src="{{ str_starts_with($ticket->place->image_path, 'http') ? $ticket->place->image_path : (str_starts_with($ticket->place->image_path, 'images/') ? asset($ticket->place->image_path) : asset('storage/' . $ticket->place->image_path)) }}" 
+                                                         alt="{{ $ticket->place->name }}" 
+                                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                                @else
+                                                    <div class="w-full h-full flex items-center justify-center bg-blue-50">
+                                                        <i class="fa-solid fa-image text-blue-400 text-sm"></i>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="flex items-center gap-2">
-                                                    <p class="text-sm font-bold text-gray-900 line-clamp-1">{{ $ticket->title }}</p>
-                                                    @if($ticket->title_en || $ticket->description_en)
-                                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 bg-blue-50 rounded" title="Tersedia dalam Bahasa Inggris">
-                                                            <i class="fa-solid fa-language"></i> EN
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                <p class="text-xs text-gray-500 line-clamp-1 mt-0.5">{{ Str::limit(strip_tags($ticket->description), 50) }}</p>
+                                                <p class="text-sm font-bold text-gray-900">{{ $ticket->name }}</p>
+                                                @if($ticket->valid_days > 1)
+                                                    <p class="text-[11px] text-gray-400 mt-0.5">
+                                                        <i class="fa-regular fa-clock"></i> Berlaku {{ $ticket->valid_days }} hari
+                                                    </p>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>
+
+                                    {{-- Destinasi --}}
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-map-pin text-gray-400 text-xs"></i>
+                                            <span class="text-sm text-gray-700 font-medium">{{ $ticket->place->name ?? '-' }}</span>
+                                        </div>
+                                    </td>
+
+                                    {{-- Tipe Tiket --}}
+                                    <td class="px-6 py-5 text-center whitespace-nowrap">
+                                        @php
+                                            $typeConfig = match($ticket->type) {
+                                                'adult' => ['label' => 'Dewasa', 'classes' => 'bg-blue-50 text-blue-700 border-blue-100', 'icon' => 'fa-user'],
+                                                'child' => ['label' => 'Anak', 'classes' => 'bg-amber-50 text-amber-700 border-amber-100', 'icon' => 'fa-child'],
+                                                'foreigner' => ['label' => 'Mancanegara', 'classes' => 'bg-purple-50 text-purple-700 border-purple-100', 'icon' => 'fa-globe'],
+                                                default => ['label' => 'Umum', 'classes' => 'bg-gray-50 text-gray-700 border-gray-200', 'icon' => 'fa-users'],
+                                            };
+                                        @endphp
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border {{ $typeConfig['classes'] }}">
+                                            <i class="fa-solid {{ $typeConfig['icon'] }} text-[10px]"></i>
+                                            {{ $typeConfig['label'] }}
+                                        </span>
+                                    </td>
+
+                                    {{-- Harga --}}
                                     <td class="px-6 py-5 whitespace-nowrap">
                                         <div class="text-sm font-bold text-gray-900">
                                             Rp {{ number_format($ticket->price, 0, ',', '.') }}
                                         </div>
-                                        @if($ticket->quota)
-                                            <div class="text-xs text-gray-500 mt-0.5">
-                                                Kuota: {{ number_format($ticket->quota) }}
-                                            </div>
-                                        @else
-                                            <div class="text-xs text-green-600 mt-0.5 font-medium">
-                                                <i class="fa-solid fa-infinity text-[10px]"></i> Unlimited
+                                        @if($ticket->price_weekend)
+                                            <div class="text-[11px] text-orange-600 mt-0.5 font-medium">
+                                                <i class="fa-solid fa-sun text-[9px]"></i> Weekend: Rp {{ number_format($ticket->price_weekend, 0, ',', '.') }}
                                             </div>
                                         @endif
                                     </td>
+
+                                    {{-- Kuota --}}
+                                    <td class="px-6 py-5 text-center whitespace-nowrap">
+                                        @if($ticket->quota)
+                                            <div class="inline-flex flex-col items-center">
+                                                <span class="text-sm font-bold text-gray-900">{{ number_format($ticket->quota) }}</span>
+                                                <span class="text-[10px] text-gray-400 font-medium">/hari</span>
+                                            </div>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 text-xs text-green-600 font-semibold">
+                                                <i class="fa-solid fa-infinity text-[10px]"></i> Unlimited
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    {{-- Terjual --}}
                                     <td class="px-6 py-5 text-center whitespace-nowrap">
                                         <div class="inline-flex flex-col items-center">
                                             <span class="text-sm font-bold text-gray-900">{{ number_format($ticket->orders_count) }}</span>
                                             <span class="text-[10px] text-gray-400 font-medium">Tiket</span>
                                         </div>
                                     </td>
+
+                                    {{-- Status --}}
                                     <td class="px-6 py-5 text-center">
                                         @if($ticket->is_active)
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
@@ -122,6 +171,8 @@
                                             </span>
                                         @endif
                                     </td>
+
+                                    {{-- Aksi --}}
                                     <td class="px-6 py-5 text-right whitespace-nowrap">
                                         <div class="flex items-center justify-end gap-1">
                                             <a href="{{ route('admin.tickets.edit', $ticket) }}" 
@@ -130,7 +181,7 @@
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
                                             <button type="button"
-                                                    onclick="confirmDelete('{{ route('admin.tickets.destroy', $ticket) }}', '{{ $ticket->title }}')"
+                                                    onclick="confirmDelete('{{ route('admin.tickets.destroy', $ticket) }}', '{{ $ticket->name }}')"
                                                     class="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                     title="Hapus">
                                                 <i class="fa-solid fa-trash-can"></i>
@@ -140,7 +191,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-16 text-center">
+                                    <td colspan="8" class="px-6 py-16 text-center">
                                         <div class="flex flex-col items-center justify-center">
                                             <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
                                                 <i class="fa-solid fa-ticket text-2xl text-blue-400"></i>
@@ -164,66 +215,109 @@
                     <div class="md:hidden space-y-4 p-4">
                         @forelse ($tickets as $ticket)
                             <div class="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm relative">
-                                <div class="flex gap-4">
-                                    <!-- Icon -->
-                                    <div class="flex-shrink-0 h-14 w-14 rounded-xl overflow-hidden bg-blue-50 border border-blue-100 flex items-center justify-center">
-                                        <i class="fa-solid fa-ticket text-blue-500 text-xl"></i>
+                                {{-- Header: Status + Tipe --}}
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        @if($ticket->is_active)
+                                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                Aktif
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-gray-500">
+                                                Nonaktif
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    @php
+                                        $typeConfig = match($ticket->type) {
+                                            'adult' => ['label' => 'Dewasa', 'classes' => 'bg-blue-50 text-blue-700', 'icon' => 'fa-user'],
+                                            'child' => ['label' => 'Anak', 'classes' => 'bg-amber-50 text-amber-700', 'icon' => 'fa-child'],
+                                            'foreigner' => ['label' => 'Mancanegara', 'classes' => 'bg-purple-50 text-purple-700', 'icon' => 'fa-globe'],
+                                            default => ['label' => 'Umum', 'classes' => 'bg-gray-50 text-gray-700', 'icon' => 'fa-users'],
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold {{ $typeConfig['classes'] }}">
+                                        <i class="fa-solid {{ $typeConfig['icon'] }} text-[9px]"></i>
+                                        {{ $typeConfig['label'] }}
+                                    </span>
+                                </div>
+
+                                {{-- Ticket Info --}}
+                                <div class="flex gap-3">
+                                    <div class="flex-shrink-0 h-12 w-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
+                                        @if($ticket->place && $ticket->place->image_path)
+                                            <img src="{{ str_starts_with($ticket->place->image_path, 'http') ? $ticket->place->image_path : (str_starts_with($ticket->place->image_path, 'images/') ? asset($ticket->place->image_path) : asset('storage/' . $ticket->place->image_path)) }}" 
+                                                 alt="{{ $ticket->place->name }}" 
+                                                 class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center bg-blue-50">
+                                                <i class="fa-solid fa-image text-blue-400 text-sm"></i>
+                                            </div>
+                                        @endif
                                     </div>
                                     
-                                    <!-- Info -->
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex justify-between items-start mb-1">
-                                            <div class="flex items-center gap-2">
-                                                @if($ticket->is_active)
-                                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700">
-                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                        Aktif
-                                                    </span>
-                                                @else
-                                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-gray-500">
-                                                        Nonaktif
-                                                    </span>
-                                                @endif
-                                                
-                                                @if($ticket->title_en)
-                                                    <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">EN</span>
-                                                @endif
-                                            </div>
-                                            <span class="text-sm font-bold text-blue-600">
-                                                Rp {{ number_format($ticket->price / 1000, 0) }}k
-                                            </span>
-                                        </div>
-                                        
-                                        <h3 class="font-bold text-gray-900 line-clamp-1 mb-1 text-sm">{{ $ticket->title }}</h3>
-                                        
-                                        <div class="flex items-center justify-between text-xs text-gray-500 mt-2">
-                                            <span class="flex items-center gap-1.5">
-                                                <i class="fa-solid fa-cart-shopping text-gray-400"></i>
-                                                {{ number_format($ticket->orders_count) }} Terjual
-                                            </span>
-                                            
-                                            @if($ticket->quota)
-                                                <span class="flex items-center gap-1.5">
-                                                    <i class="fa-solid fa-chart-pie text-gray-400"></i>
-                                                    Sisa: {{ number_format($ticket->quota - $ticket->orders_count) }}
-                                                </span>
-                                            @else
-                                                <span class="flex items-center gap-1.5 text-green-600">
-                                                    <i class="fa-solid fa-infinity"></i>
-                                                    Unlimited
-                                                </span>
-                                            @endif
-                                        </div>
+                                        <h3 class="font-bold text-gray-900 line-clamp-1 text-sm">{{ $ticket->name }}</h3>
+                                        <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                                            <i class="fa-solid fa-map-pin text-[10px]"></i>
+                                            {{ $ticket->place->name ?? '-' }}
+                                        </p>
                                     </div>
                                 </div>
-                                
+
+                                {{-- Price & Details Grid --}}
+                                <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-50">
+                                    {{-- Harga Weekday --}}
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-medium uppercase">Harga Weekday</span>
+                                        <p class="text-sm font-bold text-gray-900">Rp {{ number_format($ticket->price, 0, ',', '.') }}</p>
+                                    </div>
+
+                                    {{-- Harga Weekend --}}
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-medium uppercase">Harga Weekend</span>
+                                        @if($ticket->price_weekend)
+                                            <p class="text-sm font-bold text-orange-600">Rp {{ number_format($ticket->price_weekend, 0, ',', '.') }}</p>
+                                        @else
+                                            <p class="text-xs text-gray-400 mt-0.5">Sama</p>
+                                        @endif
+                                    </div>
+
+                                    {{-- Kuota --}}
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-medium uppercase">Kuota Harian</span>
+                                        @if($ticket->quota)
+                                            <p class="text-sm font-bold text-gray-900">{{ number_format($ticket->quota) }}</p>
+                                        @else
+                                            <p class="text-xs text-green-600 font-semibold mt-0.5">
+                                                <i class="fa-solid fa-infinity text-[9px]"></i> Unlimited
+                                            </p>
+                                        @endif
+                                    </div>
+
+                                    {{-- Terjual --}}
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-medium uppercase">Terjual</span>
+                                        <p class="text-sm font-bold text-gray-900">{{ number_format($ticket->orders_count) }} <span class="text-gray-400 font-normal text-xs">tiket</span></p>
+                                    </div>
+                                </div>
+
+                                {{-- Masa Berlaku --}}
+                                @if($ticket->valid_days > 1)
+                                    <div class="mt-2 text-[11px] text-gray-500">
+                                        <i class="fa-regular fa-clock"></i> Masa berlaku: {{ $ticket->valid_days }} hari
+                                    </div>
+                                @endif
+
                                 <!-- Actions -->
-                                <div class="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-gray-50">
+                                <div class="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-gray-50">
                                     <a href="{{ route('admin.tickets.edit', $ticket) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg">
                                         Edit
                                     </a>
                                     <button type="button"
-                                            onclick="confirmDelete('{{ route('admin.tickets.destroy', $ticket) }}', '{{ $ticket->title }}')"
+                                            onclick="confirmDelete('{{ route('admin.tickets.destroy', $ticket) }}', '{{ $ticket->name }}')"
                                             class="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 rounded-lg">
                                         Hapus
                                     </button>
@@ -294,4 +388,15 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function confirmDelete(url, name) {
+            const component = document.querySelector('[x-data]');
+            if (component && component.__x) {
+                component.__x.$data.deleteUrl = url;
+                component.__x.$data.deleteName = name;
+                component.__x.$data.showDeleteModal = true;
+            }
+        }
+    </script>
 </x-app-layout>
