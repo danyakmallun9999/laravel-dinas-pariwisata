@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
     {
         // First: Create roles and permissions
         $this->call(RolePermissionSeeder::class);
+        
+        // Populate Indonesia Region Data (Provinces, Cities, Districts, Villages)
+        $this->call(\Laravolt\Indonesia\Seeds\DatabaseSeeder::class);
 
         // Second: Create admin users and assign roles
         $this->call(AdminUserSeeder::class);

@@ -4,19 +4,16 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Laravolt\Indonesia\Facade as Indonesia;
+use Laravolt\Indonesia\Models\Province;
+use Laravolt\Indonesia\Models\City;
 
 class LocationController extends Controller
 {
     public function provinces()
     {
         try {
-            $json = \Illuminate\Support\Facades\File::get(storage_path('app/json/provinces.json'));
-            $provinces = json_decode($json, true);
-            // Sort by name
-            usort($provinces, function ($a, $b) {
-                return strcmp($a['name'], $b['name']);
-            });
+            // Fetch provinces from database using Laravolt model
+            $provinces = Province::orderBy('name', 'asc')->get();
             return response()->json($provinces);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -31,19 +28,35 @@ class LocationController extends Controller
                 return response()->json(['error' => 'Province ID is required'], 400);
             }
 
-            $json = \Illuminate\Support\Facades\File::get(storage_path('app/json/cities.json'));
-            $allCities = json_decode($json, true);
+            // Fetch cities from database
+            // Note: Laravolt structure uses 'province_code' usually, but let's check if 'province_id' works or we need to query by relationship
+            // Laravolt Indonesia v0.39 usually relates via code or id. Let's try standard relation or where clause.
+            // Checking common usage: City::where('province_code', $province->code)->get(); 
+            // OR if the input is ID, we might need to find the province first.
+            // However, often the dropdown sends the ID (which might be the code in some setups, or auto-increment ID).
+            // Let's assume the frontend sends what the provinces endpoint returned.
+            // Laravolt provinces endpoint usually returns 'id' (int) and 'code' (string).
+            
+            // Let's implement robustly: try filtering by province_id (foreign key) first.
+            // Inspecting package: typically `cities` table has `province_code`.
+            
+            // Let's try to find by ID first to get the code, or just filter.
+            // If province_id is the auto-increment ID:
+            $province = Province::find($provinceId);
+            
+            if ($province) {
+                 $cities = City::where('province_code', $province->code)
+                            ->orderBy('name', 'asc')
+                            ->get();
+                 return response()->json($cities);
+            }
+            
+            // Fallback if province_id not found (maybe it was a code?)
+             $cities = City::where('province_code', $provinceId)
+                        ->orderBy('name', 'asc')
+                        ->get();
 
-            $cities = array_filter($allCities, function ($city) use ($provinceId) {
-                return $city['province_id'] == $provinceId;
-            });
-
-            // Sort by name
-            usort($cities, function ($a, $b) {
-                return strcmp($a['name'], $b['name']);
-            });
-
-            return response()->json(array_values($cities));
+            return response()->json($cities);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
