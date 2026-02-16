@@ -124,6 +124,13 @@ class PostController extends Controller
 
     public function uploadImage(Request $request): \Illuminate\Http\JsonResponse
     {
+        // HIGH-02: Authorization + strict file validation
+        $this->authorize('create', Post::class);
+
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,gif,webp|max:5120',
+        ]);
+
         if ($request->hasFile('file')) {
             $url = $this->fileService->upload($request->file('file'), 'uploads/content');
 

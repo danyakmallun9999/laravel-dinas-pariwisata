@@ -110,18 +110,22 @@ class BookingController extends Controller
                     throw new \Exception('Kuota tiket tidak mencukupi. Silakan pilih tanggal lain.');
                 }
 
+                // Create order — guarded fields (total_price, unit_price, status) set explicitly
                 $order = TicketOrder::create($booking);
+                $order->total_price = $booking['total_price'];
+                $order->unit_price = $booking['unit_price'];
+                $order->status = 'pending';
+                $order->save();
 
                 $response = $this->midtransService->createCoreCharge($order, $paymentType, $bank);
                 $paymentData = $this->midtransService->extractPaymentData($response, $paymentType, $bank);
 
-                $order->update([
-                    'payment_gateway_id' => $response->transaction_id ?? null,
-                    'payment_method_detail' => $paymentType,
-                    'payment_channel' => $bank ?? $paymentType,
-                    'payment_info' => $paymentData,
-                    'expiry_time' => $response->expiry_time ?? now()->addMinutes(2),
-                ]);
+                $order->payment_gateway_id = $response->transaction_id ?? null;
+                $order->payment_method_detail = $paymentType;
+                $order->payment_channel = $bank ?? $paymentType;
+                $order->payment_info = $paymentData;
+                $order->expiry_time = $response->expiry_time ?? now()->addMinutes(2);
+                $order->save();
 
                 session()->put("payment_data.{$order->order_number}", $paymentData);
                 session()->forget('ticket_booking');

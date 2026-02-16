@@ -34,29 +34,38 @@ class GoogleAuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
             
-            // Find or create user
-            $user = User::where('google_id', $googleUser->getId())
-                ->orWhere('email', $googleUser->getEmail())
-                ->first();
+            // MED-01: Prioritize google_id match first, separate from email match
+            // This prevents account takeover via email-based linking
+            $user = User::where('google_id', $googleUser->getId())->first();
 
-            if ($user) {
-                // Update existing user with Google ID if not set
-                if (!$user->google_id) {
-                    $user->update([
+            if (!$user) {
+                // Only link by email if the account has no Google ID yet
+                $existingUser = User::where('email', $googleUser->getEmail())
+                    ->whereNull('google_id')
+                    ->first();
+
+                if ($existingUser) {
+                    // Block admin accounts from being linked via Google
+                    if ($existingUser->isAdmin()) {
+                        return redirect()->route('welcome')
+                            ->with('error', __('Admin users cannot login via Google. Please use the admin login page.'));
+                    }
+
+                    $existingUser->update([
                         'google_id' => $googleUser->getId(),
                         'avatar' => $googleUser->getAvatar(),
                     ]);
+                    $user = $existingUser;
+                } else {
+                    // Create new public user
+                    $user = User::create([
+                        'name' => $googleUser->getName(),
+                        'email' => $googleUser->getEmail(),
+                        'google_id' => $googleUser->getId(),
+                        'avatar' => $googleUser->getAvatar(),
+                        'email_verified_at' => now(),
+                    ]);
                 }
-            } else {
-                // Create new public user
-                $user = User::create([
-                    'name' => $googleUser->getName(),
-                    'email' => $googleUser->getEmail(),
-                    'google_id' => $googleUser->getId(),
-                    'avatar' => $googleUser->getAvatar(),
-                    'is_admin' => false,
-                    'email_verified_at' => now(),
-                ]);
             }
 
             // Ensure user is not an admin

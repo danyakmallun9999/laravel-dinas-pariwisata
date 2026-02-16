@@ -13,7 +13,7 @@ class TicketOrder extends Model
 
     protected $fillable = [
         'ticket_id',
-        'user_id', // Added
+        'user_id',
         'order_number',
         'ticket_number',
         'customer_name',
@@ -21,11 +21,6 @@ class TicketOrder extends Model
         'customer_phone',
         'visit_date',
         'quantity',
-        'total_price',
-        'tax_amount', // Added
-        'app_fee', // Added
-        'discount_amount', // Added
-        'status',
         'payment_method',
         'qr_code',
         'notes',
@@ -34,19 +29,32 @@ class TicketOrder extends Model
         'payment_gateway_url',
         'payment_method_detail',
         'payment_channel',
-        'paid_at',
-        'payed_at',
         'check_in_time',
-        'unit_price',
         'customer_city',
         'customer_country',
         'customer_province',
-        'payment_gateway_ref',
-        'refund_status',
-        'refund_amount', // Added
-        'refunded_at', // Added
         'expiry_time',
         'payment_info',
+    ];
+
+    /**
+     * Security-sensitive fields — only set explicitly, never from mass assignment.
+     * Prevents price manipulation, status tampering, and refund fraud.
+     */
+    protected $guarded = [
+        'total_price',
+        'unit_price',
+        'tax_amount',
+        'app_fee',
+        'discount_amount',
+        'status',
+        'paid_at',
+        'payed_at',
+        'refund_status',
+        'refund_amount',
+        'refunded_at',
+        'payment_gateway_ref',
+        'scanned_by',
     ];
 
     protected $casts = [
@@ -307,7 +315,8 @@ class TicketOrder extends Model
                         }
                     }
 
-                    $locked->update(['status' => 'cancelled']);
+                    $locked->status = 'cancelled';
+                    $locked->save();
                     $this->refresh();
                     return true;
                 }

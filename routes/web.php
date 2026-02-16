@@ -72,9 +72,9 @@ Route::middleware('auth.user')->prefix('tiket-saya')->group(function () {
 // E-Ticket detail (Public) - wildcard route MUST be last to avoid catching specific routes above
 Route::get('/e-tiket/{ticket}', [App\Http\Controllers\Public\TicketController::class, 'show'])->name('tickets.show');
 
-// Webhook route (no CSRF protection, rate-limited to prevent DoS)
+// Webhook route (no CSRF protection, rate-limited, IP-restricted in production)
 Route::post('/webhooks/midtrans', [App\Http\Controllers\WebhookController::class, 'handle'])
-    ->middleware('throttle:60,1')
+    ->middleware(['throttle:60,1', 'midtrans.ip'])
     ->name('webhooks.midtrans');
 
 Route::get('/dashboard', function () {

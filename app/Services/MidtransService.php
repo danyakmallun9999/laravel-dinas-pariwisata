@@ -352,12 +352,12 @@ class MidtransService
                         return;
                     }
 
-                    $order->update([
-                        'status' => 'paid',
-                        'paid_at' => now(),
-                        'payment_method_detail' => $paymentType,
-                        'payment_channel' => $notificationData['bank'] ?? $notificationData['store'] ?? $paymentType,
-                    ]);
+                    // Guarded fields set explicitly (CRIT-01 compatibility)
+                    $order->status = 'paid';
+                    $order->paid_at = now();
+                    $order->payment_method_detail = $paymentType;
+                    $order->payment_channel = $notificationData['bank'] ?? $notificationData['store'] ?? $paymentType;
+                    $order->save();
 
                     // Generate Ticket Number (also uses lock internally)
                     $order->generateTicketNumber();
@@ -387,7 +387,8 @@ class MidtransService
 
                     // Only cancel if still pending — never overwrite 'paid'
                     if ($order && $order->status === 'pending') {
-                        $order->update(['status' => 'cancelled']);
+                        $order->status = 'cancelled';
+                        $order->save();
                         Log::info('Order cancelled via Midtrans', [
                             'order_number' => $orderNumber,
                             'transaction_status' => $transactionStatus,

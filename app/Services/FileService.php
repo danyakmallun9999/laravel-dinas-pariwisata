@@ -8,6 +8,22 @@ use Illuminate\Support\Facades\Storage;
 class FileService
 {
     /**
+     * Allowed file extensions (lowercase).
+     * HIGH-04: Prevents upload of executable files (PHP, shell scripts, etc.).
+     */
+    private array $allowedExtensions = [
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico',
+        'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv',
+    ];
+
+    /**
+     * Dangerous patterns in filenames (e.g. shell.php.jpg).
+     */
+    private array $dangerousPatterns = [
+        '/\.(php|phtml|phar|sh|bash|exe|bat|cmd|com|ps1|py|rb|pl|cgi|asp|aspx|jsp|war)\./i',
+    ];
+
+    /**
      * Upload a file to the specified directory.
      *
      * @return string Full URL of the uploaded file
@@ -15,7 +31,21 @@ class FileService
     public function upload(UploadedFile $file, string $directory, string $disk = 'public'): string
     {
         $disk = env('FILESYSTEM_DISK', $disk);
-        
+
+        // HIGH-04: Validate extension whitelist
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, $this->allowedExtensions)) {
+            throw new \InvalidArgumentException("File type not allowed: {$extension}");
+        }
+
+        // HIGH-04: Block double extensions (e.g., shell.php.jpg)
+        $originalName = $file->getClientOriginalName();
+        foreach ($this->dangerousPatterns as $pattern) {
+            if (preg_match($pattern, $originalName)) {
+                throw new \InvalidArgumentException("Suspicious file name detected.");
+            }
+        }
+
         // Check if file is an image
         if (str_starts_with($file->getMimeType(), 'image/')) {
             $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());

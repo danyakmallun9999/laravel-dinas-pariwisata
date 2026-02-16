@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.user' => \App\Http\Middleware\EnsureUserAuthenticated::class,
             'permission' => \App\Http\Middleware\CheckPermission::class,
+            'midtrans.ip' => \App\Http\Middleware\MidtransIpWhitelist::class,
         ]);
         
         $middleware->web(append: [

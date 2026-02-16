@@ -172,11 +172,10 @@ class PaymentController extends Controller
                      DB::transaction(function() use ($order, $status) {
                         $locked = TicketOrder::lockForUpdate()->find($order->id);
                         if ($locked->status !== 'paid') {
-                            $locked->update([
-                                'status' => 'paid',
-                                'paid_at' => now(),
-                                'payment_method_detail' => $status->payment_type ?? null,
-                            ]);
+                            $locked->status = 'paid';
+                            $locked->paid_at = now();
+                            $locked->payment_method_detail = $status->payment_type ?? null;
+                            $locked->save();
                             $locked->generateTicketNumber();
                         }
                      });
@@ -198,7 +197,8 @@ class PaymentController extends Controller
         $this->authorize('view', $order);
 
         if ($order->status === 'pending' && $order->expiry_time && now()->greaterThan($order->expiry_time)) {
-             $order->update(['status' => 'cancelled']);
+             $order->status = 'cancelled';
+             $order->save();
         }
 
         return view('user.payment.failed', compact('order'));
@@ -253,11 +253,10 @@ class PaymentController extends Controller
                 DB::transaction(function () use ($order, $status) {
                     $lockedOrder = TicketOrder::lockForUpdate()->find($order->id);
                     if ($lockedOrder && $lockedOrder->status !== 'paid') {
-                        $lockedOrder->update([
-                            'status' => 'paid',
-                            'paid_at' => now(),
-                            'payment_method_detail' => $status->payment_type ?? null,
-                        ]);
+                        $lockedOrder->status = 'paid';
+                        $lockedOrder->paid_at = now();
+                        $lockedOrder->payment_method_detail = $status->payment_type ?? null;
+                        $lockedOrder->save();
                         $lockedOrder->generateTicketNumber();
                     }
                 });
@@ -265,7 +264,8 @@ class PaymentController extends Controller
             }
 
             if (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
-                $order->update(['status' => 'cancelled']);
+                $order->status = 'cancelled';
+                $order->save();
                 return response()->json(['success' => true, 'status' => 'cancelled']);
             }
 
@@ -293,7 +293,8 @@ class PaymentController extends Controller
                          Log::warning('Midtrans cancel failed', ['order' => $orderNumber, 'error' => $e->getMessage()]);
                     }
                 }
-                $locked->update(['status' => 'cancelled']);
+                $locked->status = 'cancelled';
+                $locked->save();
                 Log::info('Order cancelled by user', ['order' => $orderNumber]);
             }
         });

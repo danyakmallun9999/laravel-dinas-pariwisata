@@ -29,6 +29,10 @@ class AdminController extends Controller
 
     public function destroyImage(\App\Models\PlaceImage $placeImage): JsonResponse
     {
+        // HIGH-01: Authorize via parent Place ownership
+        $place = $placeImage->place;
+        $this->authorize('update', $place);
+
         // Delete from storage
         if ($placeImage->image_path) {
             $this->placeService->deleteImage($placeImage->image_path);
