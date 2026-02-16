@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,7 +14,7 @@ class SampleAdminSeeder extends Seeder
     public function run(): void
     {
         // Admin Wisata - Tourism content manager
-        $adminWisata = User::create([
+        $adminWisata = Admin::create([
             'name' => 'Admin Wisata',
             'email' => 'wisata@jepara.go.id',
             'password' => Hash::make('password'),
@@ -28,7 +28,7 @@ class SampleAdminSeeder extends Seeder
         $this->command->info('Admin Wisata created: wisata@jepara.go.id / password');
 
         // Admin Berita - News and events manager
-        $adminBerita = User::create([
+        $adminBerita = Admin::create([
             'name' => 'Admin Berita',
             'email' => 'berita@jepara.go.id',
             'password' => Hash::make('password'),

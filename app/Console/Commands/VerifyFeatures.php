@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\User;
+use App\Models\Admin;
 use App\Models\Place;
 use App\Services\DashboardService;
 use Spatie\Permission\Models\Role;
@@ -42,18 +42,18 @@ class VerifyFeatures extends Command
         }
 
         // 1. Setup Data
-        $superAdmin = User::role('super_admin', 'admin')->first();
+        $superAdmin = Admin::role('super_admin', 'admin')->first();
         if (!$superAdmin) {
             $this->info("Creating Super Admin...");
-            $superAdmin = User::factory()->create(['name' => 'Super Test', 'email' => 'supertest@example.com']);
+            $superAdmin = Admin::factory()->create(['name' => 'Super Test', 'email' => 'supertest@example.com', 'is_admin' => true]);
             $role = Role::findByName('super_admin', 'admin');
             $superAdmin->assignRole($role);
         }
 
-        $manager = User::where('email', 'managertest@example.com')->first();
+        $manager = Admin::where('email', 'managertest@example.com')->first();
         if (!$manager) {
             $this->info("Creating Manager...");
-            $manager = User::factory()->create(['name' => 'Manager Test', 'email' => 'managertest@example.com']);
+            $manager = Admin::factory()->create(['name' => 'Manager Test', 'email' => 'managertest@example.com', 'is_admin' => true]);
             $role = Role::findByName('pengelola_wisata', 'admin');
             $manager->assignRole($role);
         }

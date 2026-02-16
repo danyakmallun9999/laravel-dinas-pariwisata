@@ -90,6 +90,12 @@ class GoogleAuthController extends Controller
             // Regenerate session to prevent session fixation
             request()->session()->regenerate();
 
+            // ISO-05: Sanitize intended URL — never redirect Google users to admin routes
+            $intended = session('url.intended', route('tickets.my'));
+            if (str_starts_with(parse_url($intended, PHP_URL_PATH) ?? '', '/admin')) {
+                session()->forget('url.intended');
+            }
+
             // Redirect to intended URL or default to my tickets page
             return redirect()->intended(route('tickets.my'));
 

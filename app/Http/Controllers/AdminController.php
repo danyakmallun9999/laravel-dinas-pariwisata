@@ -48,8 +48,8 @@ class AdminController extends Controller
     {
         $query = Place::with('category')->latest();
 
-        if (!auth()->user()->can('view all destinations')) {
-            $query->where('created_by', auth()->id());
+        if (!auth('admin')->user()->can('view all destinations')) {
+            $query->where('created_by', auth('admin')->id());
         }
 
         $places = $query->paginate(10);
@@ -65,8 +65,8 @@ class AdminController extends Controller
         $query = Place::with('category')->latest();
 
         // Filter by ownership if user doesn't have global access
-        if (!auth()->user()->can('view all destinations')) {
-            $query->where('created_by', auth()->id());
+        if (!auth('admin')->user()->can('view all destinations')) {
+            $query->where('created_by', auth('admin')->id());
 
             // Redirect single-place managers directly to edit page if only one place exists
             // This streamlines their workflow as they manage only one entity
@@ -86,7 +86,7 @@ class AdminController extends Controller
         $places = $query->paginate(10);
 
         // Stats for the dashboard - query database directly for accurate totals
-        if (auth()->user()->can('view all destinations')) {
+        if (auth('admin')->user()->can('view all destinations')) {
             $stats = [
                 'total' => Place::count(),
                 'avg_rating' => Place::avg('rating') ?? 0,
@@ -95,9 +95,9 @@ class AdminController extends Controller
         } else {
             // Show only user's own stats
             $stats = [
-                'total' => Place::where('created_by', auth()->id())->count(),
-                'avg_rating' => Place::where('created_by', auth()->id())->avg('rating') ?? 0,
-                'with_photo' => Place::where('created_by', auth()->id())->whereNotNull('image_path')->where('image_path', '!=', '')->count(),
+                'total' => Place::where('created_by', auth('admin')->id())->count(),
+                'avg_rating' => Place::where('created_by', auth('admin')->id())->avg('rating') ?? 0,
+                'with_photo' => Place::where('created_by', auth('admin')->id())->whereNotNull('image_path')->where('image_path', '!=', '')->count(),
             ];
         }
 
@@ -123,7 +123,7 @@ class AdminController extends Controller
         
         $data = $request->validated();
         $data['rating'] = $data['rating'] ?? 0;
-        $data['created_by'] = auth()->id(); // Auto-assign ownership
+        $data['created_by'] = auth('admin')->id(); // Auto-assign ownership
 
         // Parse Rides and Facilities
         if (isset($data['rides'])) {
@@ -187,8 +187,8 @@ class AdminController extends Controller
         $categories = Category::orderBy('name')->get();
 
         // Check if user is a single place manager to adjust view logic (e.g. back button)
-        $isSinglePlaceManager = !auth()->user()->can('view all destinations') && 
-                                Place::where('created_by', auth()->id())->count() === 1;
+        $isSinglePlaceManager = !auth('admin')->user()->can('view all destinations') && 
+                                Place::where('created_by', auth('admin')->id())->count() === 1;
 
         return view('admin.places.edit', compact('categories', 'place', 'isSinglePlaceManager'));
     }

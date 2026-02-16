@@ -16,11 +16,15 @@ class CheckPermission
      */
     public function handle(Request $request, Closure $next, ...$permissions): Response
     {
-        if (!auth()->check()) {
+        // ISO-01: Use $request->user() to resolve from the guard set by auth middleware
+        // auth() without guard resolves default 'web' guard — wrong for admin routes
+        $user = $request->user();
+
+        if (!$user) {
             abort(403, 'Unauthorized - Not authenticated.');
         }
 
-        if (!auth()->user()->hasAnyPermission($permissions)) {
+        if (!$user->hasAnyPermission($permissions)) {
             abort(403, 'Unauthorized - Insufficient permissions.');
         }
 

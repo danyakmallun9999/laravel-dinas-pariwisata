@@ -174,7 +174,7 @@
                                                title="Edit User">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
-                                            @if($user->id !== auth()->id())
+                                            @if($user->id !== auth('admin')->id())
                                                 <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus admin ini?');">
                                                     @csrf
                                                     @method('DELETE')
@@ -226,7 +226,7 @@
                                         <a href="{{ route('admin.users.edit', $user) }}" class="p-2 text-gray-400 hover:text-blue-600">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
-                                        @if($user->id !== auth()->id())
+                                        @if($user->id !== auth('admin')->id())
                                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Hapus user?');">
                                                 @csrf
                                                 @method('DELETE')

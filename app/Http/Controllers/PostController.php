@@ -27,8 +27,8 @@ class PostController extends Controller
         $query = Post::latest();
 
         // Filter by ownership if user doesn't have global access
-        if (!auth()->user()->can('view all posts')) {
-            $query->where('created_by', auth()->id());
+        if (!auth('admin')->user()->can('view all posts')) {
+            $query->where('created_by', auth('admin')->id());
         }
 
         if ($request->filled('search')) {
@@ -56,7 +56,7 @@ class PostController extends Controller
         $this->authorize('create', Post::class);
         
         $validated = $request->validated();
-        $validated['created_by'] = auth()->id(); // Auto-assign ownership
+        $validated['created_by'] = auth('admin')->id(); // Auto-assign ownership
 
         $validated['slug'] = Str::slug($validated['title']).'-'.time();
         $validated['is_published'] = $request->has('is_published');

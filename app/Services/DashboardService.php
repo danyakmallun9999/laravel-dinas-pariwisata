@@ -17,7 +17,7 @@ class DashboardService
      */
     public function getDashboardStats(): array
     {
-        $user = auth()->user();
+        $user = auth('admin')->user();
         $viewAllPlaces = $user->can('view all destinations');
         $viewAllPosts = $user->can('view all posts');
         $viewAllEvents = $user->can('view all events');

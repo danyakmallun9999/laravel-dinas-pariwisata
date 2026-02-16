@@ -46,7 +46,7 @@ class FinancialReportController extends Controller
             $endDate = $endDate ?: Carbon::now()->endOfMonth()->toDateString();
         }
 
-        $user = auth()->user();
+        $user = auth('admin')->user();
         $userIdFilter = null;
 
         // If user can only view own reports, filter by their ID
@@ -105,7 +105,7 @@ class FinancialReportController extends Controller
             $endDate = $endDate ?: Carbon::now()->endOfMonth()->toDateString();
         }
 
-        $user = auth()->user();
+        $user = auth('admin')->user();
         $userIdFilter = null;
 
         if (!$user->can('view all financial reports') && $user->can('view own financial reports')) {

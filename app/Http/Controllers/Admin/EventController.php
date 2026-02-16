@@ -29,8 +29,8 @@ class EventController extends Controller
         $query = Event::query()
             ->whereYear('start_date', $year);
 
-        if (!auth()->user()->can('view all events')) {
-            $query->where('created_by', auth()->id());
+        if (!auth('admin')->user()->can('view all events')) {
+            $query->where('created_by', auth('admin')->id());
         }
 
         $eventsByMonth = $query->orderBy('start_date')
@@ -47,8 +47,8 @@ class EventController extends Controller
         $query = Event::query();
 
         // Filter by ownership if user doesn't have global access
-        if (!auth()->user()->can('view all events')) {
-            $query->where('created_by', auth()->id());
+        if (!auth('admin')->user()->can('view all events')) {
+            $query->where('created_by', auth('admin')->id());
         }
 
         if ($request->filled('search')) {
@@ -59,7 +59,7 @@ class EventController extends Controller
         $events = $query->latest('start_date')->paginate(10);
 
         // Stats for the dashboard
-        if (auth()->user()->can('view all events')) {
+        if (auth('admin')->user()->can('view all events')) {
             $stats = [
                 'total' => Event::count(),
                 'published' => Event::where('is_published', true)->count(),
@@ -68,9 +68,9 @@ class EventController extends Controller
         } else {
             // Show only user's own stats
             $stats = [
-                'total' => Event::where('created_by', auth()->id())->count(),
-                'published' => Event::where('created_by', auth()->id())->where('is_published', true)->count(),
-                'upcoming' => Event::where('created_by', auth()->id())->where('start_date', '>=', now())->count(),
+                'total' => Event::where('created_by', auth('admin')->id())->count(),
+                'published' => Event::where('created_by', auth('admin')->id())->where('is_published', true)->count(),
+                'upcoming' => Event::where('created_by', auth('admin')->id())->where('start_date', '>=', now())->count(),
             ];
         }
 
@@ -89,7 +89,7 @@ class EventController extends Controller
         $this->authorize('create', Event::class);
         
         $validated = $request->validated();
-        $validated['created_by'] = auth()->id(); // Auto-assign ownership
+        $validated['created_by'] = auth('admin')->id(); // Auto-assign ownership
 
         if ($request->hasFile('image')) {
             $validated['image'] = $this->fileService->upload($request->file('image'), 'events');

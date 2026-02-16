@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Place;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -32,7 +32,7 @@ class UserController extends Controller
         // For now, list all users but maybe visually distinguish
         // Or filter by is_admin = true
         
-        $users = User::where('is_admin', true)
+        $users = Admin::query()
             ->with(['roles', 'ownedPlaces'])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where(function($q) use ($request) {
@@ -63,7 +63,7 @@ class UserController extends Controller
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'exists:roles,name'],
             'place_id' => ['nullable', 'exists:places,id'],
@@ -74,15 +74,12 @@ class UserController extends Controller
             abort(403, 'Anda tidak dapat memberikan role super_admin.');
         }
 
-        $user = User::create([
+        $user = Admin::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'is_admin' => true,
         ]);
-
-        // is_admin is $guarded — must be set explicitly (not via mass assignment)
-        $user->is_admin = true;
-        $user->save();
 
         $role = Role::findByName($request->role, 'admin');
         $user->assignRole($role);
@@ -105,7 +102,7 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('status', 'Admin berhasil ditambahkan.');
     }
 
-    public function edit(User $user)
+    public function edit(Admin $user)
     {
         $this->authorizeSuperAdmin();
 
@@ -116,7 +113,7 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user', 'roles', 'places'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, Admin $user)
     {
         $this->authorizeSuperAdmin();
 
@@ -176,7 +173,7 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('status', 'Admin berhasil diperbarui.');
     }
 
-    public function destroy(User $user)
+    public function destroy(Admin $user)
     {
         $this->authorizeSuperAdmin();
 

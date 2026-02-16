@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Event;
 use App\Models\Place;
 use App\Models\Post;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
 
 class AssignOwnershipSeeder extends Seeder
@@ -16,7 +16,7 @@ class AssignOwnershipSeeder extends Seeder
     public function run(): void
     {
         // Get the super admin user
-        $superAdmin = User::role('super_admin', 'admin')->first();
+        $superAdmin = Admin::role('super_admin', 'admin')->first();
 
         if (!$superAdmin) {
             $this->command->error('Super Admin not found! Please run AdminUserSeeder first.');

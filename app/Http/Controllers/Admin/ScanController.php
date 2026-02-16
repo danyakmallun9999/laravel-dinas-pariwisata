@@ -125,7 +125,7 @@ class ScanController extends Controller
                 // SCAN-06: Track which operator scanned the ticket
                 $order->check_in_time = now();
                 $order->status = 'used';
-                $order->scanned_by = auth()->id();
+                $order->scanned_by = auth('admin')->id();
                 $order->save();
 
                 Log::info('Ticket scanned successfully', ['order' => $order->order_number]);

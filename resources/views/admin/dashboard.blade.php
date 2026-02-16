@@ -105,7 +105,7 @@
                 <!-- Places -->
                 @canany('view all destinations', 'view own destinations')
                     @php
-                        $isSinglePlaceManager = !auth()->user()->can('view all destinations') && $stats['places_count'] === 1;
+                        $isSinglePlaceManager = !auth('admin')->user()->can('view all destinations') && $stats['places_count'] === 1;
                     @endphp
 
                     @if($isSinglePlaceManager)
@@ -203,7 +203,7 @@
             </div>
 
             <!-- Admin Wisata Enhanced Dashboard -->
-            @if(auth()->user()->hasAnyPermission(['view all destinations', 'view own destinations', 'view all tickets']))
+            @if(auth('admin')->user()->hasAnyPermission(['view all destinations', 'view own destinations', 'view all tickets']))
 @php
     $formatCurrency = function ($value) {
         if (!is_numeric($value)) return 'Rp 0';
@@ -636,7 +636,7 @@
                 @endif
 
                 <!-- Post View Trends Chart -->
-                @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
+                @if(auth('admin')->user()->hasAnyPermission(['view all posts', 'view own posts']))
                 <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
@@ -653,10 +653,10 @@
 
 
             <!-- Berita & Agenda Breakdown (Admin Berita Only) -->
-            @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts', 'view all events', 'view own events']))
+            @if(auth('admin')->user()->hasAnyPermission(['view all posts', 'view own posts', 'view all events', 'view own events']))
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Post Status Breakdown -->
-                @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
+                @if(auth('admin')->user()->hasAnyPermission(['view all posts', 'view own posts']))
                 <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
@@ -698,7 +698,7 @@
                 @endif
 
                 <!-- Event Timeline Breakdown -->
-                @if(auth()->user()->hasAnyPermission(['view all events', 'view own events']))
+                @if(auth('admin')->user()->hasAnyPermission(['view all events', 'view own events']))
                 <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
@@ -747,7 +747,7 @@
             <!-- Row 5: Top Posts & Ticket Status (Side-by-Side) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                 <!-- Top Posts -->
-                @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
+                @if(auth('admin')->user()->hasAnyPermission(['view all posts', 'view own posts']))
                 <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
@@ -927,7 +927,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Recent Places -->
                 @canany('view all destinations', 'view own destinations')
-                @if(!(!auth()->user()->can('view all destinations') && $stats['places_count'] === 1))
+                @if(!(!auth('admin')->user()->can('view all destinations') && $stats['places_count'] === 1))
                 <div class="bg-white p-1 rounded-[2.5rem] border border-gray-200">
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">

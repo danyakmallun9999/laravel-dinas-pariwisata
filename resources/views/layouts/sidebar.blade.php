@@ -110,7 +110,7 @@
             <p x-show="!isSidebarMini" class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2 transition-opacity duration-300">Manajemen Pariwisata</p>
             <div x-show="isSidebarMini" class="border-t border-gray-100 my-2"></div>
 
-            @if(auth()->user()->hasAnyPermission(['view all destinations', 'view own destinations']))
+            @if(auth('admin')->user()->hasAnyPermission(['view all destinations', 'view own destinations']))
             <a href="{{ route('admin.places.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.places.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
                :class="isSidebarMini ? 'justify-center' : ''">
@@ -128,7 +128,7 @@
 
 
 
-            @if(auth()->user()->hasAnyPermission(['view all posts', 'view own posts']))
+            @if(auth('admin')->user()->hasAnyPermission(['view all posts', 'view own posts']))
             <a href="{{ route('admin.posts.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.posts.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
                :class="isSidebarMini ? 'justify-center' : ''">
@@ -144,7 +144,7 @@
             </a>
             @endif
 
-            @if(auth()->user()->hasAnyPermission(['view all events', 'view own events']))
+            @if(auth('admin')->user()->hasAnyPermission(['view all events', 'view own events']))
             <div x-data="{ eventsOpen: {{ request()->routeIs('admin.events.*') ? 'true' : 'false' }} }" class="relative">
                 <button @click="eventsOpen = !eventsOpen" 
                         class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.events.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
@@ -199,7 +199,7 @@
 
 
             <!-- E-Tiket Parent (Static Expanded) -->
-            @if(auth()->user()->can('view all tickets') || auth()->user()->hasAnyPermission(['view all financial reports', 'view own financial reports', 'view own tickets']))
+            @if(auth('admin')->user()->can('view all tickets') || auth('admin')->user()->hasAnyPermission(['view all financial reports', 'view own financial reports', 'view own tickets']))
             <div class="relative">
                 <div class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600"
                     :class="isSidebarMini ? 'justify-center' : 'justify-between'">
@@ -239,14 +239,14 @@
                     </a>
                     @endcan
 
-                    @if(auth()->user()->hasAnyPermission(['view all tickets', 'view own destinations']))
+                    @if(auth('admin')->user()->hasAnyPermission(['view all tickets', 'view own destinations']))
                     <a href="{{ route('admin.tickets.history') }}" 
                        class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tickets.history') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
                        <span class="{{ request()->routeIs('admin.tickets.history') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Riwayat Penjualan</span>
                     </a>
                     @endif
 
-                    @if(auth()->user()->hasAnyPermission(['view all financial reports', 'view own financial reports']))
+                    @if(auth('admin')->user()->hasAnyPermission(['view all financial reports', 'view own financial reports']))
                     <a href="{{ route('admin.reports.financial.index') }}" 
                        class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.reports.financial.*') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
                        <span class="{{ request()->routeIs('admin.reports.financial.*') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Laporan Keuangan</span>
