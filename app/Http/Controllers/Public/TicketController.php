@@ -59,11 +59,12 @@ class TicketController extends Controller
 
     /**
      * Verify that the authenticated user owns the order.
+     * SCAN-04: Abort if user is null (defense-in-depth).
      */
     private function verifyOrderOwnership(TicketOrder $order)
     {
         $user = Auth::guard('web')->user();
-        if ($user && $user->email !== $order->customer_email) {
+        if (!$user || $user->email !== $order->customer_email) {
             abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
         }
     }
@@ -300,14 +301,15 @@ class TicketController extends Controller
 
     /**
      * Show ticket view (for printing/downloading).
+     * SCAN-05: Filter by email in query to prevent order existence oracle.
      */
     public function downloadTicket($orderNumber)
     {
+        $user = Auth::guard('web')->user();
         $order = TicketOrder::with('ticket.place')
             ->where('order_number', $orderNumber)
+            ->where('customer_email', $user->email)
             ->firstOrFail();
-
-        $this->verifyOrderOwnership($order);
 
         if (! $order->ticket_number) {
             abort(404, 'Tiket belum diterbitkan via pembayaran.');
@@ -321,9 +323,10 @@ class TicketController extends Controller
      */
     public function downloadQrCode($orderNumber)
     {
-        $order = TicketOrder::where('order_number', $orderNumber)->firstOrFail();
-
-        $this->verifyOrderOwnership($order);
+        $user = Auth::guard('web')->user();
+        $order = TicketOrder::where('order_number', $orderNumber)
+            ->where('customer_email', $user->email)
+            ->firstOrFail();
 
         if (! $order->ticket_number) {
             abort(404, 'Tiket belum diterbitkan.');
@@ -386,9 +389,10 @@ class TicketController extends Controller
      */
     public function showQrCode($orderNumber)
     {
-        $order = TicketOrder::where('order_number', $orderNumber)->firstOrFail();
-
-        $this->verifyOrderOwnership($order);
+        $user = Auth::guard('web')->user();
+        $order = TicketOrder::where('order_number', $orderNumber)
+            ->where('customer_email', $user->email)
+            ->firstOrFail();
 
         if (! $order->ticket_number) {
             abort(404);
@@ -733,6 +737,8 @@ class TicketController extends Controller
 
     /**
      * Cancel a pending order
+     * SCAN-01: Uses DB::transaction + lockForUpdate to prevent cancel-vs-pay race.
+     * SCAN-08: Logs successful cancellations.
      */
     public function cancelOrder($orderNumber)
     {
@@ -742,25 +748,36 @@ class TicketController extends Controller
 
         $this->verifyOrderOwnership($order);
 
-        if ($order->status !== 'pending') {
-            return back()->with('error', 'Hanya pesanan pending yang bisa dibatalkan.');
-        }
+        return DB::transaction(function () use ($order, $orderNumber) {
+            // Re-fetch with lock to prevent race condition with webhook settlement
+            $lockedOrder = TicketOrder::lockForUpdate()->find($order->id);
 
-        if ($order->payment_gateway_id) {
-            try {
-                $this->midtransService->cancelTransaction($order->payment_gateway_id);
-            } catch (\Exception $e) {
-                Log::warning('Could not cancel Midtrans transaction', [
-                    'order_number' => $orderNumber,
-                    'error' => $e->getMessage(),
-                ]);
+            if ($lockedOrder->status !== 'pending') {
+                return back()->with('error', 'Hanya pesanan pending yang bisa dibatalkan.');
             }
-        }
 
-        $order->update(['status' => 'cancelled']);
+            if ($lockedOrder->payment_gateway_id) {
+                try {
+                    $this->midtransService->cancelTransaction($lockedOrder->payment_gateway_id);
+                } catch (\Exception $e) {
+                    Log::warning('Could not cancel Midtrans transaction', [
+                        'order_number' => $orderNumber,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
 
-        return redirect()->route('tickets.my')
-            ->with('success', 'Pesanan berhasil dibatalkan.');
+            $lockedOrder->update(['status' => 'cancelled']);
+
+            Log::info('Order cancelled by user', [
+                'order_number' => $orderNumber,
+                'user_email' => auth()->user()->email,
+                'had_payment' => (bool) $lockedOrder->payment_gateway_id,
+            ]);
+
+            return redirect()->route('tickets.my')
+                ->with('success', 'Pesanan berhasil dibatalkan.');
+        });
     }
 
     /**

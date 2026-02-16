@@ -122,9 +122,11 @@ class ScanController extends Controller
                 }
 
                 // Mark as Used (atomic — inside transaction + lock)
+                // SCAN-06: Track which operator scanned the ticket
                 $order->update([
                     'check_in_time' => now(),
                     'status' => 'used',
+                    'scanned_by' => auth()->id(),
                 ]);
 
                 Log::info('Ticket scanned successfully', ['order' => $order->order_number]);

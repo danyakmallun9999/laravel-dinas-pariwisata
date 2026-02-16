@@ -20,8 +20,11 @@ class WebhookController extends Controller
      */
     public function handle(Request $request)
     {
+        // SCAN-03: Only log safe fields — do NOT log full payload (contains signature_key)
         Log::info('Midtrans webhook received', [
-            'body' => $request->all(),
+            'order_id' => $request->input('order_id'),
+            'transaction_status' => $request->input('transaction_status'),
+            'payment_type' => $request->input('payment_type'),
         ]);
 
         try {

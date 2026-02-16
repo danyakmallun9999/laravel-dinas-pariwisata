@@ -286,16 +286,6 @@ class MidtransService
                 return true;
             }
 
-            // Log the webhook for idempotency
-            if ($transactionId) {
-                WebhookLog::create([
-                    'transaction_id' => $transactionId,
-                    'order_id' => $orderId,
-                    'transaction_status' => $transactionStatus,
-                    'payload' => $notificationData,
-                ]);
-            }
-
             // Extract order number from order_id (format: TICKET-{orderNumber}-{timestamp} or TICKET-{orderNumber})
             if (preg_match('/^TICKET-(.+)-\d+$/', $orderId, $matches)) {
                 $orderNumber = $matches[1];
@@ -313,8 +303,40 @@ class MidtransService
                     return true;
                 }
 
+                // SCAN-09: Cross-verify with Midtrans API for defense-in-depth
+                try {
+                    $apiStatus = $this->getTransactionStatus($orderId);
+                    $apiTransactionStatus = $apiStatus->transaction_status ?? null;
+                    if ($apiTransactionStatus && $apiTransactionStatus !== $transactionStatus) {
+                        Log::warning('Webhook status mismatch with Midtrans API', [
+                            'order_number' => $orderNumber,
+                            'webhook_status' => $transactionStatus,
+                            'api_status' => $apiTransactionStatus,
+                        ]);
+                        // Do not process — possible forge attempt
+                        return false;
+                    }
+                } catch (\Exception $e) {
+                    // API might be temporarily unavailable — proceed with webhook data
+                    Log::warning('Midtrans API cross-verification failed, proceeding', [
+                        'order_number' => $orderNumber,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+
                 // HIGH-02: Atomic payment confirmation with DB transaction + lock
-                DB::transaction(function () use ($orderNumber, $paymentType, $notificationData, $transactionStatus) {
+                // SCAN-07: WebhookLog insert moved inside transaction for atomicity
+                DB::transaction(function () use ($orderNumber, $paymentType, $notificationData, $transactionStatus, $transactionId, $orderId) {
+                    // Log webhook inside transaction — rolls back if order update fails
+                    if ($transactionId) {
+                        WebhookLog::create([
+                            'transaction_id' => $transactionId,
+                            'order_id' => $orderId,
+                            'transaction_status' => $transactionStatus,
+                            'payload' => $notificationData,
+                        ]);
+                    }
+
                     $order = TicketOrder::where('order_number', $orderNumber)
                         ->lockForUpdate()
                         ->first();
@@ -347,15 +369,47 @@ class MidtransService
                     ]);
                 });
             } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
-                $order = TicketOrder::where('order_number', $orderNumber)->first();
-                if ($order) {
-                    $order->update(['status' => 'cancelled']);
-                    Log::info('Order cancelled via Midtrans', [
-                        'order_number' => $orderNumber,
+                // SCAN-02: Atomic cancel with lock — prevent overwriting 'paid' status
+                DB::transaction(function () use ($orderNumber, $transactionStatus, $transactionId, $orderId, $notificationData) {
+                    // SCAN-07: WebhookLog inside transaction
+                    if ($transactionId) {
+                        WebhookLog::create([
+                            'transaction_id' => $transactionId,
+                            'order_id' => $orderId,
+                            'transaction_status' => $transactionStatus,
+                            'payload' => $notificationData,
+                        ]);
+                    }
+
+                    $order = TicketOrder::where('order_number', $orderNumber)
+                        ->lockForUpdate()
+                        ->first();
+
+                    // Only cancel if still pending — never overwrite 'paid'
+                    if ($order && $order->status === 'pending') {
+                        $order->update(['status' => 'cancelled']);
+                        Log::info('Order cancelled via Midtrans', [
+                            'order_number' => $orderNumber,
+                            'transaction_status' => $transactionStatus,
+                        ]);
+                    } elseif ($order && $order->status === 'paid') {
+                        Log::warning('Webhook tried to cancel already-paid order', [
+                            'order_number' => $orderNumber,
+                            'transaction_status' => $transactionStatus,
+                        ]);
+                    }
+                });
+            } elseif ($transactionStatus === 'pending') {
+                // Log webhook for pending status
+                if ($transactionId) {
+                    WebhookLog::create([
+                        'transaction_id' => $transactionId,
+                        'order_id' => $orderId,
                         'transaction_status' => $transactionStatus,
+                        'payload' => $notificationData,
                     ]);
                 }
-            } elseif ($transactionStatus === 'pending') {
+
                 $order = TicketOrder::where('order_number', $orderNumber)->first();
                 if ($order) {
                     $paymentData = $this->extractPaymentData((object) $notificationData, $paymentType, $notificationData['bank'] ?? null);
