@@ -1,12 +1,8 @@
-/**
- * Ticket Dashboard Charts — ApexCharts
- *
- * Two separate charts: Revenue & Transactions
- * Each with period filtering: 1H (day), 1M (week), 1B (month), 1T (year)
- * Data passed from Blade via window.__dashboardData (365 days of daily data)
- */
-
 import ApexCharts from 'apexcharts';
+window.ApexCharts = ApexCharts; // Expose globally for peace of mind
+
+// ── Shared Palette ──
+// ... (rest of the file constants, formatters, etc.)
 
 // ── Shared Palette ──
 const COLORS = {
@@ -45,6 +41,7 @@ const PERIOD_LABELS = {
 let revenueChart = null;
 let ticketChart = null;
 let ticketTypeChart = null;
+let isBooting = false;
 
 // ── Full data (365 days) ──
 let fullLabels = [];
@@ -76,7 +73,7 @@ function buildAreaOptions({ seriesName, data, labels, color, yFormatter, tooltip
     return {
         series: [{ name: seriesName, data }],
         chart: {
-            type: 'area', // Changed from area to bar if needed, but area works too
+            type: 'area',
             height: height || 260,
             fontFamily: "'Inter', 'Segoe UI', sans-serif",
             toolbar: {
@@ -159,11 +156,23 @@ function buildAreaOptions({ seriesName, data, labels, color, yFormatter, tooltip
 //  1. Revenue Chart
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+function safeRender(chart, el) {
+    if (!chart || !el) return;
+    if (el.offsetWidth > 0 || el.offsetHeight > 0) {
+        chart.render().catch(() => {
+            setTimeout(() => safeRender(chart, el), 200);
+        });
+    } else {
+        setTimeout(() => safeRender(chart, el), 200);
+    }
+}
+
 function initRevenueChart() {
-    const el = document.getElementById('revenueChart');
+    const el = document.getElementById('ticketRevenueChart');
     if (!el) return;
 
-    const slice = sliceData(30); // Default 1B (30 days)
+    el.innerHTML = '';
+    const slice = sliceData(30);
     const opts = buildAreaOptions({
         seriesName: 'Pendapatan',
         data: slice.revenue,
@@ -174,25 +183,20 @@ function initRevenueChart() {
     });
 
     revenueChart = new ApexCharts(el, opts);
-    revenueChart.render();
+    safeRender(revenueChart, el);
     updateRevenueStats(slice);
 }
 
 function updateRevenueStats(slice, isMonthly = false) {
     const total = slice.revenue.reduce((a, b) => a + b, 0);
     const count = slice.labels.length || 1;
-    // For monthly view, slice.tickets is monthly totals. For daily view, it's daily totals.
     const txCount = slice.tickets.reduce((a, b) => a + b, 0);
     const max = Math.max(...slice.revenue);
 
     const el = (id) => document.getElementById(id);
     if (el('revTotal')) el('revTotal').textContent = formatRupiah(total);
     if (el('revAvg')) {
-        // adjust label for avg
         el('revAvg').textContent = formatRupiah(Math.round(total / count));
-        // optional: change label text from "Rata-rata/Hari" to "Rata-rata/Bulan" ??
-        // The HTML says "Rata-rata/Hari". We might want to update that text dynamically if strict correctness is needed.
-        // For now, let's keep it simple or update it via JS if element exists.
         const avgLabel = el('revAvg').nextElementSibling;
         if (avgLabel) avgLabel.textContent = isMonthly ? 'Rata-rata/Bulan' : 'Rata-rata/Hari';
     }
@@ -206,27 +210,17 @@ function updateRevenueStats(slice, isMonthly = false) {
 
 window.filterRevenueChart = function (period) {
     if (!revenueChart) return;
-
     let slice;
     const isMonthly = period === '1T';
-
     if (isMonthly) {
-        // Use monthly data
-        slice = {
-            labels: monthlyLabels,
-            revenue: monthlyRevenue,
-            tickets: monthlyTickets
-        };
+        slice = { labels: monthlyLabels, revenue: monthlyRevenue, tickets: monthlyTickets };
     } else {
-        const days = PERIOD_DAYS[period] || 30;
-        slice = sliceData(days);
+        slice = sliceData(PERIOD_DAYS[period] || 30);
     }
-
     revenueChart.updateOptions({
         series: [{ name: 'Pendapatan', data: slice.revenue }],
         xaxis: { categories: slice.labels },
     }, true, true);
-
     updateRevenueStats(slice, isMonthly);
     const label = document.getElementById('revenuePeriodLabel');
     if (label) label.textContent = PERIOD_LABELS[period] || '';
@@ -237,9 +231,10 @@ window.filterRevenueChart = function (period) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 function initTicketChart() {
-    const el = document.getElementById('ticketChart');
+    const el = document.getElementById('ticketTransactionChart');
     if (!el) return;
 
+    el.innerHTML = '';
     const slice = sliceData(30);
     const opts = buildAreaOptions({
         seriesName: 'Tiket Terjual',
@@ -251,7 +246,7 @@ function initTicketChart() {
     });
 
     ticketChart = new ApexCharts(el, opts);
-    ticketChart.render();
+    safeRender(ticketChart, el);
     updateTicketStats(slice);
 }
 
@@ -282,30 +277,17 @@ function updateTicketStats(slice, isMonthly = false) {
 
 window.filterTicketChart = function (period) {
     if (!ticketChart) return;
-
     let slice;
     const isMonthly = period === '1T';
-
     if (isMonthly) {
-        slice = {
-            labels: monthlyLabels,
-            // Ticket chart uses 'tickets' array (which is transaction count or ticket count depending on context)
-            // In dashboard blades, 'tickets' variable is passed which is `total_tickets`.
-            // The monthlyTickets variable is also `total_tickets`.
-            tickets: monthlyTickets,
-            // We don't need revenue here but keep struct consistent
-            revenue: monthlyRevenue
-        };
+        slice = { labels: monthlyLabels, tickets: monthlyTickets, revenue: monthlyRevenue };
     } else {
-        const days = PERIOD_DAYS[period] || 30;
-        slice = sliceData(days);
+        slice = sliceData(PERIOD_DAYS[period] || 30);
     }
-
     ticketChart.updateOptions({
         series: [{ name: 'Tiket Terjual', data: slice.tickets }],
         xaxis: { categories: slice.labels },
     }, true, true);
-
     updateTicketStats(slice, isMonthly);
     const label = document.getElementById('ticketPeriodLabel');
     if (label) label.textContent = PERIOD_LABELS[period] || '';
@@ -316,11 +298,11 @@ window.filterTicketChart = function (period) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 function initTicketTypeChart(data) {
-    const el = document.getElementById('ticketTypeChart');
+    const el = document.getElementById('ticketTypeDonutChart');
     if (!el || !data.ticketTypeLabels || data.ticketTypeLabels.length === 0) return;
 
+    el.innerHTML = '';
     const seriesData = (data.ticketTypeData || []).map(Number);
-
     const options = {
         series: seriesData,
         labels: data.ticketTypeLabels,
@@ -328,11 +310,7 @@ function initTicketTypeChart(data) {
             type: 'donut',
             height: 220,
             fontFamily: "'Inter', 'Segoe UI', sans-serif",
-            animations: {
-                enabled: true,
-                easing: 'easeinout',
-                speed: 800,
-            },
+            animations: { enabled: true, easing: 'easeinout', speed: 800 },
         },
         colors: CHART_PALETTE.slice(0, seriesData.length),
         plotOptions: {
@@ -341,52 +319,21 @@ function initTicketTypeChart(data) {
                     size: '72%',
                     labels: {
                         show: true,
-                        name: {
-                            show: true,
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: '#6b7280',
-                            offsetY: -4,
-                        },
-                        value: {
-                            show: true,
-                            fontSize: '20px',
-                            fontWeight: 800,
-                            color: '#1f2937',
-                            offsetY: 4,
-                            formatter: (val) => Number(val).toLocaleString('id-ID'),
-                        },
-                        total: {
-                            show: true,
-                            showAlways: true,
-                            label: 'Total',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: '#6b7280',
-                            formatter: (w) => {
-                                return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID');
-                            }
-                        }
+                        name: { show: true, fontSize: '12px', fontWeight: 600, color: '#6b7280', offsetY: -4 },
+                        value: { show: true, fontSize: '20px', fontWeight: 800, color: '#1f2937', offsetY: 4, formatter: (val) => Number(val).toLocaleString('id-ID') },
+                        total: { show: true, showAlways: true, label: 'Total', fontSize: '12px', fontWeight: 600, color: '#6b7280', formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID') }
                     }
                 }
             }
         },
         stroke: { width: 2, colors: ['#fff'] },
         dataLabels: { enabled: false },
-        tooltip: {
-            theme: 'dark',
-            style: { fontSize: '12px' },
-            y: { formatter: (val) => val.toLocaleString('id-ID') + ' tiket' },
-        },
+        tooltip: { theme: 'dark', style: { fontSize: '12px' }, y: { formatter: (val) => val.toLocaleString('id-ID') + ' tiket' } },
         legend: { show: false },
-        states: {
-            hover: { filter: { type: 'darken', value: 0.1 } },
-            active: { filter: { type: 'none' } },
-        },
     };
 
     ticketTypeChart = new ApexCharts(el, options);
-    ticketTypeChart.render();
+    safeRender(ticketTypeChart, el);
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -395,72 +342,80 @@ function initTicketTypeChart(data) {
 
 export function destroyDashboardCharts() {
     [revenueChart, ticketChart, ticketTypeChart].forEach(c => {
-        if (c) c.destroy();
+        if (c && typeof c.destroy === 'function') {
+            try { c.destroy(); } catch (e) { }
+        }
     });
     revenueChart = ticketChart = ticketTypeChart = null;
 }
 
 export function initDashboardCharts() {
-    // Ensure cleanup
-    destroyDashboardCharts();
-
     const data = window.__dashboardData;
     if (!data) return;
 
-    // Store full 365-day arrays (coerced to numbers)
-    fullLabels = data.labels || [];
-    fullRevenue = (data.revenue || []).map(Number);
-    fullTickets = (data.tickets || []).map(Number);
+    try {
+        destroyDashboardCharts();
+        fullLabels = data.labels || [];
+        fullRevenue = (data.revenue || []).map(Number);
+        fullTickets = (data.tickets || []).map(Number);
+        monthlyLabels = data.monthlyLabels || [];
+        monthlyRevenue = (data.monthlyRevenue || []).map(Number);
+        monthlyTickets = (data.monthlyTickets || []).map(Number);
 
-    // Store monthly data
-    monthlyLabels = data.monthlyLabels || [];
-    monthlyRevenue = (data.monthlyRevenue || []).map(Number);
-    monthlyTickets = (data.monthlyTickets || []).map(Number);
-
-    initRevenueChart();
-    initTicketChart();
-    initTicketTypeChart(data);
+        initRevenueChart();
+        initTicketChart();
+        initTicketTypeChart(data);
+    } catch (e) {
+        console.error('Failed to initialize dashboard charts:', e);
+    }
 }
 
-// ── Auto-init — handle both fresh load AND Vite HMR ──
-function boot(retryCount = 0) {
-    // Check if we're on the ticket dashboard page
-    const isTicketDashboard = document.getElementById('revenueChart') ||
-        document.getElementById('ticketChart') ||
-        document.getElementById('ticketTypeChart');
+let pollInterval = null;
 
-    if (!isTicketDashboard) {
-        return; // Not on ticket dashboard, skip initialization
+function boot(retryCount = 0) {
+    const elCheck = document.getElementById('ticketRevenueChart');
+    if (!elCheck) {
+        if (retryCount < 5) setTimeout(() => boot(retryCount + 1), 200);
+        return;
     }
 
     if (window.__dashboardData) {
         initDashboardCharts();
-    } else if (retryCount < 10) {
-        // Retry if data not ready yet
-        setTimeout(() => {
-            boot(retryCount + 1);
-        }, 100);
-    } else {
-        console.warn('Ticket dashboard data not found after retries');
+        startPolling();
+    } else if (retryCount < 15) {
+        setTimeout(() => boot(retryCount + 1), 200);
     }
 }
 
-// Livewire SPA Support
+function startPolling() {
+    if (pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(() => {
+        if (document.getElementById('ticketRevenueChart')) {
+            initDashboardCharts();
+        } else {
+            clearInterval(pollInterval);
+            pollInterval = null;
+        }
+    }, 60000);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => boot());
+} else {
+    boot();
+}
+
 document.addEventListener('livewire:navigated', () => {
-    // Destroy any existing charts first
     destroyDashboardCharts();
-    // Wait a bit for the new page's scripts to execute
-    setTimeout(() => {
-        boot();
-    }, 50);
+    setTimeout(() => boot(), 150);
 });
 
-// Listen for data-ready event (dispatched from ticket dashboard blade)
-document.addEventListener('ticket-dashboard-data-ready', () => {
-    boot();
-});
+document.addEventListener('ticket-dashboard-data-ready', () => boot());
 
 document.addEventListener('livewire:navigating', () => {
-    // Cleanup old charts before navigating away
     destroyDashboardCharts();
+    if (pollInterval) clearInterval(pollInterval);
 });
+
+
+

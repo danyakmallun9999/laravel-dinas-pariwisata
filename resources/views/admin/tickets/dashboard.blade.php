@@ -156,7 +156,7 @@
                                 </template>
                             </div>
                         </div>
-                        <div id="revenueChart"></div>
+                        <div id="ticketRevenueChart" class="min-h-[260px]"></div>
                         <!-- Revenue Quick Stats -->
                         <div class="grid grid-cols-4 gap-3 mt-5 pt-5 border-t border-gray-100" id="revenueStats">
                             <div class="text-center">
@@ -202,7 +202,7 @@
                                 </template>
                             </div>
                         </div>
-                        <div id="ticketChart"></div>
+                        <div id="ticketTransactionChart" class="min-h-[260px]"></div>
                         <!-- Ticket Quick Stats -->
                         <div class="grid grid-cols-4 gap-3 mt-5 pt-5 border-t border-gray-100" id="ticketStats">
                             <div class="text-center">
@@ -237,7 +237,7 @@
                                 <p class="text-xs text-gray-500">Berdasarkan tipe</p>
                             </div>
                         </div>
-                        <div id="ticketTypeChart" class="mx-auto"></div>
+                        <div id="ticketTypeDonutChart" class="mx-auto min-h-[220px]"></div>
                         <!-- Legend -->
                         <div class="mt-6 space-y-3">
                             @php $colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']; @endphp
