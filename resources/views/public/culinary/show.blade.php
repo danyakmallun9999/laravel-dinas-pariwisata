@@ -20,7 +20,7 @@
                     <nav class="flex" aria-label="Breadcrumb">
                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
                             <li class="inline-flex items-center">
-                                <a href="{{ route('welcome') }}" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                <a href="{{ route('welcome') }}" wire:navigate class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
                                     <span class="material-symbols-outlined text-lg mr-1">home</span>
                                     Home
                                 </a>
@@ -28,7 +28,7 @@
                             <li>
                                 <div class="flex items-center">
                                     <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
-                                    <a href="{{ route('welcome') }}#culinary" class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                    <a href="{{ route('welcome') }}#culinary" wire:navigate class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
                                         Kuliner
                                     </a>
                                 </div>
@@ -57,10 +57,10 @@
 
             <!-- Right Side: Scrollable Content (50%) -->
             <div class="lg:w-1/2 relative bg-white dark:bg-slate-950">
-                <main class="max-w-2xl mx-auto px-8 py-12 md:py-20 lg:px-16 lg:py-24">
+                <main class="max-w-2xl mx-auto px-8 py-12 md:py-20 lg:px-16 lg:py-24 stagger-entry">
                     
                     <!-- Header Section -->
-                    <div class="mb-10 animate-fade-in-up">
+                    <div class="mb-10">
                         <!-- Breadcrumbs / Badges -->
                         <div class="flex items-center gap-3 mb-4 text-sm">
                             <span class="px-3 py-1 rounded-full bg-primary/10 dark:bg-blue-900/30 text-primary dark:text-blue-400 font-bold uppercase tracking-wider text-xs border border-primary/20">

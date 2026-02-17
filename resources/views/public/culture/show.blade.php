@@ -9,14 +9,14 @@
     @endpush
     <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-20">
         
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 stagger-entry">
             
             <!-- Breadcrumbs -->
             <div class="mb-6">
                 <nav class="flex" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-3">
                         <li class="inline-flex items-center">
-                            <a href="{{ route('welcome') }}" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                            <a href="{{ route('welcome') }}" wire:navigate class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
                                 <span class="material-symbols-outlined text-lg mr-1">home</span>
                                 Home
                             </a>
@@ -24,7 +24,7 @@
                         <li>
                             <div class="flex items-center">
                                 <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
-                                <a href="{{ route('welcome') }}#culture" class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                <a href="{{ route('welcome') }}#culture" wire:navigate class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
                                     Budaya
                                 </a>
                             </div>
@@ -42,7 +42,7 @@
             </div>
 
             <!-- Header Section -->
-            <div class="text-center mb-10 animate-fade-in-up">
+            <div class="text-center mb-10">
                 <div class="inline-block px-4 py-1.5 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary font-bold uppercase tracking-wider text-xs border border-primary/20 mb-6">
                     Mengenal Budaya
                 </div>
@@ -58,13 +58,13 @@
             </div>
 
             <!-- Main Image -->
-            <div class="w-full aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl mb-12 animate-fade-in-up delay-100 relative group">
+            <div class="w-full aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl mb-12 relative group">
                 <img src="{{ asset($culture->image) }}" alt="{{ $culture->name }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
             </div>
 
             <!-- Content Body -->
-            <div class="animate-fade-in-up delay-200">
+            <div>
                 
                 <!-- Description -->
                 <div class="prose prose-lg prose-slate dark:prose-invert max-w-none font-light text-slate-600 dark:text-slate-300 leading-relaxed text-left text-justify mb-12">
