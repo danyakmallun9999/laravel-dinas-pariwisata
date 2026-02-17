@@ -30,13 +30,25 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Content-Security-Policy: Prevent XSS, clickjacking, data injection
-        // Adjusted to allow TinyMCE editor to function properly
+        // Adjusted to allow TinyMCE editor and local Vite dev server to function properly
+        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com";
+        $styleSrc = "'self' 'unsafe-inline' https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://fonts.googleapis.com";
+        $connectSrc = "'self' https://cdn.tiny.cloud https://api.mymemory.translated.net https://*.midtrans.com";
+        $fontSrc = "'self' data: https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://fonts.gstatic.com";
+
+        if (app()->environment('local')) {
+            $scriptSrc .= " http://localhost:5173 http://127.0.0.1:5173";
+            $styleSrc .= " http://localhost:5173 http://127.0.0.1:5173";
+            $connectSrc .= " http://localhost:5173 http://127.0.0.1:5173 ws://localhost:5173 ws://127.0.0.1:5173";
+            $fontSrc .= " http://localhost:5173 http://127.0.0.1:5173";
+        }
+
         $csp = "default-src 'self'; " .
-               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; " .
-               "style-src 'self' 'unsafe-inline' https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://fonts.googleapis.com; " .
+               "script-src $scriptSrc; " .
+               "style-src $styleSrc; " .
                "img-src 'self' data: https: blob:; " .
-               "font-src 'self' data: https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://fonts.gstatic.com; " .
-               "connect-src 'self' https://cdn.tiny.cloud https://api.mymemory.translated.net https://*.midtrans.com; " .
+               "font-src $fontSrc; " .
+               "connect-src $connectSrc; " .
                "frame-src 'self' https://cdn.tiny.cloud https://www.google.com; " .
                "object-src 'none'; " .
                "base-uri 'self'; " .
