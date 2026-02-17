@@ -73,13 +73,13 @@
                             paint: { 'raster-opacity': 1 }
                         }]
                     },
-                    center: [110.678, -6.589],
-                    zoom: 9.5, 
-                    minZoom: 9,
+                    center: [110.68, -6.45], // Shifted center north for better balance
+                    zoom: 10, 
+                    minZoom: 8,
                     maxZoom: 12,
-                    maxBounds: [[110.0, -7.0], [111.3, -5.9]],
+                    maxBounds: [[109.8, -7.2], [111.5, -5.4]],
                     renderWorldCopies: false,
-                    pitch: 0,
+                    pitch: 45,
                     attributionControl: false,
                     interactive: false
                 });
@@ -118,9 +118,9 @@
                     setTimeout(() => {
                         const isMobile = window.innerWidth < 768;
                         map.flyTo({
-                            center: [110.68, -6.59],
-                            zoom: isMobile ? 10 : 10.0,
-                            pitch: isMobile ? 45 : 60,
+                            center: [110.68, -6.45], // Keeping the northern focal point
+                            zoom: isMobile ? 10.2 : 10.0, // Zoomed in more
+                            pitch: isMobile ? 65 : 75,
                             bearing: 0,
                             speed: 0.5,
                             curve: 1.2,
