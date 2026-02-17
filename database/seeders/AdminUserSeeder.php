@@ -25,14 +25,18 @@ class AdminUserSeeder extends Seeder
         }
 
         // SECURITY: Use environment variable for initial password, or generate random one
-        $password = env('INITIAL_ADMIN_PASSWORD');
+        $envPassword = config('app.initial_admin_password', env('INITIAL_ADMIN_PASSWORD'));
+        $isRandomPassword = false;
         
-        if (empty($password)) {
+        if (empty($envPassword)) {
             // Generate a random password that must be changed on first login
             $password = Str::random(32);
+            $isRandomPassword = true;
             $this->command->warn('⚠️  No INITIAL_ADMIN_PASSWORD set in .env');
             $this->command->warn('⚠️  Generated random password - MUST be changed on first login!');
             $this->command->warn('⚠️  Password: ' . $password);
+        } else {
+            $password = $envPassword;
         }
 
         // Use Admin model so Spatie Permission resolves the correct 'admin' guard
@@ -52,7 +56,7 @@ class AdminUserSeeder extends Seeder
 
         $this->command->info('✅ Super Admin created: admin@jepara.go.id');
         
-        if (empty(env('INITIAL_ADMIN_PASSWORD'))) {
+        if ($isRandomPassword) {
             $this->command->warn('⚠️  IMPORTANT: Change password immediately after first login!');
         }
     }

@@ -95,13 +95,36 @@ Sistem memiliki manajemen hak akses yang detail untuk berbagai peran pengguna:
 
 ## 👤 Akun Admin Default
 
-Gunakan kredensial berikut untuk login ke Dashboard Admin (`/admin/login`):
+**🔐 Security Note:** Password admin sekarang menggunakan environment variables untuk keamanan.
+
+### Setup Environment Variables
+
+Tambahkan ke file `.env`:
+
+```env
+# Initial Super Admin Password (wajib untuk production)
+INITIAL_ADMIN_PASSWORD=your_secure_password_here
+
+# Sample Admin Password (hanya untuk development)
+SAMPLE_ADMIN_PASSWORD=password
+```
+
+Lihat dokumentasi lengkap: [SEEDER-ENVIRONMENT-VARIABLES.md](./SEEDER-ENVIRONMENT-VARIABLES.md)
+
+### Default Admin Accounts
+
+Setelah menjalankan `php artisan migrate:fresh --seed`, akun berikut akan dibuat:
 
 | Role | Email | Password | Deskripsi |
 | :--- | :--- | :--- | :--- |
-| **Super Admin** | `admin@jepara.go.id` | `adminwisata` | Akses penuh seluruh sistem. |
-| **Admin Wisata** | `wisata@jepara.go.id` | `password` | Mengelola destinasi dan tiket. |
-| **Admin Berita** | `berita@jepara.go.id` | `password` | Mengelola konten berita/event. |
+| **Super Admin** | `admin@jepara.go.id` | Dari `INITIAL_ADMIN_PASSWORD` atau random | Akses penuh seluruh sistem. |
+| **Admin Wisata** | `wisata@jepara.go.id` | Dari `SAMPLE_ADMIN_PASSWORD` (default: `password`) | Mengelola destinasi dan tiket. |
+| **Admin Berita** | `berita@jepara.go.id` | Dari `SAMPLE_ADMIN_PASSWORD` (default: `password`) | Mengelola konten berita/event. |
+
+**⚠️ Penting:** 
+- Jika `INITIAL_ADMIN_PASSWORD` tidak di-set, password random akan di-generate dan ditampilkan di console
+- Ganti password segera setelah first login untuk keamanan
+- Jangan jalankan seeder di production tanpa environment variables yang proper
 
 ## 📁 Struktur Direktori & Modul Penting
 

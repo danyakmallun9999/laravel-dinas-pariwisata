@@ -17,8 +17,8 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        // X-Frame-Options: Prevent clickjacking
-        $response->headers->set('X-Frame-Options', 'DENY');
+        // X-Frame-Options: Prevent clickjacking (allow same-origin for TinyMCE)
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
 
         // X-Content-Type-Options: Prevent MIME sniffing
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -30,18 +30,18 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Content-Security-Policy: Prevent XSS, clickjacking, data injection
-        // Adjust based on your application's needs
+        // Adjusted to allow TinyMCE editor to function properly
         $csp = "default-src 'self'; " .
                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; " .
-               "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; " .
+               "style-src 'self' 'unsafe-inline' https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://fonts.googleapis.com; " .
                "img-src 'self' data: https: blob:; " .
-               "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; " .
-               "connect-src 'self' https://api.mymemory.translated.net https://*.midtrans.com; " .
-               "frame-src 'self' https://www.google.com; " .
+               "font-src 'self' data: https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://fonts.gstatic.com; " .
+               "connect-src 'self' https://cdn.tiny.cloud https://api.mymemory.translated.net https://*.midtrans.com; " .
+               "frame-src 'self' https://cdn.tiny.cloud https://www.google.com; " .
                "object-src 'none'; " .
                "base-uri 'self'; " .
                "form-action 'self'; " .
-               "frame-ancestors 'none';";
+               "frame-ancestors 'self';";
         
         $response->headers->set('Content-Security-Policy', $csp);
 
