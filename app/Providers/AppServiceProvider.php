@@ -10,8 +10,8 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
-use App\Models\{Place, Event as EventModel, Post, User};
-use App\Policies\{PlacePolicy, EventPolicy, PostPolicy};
+use App\Models\{Place, Event as EventModel, Post, Category, Ticket, User};
+use App\Policies\{PlacePolicy, EventPolicy, PostPolicy, CategoryPolicy, TicketPolicy};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Place::class, PlacePolicy::class);
         Gate::policy(EventModel::class, EventPolicy::class);
         Gate::policy(Post::class, PostPolicy::class);
+        Gate::policy(Category::class, CategoryPolicy::class);
+        Gate::policy(Ticket::class, TicketPolicy::class);
 
         // Super admin bypass - super admins can do anything
         Gate::before(function (User $user, string $ability) {

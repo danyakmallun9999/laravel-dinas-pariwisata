@@ -13,6 +13,8 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Category::class);
+        
         $query = Category::withCount('places')->latest();
 
         if ($request->filled('search')) {
@@ -29,6 +31,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Category::class);
+        
         return view('admin.categories.create');
     }
 
@@ -37,6 +41,8 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Category::class);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'icon_class' => 'nullable|string|max:255',
@@ -61,6 +67,8 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
+        $this->authorize('view', $category);
+        
         // Not used widely, maybe redirect to places filtered by category?
         return redirect()->route('admin.places.index', ['category_id' => $category->id]);
     }
@@ -70,6 +78,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        $this->authorize('update', $category);
+        
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -78,6 +88,8 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
+        $this->authorize('update', $category);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'icon_class' => 'nullable|string|max:255',
@@ -101,6 +113,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $this->authorize('delete', $category);
+        
         // Delete related places or restrict?
         // Places cascade? migration said: ->onDelete('cascade')?
         // Let's check. Yes create_places_table had constrained()->cascadeOnDelete().

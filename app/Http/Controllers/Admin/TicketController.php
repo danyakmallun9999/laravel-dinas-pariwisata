@@ -24,6 +24,8 @@ class TicketController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Ticket::class);
+        
         $query = Ticket::with('place')->withCount('orders')->latest();
 
         if ($request->filled('search')) {
@@ -46,6 +48,8 @@ class TicketController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Ticket::class);
+        
         $places = Place::orderBy('name')->get();
         return view('admin.tickets.create', compact('places'));
     }
@@ -55,6 +59,8 @@ class TicketController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Ticket::class);
+        
         $request->validate([
             'place_id' => 'required|exists:places,id',
             'tickets' => 'required|array|min:1',
@@ -89,6 +95,8 @@ class TicketController extends Controller
      */
     public function show(Ticket $ticket)
     {
+        $this->authorize('view', $ticket);
+        
         $ticket->load('place', 'orders');
         return view('admin.tickets.show', compact('ticket'));
     }
@@ -98,6 +106,8 @@ class TicketController extends Controller
      */
     public function edit(Ticket $ticket)
     {
+        $this->authorize('update', $ticket);
+        
         $places = Place::orderBy('name')->get();
         return view('admin.tickets.edit', compact('ticket', 'places'));
     }
@@ -107,6 +117,8 @@ class TicketController extends Controller
      */
     public function update(Request $request, Ticket $ticket)
     {
+        $this->authorize('update', $ticket);
+        
         $validated = $request->validate([
             'place_id' => 'required|exists:places,id',
             'name' => 'required|string|max:255',
@@ -132,6 +144,8 @@ class TicketController extends Controller
      */
     public function destroy(Ticket $ticket)
     {
+        $this->authorize('delete', $ticket);
+        
         $ticket->delete();
 
         return redirect()->route('admin.tickets.index')

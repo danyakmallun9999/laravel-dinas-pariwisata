@@ -83,7 +83,7 @@
 
                     <!-- Article Body -->
                     <article class="tinymce-content text-gray-700 dark:text-gray-300">
-                        {!! $post->translated_content !!}
+                        {!! \App\Services\ContentSanitizer::sanitizeAllowHtml($post->translated_content) !!}
                     </article>
 
                     <!-- Tags -->

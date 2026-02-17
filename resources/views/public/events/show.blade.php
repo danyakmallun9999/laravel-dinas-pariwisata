@@ -114,7 +114,7 @@
                                     {{ __('Events.Detail.About') }}
                                 </h3>
                                 <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
-                                    {!! $event->description !!}
+                                    {!! \App\Services\ContentSanitizer::sanitizeAllowHtml($event->description) !!}
                                 </div>
                             </section>
     
