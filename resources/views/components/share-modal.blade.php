@@ -17,34 +17,34 @@
 }" class="relative inline-block">
 
     <!-- Trigger -->
-    <div @click="toggle()">
+    <div @click="toggle()" class="cursor-pointer">
         {{ $slot }}
     </div>
 
-    <!-- Modal Backdrop -->
-    <div 
-        x-show="shareOpen" 
-        x-transition:enter="transition ease-out duration-500"
-        x-transition:enter-start="opacity-0" 
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-300" 
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-[11000] bg-black/60 backdrop-blur-md"
-        style="display: none;"
-    >
-        <!-- Modal Content -->
+    <template x-teleport="body">
+
         <div 
-            @click.outside="shareOpen = false"
-            x-show="shareOpen"
-            x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-500"
-            x-transition:enter-start="opacity-0 scale-90" 
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition cubic-bezier(0.16, 1, 0.3, 1) duration-300" 
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-90"
-            class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-2xl border border-white/20 dark:border-slate-800"
+            x-show="shareOpen" 
+            x-cloak
+            x-transition:enter="transition ease-out duration-500"
+            x-transition:enter-start="opacity-0" 
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-300" 
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-[11000] bg-black/60 backdrop-blur-md flex items-center justify-center"
         >
+            <div 
+                @click.outside="shareOpen = false"
+                x-show="shareOpen"
+                x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-500"
+                x-transition:enter-start="opacity-0 scale-90" 
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition cubic-bezier(0.16, 1, 0.3, 1) duration-300" 
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-90"
+                class="relative w-[90%] max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-2xl border border-white/20 dark:border-slate-800"
+            >
             <!-- Header -->
             <div class="flex items-center justify-between mb-8">
                 <div>
@@ -131,5 +131,6 @@
                 Link tersalin ke clipboard!
             </p>
         </div>
-    </div>
+        </div>
+    </template>
 </div>

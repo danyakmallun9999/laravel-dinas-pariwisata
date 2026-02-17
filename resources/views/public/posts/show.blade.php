@@ -206,13 +206,19 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        document.addEventListener('livewire:navigated', () => {
+            const viewsChartEl = document.getElementById('viewsChart');
+            const tourismChartEl = document.getElementById('tourismChart');
+            
+            if (!viewsChartEl || !tourismChartEl) return;
+
             // Configuration for charts
             Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
             Chart.defaults.color = '#64748b'; // Slate-500
             Chart.defaults.scale.grid.color = 'rgba(226, 232, 240, 0.6)'; // Slate-200
 
             // 1. Article Views Chart (Line)
-            const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+            const viewsCtx = viewsChartEl.getContext('2d');
             const viewsData = @json($viewsGraph);
             
             new Chart(viewsCtx, {
@@ -272,7 +278,7 @@
             });
 
             // 2. Tourism Stats Chart (Bar)
-            const tourismCtx = document.getElementById('tourismChart').getContext('2d');
+            const tourismCtx = tourismChartEl.getContext('2d');
             const tourismData = @json($tourismStats['monthly_data']);
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
             
