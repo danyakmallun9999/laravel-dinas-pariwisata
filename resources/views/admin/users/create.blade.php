@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center gap-4">
-            <a href="{{ route('admin.users.index') }}" class="group inline-flex items-center justify-center w-10 h-10 bg-white rounded-xl border border-gray-200 shadow-sm hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-200">
+            <a href="{{ route('admin.users.index') }}" class="group inline-flex items-center justify-center w-10 h-10 bg-white rounded-xl border border-gray-200 shadow-sm hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-200" wire:navigate>
                 <i class="fa-solid fa-arrow-left text-sm text-gray-500 group-hover:text-blue-600"></i>
             </a>
             <div>
@@ -145,7 +145,7 @@
                         <!-- Action Buttons -->
                         <div class="flex items-center justify-end pt-6 border-t border-gray-100 gap-3">
                             <a href="{{ route('admin.users.index') }}" 
-                               class="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                               class="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors" wire:navigate>
                                 Batal
                             </a>
                             <button type="submit" 

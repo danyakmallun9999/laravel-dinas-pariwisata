@@ -8,7 +8,7 @@
                 </h2>
             </div>
             <a href="{{ route('admin.posts.create') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-xs md:text-sm text-white hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5">
+               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-xs md:text-sm text-white hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5" wire:navigate>
                 <i class="fa-solid fa-plus text-xs"></i>
                 <span class="hidden md:inline">Buat Baru</span>
                 <span class="md:hidden">Baru</span>
@@ -199,7 +199,7 @@
                                             <div class="flex items-center justify-end gap-1">
                                                 <a href="{{ route('admin.posts.edit', $post) }}" 
                                                    class="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200" 
-                                                   title="Edit">
+                                                   title="Edit" wire:navigate>
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
                                                 <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="inline-block delete-form">
@@ -224,7 +224,7 @@
                                                 <p class="text-gray-600 font-medium mb-1">Belum ada postingan</p>
                                                 <p class="text-sm text-gray-400 mb-4">Mulai dengan membuat berita atau agenda baru</p>
                                                 <a href="{{ route('admin.posts.create') }}" 
-                                                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                                                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors" wire:navigate>
                                                     <i class="fa-solid fa-plus"></i>
                                                     Buat Postingan
                                                 </a>
@@ -295,7 +295,7 @@
                                         @endif
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <a href="{{ route('admin.posts.edit', $post) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg">
+                                        <a href="{{ route('admin.posts.edit', $post) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg" wire:navigate>
                                             Edit
                                         </a>
                                         <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="delete-form">

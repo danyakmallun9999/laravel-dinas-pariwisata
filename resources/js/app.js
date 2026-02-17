@@ -23,15 +23,22 @@ import './charts/financial';
 
 // Ticket Dashboard — ApexCharts
 import './charts/dashboard';
+// Admin Main Dashboard - ApexCharts
+import './charts/admin-dashboard';
+
+// TinyMCE Global Handler
+import './plugins/tinymce';
 
 import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
 import intersect from '@alpinejs/intersect';
 import morph from '@alpinejs/morph';
 import CultureSection from './components/culture-section';
+import MapDrawer from './components/map-drawer';
 
 Alpine.plugin(intersect);
 Alpine.plugin(morph);
 Alpine.data('cultureSection', CultureSection);
+Alpine.data('mapDrawer', MapDrawer);
 
 // Register QR Scanner
 import registerQrScanner from './pages/admin/scan';

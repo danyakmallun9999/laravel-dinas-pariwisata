@@ -315,7 +315,7 @@
                                     <h3 class="text-lg font-bold text-gray-800">Transaksi Terbaru</h3>
                                     <p class="text-xs text-gray-500">5 pesanan terakhir</p>
                                 </div>
-                                <a href="{{ route('admin.tickets.orders') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                <a href="{{ route('admin.tickets.orders') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium" wire:navigate>
                                     Lihat Semua <i class="fa-solid fa-arrow-right ml-1"></i>
                                 </a>
                             </div>
@@ -428,24 +428,39 @@
 
     {{-- Dashboard Data Injection for ApexCharts --}}
     <script>
-        window.__dashboardData = {
-            labels:          {!! json_encode($salesChart['labels']) !!},
-            revenue:         {!! json_encode($salesChart['revenue']) !!},
-            tickets:         {!! json_encode($salesChart['tickets']) !!},
-            monthlyLabels:   {!! json_encode($monthlySalesChart['labels']) !!},
-            monthlyRevenue:  {!! json_encode($monthlySalesChart['revenue']) !!},
-            monthlyTickets:  {!! json_encode($monthlySalesChart['tickets']) !!},
-            ticketTypeLabels: {!! json_encode($ticketTypes->pluck('type')) !!},
-            ticketTypeData:   {!! json_encode($ticketTypes->pluck('count')) !!},
-        };
+        (function() {
+            // Set data immediately
+            window.__dashboardData = {
+                labels:          {!! json_encode($salesChart['labels']) !!},
+                revenue:         {!! json_encode($salesChart['revenue']) !!},
+                tickets:         {!! json_encode($salesChart['tickets']) !!},
+                monthlyLabels:   {!! json_encode($monthlySalesChart['labels']) !!},
+                monthlyRevenue:  {!! json_encode($monthlySalesChart['revenue']) !!},
+                monthlyTickets:  {!! json_encode($monthlySalesChart['tickets']) !!},
+                ticketTypeLabels: {!! json_encode($ticketTypes->pluck('type')) !!},
+                ticketTypeData:   {!! json_encode($ticketTypes->pluck('count')) !!},
+            };
 
-        // Alpine.js data (kept for x-data binding)
-        function dashboardData() {
-            return {
-                initAnimations() {
-                    // Animations removed
+            // Alpine.js data (kept for x-data binding)
+            function dashboardData() {
+                return {
+                    initAnimations() {
+                        // Animations removed
+                    }
                 }
             }
-        }
+            
+            // Dispatch event after DOM is ready (works for both initial load and SPA navigation)
+            const dispatchReady = () => {
+                document.dispatchEvent(new CustomEvent('ticket-dashboard-data-ready'));
+            };
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', dispatchReady);
+            } else {
+                // DOM already ready, but wait a tick to ensure all scripts are loaded
+                setTimeout(dispatchReady, 0);
+            }
+        })();
     </script>
 </x-app-layout>

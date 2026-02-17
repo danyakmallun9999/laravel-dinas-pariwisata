@@ -7,7 +7,7 @@
                     Riwayat Penjualan
                 </h2>
             </div>
-            <a href="{{ route('admin.tickets.orders') }}" class="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm">
+            <a href="{{ route('admin.tickets.orders') }}" class="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm" wire:navigate>
                 <i class="fa-solid fa-inbox text-xs md:text-sm"></i>
                 <span class="hidden md:inline">Pesanan Masuk</span>
             </a>
@@ -79,7 +79,7 @@
                             <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors">
                                 <i class="fa-solid fa-search mr-2"></i>Filter
                             </button>
-                            <a href="{{ route('admin.tickets.history') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium text-sm transition-colors" title="Reset Filter">
+                            <a href="{{ route('admin.tickets.history') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium text-sm transition-colors" title="Reset Filter" wire:navigate>
                                 <i class="fa-solid fa-sync"></i>
                             </a>
                         </div>
@@ -149,7 +149,7 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <button onclick="showQR('{{ $order->order_number }}')" class="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Lihat QR Code">
+                                            <button onclick="window.dispatchEvent(new CustomEvent('open-qr', { detail: '{{ $order->order_number }}' }))" class="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Lihat QR Code">
                                                 <i class="fa-solid fa-qrcode"></i>
                                             </button>
                                         </td>
@@ -223,7 +223,7 @@
                                 </div>
                                 
                                 <div class="flex justify-end pt-2 border-t border-gray-50">
-                                    <button onclick="showQR('{{ $order->order_number }}')" class="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors font-bold text-xs" title="Lihat QR Code">
+                                    <button onclick="window.dispatchEvent(new CustomEvent('open-qr', { detail: '{{ $order->order_number }}' }))" class="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors font-bold text-xs" title="Lihat QR Code">
                                         <i class="fa-solid fa-qrcode"></i> Lihat QR Code
                                     </button>
                                 </div>
@@ -245,93 +245,103 @@
         </div>
     </div>
 
-    <!-- Reuse QR Modal from Orders Page -->
-    <div id="qrModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-800">QR Code Tiket</h3>
-                <button onclick="closeQR()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fa-solid fa-xmark text-xl"></i>
+    <!-- QR Code Modal (Alpine.js controlled) -->
+    <style> [x-cloak] { display: none !important; } </style>
+    <div x-data="{
+            open: false,
+            orderNumber: '',
+            init() {
+                window.addEventListener('open-qr', (e) => {
+                    this.show(e.detail);
+                });
+            },
+            show(number) {
+                this.orderNumber = number;
+                this.open = true;
+                
+                setTimeout(() => {
+                    const container = document.getElementById('qrcode-container');
+                    if(container && typeof QRCode !== 'undefined') {
+                        container.innerHTML = '';
+                        new QRCode(container, {
+                            text: number,
+                            width: 256,
+                            height: 256,
+                            colorDark : '#000000',
+                            colorLight : '#ffffff',
+                            correctLevel : QRCode.CorrectLevel.H
+                        });
+                        
+                        const canvas = container.querySelector('canvas');
+                        if(canvas) {
+                            canvas.style.width = '100%';
+                            canvas.style.height = '100%';
+                        }
+                    } else if (typeof QRCode === 'undefined') {
+                        console.error('QRCode library not loaded');
+                        if(container) container.innerHTML = '<p class=\'text-red-500\'>Error: QR Library not loaded</p>';
+                    }
+                }, 50);
+            },
+            download() {
+                const sourceCanvas = document.querySelector('#qrcode-container canvas');
+                if (!sourceCanvas) return;
+
+                const padding = 20;
+                const size = sourceCanvas.width;
+                const newSize = size + (padding * 2);
+
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = newSize;
+                finalCanvas.height = newSize;
+                const ctx = finalCanvas.getContext('2d');
+
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, newSize, newSize);
+                ctx.drawImage(sourceCanvas, padding, padding);
+
+                const url = finalCanvas.toDataURL('image/jpeg', 1.0);
+                const link = document.createElement('a');
+                link.download = `ticket-qr-${this.orderNumber}.jpg`;
+                link.href = url;
+                link.click();
+            }
+        }"
+        x-show="open" 
+        x-cloak
+        class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm"
+        @keydown.escape.window="open = false">
+        
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl transform transition-all"
+             @click.away="open = false">
+            
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">QR Code Tiket</h3>
+                <button @click="open = false" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div id="qrContent" class="text-center"></div>
-            <div class="mt-4 text-center">
-                <button onclick="downloadQR()" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition-colors">
-                    <i class="fa-solid fa-download mr-2"></i>Download QR Code
+            
+            <div class="text-center mb-6">
+                <div class="bg-gray-50 rounded-xl p-2 inline-block mb-4">
+                    <span class="font-mono font-bold text-gray-700 text-lg tracking-wider" x-text="orderNumber"></span>
+                </div>
+                
+                <div id="qrcode-container" class="mx-auto bg-white p-2 rounded-lg border border-gray-100 shadow-sm" style="width: 200px; height: 200px;"></div>
+                
+                <p class="text-sm text-gray-400 mt-4">Scan QR code ini di loket untuk verifikasi</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <button @click="open = false" class="px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors">
+                    Tutup
+                </button>
+                <button @click="download()" class="px-4 py-2.5 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Simpan
                 </button>
             </div>
         </div>
     </div>
-
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script>
-    let currentOrderNumber = '';
-
-    function showQR(orderNumber) {
-        currentOrderNumber = orderNumber;
-        document.getElementById('qrModal').classList.remove('hidden');
-        
-        const qrContent = document.getElementById('qrContent');
-        qrContent.innerHTML = `
-            <div class="text-sm text-gray-500 mb-4 font-mono">Order: ${orderNumber}</div>
-            <div id="qrcode" class="flex justify-center mb-2 mx-auto" style="width: 200px; height: 200px; overflow: hidden;"></div>
-        `;
-        
-        const qrContainer = document.getElementById("qrcode");
-        
-        new QRCode(qrContainer, {
-            text: orderNumber,
-            width: 800,
-            height: 800, 
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
-
-        const styleQR = () => {
-            const canvas = qrContainer.querySelector('canvas');
-            const img = qrContainer.querySelector('img');
-            if(canvas) {
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-            }
-            if(img) {
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.display = 'block';
-            }
-        };
-
-        styleQR();
-        setTimeout(styleQR, 0);
-    }
-
-    function closeQR() {
-        document.getElementById('qrModal').classList.add('hidden');
-    }
-
-    function downloadQR() {
-        const sourceCanvas = document.querySelector('#qrcode canvas');
-        if (!sourceCanvas) return;
-
-        const padding = 100;
-        const size = sourceCanvas.width;
-        const newSize = size + (padding * 2);
-        
-        const finalCanvas = document.createElement('canvas');
-        finalCanvas.width = newSize;
-        finalCanvas.height = newSize;
-        const ctx = finalCanvas.getContext('2d');
-
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, newSize, newSize);
-        ctx.drawImage(sourceCanvas, padding, padding);
-
-        const url = finalCanvas.toDataURL('image/jpeg', 1.0);
-        const link = document.createElement('a');
-        link.download = `ticket-qr-${currentOrderNumber}.jpg`;
-        link.href = url;
-        link.click();
-    }
-    </script>
 </x-app-layout>

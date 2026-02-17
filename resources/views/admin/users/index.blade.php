@@ -8,7 +8,7 @@
                 </h2>
             </div>
             <a href="{{ route('admin.users.create') }}" 
-               class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-semibold text-sm text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95">
+               class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-semibold text-sm text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95" wire:navigate>
                 <i class="fa-solid fa-plus text-xs"></i>
                 <span>Tambah Admin</span>
             </a>
@@ -121,7 +121,7 @@
                                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                                             </div>
                                             <div class="min-w-0">
-                                                <a href="{{ route('admin.users.edit', $user) }}" class="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors line-clamp-1">
+                                                <a href="{{ route('admin.users.edit', $user) }}" class="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors line-clamp-1" wire:navigate>
                                                     {{ $user->name }}
                                                 </a>
                                                 <div class="flex items-center gap-1.5 mt-1">
@@ -171,7 +171,7 @@
                                         <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                             <a href="{{ route('admin.users.edit', $user) }}" 
                                                class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all" 
-                                               title="Edit User">
+                                               title="Edit User" wire:navigate>
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
                                             @if($user->id !== auth('admin')->id())
@@ -223,7 +223,7 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-1">
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="p-2 text-gray-400 hover:text-blue-600">
+                                        <a href="{{ route('admin.users.edit', $user) }}" class="p-2 text-gray-400 hover:text-blue-600" wire:navigate>
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
                                         @if($user->id !== auth('admin')->id())

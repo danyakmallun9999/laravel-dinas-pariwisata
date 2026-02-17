@@ -46,6 +46,7 @@ let ticketChart = null; // New separate tx chart
 let paymentChart = null;
 let sparkGrossChart = null;
 let sparkTicketsChart = null;
+let isInitializing = false; // Flag to prevent multiple simultaneous initializations
 
 // Full 365-day data for filtering
 let fullLabels = [];
@@ -71,8 +72,22 @@ export function destroyFinancialCharts() {
  * Initialize all financial charts from window.__financialData.
  */
 export function initFinancialCharts() {
+    // Prevent multiple simultaneous initializations
+    if (isInitializing) {
+        console.log('Financial charts initialization already in progress, skipping...');
+        return;
+    }
+
+    isInitializing = true;
+
+    // Ensure any existing charts are destroyed before re-initializing
+    destroyFinancialCharts();
+
     const data = window.__financialData;
-    if (!data) return;
+    if (!data) {
+        isInitializing = false;
+        return;
+    }
 
     // Load 365-day data if available (fallback to daily arrays if not present)
     fullLabels = data.chartLabels || data.dailyLabels || [];
@@ -91,15 +106,26 @@ export function initFinancialCharts() {
         monthlyLen: monthlyLabels.length
     });
 
-    // 1. Revenue & Transaction Charts (Interactive)
-    initRevenueChart();
-    initTicketChart();
+    try {
+        // 1. Revenue & Transaction Charts (Interactive)
+        initRevenueChart();
+        initTicketChart();
 
-    // 2. Payment Method Distribution (Static based on date range)
-    initPaymentChart(data);
+        // 2. Payment Method Distribution (Static based on date range)
+        initPaymentChart(data);
 
-    // 3. Sparklines (Static based on date range)
-    initSparklines(data);
+        // 3. Sparklines (Static based on date range)
+        initSparklines(data);
+        
+        console.log('Financial charts initialized successfully');
+    } catch (error) {
+        console.error('Error initializing financial charts:', error);
+    } finally {
+        // Reset flag after initialization completes
+        setTimeout(() => {
+            isInitializing = false;
+        }, 100);
+    }
 }
 
 // ── Helper: Slice Data ──
@@ -201,6 +227,12 @@ function initRevenueChart() {
     const el = document.getElementById('revenueChart');
     if (!el) return;
 
+    // Destroy existing chart before creating new one
+    if (revenueChart instanceof ApexCharts) {
+        revenueChart.destroy();
+        revenueChart = null;
+    }
+
     const slice = sliceData(30);
     const opts = buildAreaOptions({
         seriesName: 'Pendapatan',
@@ -272,6 +304,12 @@ window.filterFinancialRevenue = function (period) {
 function initTicketChart() {
     const el = document.getElementById('ticketChart');
     if (!el) return;
+
+    // Destroy existing chart before creating new one
+    if (ticketChart instanceof ApexCharts) {
+        ticketChart.destroy();
+        ticketChart = null;
+    }
 
     const slice = sliceData(30);
     const opts = buildAreaOptions({
@@ -347,6 +385,12 @@ window.filterFinancialTickets = function (period) {
 function initPaymentChart(data) {
     const el = document.getElementById('paymentMethodChart');
     if (!el || !data.paymentLabels || data.paymentLabels.length === 0) return;
+
+    // Destroy existing chart before creating new one
+    if (paymentChart instanceof ApexCharts) {
+        paymentChart.destroy();
+        paymentChart = null;
+    }
 
     const paymentNumbers = (data.paymentData || []).map(Number);
 
@@ -429,6 +473,16 @@ function createSparkline(elId, seriesData, color) {
 }
 
 function initSparklines(data) {
+    // Destroy existing sparkline charts before creating new ones
+    if (sparkGrossChart instanceof ApexCharts) {
+        sparkGrossChart.destroy();
+        sparkGrossChart = null;
+    }
+    if (sparkTicketsChart instanceof ApexCharts) {
+        sparkTicketsChart.destroy();
+        sparkTicketsChart = null;
+    }
+
     const sparkRev = (data.sparkRevenue || []).map(Number);
     const sparkTix = (data.sparkTickets || []).map(Number);
     sparkGrossChart = createSparkline('sparkGross', sparkRev, COLORS.blue);
@@ -436,27 +490,83 @@ function initSparklines(data) {
 }
 
 // ── Auto-init ──
-function boot() {
+function boot(retryCount = 0) {
+    // Check if we're on the financial report page
+    const isFinancialPage = document.getElementById('revenueChart') ||
+        document.getElementById('ticketChart') ||
+        document.getElementById('paymentMethodChart');
+
+    if (!isFinancialPage) {
+        return; // Not on financial page, skip initialization
+    }
+
     if (window.__financialData) {
         initFinancialCharts();
-    } else {
+    } else if (retryCount < 10) {
+        // Retry if data not ready yet
         setTimeout(() => {
-            if (window.__financialData) initFinancialCharts();
+            boot(retryCount + 1);
         }, 100);
+    } else {
+        console.warn('Financial dashboard data not found after retries');
     }
 }
 
+// Helper function to try initialization
+const tryInitFinancial = () => {
+    setTimeout(() => {
+        boot();
+    }, 50);
+};
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
+    document.addEventListener('DOMContentLoaded', tryInitFinancial);
 } else {
-    boot();
+    tryInitFinancial();
 }
 
 // Livewire SPA Support
+let navigationTimeout = null;
 document.addEventListener('livewire:navigated', () => {
-    boot();
+    // Clear any pending initialization
+    if (navigationTimeout) {
+        clearTimeout(navigationTimeout);
+    }
+    
+    // Destroy any existing charts first
+    destroyFinancialCharts();
+    isInitializing = false; // Reset flag
+    
+    // Wait a bit for the new page's scripts to execute
+    navigationTimeout = setTimeout(() => {
+        boot();
+        navigationTimeout = null;
+    }, 150);
 });
 
 document.addEventListener('livewire:navigating', () => {
+    // Clear any pending initialization
+    if (navigationTimeout) {
+        clearTimeout(navigationTimeout);
+        navigationTimeout = null;
+    }
+    
+    // Cleanup old charts before navigating away
     destroyFinancialCharts();
+    isInitializing = false; // Reset flag
+});
+
+// Listen for data-ready event (dispatched from financial report blade)
+let dataReadyTimeout = null;
+document.addEventListener('financial-dashboard-data-ready', () => {
+    // Clear any pending initialization
+    if (dataReadyTimeout) {
+        clearTimeout(dataReadyTimeout);
+    }
+    
+    // Prevent duplicate calls
+    dataReadyTimeout = setTimeout(() => {
+        tryInitFinancial();
+        dataReadyTimeout = null;
+    }, 100);
 });

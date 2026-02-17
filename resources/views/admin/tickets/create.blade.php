@@ -7,7 +7,7 @@
                     Tambah Tiket Baru
                 </h2>
             </div>
-            <a href="{{ route('admin.tickets.index') }}" class="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm">
+            <a href="{{ route('admin.tickets.index') }}" class="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm" wire:navigate>
                 <i class="fa-solid fa-arrow-left text-xs md:text-sm"></i>
                 <span class="hidden md:inline">Kembali</span>
             </a>
@@ -200,7 +200,7 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
-                    <a href="{{ route('admin.tickets.index') }}" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
+                    <a href="{{ route('admin.tickets.index') }}" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors" wire:navigate>
                         Batal
                     </a>
                     <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-sm flex items-center gap-2">
@@ -231,9 +231,14 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // Refactored for SPA: Run on load and navigation
+        document.addEventListener('livewire:navigated', () => {
             const select = document.getElementById('place_id');
-            if (select.value) updatePlaceImage(select);
+            if (select && select.value) updatePlaceImage(select);
         });
+        
+        // Initial load check
+        const select = document.getElementById('place_id');
+        if (select && select.value) updatePlaceImage(select);
     </script>
 </x-app-layout>

@@ -401,6 +401,9 @@ export function destroyDashboardCharts() {
 }
 
 export function initDashboardCharts() {
+    // Ensure cleanup
+    destroyDashboardCharts();
+
     const data = window.__dashboardData;
     if (!data) return;
 
@@ -420,29 +423,57 @@ export function initDashboardCharts() {
 }
 
 // ── Auto-init — handle both fresh load AND Vite HMR ──
-function boot() {
+function boot(retryCount = 0) {
+    // Check if we're on the ticket dashboard page
+    const isTicketDashboard = document.getElementById('revenueChart') ||
+        document.getElementById('ticketChart') ||
+        document.getElementById('ticketTypeChart');
+
+    if (!isTicketDashboard) {
+        return; // Not on ticket dashboard, skip initialization
+    }
+
     if (window.__dashboardData) {
         initDashboardCharts();
-    } else {
+    } else if (retryCount < 10) {
+        // Retry if data not ready yet
         setTimeout(() => {
-            if (window.__dashboardData) initDashboardCharts();
+            boot(retryCount + 1);
         }, 100);
+    } else {
+        console.warn('Ticket dashboard data not found after retries');
     }
 }
 
+// Helper function to try initialization
+const tryInitDashboard = () => {
+    setTimeout(() => {
+        boot();
+    }, 50);
+};
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
+    document.addEventListener('DOMContentLoaded', tryInitDashboard);
 } else {
-    boot();
+    tryInitDashboard();
 }
 
 // Livewire SPA Support
 document.addEventListener('livewire:navigated', () => {
-    // Re-init charts if we landed on the dashboard
-    boot();
+    // Destroy any existing charts first
+    destroyDashboardCharts();
+    // Wait a bit for the new page's scripts to execute
+    setTimeout(() => {
+        boot();
+    }, 100);
 });
 
 document.addEventListener('livewire:navigating', () => {
     // Cleanup old charts before navigating away
     destroyDashboardCharts();
+});
+
+// Listen for data-ready event (dispatched from ticket dashboard blade)
+document.addEventListener('ticket-dashboard-data-ready', () => {
+    tryInitDashboard();
 });

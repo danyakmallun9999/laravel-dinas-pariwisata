@@ -12,7 +12,9 @@
     }
 @endphp
 
-<form action="{{ $action }}" method="POST" enctype="multipart/form-data" class="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-80px)] pb-20 lg:pb-0">
+<form action="{{ $action }}" method="POST" enctype="multipart/form-data" 
+      class="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-80px)] pb-20 lg:pb-0"
+      x-data="placeForm()">
     @csrf
     @if ($method !== 'POST')
         @method($method)
@@ -42,7 +44,9 @@
                         <input type="text" id="name_id" name="name" 
                                value="{{ old('name', $place->name) }}"
                                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                               required placeholder="Contoh: Pantai Kartini">
+                               required placeholder="Contoh: Pantai Kartini"
+                               x-ref="name"
+                               @input="sourceName = $el.value">
                         <x-input-error :messages="$errors->get('name')" class="mt-1" />
                     </div>
 
@@ -80,7 +84,9 @@
                         </label>
                         <textarea id="description_id" name="description" rows="3"
                                   class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                  placeholder="Deskripsi singkat lokasi...">{{ old('description', $place->description) }}</textarea>
+                                  placeholder="Deskripsi singkat lokasi..."
+                                  x-ref="description"
+                                  @input="sourceDesc = $el.value">{{ old('description', $place->description) }}</textarea>
                         <x-input-error :messages="$errors->get('description')" class="mt-1" />
                     </div>
 
@@ -102,10 +108,16 @@
                             <i class="fa-solid fa-language text-blue-600 text-xs"></i>
                             English Translation
                         </h4>
-                        <button type="button" id="auto-translate-btn" 
-                                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1.5">
-                            <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-                            Translate
+                        <button type="button" 
+                                @click="autoTranslate"
+                                :disabled="isTranslating"
+                                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <template x-if="!isTranslating">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles text-xs"></i> Translate</span>
+                            </template>
+                             <template x-if="isTranslating">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Translating...</span>
+                            </template>
                         </button>
                     </div>
                     
@@ -114,13 +126,15 @@
                         <input type="text" id="name_en" name="name_en" 
                                value="{{ old('name_en', $place->name_en) }}"
                                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
-                               placeholder="English name...">
+                               placeholder="English name..."
+                               x-ref="name_en">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-1.5">Description (English)</label>
                         <textarea id="description_en" name="description_en" rows="2"
                                   class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
-                                  placeholder="English description...">{{ old('description_en', $place->description_en) }}</textarea>
+                                  placeholder="English description..."
+                                  x-ref="description_en">{{ old('description_en', $place->description_en) }}</textarea>
                     </div>
                 </div>
 
@@ -147,9 +161,6 @@
                                    placeholder="Nomor telepon">
                         </div>
                     </div>
-
-                    <!-- Website field removed -->
-                    
                     
                     <!-- Social Media Repeater -->
                     <div x-data="{
@@ -386,7 +397,7 @@
 
         <!-- Footer Actions (Desktop Only) -->
         <div class="hidden lg:flex p-4 border-t border-gray-200 bg-gray-50 items-center justify-between gap-3">
-            <a href="{{ route('admin.places.index') }}"
+            <a href="{{ route('admin.places.index') }}" wire:navigate
                class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-white text-sm font-medium flex items-center gap-2">
                 <i class="fa-solid fa-arrow-left text-xs"></i>Batal
             </a>
@@ -412,7 +423,7 @@
 
     <!-- Footer Actions (Mobile Only) -->
     <div class="lg:hidden p-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between gap-3 fixed bottom-0 left-0 right-0 z-[15] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <a href="{{ route('admin.places.index') }}"
+        <a href="{{ route('admin.places.index') }}" wire:navigate
            class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium flex items-center gap-2">
             <i class="fa-solid fa-arrow-left text-xs"></i>Batal
         </a>
@@ -424,91 +435,73 @@
 </form>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const translateBtn = document.getElementById('auto-translate-btn');
-        if (translateBtn) {
-            translateBtn.addEventListener('click', async function() {
-                const btnOriginalText = translateBtn.innerHTML;
-                translateBtn.disabled = true;
-                translateBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-xs"></i> <span>Translating...</span>';
+    window.placeForm = function() {
+        return {
+            sourceName: @js(old('name', $place->name ?? '')),
+            sourceDesc: @js(old('description', $place->description ?? '')),
+            isTranslating: false,
 
+            init() {
+                // Initialize if needed
+            },
+
+            async autoTranslate() {
+                this.isTranslating = true;
+                const translateUrl = "{{ route('admin.posts.translate') }}";
                 let successCount = 0;
                 let errorCount = 0;
-                const translateUrl = "{{ route('admin.posts.translate') }}";
 
-                try {
-                    // Helper function for translation
-                    const translateText = async (text, targetId) => {
-                        if (!text) return;
+                const translateText = async (text, targetRef) => {
+                    if (!text) return;
+                    try {
+                        const response = await fetch(translateUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json' 
+                            },
+                            body: JSON.stringify({
+                                text: text,
+                                source: 'id',
+                                target: 'en'
+                            })
+                        });
 
-                        try {
-                            const response = await fetch(translateUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Accept': 'application/json' 
-                                },
-                                body: JSON.stringify({
-                                    text: text,
-                                    source: 'id',
-                                    target: 'en'
-                                })
-                            });
-
-                            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                            const data = await response.json();
-                            
-                            if (data.success) {
-                                document.getElementById(targetId).value = data.translation;
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            if (this.$refs[targetRef]) {
+                                this.$refs[targetRef].value = data.translation;
                                 successCount++;
-                            } else {
-                                console.error('Translation failed for ' + targetId + ':', data.message);
-                                errorCount++;
                             }
-                        } catch (e) {
-                            console.error('Translation exception for ' + targetId + ':', e);
+                        } else {
                             errorCount++;
                         }
-                    };
-
-                    // Translate Title/Name
-                    const titleSource = document.getElementById('name_id').value;
-                    await translateText(titleSource, 'name_en');
-
-                    // Wait 1.5s to avoid rate limiting from Google Translate
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-
-                    // Translate Description
-                    const descriptionElement = document.getElementById('description_id');
-                    const contentSource = descriptionElement ? descriptionElement.value : '';
-                    await translateText(contentSource, 'description_en');
-
-                    if (successCount > 0) {
-                        window.dispatchEvent(new CustomEvent('notify', { 
-                            detail: { message: 'Terjemahan berhasil!', type: 'success' } 
-                        }));
-                    } else if (errorCount > 0) {
-                        window.dispatchEvent(new CustomEvent('notify', { 
-                            detail: { message: 'Gagal menerjemahkan. Cek console untuk detail.', type: 'error' } 
-                        }));
-                    } else {
-                         window.dispatchEvent(new CustomEvent('notify', { 
-                            detail: { message: 'Tidak ada teks untuk diterjemahkan.', type: 'info' } 
-                        }));
+                    } catch (e) {
+                         console.error(e);
+                         errorCount++;
                     }
+                };
 
-                } catch (error) {
-                    console.error('General translation error:', error);
-                    window.dispatchEvent(new CustomEvent('notify', { 
-                        detail: { message: 'Terjemahan gagal. Terjadi kesalahan sistem.', type: 'error' } 
-                    }));
-                } finally {
-                    translateBtn.disabled = false;
-                    translateBtn.innerHTML = btnOriginalText;
+                // Get values from refs to ensure we have latest input
+                const titleSource = this.$refs.name.value;
+                await translateText(titleSource, 'name_en');
+
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                const contentSource = this.$refs.description.value;
+                await translateText(contentSource, 'description_en');
+
+                if (successCount > 0) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Terjemahan berhasil!', type: 'success' } }));
+                } else if (errorCount > 0) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Gagal menerjemahkan.', type: 'error' } }));
                 }
-            });
-        }
-    });
+
+                this.isTranslating = false;
+            }
+        };
+    };
 </script>

@@ -32,7 +32,11 @@
             <form action="{{ route('admin.events.update', $event) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                     x-data="window.eventForm({
+                        translateUrl: '{{ route('admin.events.translate') }}',
+                        csrf: '{{ csrf_token() }}'
+                     })">
                     <!-- Left Column: Main Content -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Event Info Card -->
@@ -83,10 +87,11 @@
                                         <h3 class="font-bold text-blue-900">English Translation</h3>
                                     </div>
                                     <button type="button" 
-                                            id="auto-translate-btn" 
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                                        <i class="fa-solid fa-language"></i>
-                                        Auto Translate
+                                            @click="autoTranslate"
+                                            :disabled="isTranslating"
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fa-solid" :class="isTranslating ? 'fa-spinner fa-spin' : 'fa-language'"></i>
+                                        <span x-text="isTranslating ? 'Translating...' : 'Auto Translate'"></span>
                                     </button>
                                 </div>
                             </div>
@@ -122,34 +127,51 @@
 
                         <!-- TinyMCE Initialization -->
                         <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                tinymce.init({
-                                    selector: '.settings-tiny',
-                                    height: 400,
-                                    menubar: false,
-                                    plugins: 'lists link image table code wordcount',
-                                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
-                                    content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
-                                    relative_urls: false,
-                                    remove_script_host: false,
-                                    document_base_url: '{{ url('/') }}',
-                                });
-                                tinymce.init({
-                                    selector: '.settings-tiny-en',
-                                    height: 300,
-                                    menubar: false,
-                                    plugins: 'lists link image table code wordcount',
-                                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
-                                    content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
-                                    relative_urls: false,
-                                    remove_script_host: false,
-                                    document_base_url: '{{ url('/') }}',
-                                });
+                            // Reuse window.eventForm from create.blade.php if available, or define it.
+                            // Since we are not guaranteed to load create first, we must define it here too (it is safe to redefine or check existence).
+                            window.eventForm = window.eventForm || function(config) {
+                                return {
+                                    isTranslating: false,
+                                    init() {
+                                        this.initEditors();
+                                    },
+                                    initEditors() {
+                                        if (typeof tinymce === 'undefined') return;
 
-                                // Auto translate functionality
-                                const translateBtn = document.getElementById('auto-translate-btn');
-                                if(translateBtn) {
-                                    translateBtn.addEventListener('click', async function() {
+                                        const editors = [
+                                            { id: 'description', height: 400 },
+                                            { id: 'description_en', height: 300 }
+                                        ];
+
+                                        editors.forEach(editorConfig => {
+                                            const el = document.getElementById(editorConfig.id);
+                                            if (!el) return;
+
+                                            if (tinymce.get(editorConfig.id)) {
+                                                tinymce.get(editorConfig.id).remove();
+                                            }
+
+                                            tinymce.init({
+                                                target: el,
+                                                height: editorConfig.height,
+                                                menubar: false,
+                                                plugins: 'lists link image table code wordcount',
+                                                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
+                                                content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
+                                                relative_urls: false,
+                                                remove_script_host: false,
+                                                document_base_url: '{{ url('/') }}'
+                                            });
+                                        });
+
+                                        this.$cleanup(() => {
+                                            editors.forEach(editorConfig => {
+                                                const editor = tinymce.get(editorConfig.id);
+                                                if (editor) editor.remove();
+                                            });
+                                        });
+                                    },
+                                    async autoTranslate() {
                                         const title = document.getElementById('title').value;
                                         const description = tinymce.get('description')?.getContent() || '';
 
@@ -158,43 +180,36 @@
                                             return;
                                         }
 
-                                        const originalText = translateBtn.innerHTML;
-                                        translateBtn.disabled = true;
-                                        translateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Translating...';
+                                        this.isTranslating = true;
 
                                         try {
                                             if(title) {
-                                                const res = await fetch('{{ route('admin.events.translate') }}', {
+                                                const res = await fetch(config.translateUrl, {
                                                     method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrf },
                                                     body: JSON.stringify({ text: title, source: 'id', target: 'en' })
                                                 });
                                                 const data = await res.json();
                                                 if(data.success) document.getElementById('title_en').value = data.translation;
                                             }
                                             if(description) {
-                                                const res = await fetch('{{ route('admin.events.translate') }}', {
+                                                const res = await fetch(config.translateUrl, {
                                                     method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrf },
                                                     body: JSON.stringify({ text: description, source: 'id', target: 'en' })
                                                 });
                                                 const data = await res.json();
                                                 if(data.success) tinymce.get('description_en')?.setContent(data.translation);
                                             }
-                                            translateBtn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Done!';
-                                            setTimeout(() => {
-                                                translateBtn.disabled = false;
-                                                translateBtn.innerHTML = originalText;
-                                            }, 2000);
                                         } catch(e) {
                                             console.error(e);
                                             alert('Translation failed');
-                                            translateBtn.disabled = false;
-                                            translateBtn.innerHTML = originalText;
+                                        } finally {
+                                            this.isTranslating = false;
                                         }
-                                    });
-                                }
-                            });
+                                    }
+                                };
+                            };
                         </script>
                     </div>
 
@@ -273,7 +288,7 @@
                                         Simpan Perubahan
                                     </button>
                                     <a href="{{ route('admin.events.index') }}" 
-                                       class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all">
+                                       class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all" wire:navigate>
                                         <i class="fa-solid fa-xmark"></i>
                                         Batal
                                     </a>

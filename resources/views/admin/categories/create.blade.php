@@ -8,7 +8,11 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
+                <div class="p-6 bg-white border-b border-gray-200"
+                     x-data="{ 
+                        icon: '{{ old('icon_class') }}',
+                        color: '{{ old('color', '#3b82f6') }}'
+                     }">
                     
                     <form action="{{ route('admin.categories.store') }}" method="POST">
                         @csrf
@@ -24,9 +28,9 @@
                         <div class="mb-4">
                             <x-input-label for="icon_class" :value="__('Kelas Ikon (FontAwesome)')" />
                             <div class="flex gap-2">
-                                <x-text-input id="icon_class" class="block mt-1 w-full" type="text" name="icon_class" :value="old('icon_class')" placeholder="Contoh: fa-solid fa-cloud" />
+                                <x-text-input id="icon_class" class="block mt-1 w-full" type="text" name="icon_class" x-model="icon" placeholder="Contoh: fa-solid fa-cloud" />
                                 <div class="mt-1 w-10 flex items-center justify-center bg-gray-100 rounded border border-gray-300">
-                                    <i class="fa-solid fa-question text-gray-400" id="icon-preview"></i>
+                                    <i class="fa-solid fa-question text-gray-400" :class="icon"></i>
                                 </div>
                             </div>
                             <p class="text-xs text-gray-500 mt-1">Gunakan kelas ikon dari FontAwesome 6 (misal: fa-solid fa-umbrella-beach)</p>
@@ -37,14 +41,14 @@
                         <div class="mb-4">
                             <x-input-label for="color" :value="__('Warna Penanda')" />
                             <div class="flex items-center gap-2 mt-1">
-                                <input type="color" name="color" id="color" value="{{ old('color', '#3b82f6') }}" class="h-10 w-20 rounded border border-gray-300 p-1">
-                                <x-text-input type="text" id="color_text" class="block w-32" :value="old('color', '#3b82f6')" readonly />
+                                <input type="color" name="color" id="color" x-model="color" class="h-10 w-20 rounded border border-gray-300 p-1">
+                                <x-text-input type="text" id="color_text" class="block w-32" x-model="color" readonly />
                             </div>
                             <x-input-error :messages="$errors->get('color')" class="mt-2" />
                         </div>
 
                         <div class="flex items-center justify-end mt-4">
-                            <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 active:bg-gray-400 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 mr-2">
+                            <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 active:bg-gray-400 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 mr-2" wire:navigate>
                                 Batal
                             </a>
                             <x-primary-button class="ml-4">
@@ -54,24 +58,4 @@
                     </form>
 
                 </div>
-            </div>
-        </div>
-    </div>
-
-    @push('scripts')
-    <script>
-        const iconInput = document.getElementById('icon_class');
-        const iconPreview = document.getElementById('icon-preview');
-        const colorInput = document.getElementById('color');
-        const colorText = document.getElementById('color_text');
-
-        iconInput.addEventListener('input', function() {
-            iconPreview.className = this.value;
-        });
-
-        colorInput.addEventListener('input', function() {
-            colorText.value = this.value;
-        });
-    </script>
-    @endpush
 </x-app-layout>

@@ -20,12 +20,12 @@
                 </form>
 
                 <div class="flex gap-2">
-                    <a href="{{ route('admin.tickets.orders') }}" class="flex-1 sm:flex-none inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm whitespace-nowrap">
+                    <a href="{{ route('admin.tickets.orders') }}" class="flex-1 sm:flex-none inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors shadow-sm font-medium text-sm whitespace-nowrap" wire:navigate>
                         <i class="fa-solid fa-inbox mr-2 text-blue-500"></i>
                         <span class="hidden sm:inline">Pesanan Masuk</span>
                         <span class="sm:hidden">Pesanan</span>
                     </a>
-                    <a href="{{ route('admin.tickets.create') }}" class="flex-1 sm:flex-none inline-flex justify-center items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-sm font-medium text-sm whitespace-nowrap">
+                    <a href="{{ route('admin.tickets.create') }}" class="flex-1 sm:flex-none inline-flex justify-center items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-sm font-medium text-sm whitespace-nowrap" wire:navigate>
                         <i class="fa-solid fa-plus mr-2"></i>
                         <span class="hidden sm:inline">Tambah Tiket</span>
                         <span class="sm:hidden">Buat Baru</span>
@@ -177,7 +177,7 @@
                                         <div class="flex items-center justify-end gap-1">
                                             <a href="{{ route('admin.tickets.edit', $ticket) }}" 
                                                class="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                               title="Edit">
+                                               title="Edit" wire:navigate>
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
                                             <button type="button"
@@ -199,7 +199,7 @@
                                             <p class="text-gray-600 font-medium mb-1">Belum ada tiket</p>
                                             <p class="text-sm text-gray-400 mb-4">Mulai dengan menambahkan tiket pertama</p>
                                             <a href="{{ route('admin.tickets.create') }}" 
-                                               class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                               class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors" wire:navigate>
                                                 <i class="fa-solid fa-plus"></i>
                                                 Tambah Tiket
                                             </a>
@@ -313,7 +313,7 @@
 
                                 <!-- Actions -->
                                 <div class="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-gray-50">
-                                    <a href="{{ route('admin.tickets.edit', $ticket) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg">
+                                    <a href="{{ route('admin.tickets.edit', $ticket) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg" wire:navigate>
                                         Edit
                                     </a>
                                     <button type="button"

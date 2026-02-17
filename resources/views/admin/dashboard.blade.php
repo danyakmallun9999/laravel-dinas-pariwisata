@@ -50,7 +50,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @unlessrole('pengelola_wisata')
                 @canany('create destinations')
-                <a href="{{ route('admin.places.create') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-blue-300 transition-colors">
+                <a href="{{ route('admin.places.create') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-blue-300 transition-colors" wire:navigate>
                     <div class="flex flex-col items-center justify-center gap-3 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full group-hover:bg-blue-50/30 transition-colors">
                         <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 border border-blue-100">
                             <i class="fa-solid fa-map-location-dot"></i>
@@ -62,7 +62,7 @@
                 @endunlessrole
 
                 @canany('create posts')
-                <a href="{{ route('admin.posts.create') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-purple-300 transition-colors">
+                <a href="{{ route('admin.posts.create') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-purple-300 transition-colors" wire:navigate>
                     <div class="flex flex-col items-center justify-center gap-3 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full group-hover:bg-purple-50/30 transition-colors">
                         <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 border border-purple-100">
                             <i class="fa-solid fa-pen-nib"></i>
@@ -73,7 +73,7 @@
                 @endcanany
 
                 @canany('create events')
-                <a href="{{ route('admin.events.create') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-orange-300 transition-colors">
+                <a href="{{ route('admin.events.create') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-orange-300 transition-colors" wire:navigate>
                     <div class="flex flex-col items-center justify-center gap-3 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full group-hover:bg-orange-50/30 transition-colors">
                         <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl group-hover:bg-orange-600 group-hover:text-white transition-all duration-300 border border-orange-100">
                             <i class="fa-solid fa-calendar-plus"></i>
@@ -86,7 +86,7 @@
                 <!-- Check-in Scanner Shortcut (Hidden for Pengelola Wisata) -->
                 @unlessrole('pengelola_wisata')
                 @canany('scan tickets')
-                <a href="{{ route('admin.scan.index') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-emerald-300 transition-colors">
+                <a href="{{ route('admin.scan.index') }}" class="group bg-white p-1 rounded-[2.5rem] border border-gray-200 hover:border-emerald-300 transition-colors" wire:navigate>
                     <div class="flex flex-col items-center justify-center gap-3 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full group-hover:bg-emerald-50/30 transition-colors">
                         <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 border border-emerald-100">
                             <i class="fa-solid fa-qrcode"></i>
@@ -110,7 +110,7 @@
 
                     @if($isSinglePlaceManager)
                         <!-- Single Place Manager View -->
-                        <a href="{{ route('admin.places.index') }}" class="group bg-blue-600 p-1 rounded-[2.5rem] border border-blue-500 hover:scale-[1.02] transition-transform duration-300">
+                        <a href="{{ route('admin.places.index') }}" class="group bg-blue-600 p-1 rounded-[2.5rem] border border-blue-500 hover:scale-[1.02] transition-transform duration-300" wire:navigate>
                             <div class="p-6 rounded-[2rem] border border-white/10 bg-gradient-to-br from-blue-600 to-indigo-700 h-full relative overflow-hidden">
                                 <!-- Decoration -->
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
@@ -201,6 +201,9 @@
                 </div>
                 @endcanany
             </div>
+
+            <!-- Debug Data -->
+            <textarea id="debug-stats-data" style="display:none;">{{ json_encode($stats) }}</textarea>
 
             <!-- Admin Wisata Enhanced Dashboard -->
             @if(auth('admin')->user()->hasAnyPermission(['view all destinations', 'view own destinations', 'view all tickets']))
@@ -363,7 +366,7 @@
                                     </div>
                                     <h3 class="text-lg font-bold text-gray-800">Transaksi Terakhir</h3>
                                 </div>
-                                <a href="{{ route('admin.tickets.orders') }}" class="group flex items-center gap-2 text-sm text-blue-600 font-bold hover:text-blue-700 transition-colors">
+                                <a href="{{ route('admin.tickets.orders') }}" class="group flex items-center gap-2 text-sm text-blue-600 font-bold hover:text-blue-700 transition-colors" wire:navigate>
                                     Lihat Semua
                                     <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                                 </a>
@@ -504,7 +507,9 @@
                                 </div>
                             </div>
                             <div class="h-[300px] relative">
-                                <canvas id="revenueTrendChart"></canvas>
+                                <!-- Source: resources/js/charts/admin-dashboard.js -->
+                                <!-- Source: resources/js/charts/admin-dashboard.js -->
+                                <div id="revenueTrendChart" class="w-full h-full"></div>
                             </div>
                         </div>
                     </div>
@@ -624,7 +629,7 @@
 
                                 <!-- Action -->
                                 <div class="flex items-center gap-3">
-                                    <a href="{{ route('admin.events.edit', $stats['featured_event']) }}" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-200 hover:shadow-purple-300">
+                                    <a href="{{ route('admin.events.edit', $stats['featured_event']) }}" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-200 hover:shadow-purple-300" wire:navigate>
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Kelola
                                     </a>
@@ -644,7 +649,7 @@
                             <span class="text-xs text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full">30 Hari Terakhir</span>
                         </div>
                         <div class="h-[300px] relative">
-                            <canvas id="postViewsChart"></canvas>
+                            <div id="postViewsChart" class="w-full h-full"></div>
                         </div>
                     </div>
                 </div>
@@ -661,7 +666,7 @@
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-bold text-gray-800">Status Berita</h3>
-                            <a href="{{ route('admin.posts.index') }}" class="text-sm text-purple-600 hover:underline">Kelola</a>
+                            <a href="{{ route('admin.posts.index') }}" class="text-sm text-purple-600 hover:underline" wire:navigate>Kelola</a>
                         </div>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between p-4 rounded-2xl bg-white border border-gray-100 hover:border-green-200 transition-colors">
@@ -703,7 +708,7 @@
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-bold text-gray-800">Timeline Agenda</h3>
-                            <a href="{{ route('admin.events.index') }}" class="text-sm text-orange-600 hover:underline">Kelola</a>
+                            <a href="{{ route('admin.events.index') }}" class="text-sm text-orange-600 hover:underline" wire:navigate>Kelola</a>
                         </div>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between p-4 rounded-2xl bg-white border border-gray-100 hover:border-blue-200 transition-colors">
@@ -783,7 +788,7 @@
                     <div class="p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 h-full">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-bold text-gray-800">Status Pesanan Tiket</h3>
-                            <a href="{{ route('admin.tickets.orders') }}" class="text-sm text-emerald-600 hover:underline">Lihat Semua</a>
+                            <a href="{{ route('admin.tickets.orders') }}" class="text-sm text-emerald-600 hover:underline" wire:navigate>Lihat Semua</a>
                         </div>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between p-4 rounded-2xl bg-white border border-gray-100 hover:border-emerald-200 transition-colors">
@@ -851,7 +856,7 @@
                         <div class="flex flex-col md:flex-row items-center gap-6">
                             <!-- Chart -->
                             <div class="relative w-48 h-48 md:w-56 md:h-56 flex-shrink-0">
-                                <canvas id="categoriesChart"></canvas>
+                                <div id="categoriesChart" class="w-full h-full"></div>
                                 <!-- Center Text -->
                                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                     <span class="text-3xl font-bold text-gray-800">{{ $stats['places_count'] }}</span>
@@ -1007,272 +1012,64 @@
     </div>
     </div>
 
-    <!-- Chart Script -->
+    {{-- Data Injection for SPA-compatible Charts (Livewire v4 Compatible) --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const categoriesCtx = document.getElementById('categoriesChart');
-            if (categoriesCtx) {
-                new Chart(categoriesCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: @json($stats['categories']->pluck('name')->values()),
-                        datasets: [{
-                            data: @json($stats['categories']->pluck('places_count')->values()),
-                            backgroundColor: @json($stats['categories']->pluck('color')->values()),
-                            borderWidth: 0,
-                            hoverOffset: 4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '75%', 
-                        plugins: {
-                            legend: {
-                                display: false // We use custom legend
-                            },
-                            tooltip: {
-                                backgroundColor: '#1e293b',
-                                padding: 12,
-                                cornerRadius: 8,
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.label || '';
-                                        let value = context.parsed || 0;
-                                        let total = context.chart._metasets[context.datasetIndex].total;
-                                        let percentage = ((value / total) * 100).toFixed(1) + '%';
-                                        return label + ': ' + value + ' (' + percentage + ')';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Visitation Trends Chart with Toggle
-            const visitationCtx = document.getElementById('visitationChart');
-            
-            // Prepare Data
-            const monthlyData = @json($stats['visitation_trends'] ?? []);
-            const yearlyData = @json($stats['yearly_visitation_trends'] ?? []);
-            let visitationChart = null;
-
-            // Initialize Chart if data exists
-            if (visitationCtx && (monthlyData.labels || yearlyData.labels)) {
-                
-                // Helper to init chart
-                const initChart = (data) => {
-                    return new Chart(visitationCtx, {
-                        type: 'line',
-                        data: JSON.parse(JSON.stringify(data)), // Deep copy to avoid reference issues
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            interaction: {
-                                mode: 'index',
-                                intersect: false,
-                            },
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: {
-                                        usePointStyle: true,
-                                        boxWidth: 8,
-                                        padding: 20,
-                                        font: { size: 11 }
-                                    },
-                                    onClick: function(e, legendItem, legend) {
-                                        const index = legendItem.datasetIndex;
-                                        const ci = legend.chart;
-                                        if (ci.isDatasetVisible(index)) {
-                                            ci.hide(index);
-                                            legendItem.hidden = true;
-                                        } else {
-                                            ci.show(index);
-                                            legendItem.hidden = false;
-                                        }
-                                    }
-                                },
-                                tooltip: {
-                                    backgroundColor: '#1e293b',
-                                    padding: 12,
-                                    cornerRadius: 8,
-                                    titleFont: { size: 13, weight: 'bold' }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { borderDash: [2, 2], color: '#f1f5f9' },
-                                    ticks: { precision: 0 }
-                                },
-                                x: {
-                                    grid: { display: false }
-                                }
-                            }
-                        }
-                    });
-                };
-
-                // Initial Render (Monthly)
-                if (monthlyData.labels) {
-                    visitationChart = initChart(monthlyData);
-                } else if (yearlyData.labels) {
-                    // Fallback if no monthly data
-                    visitationChart = initChart(yearlyData);
-                    document.getElementById('chartPeriodLabel').innerText = '5 Tahun Terakhir';
-                    toggleActiveButton('yearly');
+        (function() {
+            // Set data immediately
+            window.__adminDashboardData = {
+                visitation: {
+                    monthly: @json($stats['visitation_trends'] ?? []),
+                    yearly: @json($stats['yearly_visitation_trends'] ?? [])
+                },
+                revenue: {
+                    labels: @json($stats['weekly_revenue']['labels'] ?? []),
+                    data: @json($stats['weekly_revenue']['data'] ?? [])
+                },
+                postViews: {
+                    labels: @json($stats['post_view_trends']['labels'] ?? []),
+                    data: @json($stats['post_view_trends']['data'] ?? [])
+                },
+                categories: {
+                    names: @json($stats['categories']->pluck('name')->values()->toArray()),
+                    counts: @json($stats['categories']->pluck('places_count')->values()->toArray()),
+                    colors: @json($stats['categories']->pluck('color')->values()->toArray())
                 }
-
-                // Global function for button click
-                window.switchChartMode = function(mode) {
-                    if (!visitationChart) return;
-
-                    const btnMonthly = document.getElementById('btn-monthly');
-                    const btnYearly = document.getElementById('btn-yearly');
-                    const label = document.getElementById('chartPeriodLabel');
-
-                    let newData;
-
-                    if (mode === 'monthly') {
-                        newData = monthlyData;
-                        label.innerText = '{{ date("Y") }}';
-                        
-                        btnMonthly.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-                        btnMonthly.classList.remove('text-gray-500', 'hover:text-gray-700');
-                        
-                        btnYearly.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
-                        btnYearly.classList.add('text-gray-500', 'hover:text-gray-700');
-                    } else {
-                        newData = yearlyData;
-                        label.innerText = '5 Tahun Terakhir';
-
-                        btnYearly.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-                        btnYearly.classList.remove('text-gray-500', 'hover:text-gray-700');
-                        
-                        btnMonthly.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
-                        btnMonthly.classList.add('text-gray-500', 'hover:text-gray-700');
+            };
+            
+            // Debug log untuk memastikan data tersedia
+            console.log('Admin Dashboard Data Set:', {
+                hasRevenue: !!window.__adminDashboardData.revenue,
+                hasPostViews: !!window.__adminDashboardData.postViews,
+                hasCategories: !!window.__adminDashboardData.categories,
+                revenueDataLength: window.__adminDashboardData.revenue?.data?.length || 0,
+                postViewsDataLength: window.__adminDashboardData.postViews?.data?.length || 0,
+                categoriesCount: window.__adminDashboardData.categories?.names?.length || 0
+            });
+            
+            // Dispatch event setelah DOM ready (untuk initial load)
+            const dispatchReady = () => {
+                // Tunggu sedikit untuk memastikan elemen chart sudah ada di DOM
+                setTimeout(() => {
+                    document.dispatchEvent(new CustomEvent('admin-dashboard-data-ready'));
+                    // Juga dispatch ke Livewire jika tersedia
+                    if (window.Livewire) {
+                        window.Livewire.dispatch('admin-dashboard-data-ready');
                     }
-
-                    if (newData && newData.labels) {
-                        visitationChart.data.labels = newData.labels;
-                        visitationChart.data.datasets = newData.datasets;
-                        visitationChart.update();
-                    }
-                };
+                }, 100);
+            };
+            
+            // Untuk initial load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', dispatchReady);
+            } else {
+                // DOM sudah ready, tapi tunggu untuk memastikan semua script loaded
+                setTimeout(dispatchReady, 50);
             }
-
-            // Revenue Trend Chart
-            const revenueCtx = document.getElementById('revenueTrendChart');
-            if (revenueCtx) {
-                new Chart(revenueCtx, {
-                    type: 'line',
-                    data: {
-                        labels: @json($stats['weekly_revenue']['labels'] ?? []),
-                        datasets: [{
-                            label: 'Pendapatan',
-                            data: @json($stats['weekly_revenue']['data'] ?? []),
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#10b981',
-                            pointBorderWidth: 2,
-                            pointHoverRadius: 6,
-                            pointHoverBackgroundColor: '#10b981',
-                            pointHoverBorderColor: '#fff',
-                            pointHoverBorderWidth: 2,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: '#1e293b',
-                                padding: 12,
-                                cornerRadius: 8,
-                                callbacks: {
-                                    label: function(context) {
-                                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.parsed.y);
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { borderDash: [2, 2], color: '#f1f5f9' },
-                                ticks: {
-                                    callback: function(value) {
-                                        if (value >= 1000000) return 'Rp ' + (value / 1000000) + 'jt';
-                                        if (value >= 1000) return 'Rp ' + (value / 1000) + 'rb';
-                                        return 'Rp ' + value;
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: { display: false }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Post Views Chart
-            const postViewsCtx = document.getElementById('postViewsChart');
-            if (postViewsCtx) {
-                new Chart(postViewsCtx, {
-                    type: 'line',
-                    data: {
-                        labels: @json($stats['post_view_trends']['labels'] ?? []),
-                        datasets: [{
-                            label: 'Pembaca',
-                            data: @json($stats['post_view_trends']['data'] ?? []),
-                            borderColor: '#8b5cf6',
-                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#8b5cf6',
-                            pointBorderWidth: 2,
-                            pointHoverRadius: 6,
-                            pointHoverBackgroundColor: '#8b5cf6',
-                            pointHoverBorderColor: '#fff',
-                            pointHoverBorderWidth: 2,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: '#1e293b',
-                                padding: 12,
-                                cornerRadius: 8,
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { borderDash: [2, 2], color: '#f1f5f9' },
-                                ticks: { precision: 0 }
-                            },
-                            x: {
-                                grid: { display: false }
-                            }
-                        }
-                    }
-                });
-            }
-        });
+            
+            // Untuk SPA navigation (Livewire v4) - dispatch setelah script dieksekusi
+            setTimeout(() => {
+                document.dispatchEvent(new CustomEvent('admin-dashboard-data-ready'));
+            }, 200);
+        })();
     </script>
 </x-app-layout>

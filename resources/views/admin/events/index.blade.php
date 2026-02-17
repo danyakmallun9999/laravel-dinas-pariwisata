@@ -8,7 +8,7 @@
                 </h2>
             </div>
             <a href="{{ route('admin.events.create') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold text-xs md:text-sm rounded-xl hover:from-violet-700 hover:to-purple-700 focus:ring-4 focus:ring-violet-500/25 transition-all">
+               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold text-xs md:text-sm rounded-xl hover:from-violet-700 hover:to-purple-700 focus:ring-4 focus:ring-violet-500/25 transition-all" wire:navigate>
                 <i class="fa-solid fa-plus"></i>
                 <span class="hidden md:inline">Tambah Event</span>
                 <span class="md:hidden">Tambah</span>
@@ -174,7 +174,7 @@
                                         <div class="flex items-center justify-end gap-1">
                                             <a href="{{ route('admin.events.edit', $event) }}" 
                                                class="p-2.5 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
-                                               title="Edit">
+                                               title="Edit" wire:navigate>
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
                                             <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="inline-block delete-form">
@@ -199,7 +199,7 @@
                                             <p class="text-gray-600 font-medium mb-1">Belum ada event</p>
                                             <p class="text-sm text-gray-400 mb-4">Mulai dengan menambahkan event pertama</p>
                                             <a href="{{ route('admin.events.create') }}" 
-                                               class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-colors">
+                                               class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-colors" wire:navigate>
                                                 <i class="fa-solid fa-plus"></i>
                                                 Tambah Event
                                             </a>
@@ -258,7 +258,7 @@
                                 
                                 <!-- Actions -->
                                 <div class="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-gray-50">
-                                    <a href="{{ route('admin.events.edit', $event) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg">
+                                    <a href="{{ route('admin.events.edit', $event) }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 bg-gray-100 rounded-lg" wire:navigate>
                                         Edit
                                     </a>
                                     <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="delete-form">

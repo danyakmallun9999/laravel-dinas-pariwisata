@@ -40,7 +40,12 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" 
+                     x-data="postForm({
+                        uploadUrl: '{{ route('admin.posts.uploadImage') }}',
+                        translateUrl: '{{ route('admin.posts.translate') }}',
+                        csrf: '{{ csrf_token() }}'
+                     })">
                     <!-- Left Column: Main Content -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Indonesian Content Card -->
@@ -102,10 +107,11 @@
                                         </div>
                                     </div>
                                     <button type="button" 
-                                            id="auto-translate-btn" 
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/25 transition-all shadow-lg shadow-blue-500/25">
-                                        <i class="fa-solid fa-language"></i>
-                                        <span>Auto Translate</span>
+                                            @click="autoTranslate"
+                                            :disabled="isTranslating"
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold text-sm rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/25 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fa-solid" :class="isTranslating ? 'fa-spinner fa-spin' : 'fa-language'"></i>
+                                        <span x-text="isTranslating ? 'Translating...' : 'Auto Translate'"></span>
                                     </button>
                                 </div>
                             </div>
@@ -141,131 +147,117 @@
 
                         <!-- TinyMCE Initialization -->
                         <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                tinymce.init({
-                                    selector: '.settings-tiny',
-                                    height: 500,
-                                    menubar: false,
-                                    plugins: 'lists link image table code wordcount',
-                                    toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
-                                    content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
-                                    relative_urls: false,
-                                    remove_script_host: false,
-                                    document_base_url: '{{ url('/') }}',
-                                    images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
-                                        const xhr = new XMLHttpRequest();
-                                        xhr.withCredentials = false;
-                                        xhr.open('POST', '{{ route('admin.posts.uploadImage') }}');
-                                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                                        xhr.setRequestHeader('X-CSRF-TOKEN', token);
-                                        xhr.upload.onprogress = (e) => { progress(e.loaded / e.total * 100); };
-                                        xhr.onload = () => {
-                                            if (xhr.status < 200 || xhr.status >= 300) {
-                                                reject('HTTP Error: ' + xhr.status);
-                                                return;
-                                            }
-                                            const json = JSON.parse(xhr.responseText);
-                                            if (!json || typeof json.location != 'string') {
-                                                reject('Invalid JSON');
-                                                return;
-                                            }
-                                            resolve(json.location);
-                                        };
-                                        xhr.onerror = () => { reject('Upload failed'); };
-                                        const formData = new FormData();
-                                        formData.append('file', blobInfo.blob(), blobInfo.filename());
-                                        xhr.send(formData);
-                                    }),
-                                    setup: function(editor) {
-                                        editor.on('ExecCommand', function(e) {
-                                            if (e.command === 'mceImage') {
-                                                let checks = 0;
-                                                const checkDialog = setInterval(() => {
-                                                    checks++;
-                                                    // Stop checking after 2 seconds (20 checks * 100ms)
-                                                    if (checks > 20) clearInterval(checkDialog);
+                            // Define the data function globally so it's available for Alpine
+                            window.postForm = function(config) {
+                                return {
+                                    isTranslating: false,
+                                    init() {
+                                        this.initEditors();
+                                    },
+                                    initEditors() {
+                                        if (typeof tinymce === 'undefined') return;
+                                        
+                                        // Specific init for both editors
+                                        const editors = ['content', 'content_en'];
+                                        
+                                        editors.forEach(id => {
+                                            const el = document.getElementById(id);
+                                            if(!el) return;
 
-                                                    const dialog = document.querySelector('.tox-dialog[role="dialog"]');
-                                                    if (dialog) {
-                                                        const title = dialog.querySelector('.tox-dialog__title');
-                                                        // Ensure it's the Image dialog
-                                                        if (title && (title.innerText.includes('Image') || title.innerText.includes('Gambar'))) {
-                                                            const tabs = dialog.querySelectorAll('.tox-dialog__body-nav-item');
-                                                            if (tabs.length > 0) {
-                                                                // Found the tabs, apply logic and stop
-                                                                clearInterval(checkDialog);
-                                                                
-                                                                // 1. Hide General Tab
-                                                                tabs[0].style.display = 'none';
+                                            // Destroy existing instance if any (important for SPA)
+                                            if (tinymce.get(id)) {
+                                                tinymce.get(id).remove();
+                                            }
 
-                                                                // 2. Click Upload Tab for new images
-                                                                const node = editor.selection.getNode();
-                                                                if (node.nodeName !== 'IMG' && tabs.length > 1) {
-                                                                    tabs[1].click();
-                                                                }
-                                                            }
+                                            tinymce.init({
+                                                target: el,
+                                                height: 500,
+                                                menubar: false,
+                                                plugins: 'lists link image table code wordcount',
+                                                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
+                                                content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
+                                                relative_urls: false,
+                                                remove_script_host: false,
+                                                document_base_url: '{{ url('/') }}',
+                                                images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+                                                    const xhr = new XMLHttpRequest();
+                                                    xhr.withCredentials = false;
+                                                    xhr.open('POST', config.uploadUrl);
+                                                    xhr.setRequestHeader('X-CSRF-TOKEN', config.csrf);
+                                                    xhr.upload.onprogress = (e) => { progress(e.loaded / e.total * 100); };
+                                                    xhr.onload = () => {
+                                                        if (xhr.status < 200 || xhr.status >= 300) {
+                                                            reject('HTTP Error: ' + xhr.status);
+                                                            return;
                                                         }
-                                                    }
-                                                }, 100); // Check every 100ms
-                                            }
+                                                        const json = JSON.parse(xhr.responseText);
+                                                        if (!json || typeof json.location != 'string') {
+                                                            reject('Invalid JSON');
+                                                            return;
+                                                        }
+                                                        resolve(json.location);
+                                                    };
+                                                    xhr.onerror = () => { reject('Upload failed'); };
+                                                    const formData = new FormData();
+                                                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                                                    xhr.send(formData);
+                                                }),
+                                                setup: (editor) => {
+                                                    editor.on('remove', () => {
+                                                        // Cleanup logic
+                                                    });
+                                                }
+                                            });
                                         });
-                                    }
-                                });
 
-                                // Auto Translate
-                                const translateBtn = document.getElementById('auto-translate-btn');
-                                if(translateBtn) {
-                                    translateBtn.addEventListener('click', async function() {
-                                        const titleId = document.getElementById('title').value;
-                                        const contentIdHtml = tinymce.get('content').getContent();
+                                        // Cleanup on component destruction
+                                        this.$cleanup(() => {
+                                            editors.forEach(id => {
+                                                const editor = tinymce.get(id);
+                                                if (editor) editor.remove();
+                                            });
+                                        });
+                                    },
+                                    async autoTranslate() {
+                                        const title = document.getElementById('title').value;
+                                        const content = tinymce.get('content')?.getContent();
 
-                                        if(!titleId && !contentIdHtml) {
+                                        if (!title && !content) {
                                             alert('Isi judul atau konten bahasa Indonesia terlebih dahulu.');
                                             return;
                                         }
 
-                                        const originalText = translateBtn.innerHTML;
-                                        translateBtn.disabled = true;
-                                        translateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Translating...';
+                                        this.isTranslating = true;
 
                                         try {
-                                            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                                            
-                                            if(titleId) {
-                                                const res = await fetch('{{ route('admin.posts.translate') }}', {
+                                            if (title) {
+                                                const res = await fetch(config.translateUrl, {
                                                     method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
-                                                    body: JSON.stringify({ text: titleId, source: 'id', target: 'en' })
+                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrf },
+                                                    body: JSON.stringify({ text: title, source: 'id', target: 'en' })
                                                 });
                                                 const data = await res.json();
-                                                if(data.success) document.getElementById('title_en').value = data.translation;
+                                                if (data.success) document.getElementById('title_en').value = data.translation;
                                             }
 
-                                            if(contentIdHtml) {
-                                                const res = await fetch('{{ route('admin.posts.translate') }}', {
+                                            if (content) {
+                                                const res = await fetch(config.translateUrl, {
                                                     method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
-                                                    body: JSON.stringify({ text: contentIdHtml, source: 'id', target: 'en' })
+                                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrf },
+                                                    body: JSON.stringify({ text: content, source: 'id', target: 'en' })
                                                 });
                                                 const data = await res.json();
-                                                if(data.success) tinymce.get('content_en').setContent(data.translation);
+                                                if (data.success) tinymce.get('content_en')?.setContent(data.translation);
                                             }
-                                            
-                                            translateBtn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Done!';
-                                            setTimeout(() => {
-                                                translateBtn.disabled = false;
-                                                translateBtn.innerHTML = originalText;
-                                            }, 2000);
-
-                                        } catch (error) {
-                                            console.error('Translation error:', error);
+                                        } catch (e) {
+                                            console.error(e);
                                             alert('Gagal melakukan translasi otomatis.');
-                                            translateBtn.disabled = false;
-                                            translateBtn.innerHTML = originalText;
+                                        } finally {
+                                            this.isTranslating = false;
                                         }
-                                    });
-                                }
-                            });
+                                    }
+                                };
+                            };
                         </script>
                     </div>
 
@@ -326,7 +318,7 @@
                                         Simpan & Terbitkan
                                     </button>
                                     <a href="{{ route('admin.posts.index') }}" 
-                                       class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all">
+                                       class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all" wire:navigate>
                                         <i class="fa-solid fa-xmark"></i>
                                         Batal
                                     </a>
