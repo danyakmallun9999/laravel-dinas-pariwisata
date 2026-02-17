@@ -1,40 +1,7 @@
 {
-  "_vendor-CH53hkvC.js": {
-    "file": "assets/vendor-CH53hkvC.js",
-    "name": "vendor"
-  },
-  "_vendor-charts-B2cPIPpQ.js": {
-    "file": "assets/vendor-charts-B2cPIPpQ.js",
-    "name": "vendor-charts",
-    "imports": [
-      "_vendor-CH53hkvC.js"
-    ]
-  },
-  "_vendor-core-Cl9hlQjT.js": {
-    "file": "assets/vendor-core-Cl9hlQjT.js",
-    "name": "vendor-core"
-  },
-  "_vendor-gsap-B2uKOqL4.js": {
-    "file": "assets/vendor-gsap-B2uKOqL4.js",
-    "name": "vendor-gsap"
-  },
-  "_vendor-maps-Cd4ghSIA.js": {
-    "file": "assets/vendor-maps-Cd4ghSIA.js",
-    "name": "vendor-maps",
-    "imports": [
-      "_vendor-CH53hkvC.js"
-    ],
-    "css": [
-      "assets/vendor-maps-EGhNnKeS.css"
-    ],
-    "assets": [
-      "assets/leaflet.routing.icons-D1_G_SEE.png",
-      "assets/routing-icon-DR3Yqk3O.png"
-    ]
-  },
-  "_vendor-maps-EGhNnKeS.css": {
-    "file": "assets/vendor-maps-EGhNnKeS.css",
-    "src": "_vendor-maps-EGhNnKeS.css"
+  "_leaflet-src-eHmD5uJa.js": {
+    "file": "assets/leaflet-src-eHmD5uJa.js",
+    "name": "leaflet-src"
   },
   "node_modules/@fontsource/figtree/files/figtree-latin-400-normal.woff": {
     "file": "assets/figtree-latin-400-normal-BD4aNku5.woff",
@@ -977,7 +944,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-qXfq0Sdv.css",
+    "file": "assets/app-uCsistRf.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -995,26 +962,28 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-mzoO_K2y.js",
+    "file": "assets/app-BzZtKQh1.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-maps-Cd4ghSIA.js",
-      "_vendor-gsap-B2uKOqL4.js",
-      "_vendor-charts-B2cPIPpQ.js",
-      "_vendor-core-Cl9hlQjT.js",
-      "_vendor-CH53hkvC.js"
+      "_leaflet-src-eHmD5uJa.js"
+    ],
+    "css": [
+      "assets/app-EGhNnKeS.css"
+    ],
+    "assets": [
+      "assets/leaflet.routing.icons-D1_G_SEE.png",
+      "assets/routing-icon-DR3Yqk3O.png"
     ]
   },
   "resources/js/pages/welcome.js": {
-    "file": "assets/welcome-xfp9YjTZ.js",
+    "file": "assets/welcome-D7n6qvxw.js",
     "name": "welcome",
     "src": "resources/js/pages/welcome.js",
     "isEntry": true,
     "imports": [
-      "_vendor-maps-Cd4ghSIA.js",
-      "_vendor-CH53hkvC.js"
+      "_leaflet-src-eHmD5uJa.js"
     ]
   }
 }
