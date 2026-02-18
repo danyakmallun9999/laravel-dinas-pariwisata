@@ -342,6 +342,7 @@ class WelcomeController extends Controller
                     'description' => Str::limit($place->translated_description, 50),
                     'image_url' => $place->image_path ? asset($place->image_path) : null,
                     'type' => 'Destinasi',
+                    'type_key' => 'location',
                     'url' => route('places.show', $place->slug),
                     // For map features
                     'slug' => $place->slug, 
@@ -360,6 +361,7 @@ class WelcomeController extends Controller
                     'description' => Str::limit(strip_tags($post->content ?? ''), 50),
                     'image_url' => $post->image_path ? asset($post->image_path) : null,
                     'type' => 'Berita',
+                    'type_key' => 'news',
                     'url' => route('posts.show', $post->slug),
                 ];
             });
@@ -376,6 +378,7 @@ class WelcomeController extends Controller
                     'description' => Str::limit($event->description, 50),
                     'image_url' => $event->image ? asset($event->image) : null,
                     'type' => 'Agenda',
+                    'type_key' => 'event',
                     'url' => route('events.public.show', $event->slug),
                 ];
             });
@@ -393,6 +396,7 @@ class WelcomeController extends Controller
                     'description' => Str::limit($item->description, 50),
                     'image_url' => asset($item->image),
                     'type' => 'Budaya',
+                    'type_key' => 'culture',
                     'url' => route('culture.show', $item->slug),
                 ];
             })->values();
@@ -410,6 +414,7 @@ class WelcomeController extends Controller
                     'description' => Str::limit($item->description, 50),
                     'image_url' => asset($item->image),
                     'type' => 'Kuliner',
+                    'type_key' => 'culinary',
                     'url' => route('culinary.show', $item->slug),
                 ];
             })->values();

@@ -15,7 +15,7 @@ class StorePostRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'content' => 'required|string|max:10000',
             'type' => 'required|in:news,event',
             'image' => 'nullable|image|max:2048',
             'published_at' => 'nullable|date',
@@ -23,7 +23,7 @@ class StorePostRequest extends FormRequest
             'image_credit' => 'nullable|string|max:255',
             'is_published' => 'sometimes|boolean',
             'title_en' => 'nullable|string|max:255',
-            'content_en' => 'nullable|string',
+            'content_en' => 'nullable|string|max:10000',
         ];
     }
 }

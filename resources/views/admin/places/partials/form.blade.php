@@ -82,7 +82,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
                             Deskripsi
                         </label>
-                        <textarea id="description_id" name="description" rows="3"
+                        <textarea id="description_id" name="description" rows="8"
                                   class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                   placeholder="Deskripsi singkat lokasi..."
                                   x-ref="description"
@@ -131,7 +131,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-1.5">Description (English)</label>
-                        <textarea id="description_en" name="description_en" rows="2"
+                        <textarea id="description_en" name="description_en" rows="6"
                                   class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
                                   placeholder="English description..."
                                   x-ref="description_en">{{ old('description_en', $place->description_en) }}</textarea>

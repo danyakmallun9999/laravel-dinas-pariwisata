@@ -286,13 +286,21 @@ window.mapComponent = function (config = {}) {
         },
 
         selectFeature(result) {
-            // Priority: URL redirection (for Places, Posts, Events)
+            // For locations (Destinasi), we don't redirect but zoom the map
+            if (result.type_key === 'location') {
+                this.zoomToFeature(result);
+                this.searchResults = [];
+                this.searchOpen = false;
+                return;
+            }
+
+            // For others (Posts, Events, Cultures, Culinaries) that have a URL, we redirect
             if (result.url) {
                 window.location.href = result.url;
                 return;
             }
 
-            // Fallback for map features (Boundaries, Infrastructure, etc.)
+            // Fallback
             this.selectedFeature = result;
             this.zoomToFeature(result);
             this.searchResults = [];

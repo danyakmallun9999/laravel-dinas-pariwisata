@@ -40,6 +40,8 @@ Alpine.plugin(morph);
 Alpine.data('cultureSection', CultureSection);
 Alpine.data('mapDrawer', MapDrawer);
 
+
+
 // Register QR Scanner
 import registerQrScanner from './pages/admin/scan';
 registerQrScanner(Alpine);

@@ -12,15 +12,23 @@
                 $allEvents = $groupedEvents->flatten();
                 // Extract unique years
                 $years = $allEvents->pluck('start_date')->map(fn($date) => $date->format('Y'))->unique()->sortDesc()->values();
-                // Extract unique month names (localized)
-                $months = $allEvents->pluck('start_date')->map(fn($date) => $date->translatedFormat('F'))->unique()->values();
+                // Extract unique month names (localized) sorted by month number
+                $months = $allEvents->pluck('start_date')
+                    ->map(fn($date) => [
+                        'number' => $date->format('m'),
+                        'name' => $date->translatedFormat('F')
+                    ])
+                    ->unique('number')
+                    ->sortBy('number')
+                    ->pluck('name')
+                    ->values();
 
                 $allEventsJSON = $allEvents->map(function($event) {
                     return [
                         'id' => $event->id,
-                        'title' => $event->title,
+                        'title' => $event->translated_title,
                         'slug' => $event->slug,
-                        'description' => $event->description,
+                        'description' => $event->translated_description,
                         'location' => $event->location,
                         'image_url' => $event->image ? asset($event->image) : null,
                         'start_date_month' => $event->start_date->format('M'),

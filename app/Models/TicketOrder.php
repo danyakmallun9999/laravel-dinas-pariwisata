@@ -226,10 +226,10 @@ class TicketOrder extends Model
     public function getStatusLabelAttribute()
     {
         return match ($this->status) {
-            'pending' => 'Menunggu Pembayaran',
-            'paid' => 'Sudah Dibayar',
-            'used' => 'Sudah Digunakan',
-            'cancelled' => 'Dibatalkan',
+            'pending' => __('Tickets.Status.Pending'),
+            'paid' => __('Tickets.Status.Paid'),
+            'used' => __('Tickets.Status.Used'),
+            'cancelled' => __('Tickets.Status.Cancelled'),
             default => 'Unknown',
         };
     }
@@ -245,8 +245,8 @@ class TicketOrder extends Model
                 'border' => 'border-green-200 dark:border-green-800',
                 'iconBg' => 'bg-green-100 dark:bg-green-900/40',
                 'iconColor' => 'text-green-500',
-                'title' => 'Pembayaran Berhasil',
-                'subtitle' => 'Tiket siap digunakan',
+                'title' => __('Tickets.Status.Paid.Title'),
+                'subtitle' => __('Tickets.Status.Paid.Subtitle'),
                 'showQr' => true,
                 'animation' => 'scale',
             ],
@@ -254,9 +254,9 @@ class TicketOrder extends Model
                 'bg' => 'bg-yellow-50 dark:bg-yellow-900/20',
                 'border' => 'border-yellow-200 dark:border-yellow-800',
                 'iconBg' => 'bg-yellow-100 dark:bg-yellow-900/40',
-                'iconColor' => 'text-yellow-500',
-                'title' => 'Menunggu Pembayaran',
-                'subtitle' => 'Selesaikan pembayaran sebelum waktu habis',
+                'iconColor' => 'text-yellow-600',
+                'title' => __('Tickets.Status.Pending.Title'),
+                'subtitle' => __('Tickets.Status.Pending.Subtitle'),
                 'showQr' => false,
                 'animation' => 'pulse',
             ],
@@ -265,22 +265,22 @@ class TicketOrder extends Model
                 'border' => 'border-red-200 dark:border-red-800',
                 'iconBg' => 'bg-red-100 dark:bg-red-900/40',
                 'iconColor' => 'text-red-500',
-                'title' => 'Pesanan Dibatalkan',
-                'subtitle' => 'Tiket tidak dapat digunakan',
+                'title' => __('Tickets.Status.Cancelled.Title'),
+                'subtitle' => __('Tickets.Status.Cancelled.Subtitle'),
                 'showQr' => false,
-                'animation' => 'fade',
+                'animation' => 'none',
             ],
             'used' => [
                 'bg' => 'bg-blue-50 dark:bg-blue-900/20',
                 'border' => 'border-blue-200 dark:border-blue-800',
                 'iconBg' => 'bg-blue-100 dark:bg-blue-900/40',
                 'iconColor' => 'text-blue-500',
-                'title' => 'Tiket Sudah Digunakan',
+                'title' => __('Tickets.Status.Used.Title'),
                 'subtitle' => $this->check_in_time
-                    ? 'Digunakan pada '.$this->check_in_time->translatedFormat('d F Y, H:i')
-                    : 'Tiket telah digunakan',
+                    ? __('Tickets.Status.Used.Subtitle', ['date' => $this->check_in_time->translatedFormat('d M Y, H:i')])
+                    : __('Tickets.Status.Used.SubtitleDefault'),
                 'showQr' => true,
-                'animation' => 'fade',
+                'animation' => 'scale',
             ],
         ];
 

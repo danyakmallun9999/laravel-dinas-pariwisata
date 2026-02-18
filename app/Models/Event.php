@@ -66,4 +66,23 @@ class Event extends Model
     {
         return $query->where('created_by', $userId);
     }
+
+    public function getTranslatedTitleAttribute()
+    {
+        $locale = app()->getLocale();
+        if ($locale === 'en' && !empty($this->title_en)) {
+            return $this->title_en;
+        }
+        return $this->title;
+    }
+
+    public function getTranslatedDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        if ($locale === 'en' && !empty($this->description_en) && trim(strip_tags($this->description_en)) !== '') {
+            return $this->description_en;
+        }
+        return $this->description;
+    }
+
 }

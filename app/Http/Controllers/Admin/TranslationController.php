@@ -13,7 +13,7 @@ class TranslationController extends Controller
     public function translate(Request $request)
     {
         $request->validate([
-            'text' => 'required|string',
+            'text' => 'required|string|max:10003', // Slightly more than 10k to be safe
             'target' => 'required|string|in:en,id',
             'source' => 'nullable|string',
         ]);
@@ -22,6 +22,62 @@ class TranslationController extends Controller
         $source = $request->source ?? 'id';
         $target = $request->target;
 
+        // If text is short, translate directly
+        if (mb_strlen($text) <= 450) {
+            return $this->performTranslation($text, $source, $target);
+        }
+
+        // Otherwise, chunk the text
+        $chunks = $this->chunkText($text, 450);
+        $translatedChunks = [];
+
+        foreach ($chunks as $chunk) {
+            $result = $this->performTranslation($chunk, $source, $target);
+            $responseData = $result->getData(true);
+            
+            if ($responseData['success']) {
+                $translatedChunks[] = $responseData['translation'];
+            } else {
+                return $result; // Return the error if any chunk fails
+            }
+            
+            // Subtle delay to avoid rate limiting if many chunks
+            if (count($chunks) > 2) {
+                usleep(200000); // 200ms
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'translation' => implode(' ', $translatedChunks),
+            'provider' => 'chunked',
+        ]);
+    }
+
+    private function chunkText($text, $size)
+    {
+        $chunks = [];
+        $words = explode(' ', $text);
+        $currentChunk = '';
+
+        foreach ($words as $word) {
+            if (mb_strlen($currentChunk . ' ' . $word) > $size) {
+                $chunks[] = trim($currentChunk);
+                $currentChunk = $word;
+            } else {
+                $currentChunk .= (empty($currentChunk) ? '' : ' ') . $word;
+            }
+        }
+
+        if (!empty($currentChunk)) {
+            $chunks[] = trim($currentChunk);
+        }
+
+        return $chunks;
+    }
+
+    private function performTranslation($text, $source, $target)
+    {
         // Strategy 1: Try Google Translate first
         try {
             $tr = new GoogleTranslate();
@@ -41,7 +97,7 @@ class TranslationController extends Controller
         // Strategy 2: Fallback to MyMemory API
         try {
             $langpair = "{$source}|{$target}";
-            $response = Http::timeout(10)->get('https://api.mymemory.translated.net/get', [
+            $response = Http::timeout(20)->get('https://api.mymemory.translated.net/get', [
                 'q' => $text,
                 'langpair' => $langpair,
             ]);

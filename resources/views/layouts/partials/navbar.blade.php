@@ -119,19 +119,46 @@
                         </div>
                         
                         <template x-for="(result, index) in searchResults" :key="index">
-                            <button @click="selectFeature(result); scrollToMap(); searchResults = []"
-                                class="w-full text-left px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-900/40 border-b border-slate-50 dark:border-slate-800/50 last:border-0 transition-colors flex items-center gap-4 group">
-                                <div class="shrink-0 w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
-                                    <span class="material-symbols-outlined text-xl" x-text="result.type === 'event' ? 'event' : (result.type === 'news' ? 'article' : 'location_on')"></span>
+                            <button @click="selectFeature(result); if(result.type_key === 'location') scrollToMap(); searchResults = []"
+                                class="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-b border-slate-50 dark:border-slate-800/50 last:border-0 transition-all flex items-center gap-4 group">
+                                
+                                <!-- Result Image or Icon -->
+                                <div class="shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200/50 dark:border-slate-700/50 group-hover:scale-105 transition-transform">
+                                    <template x-if="result.image_url">
+                                        <img :src="result.image_url" class="w-full h-full object-cover" alt="">
+                                    </template>
+                                    <template x-if="!result.image_url">
+                                        <div class="w-full h-full flex items-center justify-center" 
+                                             :class="{
+                                                'bg-blue-500/10 text-blue-500': result.type_key === 'location',
+                                                'bg-emerald-500/10 text-emerald-500': result.type_key === 'news',
+                                                'bg-amber-500/10 text-amber-500': result.type_key === 'event',
+                                                'bg-purple-500/10 text-purple-500': result.type_key === 'culture',
+                                                'bg-rose-500/10 text-rose-500': result.type_key === 'culinary'
+                                             }">
+                                            <span class="material-symbols-outlined text-2xl" 
+                                                  x-text="result.type_key === 'location' ? 'location_on' : (result.type_key === 'news' ? 'article' : (result.type_key === 'event' ? 'event' : (result.type_key === 'culture' ? 'theater_comedy' : 'restaurant')))"></span>
+                                        </div>
+                                    </template>
                                 </div>
+
                                 <div class="min-w-0 flex-1">
-                                    <p class="font-bold text-slate-800 dark:text-slate-100 text-sm truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" x-text="result.name"></p>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400" x-text="result.type || '{{ __('Nav.DefaultType') }}'"></span>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate" x-text="result.address || result.description || ''"></p>
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <span class="text-[9px] uppercase font-black px-1.5 py-0.5 rounded tracking-tighter" 
+                                              :class="{
+                                                'bg-blue-100 text-blue-600': result.type_key === 'location',
+                                                'bg-emerald-100 text-emerald-600': result.type_key === 'news',
+                                                'bg-amber-100 text-amber-600': result.type_key === 'event',
+                                                'bg-purple-100 text-purple-600': result.type_key === 'culture',
+                                                'bg-rose-100 text-rose-600': result.type_key === 'culinary'
+                                              }"
+                                              x-text="result.type"></span>
+                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-sm truncate group-hover:text-primary transition-colors" x-text="result.name"></p>
                                     </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate leading-relaxed" x-text="result.description || ''"></p>
                                 </div>
-                                <span class="material-symbols-outlined text-slate-300 group-hover:text-blue-500 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all">arrow_forward</span>
+
+                                <span class="material-symbols-outlined text-slate-200 dark:text-slate-700 group-hover:text-primary group-hover:translate-x-1 transition-all">chevron_right</span>
                             </button>
                         </template>
                     </div>

@@ -112,6 +112,11 @@ class Place extends Model
         'social_media' => 'array',
     ];
 
+    protected $appends = [
+        'translated_name',
+        'translated_description',
+    ];
+
     /**
      * Get the user who created this place.
      */

@@ -51,51 +51,71 @@
                 <!-- Badge -->
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary-600 shadow-sm animate-pulse">
                     <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-                    <span class="text-xs font-bold font-display uppercase tracking-wider text-primary">Upcoming Main Event</span>
+                    <span class="text-xs font-bold font-display uppercase tracking-wider text-primary">{{ __('EventSection.Badge') }}</span>
                 </div>
 
                 <!-- Title & Description -->
                 <div>
                     <h2 class="text-3xl lg:text-4xl font-bold font-display text-slate-900 mb-4 leading-tight">
-                        {{ $upcomingEvent->title }}
+                        {{ $upcomingEvent->translated_title }}
                     </h2>
                     <p class="text-base text-slate-600 leading-relaxed font-sans line-clamp-3">
-                        {{ Str::limit(strip_tags($upcomingEvent->description), 150) }}
+                        {{ Str::limit(strip_tags($upcomingEvent->translated_description), 150) }}
                     </p>
                 </div>
 
                 <!-- Countdown -->
                 <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-xl shadow-slate-200/50 relative overflow-hidden"
-                     x-data="countdown('{{ $upcomingEvent->start_date }}')">
+                     x-data="{
+                        target: {{ $upcomingEvent->start_date->timestamp * 1000 }},
+                        days: '00', hours: '00', minutes: '00', seconds: '00',
+                        update() {
+                            const now = new Date().getTime();
+                            const dist = this.target - now;
+                            if (dist <= 0) {
+                                this.days = this.hours = this.minutes = this.seconds = '00';
+                                return;
+                            }
+                            this.days = String(Math.floor(dist / 86400000)).padStart(2, '0');
+                            this.hours = String(Math.floor((dist % 86400000) / 3600000)).padStart(2, '0');
+                            this.minutes = String(Math.floor((dist % 3600000) / 60000)).padStart(2, '0');
+                            this.seconds = String(Math.floor((dist % 60000) / 1000)).padStart(2, '0');
+                        },
+                        init() {
+                            this.update();
+                            setInterval(() => this.update(), 1000);
+                        }
+                     }"
+                     x-cloak>
                     
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
 
-                    <h3 class="text-center text-slate-400 font-bold font-display mb-6 uppercase tracking-widest text-xs relative z-10">Hitung Mundur</h3>
+                    <h3 class="text-center text-slate-400 font-bold font-display mb-6 uppercase tracking-widest text-xs relative z-10">{{ __('EventSection.Countdown') }}</h3>
                     
                     <div class="grid grid-cols-4 gap-2 text-center relative z-10">
                         <div class="space-y-2">
                             <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-                                <span class="block text-2xl font-black font-display text-slate-900" x-text="days">00</span>
+                                <span class="block text-2xl font-black font-display text-slate-900" x-text="days">--</span>
                             </div>
-                            <span class="text-[10px] text-slate-500 font-bold uppercase">Hari</span>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase">{{ __('EventSection.Days') }}</span>
                         </div>
                         <div class="space-y-2">
                             <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-                                <span class="block text-2xl font-black font-display text-slate-900" x-text="hours">00</span>
+                                <span class="block text-2xl font-black font-display text-slate-900" x-text="hours">--</span>
                             </div>
-                            <span class="text-[10px] text-slate-500 font-bold uppercase">Jam</span>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase">{{ __('EventSection.Hours') }}</span>
                         </div>
                         <div class="space-y-2">
                             <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-                                <span class="block text-2xl font-black font-display text-slate-900" x-text="minutes">00</span>
+                                <span class="block text-2xl font-black font-display text-slate-900" x-text="minutes">--</span>
                             </div>
-                            <span class="text-[10px] text-slate-500 font-bold uppercase">Menit</span>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase">{{ __('EventSection.Minutes') }}</span>
                         </div>
                         <div class="space-y-2">
                             <div class="bg-primary/5 rounded-xl p-2 border border-primary/10">
-                                <span class="block text-2xl font-black font-display text-primary" x-text="seconds">00</span>
+                                <span class="block text-2xl font-black font-display text-primary" x-text="seconds">--</span>
                             </div>
-                            <span class="text-[10px] text-primary font-bold uppercase">Detik</span>
+                            <span class="text-[10px] text-primary font-bold uppercase">{{ __('EventSection.Seconds') }}</span>
                         </div>
                     </div>
                 </div>
@@ -107,9 +127,9 @@
                             <i class="fa-regular fa-calendar text-lg"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-500 font-bold uppercase">Tanggal</p>
+                            <p class="text-xs text-slate-500 font-bold uppercase">{{ __('EventSection.Date') }}</p>
                             <p class="text-slate-900 font-bold text-sm">
-                                {{ \Carbon\Carbon::parse($upcomingEvent->start_date)->format('d M Y') }}
+                                {{ \Carbon\Carbon::parse($upcomingEvent->start_date)->translatedFormat('d M Y') }}
                             </p>
                         </div>
                     </div>
@@ -118,7 +138,7 @@
                             <i class="fa-solid fa-location-dot text-lg"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-500 font-bold uppercase">Lokasi</p>
+                            <p class="text-xs text-slate-500 font-bold uppercase">{{ __('EventSection.Location') }}</p>
                             <p class="text-slate-900 font-medium text-sm line-clamp-1">
                                 {{ $upcomingEvent->location }}
                             </p>
@@ -130,7 +150,7 @@
                 <a href="{{ route('events.public.show', $upcomingEvent->slug) }}" 
                     class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/20"
                     wire:navigate>
-                    <span>Lihat Detail</span>
+                    <span>{{ __('EventSection.ViewDetails') }}</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
@@ -139,7 +159,7 @@
             <div class="lg:col-span-12 xl:col-span-7 w-full overflow-hidden" data-aos="fade-left" data-aos-delay="100">
                 
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-2xl font-bold font-display text-slate-900">Event Lainnya</h3>
+                    <h3 class="text-2xl font-bold font-display text-slate-900">{{ __('EventSection.OtherEvents') }}</h3>
                     
                     <!-- Navigation Buttons -->
                      @if($nextEvents->count() > 2)
@@ -166,24 +186,24 @@
                         <!-- Image -->
                         <div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
                             @if($event->image)
-                                <img src="{{ asset($event->image) }}" alt="{{ $event->title }}" 
+                                <img src="{{ asset($event->image) }}" alt="{{ $event->translated_title }}" 
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
-                                <img src="{{ asset('images/agenda/logo-agenda.png') }}" alt="{{ $event->title }}" 
+                                <img src="{{ asset('images/agenda/logo-agenda.png') }}" alt="{{ $event->translated_title }}" 
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @endif
                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-primary shadow-sm">
-                                {{ \Carbon\Carbon::parse($event->start_date)->format('d M') }}
+                                {{ \Carbon\Carbon::parse($event->start_date)->translatedFormat('d M') }}
                             </div>
                         </div>
 
                         <!-- Content -->
                         <div class="p-5">
                             <h4 class="font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors text-lg">
-                                {{ $event->title }}
+                                {{ $event->translated_title }}
                             </h4>
                             <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-50">
-                                <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">Lokasi</span>
+                                <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">{{ __('EventSection.Location') }}</span>
                                 <span class="text-xs font-bold text-slate-700 line-clamp-1 max-w-[60%] text-right">{{ $event->location }}</span>
                             </div>
                         </div>
@@ -192,14 +212,14 @@
 
                     @if($nextEvents->isEmpty())
                         <div class="w-full py-10 text-center text-slate-500 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                            Belum ada event lainnya.
+                            {{ __('EventSection.NoOtherEvents') }}
                         </div>
                     @endif
                 </div>
                 
                 <div class="text-center mt-4 lg:hidden">
                      <a href="{{ route('events.public.index') }}" class="inline-flex items-center text-primary font-medium hover:text-primary-dark text-sm" wire:navigate>
-                        Lihat Semua Event <i class="fa-solid fa-arrow-right ml-1"></i>
+                        {{ __('EventSection.ViewAllEvents') }} <i class="fa-solid fa-arrow-right ml-1"></i>
                     </a>
                 </div>
 
@@ -208,41 +228,4 @@
     </div>
 </section>
 
-<!-- Alpine.js Countdown Component Script -->
-<script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('countdown', (targetDate) => ({
-            endDate: new Date(targetDate).getTime(),
-            days: '00',
-            hours: '00',
-            minutes: '00',
-            seconds: '00',
-            interval: null,
-            init() {
-                this.updateCountdown();
-                this.interval = setInterval(() => {
-                    this.updateCountdown();
-                }, 1000);
-            },
-            updateCountdown() {
-                const now = new Date().getTime();
-                const distance = this.endDate - now;
-
-                if (distance < 0) {
-                    clearInterval(this.interval);
-                    this.days = '00';
-                    this.hours = '00';
-                    this.minutes = '00';
-                    this.seconds = '00';
-                    return;
-                }
-
-                this.days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-                this.hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-                this.minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-                this.seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
-            }
-        }));
-    });
-</script>
 @endif

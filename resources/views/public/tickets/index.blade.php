@@ -28,6 +28,7 @@
                          return [
                              'id' => $ticket->id,
                              'name' => $ticket->name,
+                             'translated_name' => $ticket->translated_name,
                              'type' => $ticket->type,
                              'description' => $ticket->description,
                              'price' => $ticket->price,
@@ -42,6 +43,7 @@
                     return [
                         'id' => $place->id,
                         'name' => $place->name,
+                        'translated_name' => $place->translated_name,
                         'slug' => $place->slug,
                         'kecamatan' => $place->kecamatan ?? '',
                         'image_url' => $imageUrl,
@@ -60,7 +62,7 @@
                     if (this.search === '') return this.places;
                     const q = this.search.toLowerCase();
                     return this.places.filter(place => {
-                        return place.name.toLowerCase().includes(q) || 
+                        return place.translated_name.toLowerCase().includes(q) || 
                                (place.kecamatan && place.kecamatan.toLowerCase().includes(q));
                     });
                 },
@@ -93,7 +95,7 @@
                         <input 
                             x-model="search"
                             type="text" 
-                            placeholder="Cari destinasi wisata..."
+                            placeholder="{{ __('Tickets.SearchPlaceholder') }}"
                             class="flex-1 px-3 py-3 border-none bg-transparent text-sm text-slate-700 dark:text-white font-medium placeholder:text-slate-400 focus:ring-0 focus:outline-none"
                         >
                         <button 
@@ -106,7 +108,7 @@
                         </button>
                     </div>
                     <div class="mt-2 text-xs text-slate-400 flex items-center gap-1.5" x-show="search" x-transition>
-                        <span>Menampilkan <strong class="text-slate-600 dark:text-white" x-text="filteredPlaces.length"></strong> destinasi</span>
+                        <span>{{ __('Tickets.My.ShowingOrders', ['count' => '<strong class="text-slate-600 dark:text-white" x-text="filteredPlaces.length"></strong>']) }}</span>
                     </div>
                 </div>
 
@@ -147,13 +149,13 @@
                                                     </template>
                                                     <span class="inline-flex items-center gap-1">
                                                         <i class="fa-solid fa-ticket text-[10px] text-primary/50"></i>
-                                                        <span x-text="place.ticket_count + ' jenis tiket'"></span>
+                                                        <span x-text="place.ticket_count + ' {{ __('Tickets.Card.Ticket') }}'"></span>
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-3 shrink-0">
                                                 <div class="text-right">
-                                                    <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wide leading-none mb-0.5">Mulai dari</div>
+                                                    <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wide leading-none mb-0.5">{{ __('Places.Ticket.Price') }}</div>
                                                     <div class="text-xl font-extrabold text-primary leading-none">Rp <span x-text="place.formatted_min_price"></span></div>
                                                 </div>
                                                 <div 
@@ -172,7 +174,7 @@
                                     <!-- Image - shorter -->
                                     <div class="w-full h-40 relative overflow-hidden">
                                         <template x-if="place.image_url">
-                                            <img :src="place.image_url" :alt="place.name" class="w-full h-full object-cover">
+                                            <img :src="place.image_url" :alt="place.translated_name" class="w-full h-full object-cover">
                                         </template>
                                         <template x-if="!place.image_url">
                                             <div class="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-300 dark:text-slate-500">
@@ -182,13 +184,13 @@
                                         <!-- Ticket count pill on image -->
                                         <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-xs font-semibold text-white">
                                             <i class="fa-solid fa-ticket mr-1 text-[11px]"></i>
-                                            <span x-text="place.ticket_count"></span> tiket
+                                            <span x-text="place.ticket_count"></span> {{ __('Tickets.Card.Ticket') }}
                                         </div>
                                     </div>
                                     <!-- Info row below image -->
                                     <div class="px-4 py-3.5 flex items-center gap-3">
                                         <div class="flex-1 min-w-0">
-                                            <h3 class="text-base font-bold text-slate-800 dark:text-white truncate leading-snug transition-colors" :class="expanded && 'text-primary'" x-text="place.name"></h3>
+                                            <h3 class="text-base font-bold text-slate-800 dark:text-white truncate leading-snug transition-colors" :class="expanded && 'text-primary'" x-text="place.translated_name"></h3>
                                             <template x-if="place.kecamatan">
                                                 <div class="flex items-center gap-1 mt-0.5 text-xs text-slate-400">
                                                     <i class="fa-solid fa-location-dot text-[10px] text-primary/50"></i>
@@ -198,7 +200,7 @@
                                         </div>
                                         <div class="flex items-center gap-2 shrink-0">
                                             <div class="text-right">
-                                                <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wide leading-none mb-0.5">Mulai dari</div>
+                                                <div class="text-[10px] font-medium text-slate-400 uppercase tracking-wide leading-none mb-0.5">{{ __('Places.Ticket.Price') }}</div>
                                                 <div class="text-base font-extrabold text-primary leading-tight">Rp <span x-text="place.formatted_min_price"></span></div>
                                             </div>
                                             <div 
@@ -217,7 +219,7 @@
                                 <div class="border-t border-slate-100 dark:border-slate-700/50 bg-slate-50/60 dark:bg-slate-900/30 px-4 sm:px-5 py-4">
                                     <div class="flex items-center gap-2 mb-4">
                                         <div class="w-0.5 h-3.5 rounded-full bg-primary"></div>
-                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pilihan Tiket</span>
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ __('Places.Ticket.Title') }}</span>
                                     </div>
 
                                     <div class="space-y-3">
@@ -245,7 +247,7 @@
                                                                 </div>
                                                                 <div class="flex-1 min-w-0">
                                                                     <div class="flex flex-wrap items-center gap-1.5 mb-1">
-                                                                        <h5 class="font-semibold text-slate-800 dark:text-white text-sm group-hover/ticket:text-primary transition-colors" x-text="ticket.name"></h5>
+                                                                        <h5 class="font-semibold text-slate-800 dark:text-white text-sm group-hover/ticket:text-primary transition-colors" x-text="ticket.translated_name"></h5>
                                                                         <template x-if="ticket.type">
                                                                             <span 
                                                                                 class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
@@ -262,18 +264,18 @@
                                                                     <div class="flex flex-wrap items-center gap-x-3 text-xs text-slate-400">
                                                                         <span class="inline-flex items-center gap-1">
                                                                             <i class="fa-regular fa-clock text-xs"></i>
-                                                                            <span x-text="ticket.valid_days + ' hari'"></span>
+                                                                            <span x-text="ticket.valid_days + ' {{ __('Tickets.Card.Day') }}'"></span>
                                                                         </span>
                                                                         <template x-if="ticket.quota">
                                                                             <span class="inline-flex items-center gap-1 text-emerald-500">
                                                                                 <i class="fa-solid fa-users text-xs"></i>
-                                                                                <span x-text="ticket.quota + '/hari'"></span>
+                                                                                <span x-text="ticket.quota + '/{{ __('Tickets.Card.Day') }}'"></span>
                                                                             </span>
                                                                         </template>
                                                                         <template x-if="!ticket.quota">
                                                                             <span class="inline-flex items-center gap-1 text-emerald-500">
                                                                                 <i class="fa-solid fa-infinity text-xs"></i>
-                                                                                Tanpa batas
+                                                                                {{ __('Tickets.Card.Unlimited') }}
                                                                             </span>
                                                                         </template>
                                                                     </div>
@@ -285,7 +287,7 @@
                                                         <div class="flex items-center justify-between sm:justify-end gap-4 pt-3 sm:pt-0 border-t sm:border-0 border-dashed border-slate-200 dark:border-slate-700/50 shrink-0 ml-12 sm:ml-0">
                                                             <div class="sm:text-right">
                                                                 <div class="text-base font-bold text-primary leading-tight">Rp <span x-text="ticket.formatted_price"></span></div>
-                                                                <div class="text-xs text-slate-400">/orang</div>
+                                                                <div class="text-xs text-slate-400">{{ __('Tickets.Card.PerPerson') }}</div>
                                                             </div>
                                                             <a 
                                                                 :href="`/e-tiket/${ticket.id}`" 
@@ -293,7 +295,7 @@
                                                                 class="px-5 py-2 rounded-2xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-colors whitespace-nowrap"
                                                                 wire:navigate
                                                             >
-                                                                Beli Tiket
+                                                                {{ __('Tickets.Card.Book') }}
                                                             </a>
                                                         </div>
                                                     </div>

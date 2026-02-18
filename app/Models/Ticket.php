@@ -12,14 +12,17 @@ class Ticket extends Model
     protected $fillable = [
         'place_id',
         'name',
+        'name_en',
         'type',
         'description',
+        'description_en',
         'price',
         'price_weekend',
         'quota',
         'valid_days',
         'is_active',
         'terms_conditions',
+        'terms_conditions_en',
     ];
 
     protected $casts = [
@@ -27,6 +30,36 @@ class Ticket extends Model
         'price_weekend' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    protected $appends = [
+        'translated_name',
+        'translated_description',
+        'translated_terms_conditions',
+    ];
+
+    public function getTranslatedNameAttribute()
+    {
+        if (app()->getLocale() == 'en' && !empty($this->name_en)) {
+            return $this->name_en;
+        }
+        return $this->name;
+    }
+
+    public function getTranslatedDescriptionAttribute()
+    {
+        if (app()->getLocale() == 'en' && !empty($this->description_en)) {
+            return $this->description_en;
+        }
+        return $this->description;
+    }
+
+    public function getTranslatedTermsConditionsAttribute()
+    {
+        if (app()->getLocale() == 'en' && !empty($this->terms_conditions_en)) {
+            return $this->terms_conditions_en;
+        }
+        return $this->terms_conditions;
+    }
 
     /**
      * Get the place that owns the ticket.

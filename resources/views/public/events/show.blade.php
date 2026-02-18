@@ -1,14 +1,14 @@
 <x-public-layout>
     @push('seo')
         <x-seo 
-            :title="$event->title . ' - Agenda Jelajah Jepara'"
-            :description="Str::limit(strip_tags($event->description), 150)"
+            :title="$event->translated_title . ' - ' . __('Nav.AppName')"
+            :description="Str::limit(strip_tags($event->translated_description), 150)"
             :image="$event->image ? asset($event->image) : asset('images/agenda/logo-agenda.png')"
             type="article"
         />
     @endpush
-    @section('meta_title', $event->title)
-    @section('meta_description', Str::limit(strip_tags($event->description), 150))
+    @section('meta_title', $event->translated_title)
+    @section('meta_description', Str::limit(strip_tags($event->translated_description), 150))
     @section('meta_image', $event->image ? asset($event->image) : asset('images/agenda/logo-agenda.png'))
 
     <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-24 lg:pt-20">
@@ -26,14 +26,14 @@
                                 <li class="inline-flex items-center">
                                     <a href="{{ route('welcome') }}" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors" wire:navigate>
                                         <span class="material-symbols-outlined text-lg mr-1">home</span>
-                                        Home
+                                        {{ __('Nav.Home') }}
                                     </a>
                                 </li>
                                 <li>
                                     <div class="flex items-center">
                                         <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
                                         <a href="{{ route('events.public.index') }}" class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors" wire:navigate>
-                                            Agenda
+                                            {{ __('Nav.Events') }}
                                         </a>
                                     </div>
                                 </li>
@@ -41,7 +41,7 @@
                                     <div class="flex items-center">
                                         <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
                                         <span class="text-sm font-medium text-slate-900 dark:text-white line-clamp-1 max-w-[150px] md:max-w-xs">
-                                            {{ $event->title }}
+                                            {{ $event->translated_title }}
                                         </span>
                                     </div>
                                 </li>
@@ -91,7 +91,7 @@
                         <!-- Title & Location -->
                         <div class="mb-10 animate-fade-in-up delay-100">
                             <h1 class="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-[1.2] md:leading-tight mb-6">
-                                {{ $event->title }}
+                                {{ $event->translated_title }}
                             </h1>
                             @if($event->location)
                             <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-lg">
@@ -114,7 +114,7 @@
                                     {{ __('Events.Detail.About') }}
                                 </h3>
                                 <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
-                                    {!! \App\Services\ContentSanitizer::sanitizeAllowHtml($event->description) !!}
+                                    {!! \App\Services\ContentSanitizer::sanitizeAllowHtml($event->translated_description) !!}
                                 </div>
                             </section>
     
@@ -208,7 +208,7 @@
                         <!-- Footer Area -->
                         <div class="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 text-center">
                             <p class="text-slate-400 text-sm">
-                                &copy; {{ date('Y') }} Dinas Pariwisata & Kebudayaan Kabupaten Jepara
+                                {{ __('Places.Footer', ['year' => date('Y')]) }}
                             </p>
                         </div>
     

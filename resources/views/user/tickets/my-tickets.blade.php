@@ -88,7 +88,7 @@
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 text-sm pointer-events-none"></i>
                         <input type="text" x-model.debounce.200ms="searchQuery"
-                               placeholder="Cari order ID atau nama destinasi..."
+                               placeholder="{{ __('Tickets.My.SearchPlaceholder') }}"
                                class="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
                         <button x-show="searchQuery.length > 0" x-cloak
                                 @click="searchQuery = ''"
@@ -101,7 +101,7 @@
                 {{-- Results count --}}
                 <div class="flex items-center justify-between mb-4 px-1">
                     <p class="text-xs text-slate-400 dark:text-slate-500">
-                        <span x-text="visibleCount"></span> tiket ditampilkan
+                        <span x-text="visibleCount"></span> {{ __('Tickets.My.CountLabel') }}
                     </p>
                 </div>
 
@@ -263,7 +263,7 @@
                                                   x-transition:enter-end="opacity-100 scale-100"
                                                   class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 ring-1 ring-red-200/60 dark:ring-red-800/40">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                                Kadaluwarsa
+                                                {{ __('Tickets.My.Status.Expired') }}
                                             </span>
                                         </div>
                                         {{-- Countdown timer (right-aligned) --}}
@@ -272,7 +272,7 @@
                                              x-transition:leave-start="opacity-100"
                                              x-transition:leave-end="opacity-0"
                                              class="flex flex-col items-end shrink-0">
-                                            <span class="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5 uppercase tracking-wider font-medium">Sisa Waktu</span>
+                                            <span class="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5 uppercase tracking-wider font-medium">{{ __('Tickets.My.TimeRemaining') }}</span>
                                             <span class="font-mono text-base font-extrabold text-amber-600 dark:text-amber-400 tabular-nums" x-text="format(remaining)"></span>
                                         </div>
                                     </div>
@@ -288,8 +288,8 @@
                                                :class="expired ? 'text-red-400 dark:text-red-500' : 'text-amber-500 dark:text-amber-400'"></i>
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="font-bold text-[15px] text-slate-900 dark:text-white leading-snug">{{ $order->ticket->place->name }}</p>
-                                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">{{ $order->ticket->name }} · <span class="capitalize">{{ $order->ticket->type }}</span></p>
+                                            <p class="font-bold text-[15px] text-slate-900 dark:text-white leading-snug">{{ $order->ticket->place->translated_name }}</p>
+                                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">{{ $order->ticket->translated_name }} · <span class="capitalize">{{ $order->ticket->type }}</span></p>
                                         </div>
                                     </div>
 
@@ -301,7 +301,7 @@
                                         </div>
                                         <div class="inline-flex items-center gap-1.5 bg-slate-50 dark:bg-slate-700/40 rounded-lg px-3 py-1.5">
                                             <i class="fa-solid fa-users text-[10px] text-slate-400 dark:text-slate-500"></i>
-                                            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{ $order->quantity }} tiket</span>
+                                            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{ $order->quantity }} {{ __('Tickets.Unit') }}</span>
                                         </div>
                                         <div class="inline-flex items-center gap-1.5 bg-primary/5 dark:bg-primary/10 rounded-lg px-3 py-1.5">
                                             <span class="text-xs font-bold text-primary">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
@@ -316,7 +316,7 @@
                                          x-transition:leave-end="opacity-0 max-h-0"
                                          class="bg-slate-50/80 dark:bg-slate-700/20 rounded-xl p-3.5 border border-slate-100 dark:border-slate-700/60 overflow-hidden">
                                         <div class="flex items-center justify-between mb-2.5">
-                                            <span class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">Metode Pembayaran</span>
+                                            <span class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">{{ __('Tickets.My.PaymentMethod') }}</span>
                                             <span class="text-xs font-bold text-slate-600 dark:text-slate-300">
                                                 @if($order->payment_method_detail === 'bank_transfer')
                                                     Bank {{ strtoupper($order->payment_channel) }}
@@ -329,7 +329,7 @@
                                         @if(isset($order->payment_info['va_number']))
                                             <div class="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200/80 dark:border-slate-600/60 flex items-center justify-between gap-2">
                                                 <div class="min-w-0">
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">Nomor Virtual Account</p>
+                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-0.5">{{ __('Tickets.My.VirtualAccount') }}</p>
                                                     <p class="font-mono text-[15px] font-bold text-slate-800 dark:text-white tracking-wider truncate">{{ $order->payment_info['va_number'] }}</p>
                                                 </div>
                                                 <button onclick="navigator.clipboard.writeText('{{ $order->payment_info['va_number'] }}'); this.querySelector('i').className='fa-solid fa-check text-emerald-500'; setTimeout(() => this.querySelector('i').className='fa-regular fa-copy', 1500)" 
@@ -340,14 +340,14 @@
                                         @elseif(isset($order->payment_info['bill_key']))
                                             <div class="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200/80 dark:border-slate-600/60 space-y-2">
                                                 <div class="flex items-center justify-between gap-2">
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500">Bill Key</span>
+                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500">{{ __('Tickets.Payment.BillKey') }}</span>
                                                     <div class="flex items-center gap-2">
                                                         <span class="font-mono text-sm font-bold text-slate-800 dark:text-white">{{ $order->payment_info['bill_key'] }}</span>
                                                         <button onclick="navigator.clipboard.writeText('{{ $order->payment_info['bill_key'] }}')" class="text-slate-400 hover:text-primary text-xs transition-colors"><i class="fa-regular fa-copy"></i></button>
                                                     </div>
                                                 </div>
                                                 <div class="flex items-center justify-between gap-2">
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500">Biller Code</span>
+                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500">{{ __('Tickets.Payment.BillerCode') }}</span>
                                                     <span class="font-mono text-sm font-bold text-slate-800 dark:text-white">{{ $order->payment_info['biller_code'] }}</span>
                                                 </div>
                                             </div>
@@ -356,7 +356,7 @@
                                                 <div class="inline-block bg-white rounded-xl p-3 border border-slate-200/80">
                                                     <img src="{{ $order->payment_info['qr_url'] }}" alt="QR Code" class="h-28 w-28 object-contain">
                                                 </div>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">Scan QR untuk membayar</p>
+                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">{{ __('Tickets.My.ScanQR') }}</p>
                                             </div>
                                         @endif
                                     </div>
@@ -378,7 +378,7 @@
                                         <div class="flex gap-2.5 mb-2.5">
                                             <a href="{{ route('payment.status', $order->order_number) }}" 
                                                class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-center font-semibold py-3 rounded-[14px] transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-amber-500/15 active:scale-[0.98]">
-                                                <i class="fa-solid fa-wallet text-xs"></i> Bayar Sekarang
+                                                <i class="fa-solid fa-wallet text-xs"></i> {{ __('Tickets.My.PayNow') }}
                                             </a>
                                             <button @click="
                                                 $el.innerHTML = '<i class=\'fa-solid fa-spinner fa-spin text-xs\'></i>';
@@ -393,7 +393,7 @@
                                                         }
                                                     })
                                                     .catch(() => { $el.innerHTML = '<i class=\'fa-solid fa-arrows-rotate text-xs\'></i>'; $el.disabled = false; });
-                                            " class="w-12 h-12 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400 rounded-[14px] transition-all flex items-center justify-center border border-slate-200 dark:border-slate-600 active:scale-95 shrink-0" title="Cek Status Pembayaran">
+                                            " class="w-12 h-12 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400 rounded-[14px] transition-all flex items-center justify-center border border-slate-200 dark:border-slate-600 active:scale-95 shrink-0" title="{{ __('Tickets.My.CheckStatus') }}">
                                                 <i class="fa-solid fa-arrows-rotate text-xs"></i>
                                             </button>
                                         </div>
@@ -416,7 +416,7 @@
                                          x-transition:enter-end="opacity-100 translate-y-0">
                                         <div class="mb-2.5">
                                             <a href="{{ route('tickets.show', $order->ticket->id) }}" class="w-full bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-center font-semibold py-3 rounded-[14px] transition-all text-sm flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600 active:scale-[0.98]">
-                                                <i class="fa-solid fa-redo text-xs"></i> Pesan Ulang
+                                                <i class="fa-solid fa-redo text-xs"></i> {{ __('Tickets.My.Rebook') }}
                                             </a>
                                         </div>
                                         <div class="flex gap-2.5">
@@ -444,17 +444,17 @@
                                             <div class="w-14 h-14 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                                 <i class="fa-solid fa-triangle-exclamation text-red-500 text-2xl"></i>
                                             </div>
-                                            <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Batalkan Pesanan?</h3>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Pesanan <strong class="font-mono text-slate-700 dark:text-slate-300">{{ $order->order_number }}</strong> akan dibatalkan secara permanen.</p>
+                                            <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">{{ __('Tickets.My.Cancel.Title') }}</h3>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">{{ __('Tickets.My.Cancel.Message', ['order' => $order->order_number]) }}</p>
                                             <div class="flex gap-3">
                                                 <button @click="showCancelConfirm = false"
                                                     class="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold rounded-xl transition-colors text-sm">
-                                                    Kembali
+                                                    {{ __('Tickets.My.Cancel.Back') }}
                                                 </button>
                                                 <form action="{{ route('payment.cancel', $order->order_number) }}" method="POST" class="flex-1">
                                                     @csrf
                                                     <button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-colors text-sm">
-                                                        Ya, Batalkan
+                                                        {{ __('Tickets.My.Cancel.Confirm') }}
                                                     </button>
                                                 </form>
                                             </div>
@@ -501,7 +501,7 @@
                                         {{-- Ticket number badge (paid/used only) --}}
                                         @if($order->ticket_number && in_array($order->status, ['paid', 'used']))
                                         <div class="text-right shrink-0">
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-medium mb-0.5">No. Tiket</p>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-medium mb-0.5">{{ __('Tickets.My.TicketNo') }}</p>
                                             <p class="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 tracking-wider">{{ $order->ticket_number }}</p>
                                         </div>
                                         @endif
@@ -521,8 +521,8 @@
                                                 {{ $order->status == 'cancelled' ? 'text-red-400 dark:text-red-500' : '' }}"></i>
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="font-bold text-[15px] text-slate-900 dark:text-white leading-snug">{{ $order->ticket->place->name }}</p>
-                                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">{{ $order->ticket->name }} · <span class="capitalize">{{ $order->ticket->type }}</span></p>
+                                            <p class="font-bold text-[15px] text-slate-900 dark:text-white leading-snug">{{ $order->ticket->place->translated_name }}</p>
+                                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">{{ $order->ticket->translated_name }} · <span class="capitalize">{{ $order->ticket->type }}</span></p>
                                         </div>
                                     </div>
 
@@ -534,7 +534,7 @@
                                         </div>
                                         <div class="inline-flex items-center gap-1.5 bg-slate-50 dark:bg-slate-700/40 rounded-lg px-3 py-1.5">
                                             <i class="fa-solid fa-users text-[10px] text-slate-400 dark:text-slate-500"></i>
-                                            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{ $order->quantity }} tiket</span>
+                                            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{ $order->quantity }} {{ __('Tickets.Unit') }}</span>
                                         </div>
                                         <div class="inline-flex items-center gap-1.5 bg-primary/5 dark:bg-primary/10 rounded-lg px-3 py-1.5">
                                             <span class="text-xs font-bold text-primary">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
@@ -641,10 +641,10 @@ function ticketList() {
         searchQuery: '',
         
         tabs: [
-            { key: 'all', label: 'Semua', icon: 'fa-solid fa-layer-group', count: statusCounts.all },
-            { key: 'active', label: 'Aktif', icon: 'fa-solid fa-bolt', count: statusCounts.active },
-            { key: 'history', label: 'Riwayat', icon: 'fa-solid fa-clock-rotate-left', count: statusCounts.history },
-            { key: 'cancelled', label: 'Dibatalkan', icon: 'fa-solid fa-ban', count: statusCounts.cancelled },
+            { key: 'all', label: '{{ __('Tickets.My.Tab.All') }}', icon: 'fa-solid fa-layer-group', count: statusCounts.all },
+            { key: 'active', label: '{{ __('Tickets.My.Tab.Active') }}', icon: 'fa-solid fa-bolt', count: statusCounts.active },
+            { key: 'history', label: '{{ __('Tickets.My.Tab.History') }}', icon: 'fa-solid fa-clock-rotate-left', count: statusCounts.history },
+            { key: 'cancelled', label: '{{ __('Tickets.My.Tab.Cancelled') }}', icon: 'fa-solid fa-ban', count: statusCounts.cancelled },
         ],
 
         isVisible(status, orderNum, placeName) {
@@ -681,8 +681,8 @@ function ticketList() {
                     icon: 'fa-solid fa-magnifying-glass',
                     bgClass: 'bg-slate-100 dark:bg-slate-700',
                     iconClass: 'text-slate-300 dark:text-slate-500',
-                    title: 'Tidak ditemukan',
-                    subtitle: `Tidak ada tiket yang cocok dengan "${this.searchQuery}"`
+                    title: '{{ __('Tickets.My.Empty.Search.Title') }}',
+                    subtitle: `{{ __('Tickets.My.Empty.Search.Subtitle') }}`.replace(':query', this.searchQuery)
                 };
             }
 
@@ -691,29 +691,29 @@ function ticketList() {
                     icon: 'fa-solid fa-ticket',
                     bgClass: 'bg-slate-100 dark:bg-slate-700',
                     iconClass: 'text-slate-300 dark:text-slate-500',
-                    title: 'Belum ada transaksi',
-                    subtitle: 'Anda belum melakukan pemesanan tiket'
+                    title: '{{ __('Tickets.My.Empty.All.Title') }}',
+                    subtitle: '{{ __('Tickets.My.Empty.All.Subtitle') }}'
                 },
                 active: {
                     icon: 'fa-solid fa-clock',
                     bgClass: 'bg-yellow-50 dark:bg-yellow-900/20',
                     iconClass: 'text-yellow-400 dark:text-yellow-600',
-                    title: 'Belum ada tiket aktif',
-                    subtitle: 'Tiket yang menunggu pembayaran atau sudah dibayar akan muncul di sini'
+                    title: '{{ __('Tickets.My.Empty.Active.Title') }}',
+                    subtitle: '{{ __('Tickets.My.Empty.Active.Subtitle') }}'
                 },
                 history: {
                     icon: 'fa-solid fa-clock-rotate-left',
                     bgClass: 'bg-blue-50 dark:bg-blue-900/20',
                     iconClass: 'text-blue-400 dark:text-blue-600',
-                    title: 'Belum ada riwayat',
-                    subtitle: 'Tiket yang sudah digunakan akan muncul di sini'
+                    title: '{{ __('Tickets.My.Empty.History.Title') }}',
+                    subtitle: '{{ __('Tickets.My.Empty.History.Subtitle') }}'
                 },
                 cancelled: {
                     icon: 'fa-solid fa-ban',
                     bgClass: 'bg-red-50 dark:bg-red-900/20',
                     iconClass: 'text-red-300 dark:text-red-600',
-                    title: 'Tidak ada tiket dibatalkan',
-                    subtitle: 'Tiket yang dibatalkan akan muncul di sini'
+                    title: '{{ __('Tickets.My.Empty.Cancelled.Title') }}',
+                    subtitle: '{{ __('Tickets.My.Empty.Cancelled.Subtitle') }}'
                 }
             };
 
