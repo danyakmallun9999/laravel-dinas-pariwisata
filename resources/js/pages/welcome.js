@@ -286,13 +286,10 @@ window.mapComponent = function (config = {}) {
         },
 
         selectFeature(result) {
-            // For locations (Destinasi), we don't redirect but zoom the map
-            if (result.type_key === 'location') {
-                this.zoomToFeature(result);
-                this.searchResults = [];
-                this.searchOpen = false;
-                return;
-            }
+            // For locations (Destinasi), we still want to zoom but also redirect if clicked from search
+            // The user requested redirect, so we prioritize that. 
+            // If they want to just zoom, we might need a separate button later.
+
 
             // For others (Posts, Events, Cultures, Culinaries) that have a URL, we redirect
             if (result.url) {
