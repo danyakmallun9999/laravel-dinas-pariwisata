@@ -2,17 +2,27 @@
 import L from 'leaflet';
 import 'leaflet-draw';
 
+// Fix Leaflet default icon paths for Vite/SPA
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
+
 export default (config) => ({
     map: null,
-    drawControl: null,
-    drawnItems: null,
-    drawingMode: null,
+    marker: null,
     geometryJson: (function () {
         if (!config.initialGeometry) return '';
         if (typeof config.initialGeometry === 'string') {
             try {
-                JSON.parse(config.initialGeometry);
-                return config.initialGeometry;
+                const geom = JSON.parse(config.initialGeometry);
+                return JSON.stringify(geom); // normalized
             } catch (e) {
                 return '';
             }
@@ -21,24 +31,24 @@ export default (config) => ({
     })(),
     coordinates: { lat: config.center[0], lng: config.center[1] },
     hasGeometry: false,
-    currentDrawHandler: null,
+    isLoading: true,
 
     init() {
         this.$nextTick(() => {
-            this.initMap();
-            if (config.initialGeometry) {
-                let geom = config.initialGeometry;
-                if (typeof geom === 'string') {
-                    try {
-                        geom = JSON.parse(geom);
-                    } catch (e) {
-                        console.error('Failed to parse initialGeometry string:', e);
-                        geom = null;
-                    }
-                }
-                if (geom) {
-                    this.loadExistingGeometry(geom);
-                }
+            // Show loading state first
+            this.isLoading = true;
+            setTimeout(() => {
+                this.initMap();
+                this.isLoading = false;
+            }, 500); // Slight delay to simulate "fresh" reload
+        });
+
+        // Robust cleanup for SPA
+        this.$cleanup(() => {
+            if (this.map) {
+                console.log('Cleaning up map instance...');
+                this.map.remove();
+                this.map = null;
             }
         });
     },
@@ -46,299 +56,137 @@ export default (config) => ({
     initMap() {
         if (!this.$refs.mapContainer) return;
 
-        // Ensure clean slate if map already exists (SPA navigation safety)
+        // Ensure clean slate
         if (this.map) {
             this.map.remove();
             this.map = null;
         }
 
-        this.map = L.map(this.$refs.mapContainer).setView(config.center, config.zoom);
+        // Initialize map with performance optimizations
+        this.map = L.map(this.$refs.mapContainer, {
+            preferCanvas: true,
+            wheelPxPerZoomLevel: 120
+        }).setView(config.center, config.zoom);
 
+        // Switch to Google Maps Streets as requested
         const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
             maxZoom: 20,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
             attribution: '&copy; Google Maps'
         }).addTo(this.map);
 
-        const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
-            maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            attribution: '&copy; Google Maps'
+        // Define icons using CDN to avoid build issues
+        const iconDefault = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
         });
 
-        const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
-            maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            attribution: '&copy; Google Maps'
-        });
-
-        const googleTerrain = L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
-            maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            attribution: '&copy; Google Maps'
-        });
-
-        const baseLayers = {
-            "Google Streets": googleStreets,
-            "Google Hybrid": googleHybrid,
-            "Google Satellite": googleSatellite,
-            "Google Terrain": googleTerrain
-        };
-
-        this.drawnItems = new L.FeatureGroup();
-        this.map.addLayer(this.drawnItems);
-
-        const overlays = {
-            "Gambar": this.drawnItems
-        };
-
-        L.control.layers(baseLayers, overlays).addTo(this.map);
-
-        this.initDrawControl();
-
-        if (config.drawType === 'point') {
-            this.startDrawing('point');
-        } else if (config.drawType === 'line') {
-            this.startDrawing('line');
-        } else if (config.drawType === 'polygon') {
-            this.startDrawing('polygon');
-        }
-
-        // Force invalidate size after a small delay to handle flexbox resizing
-        setTimeout(() => {
-            this.map.invalidateSize();
-        }, 200);
-    },
-
-    initDrawControl() {
-        // Safe check for L.Control.Draw availability
-        if (!L.Control.Draw) {
-            console.warn('Leaflet Draw plugin not loaded');
-            return;
-        }
-
-        const drawOptions = {
-            position: 'topright',
-            draw: {
-                polygon: {
-                    allowIntersection: true,
-                    showArea: true,
-                    drawError: {
-                        color: '#e1e100',
-                        message: '<strong>Oh snap!<strong> you can\'t draw that!'
-                    },
-                },
-                polyline: {
-                    metric: true
-                },
-                circle: false,
-                rectangle: false,
-                marker: true,
-                circlemarker: false
-            },
-            edit: {
-                featureGroup: this.drawnItems,
-                remove: true
+        // Load existing geometry if available
+        if (this.geometryJson) {
+            try {
+                const geo = JSON.parse(this.geometryJson);
+                if (geo.type === 'Point') {
+                    const lat = geo.coordinates[1];
+                    const lng = geo.coordinates[0];
+                    this.setMarker([lat, lng], iconDefault);
+                    this.map.setView([lat, lng], 16);
+                }
+            } catch (e) {
+                console.error('Error parsing initial geometry', e);
             }
-        };
+        } else {
+            // Default to point mode even without geometry
+        }
 
-        this.drawControl = new L.Control.Draw(drawOptions);
-        this.map.addControl(this.drawControl);
-
-        this.map.on(L.Draw.Event.CREATED, (e) => {
-            this.handleDrawCreated(e);
-        });
-
-        this.map.on(L.Draw.Event.EDITED, (e) => {
-            this.handleDrawEdited(e);
-        });
-
-        this.map.on(L.Draw.Event.DELETED, (e) => {
-            this.handleDrawDeleted(e);
-        });
+        // Always activate "Point" mode by default
+        this.startDrawing('point');
     },
 
     startDrawing(type) {
-        this.map.off('click', this.handleMapClick);
+        // We only support 'point' now
+        if (type !== 'point') return;
 
-        if (this.currentDrawHandler) {
-            this.currentDrawHandler.disable();
-            this.currentDrawHandler = null;
-        }
+        // Change cursor to indicate placement mode
+        this.$refs.mapContainer.style.cursor = 'crosshair';
 
-        this.drawingMode = type;
+        // Remove any existing click listeners to prevent duplicates
+        this.map.off('click');
 
-        if (type === 'point') {
-            this.map.on('click', this.handleMapClick.bind(this));
-        } else {
-            // Check if L.Draw is available
-            if (!L.Draw) return;
-
-            if (type === 'line') {
-                this.currentDrawHandler = new L.Draw.Polyline(this.map, this.drawControl.options.draw.polyline);
-            } else if (type === 'polygon') {
-                this.currentDrawHandler = new L.Draw.Polygon(this.map, this.drawControl.options.draw.polygon);
+        // Persistent click handler to place/move marker
+        this.map.on('click', (e) => {
+            if (this.$refs.mapContainer) {
+                this.$refs.mapContainer.style.cursor = 'crosshair';
             }
-
-            if (this.currentDrawHandler) {
-                this.currentDrawHandler.enable();
-            }
-        }
+            this.setMarker(e.latlng);
+        });
     },
 
-    handleMapClick(e) {
-        const { lat, lng } = e.latlng;
-        this.coordinates = {
-            lat: Number(lat).toFixed(6),
-            lng: Number(lng).toFixed(6)
-        };
+    setMarker(latlng, icon = null) {
+        if (!icon) {
+            icon = L.icon({
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+        }
 
-        this.drawnItems.clearLayers();
+        // Strict cleanup: Remove ALL markers to prevent duplicates
+        this.map.eachLayer((layer) => {
+            if (layer instanceof L.Marker) {
+                this.map.removeLayer(layer);
+            }
+        });
 
-        const marker = L.marker([lat, lng]);
-        marker.addTo(this.drawnItems);
+        this.marker = L.marker(latlng, {
+            icon: icon,
+            draggable: true
+        }).addTo(this.map);
 
+        this.updateCoordinates(latlng);
+
+        // Update on drag
+        this.marker.on('dragend', (event) => {
+            const position = event.target.getLatLng();
+            this.updateCoordinates(position);
+        });
+    },
+
+    updateCoordinates(latlng) {
+        const lat = parseFloat(latlng.lat).toFixed(6);
+        const lng = parseFloat(latlng.lng).toFixed(6);
+
+        this.coordinates = { lat, lng };
+        this.hasGeometry = true;
         this.geometryJson = JSON.stringify({
             type: 'Point',
             coordinates: [parseFloat(lng), parseFloat(lat)]
         });
-        this.hasGeometry = true;
-    },
-
-    handleDrawCreated(e) {
-        const layer = e.layer;
-        this.drawnItems.addLayer(layer);
-        this.updateGeometryFromLayer(layer);
-    },
-
-    handleDrawEdited(e) {
-        const layers = e.layers;
-        layers.eachLayer((layer) => {
-            this.updateGeometryFromLayer(layer);
-        });
-    },
-
-    handleDrawDeleted(e) {
-        this.geometryJson = '';
-        this.hasGeometry = false;
-        if (config.drawType === 'point') {
-            this.coordinates = { lat: config.center[0], lng: config.center[1] };
-        }
-    },
-
-    updateGeometryFromLayer(layer) {
-        const geojson = layer.toGeoJSON();
-        const geometry = geojson.geometry;
-
-        if (geometry) {
-            this.geometryJson = JSON.stringify(geometry);
-            this.hasGeometry = true;
-            this.coordinates = {
-                lat: Number(geojson.properties?.lat || config.center[0]).toFixed(6),
-                lng: Number(geojson.properties?.lng || config.center[1]).toFixed(6)
-            };
-
-            if (geometry.type === 'Point') {
-                this.coordinates = {
-                    lat: Number(geometry.coordinates[1]).toFixed(6),
-                    lng: Number(geometry.coordinates[0]).toFixed(6)
-                };
-            }
-
-            if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
-                this.calculateArea(layer);
-            }
-        }
-    },
-
-    calculateArea(layer) {
-        let areaSqMeters = 0;
-
-        if (layer instanceof L.Polygon) {
-            const latlngs = layer.getLatLngs();
-            const ringArea = (ring) => L.GeometryUtil.geodesicArea(ring);
-
-            const processLatLngs = (coords) => {
-                if (coords.length === 0) return;
-                if (coords[0] instanceof L.LatLng) {
-                    areaSqMeters += ringArea(coords);
-                } else if (Array.isArray(coords[0])) {
-                    coords.forEach(child => processLatLngs(child));
-                }
-            };
-
-            processLatLngs(latlngs);
-        }
-
-        const areaHectares = (areaSqMeters / 10000).toFixed(4);
-        this.$dispatch('area-calculated', areaHectares);
     },
 
     clearDrawing() {
-        this.drawnItems.clearLayers();
+        // Strict cleanup
+        this.map.eachLayer((layer) => {
+            if (layer instanceof L.Marker) {
+                this.map.removeLayer(layer);
+            }
+        });
+        this.marker = null;
         this.geometryJson = '';
         this.hasGeometry = false;
-        if (config.drawType === 'point') {
-            this.coordinates = { lat: config.center[0], lng: config.center[1] };
-        }
+        this.coordinates = { lat: '', lng: '' };
     },
 
+    // Kept for compatibility if view calls it, but disabled logic
     editDrawing() {
-        if (!this.hasGeometry) return;
-
-        const editControl = new L.EditToolbar.Edit(this.map, {
-            featureGroup: this.drawnItems
-        });
-        editControl.enable();
-    },
-
-    loadExistingGeometry(geometry) {
-        const tempLayer = L.geoJSON(geometry, {
-            style: {
-                color: '#3388ff',
-                fillOpacity: 0.2,
-                weight: 3
-            },
-            pointToLayer: (feature, latlng) => {
-                return L.marker(latlng);
-            }
-        });
-
-        const layers = tempLayer.getLayers();
-        if (layers.length > 0) {
-            const layer = layers[0];
-
-            if (layer instanceof L.LayerGroup) {
-                layer.eachLayer(l => {
-                    l.addTo(this.drawnItems);
-                });
-            } else {
-                layer.addTo(this.drawnItems);
-            }
-
-            try {
-                this.map.fitBounds(tempLayer.getBounds());
-            } catch (e) {
-                console.warn('Map fitBounds failed:', e);
-            }
-
-            this.hasGeometry = true;
-            this.geometryJson = JSON.stringify(geometry);
-
-            if (geometry.type === 'Point') {
-                this.coordinates = {
-                    lat: Number(geometry.coordinates[1]).toFixed(6),
-                    lng: Number(geometry.coordinates[0]).toFixed(6)
-                };
-            }
-
-            if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
-                if (layer instanceof L.LayerGroup) {
-                    // TODO: Handle area for group
-                } else {
-                    this.calculateArea(layer);
-                }
-            }
-        }
+        // no-op
     }
 });

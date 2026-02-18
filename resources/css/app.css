@@ -284,3 +284,16 @@
 .stagger-entry>*:nth-child(5) {
     animation-delay: 0.25s;
 }
+
+/* 6. Leaflet Fixes */
+.leaflet-pane img,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+    max-width: none !important;
+    max-height: none !important;
+}
+
+.leaflet-tile-container {
+    pointer-events: auto !important;
+}

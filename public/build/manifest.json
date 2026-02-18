@@ -927,9 +927,17 @@
     "file": "assets/layers-BWBAp2CZ.png",
     "src": "node_modules/leaflet/dist/images/layers.png"
   },
+  "node_modules/leaflet/dist/images/marker-icon-2x.png": {
+    "file": "assets/marker-icon-2x-_ZA0WGCc.png",
+    "src": "node_modules/leaflet/dist/images/marker-icon-2x.png"
+  },
   "node_modules/leaflet/dist/images/marker-icon.png": {
     "file": "assets/marker-icon-hN30_KVU.png",
     "src": "node_modules/leaflet/dist/images/marker-icon.png"
+  },
+  "node_modules/leaflet/dist/images/marker-shadow.png": {
+    "file": "assets/marker-shadow-f7SaPCxT.png",
+    "src": "node_modules/leaflet/dist/images/marker-shadow.png"
   },
   "node_modules/material-symbols/material-symbols-outlined.woff2": {
     "file": "assets/material-symbols-outlined-Bgl3Icaq.woff2",
@@ -966,7 +974,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-WMSuSVzV.js",
+    "file": "assets/app-B0HzvNr_.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -977,6 +985,9 @@
       "assets/app-EGhNnKeS.css"
     ],
     "assets": [
+      "assets/marker-icon-hN30_KVU.png",
+      "assets/marker-icon-2x-_ZA0WGCc.png",
+      "assets/marker-shadow-f7SaPCxT.png",
       "assets/leaflet.routing.icons-D1_G_SEE.png",
       "assets/routing-icon-DR3Yqk3O.png"
     ]
