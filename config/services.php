@@ -48,4 +48,8 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URL'),
     ],
 
+    'tinymce' => [
+        'api_key' => env('TINYMCE_API_KEY'),
+    ],
+
 ];

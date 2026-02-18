@@ -944,7 +944,11 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
+<<<<<<< HEAD
     "file": "assets/app-OZ7YXoxK.css",
+=======
+    "file": "assets/app-C9ehbyzG.css",
+>>>>>>> 4832a3a (feat: Add TinyMCE API key configuration and update compiled CSS assets.)
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
