@@ -40,7 +40,36 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-6 space-y-6">
+                            <div class="p-6 space-y-6" x-data="{ 
+                                isTranslating: false,
+                                async translateName() {
+                                    const nameVal = document.getElementById('name').value;
+                                    if(!nameVal) return;
+                                    
+                                    this.isTranslating = true;
+                                    try {
+                                        const response = await fetch('{{ route('admin.posts.translate') }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                            },
+                                            body: JSON.stringify({
+                                                text: nameVal,
+                                                target: 'en'
+                                            })
+                                        });
+                                        const data = await response.json();
+                                        if(data.success) {
+                                            document.getElementById('name_en').value = data.translation;
+                                        }
+                                    } catch (error) {
+                                        console.error('Translation failed:', error);
+                                    } finally {
+                                        this.isTranslating = false;
+                                    }
+                                }
+                            }">
                                 <div>
                                     <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
                                         Nama Kategori
@@ -53,6 +82,28 @@
                                            required 
                                            autofocus>
                                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label for="name_en" class="block text-sm font-semibold text-gray-700">
+                                            Nama Kategori (English)
+                                        </label>
+                                        <button type="button" 
+                                                @click="translateName()"
+                                                class="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 disabled:opacity-50"
+                                                :disabled="isTranslating">
+                                            <i class="fa-solid fa-language" :class="isTranslating ? 'animate-pulse' : ''"></i>
+                                            <span x-text="isTranslating ? 'Translating...' : 'Translate Automatically'"></span>
+                                        </button>
+                                    </div>
+                                    <input type="text" 
+                                           id="name_en" 
+                                           name="name_en" 
+                                           value="{{ old('name_en', $category->name_en) }}"
+                                           class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium placeholder-gray-400 focus:bg-white focus:ring-0 focus:border-blue-500 transition-all"
+                                           placeholder="Example: Nature, Culture, Culinary...">
+                                    <x-input-error :messages="$errors->get('name_en')" class="mt-2" />
                                 </div>
                             </div>
                         </div>

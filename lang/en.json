@@ -282,6 +282,8 @@
     "Places.ShowLess": "Show Less",
     "Places.Ticket.Title": "Entrance Ticket",
     "Places.Ticket.Subtitle": "Choose tickets according to your needs",
+    "Places.Ticket.Free": "Free",
+    "Places.Ticket.Entry": "Entrance Ticket",
     "Places.Ticket.Type": "Ticket",
     "Places.Ticket.DescriptionDefault": "Entrance ticket for tourism destination",
     "Places.Ticket.Price": "Price",

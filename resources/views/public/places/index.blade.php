@@ -23,12 +23,16 @@
                 places: {{ Js::from($places->map(function($place) {
                     $place->name = $place->translated_name;
                     $place->description = $place->translated_description;
+                    // Ensure localized category name
+                    if ($place->category) {
+                        $place->category_name = $place->category->name;
+                    }
                     return $place;
                 })) }},
                 get filteredPlaces() {
                     return this.places.filter(place => {
                         const matchesSearch = this.search === '' || place.name.toLowerCase().includes(this.search.toLowerCase());
-                        const matchesCategory = this.selectedCategory === '' || (place.category && place.category.name === this.selectedCategory);
+                        const matchesCategory = this.selectedCategory === '' || (place.category_name === this.selectedCategory);
                         
                         // Location matching (Match exact kecamatan)
                         const matchesLocation = this.selectedLocation === '' || place.kecamatan === this.selectedLocation;
@@ -214,7 +218,7 @@
                                 <!-- Category Badge -->
                                 <div class="absolute top-4 left-4">
                                     <span class="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur text-xs font-bold text-slate-800 dark:text-white shadow-sm border border-white/20" 
-                                          x-text="(place.category && place.category.name) ? place.category.name : '{{ __('Tourism.Category.Default') }}'">
+                                          x-text="place.category_name ? place.category_name : '{{ __('Tourism.Category.Default') }}'">
                                     </span>
                                 </div>
 
@@ -244,7 +248,7 @@
                                     <!-- Price -->
                                     <div class="font-bold text-primary flex items-center gap-1">
                                         <span class="material-symbols-outlined text-lg">payments</span>
-                                        <span x-text="place.ticket_price === 'Gratis' ? 'Gratis' : (place.ticket_price && place.ticket_price.length < 15 ? place.ticket_price : 'Tiket Masuk')"></span>
+                                        <span x-text="place.ticket_price === 'Gratis' || place.ticket_price === 'Free' ? '{{ __('Places.Ticket.Free') }}' : (place.ticket_price && place.ticket_price.length < 15 ? place.ticket_price : '{{ __('Places.Ticket.Entry') }}')"></span>
                                     </div>
                                 </div>
                             </div>

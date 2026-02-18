@@ -70,14 +70,14 @@
                                 <li class="inline-flex items-center">
                                     <a href="{{ route('welcome') }}" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors" wire:navigate>
                                         <span class="material-symbols-outlined text-lg mr-1">home</span>
-                                        Home
+                                        {{ __('Nav.Home') }}
                                     </a>
                                 </li>
                                 <li>
                                     <div class="flex items-center">
                                         <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
                                         <a href="{{ route('places.index') }}" class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors" wire:navigate>
-                                            Destinasi
+                                            {{ __('Nav.Destinations') }}
                                         </a>
                                     </div>
                                 </li>
@@ -111,7 +111,7 @@
                             <div class="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center">
                                 <div class="bg-white/90 backdrop-blur px-4 py-2 rounded-full font-bold text-sm text-slate-700 shadow-lg opacity-0 hover:opacity-100 transition-opacity flex items-center gap-2">
                                     <span class="material-symbols-outlined text-base">zoom_in</span>
-                                    Lihat Detail
+                                    {{ __('Places.ReadMore') }}
                                 </div>
                             </div>
                         </div>
