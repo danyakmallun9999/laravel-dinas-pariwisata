@@ -26,9 +26,11 @@ Route::get('/budaya/{slug}', [WelcomeController::class, 'showCulture'])->name('c
 Route::get('/kuliner/{slug}', [WelcomeController::class, 'showCulinary'])->name('culinary.show');
 
 // Google OAuth routes (for public users)
-Route::get('/auth/google/login', [GoogleAuthController::class, 'showLoginPage'])->name('auth.google.login');
-Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+if (config('features.google_login_enabled')) {
+    Route::get('/auth/google/login', [GoogleAuthController::class, 'showLoginPage'])->name('auth.google.login');
+    Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+}
 Route::post('/auth/logout', [GoogleAuthController::class, 'logout'])->name('auth.user.logout');
 
 // E-Ticket Feature (conditionally enabled via config/features.php)

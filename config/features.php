@@ -15,5 +15,6 @@ return [
     |
     */
     'e_ticket_enabled' => env('FEATURE_E_TICKET', false),
+    'google_login_enabled' => env('FEATURE_GOOGLE_LOGIN', true),
 
 ];
