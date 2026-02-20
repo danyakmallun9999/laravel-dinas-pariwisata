@@ -118,9 +118,10 @@ class WelcomeController extends Controller
 
     public function showCulture(string $slug): View
     {
-        $culture = Culture::where('slug', $slug)->firstOrFail();
+        $culture = Culture::with('images')->where('slug', $slug)->firstOrFail();
         return view('public.culture.show', compact('culture'));
     }
+
 
     public function showCulinary(string $slug): View
     {

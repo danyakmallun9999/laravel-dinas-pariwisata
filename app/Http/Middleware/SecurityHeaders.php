@@ -52,7 +52,7 @@ class SecurityHeaders
                "connect-src $connectSrc; " .
                "worker-src 'self' blob:; " . // Required for MapLibre GL
                "child-src 'self' blob:; " .  // Fallback for older browsers
-               "frame-src 'self' https://cdn.tiny.cloud https://www.google.com https://maps.google.com; " .
+               "frame-src 'self' https://cdn.tiny.cloud https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com; " .
                "object-src 'none'; " .
                "base-uri 'self'; " .
                "form-action 'self'; " .

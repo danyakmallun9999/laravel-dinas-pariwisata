@@ -19,6 +19,7 @@ class Culture extends Model
         'category',
         'location',
         'time',
+        'youtube_url',
     ];
 
     public function getRouteKeyName()
@@ -26,21 +27,21 @@ class Culture extends Model
         return 'slug';
     }
 
+    public function images()
+    {
+        return $this->hasMany(CultureImage::class);
+    }
+
     public function getImageUrlAttribute()
     {
         if (!$this->image) {
-            return null; // or default image
+            return null;
         }
 
         if (Str::startsWith($this->image, 'http')) {
             return $this->image;
         }
 
-        // Check if file exists in storage via symlink path logic or filesystem
-        // If it starts with 'images/culture', it might be from storage.
-        // Static images are in 'images/kuliner-jppr' or 'images/culture' public folder directly.
-        
-        // If file exists in 'public/storage/' . $this->image
         if (file_exists(public_path('storage/' . $this->image))) {
             return asset('storage/' . $this->image);
         }

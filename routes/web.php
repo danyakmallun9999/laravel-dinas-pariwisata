@@ -106,7 +106,9 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::delete('/places/images/{placeImage}', [AdminController::class, 'destroyImage'])->name('places.images.destroy');
 
     // Culture routes
+    Route::delete('/cultures/images/{image}', [\App\Http\Controllers\Admin\CultureController::class, 'destroyImage'])->name('cultures.images.destroy');
     Route::resource('cultures', \App\Http\Controllers\Admin\CultureController::class);
+
 
     // Categories routes
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
