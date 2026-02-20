@@ -218,15 +218,6 @@
                                 </form>
                             </div>
                         </div>
-                    @else
-                        @if(config('features.google_login_enabled'))
-                        <div class="hidden md:flex ml-3 pl-3 border-l border-slate-200 dark:border-white/10 no-drag">
-                            <a href="{{ route('auth.google.login') }}" class="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-slate-900/20 dark:shadow-white/10" wire:navigate>
-                                <img src="https://www.google.com/favicon.ico" class="w-4 h-4 opacity-90 group-hover:scale-110 transition-transform" alt="Google">
-                                <span>{{ __('Nav.Login') }}</span>
-                            </a>
-                        </div>
-                        @endif
                     @endauth
                 </div>
 
@@ -310,15 +301,6 @@
                                 </form>
                             </div>
                         </div>
-                    @else
-                        @if(config('features.google_login_enabled'))
-                        <div class="sticky bottom-0 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-100 dark:border-white/5">
-                            <a href="{{ route('auth.google.login') }}" class="flex items-center justify-center gap-3 w-full py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold active:scale-[0.98] transition-transform shadow-lg shadow-slate-900/20 dark:shadow-white/10" wire:navigate>
-                                <img src="https://www.google.com/favicon.ico" class="w-5 h-5" alt="Google">
-                                {{ __('Nav.Login') }}
-                            </a>
-                        </div>
-                        @endif
                     @endauth
                 </div>
             </div>
