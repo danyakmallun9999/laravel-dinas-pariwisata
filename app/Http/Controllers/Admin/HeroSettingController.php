@@ -12,16 +12,16 @@ class HeroSettingController extends Controller
         $setting = \App\Models\HeroSetting::first();
         if (!$setting) {
             $setting = new \App\Models\HeroSetting([
-                'type' => 'map',
-                'badge_id' => 'Jelajahi Jepara',
-                'badge_en' => 'Explore Jepara',
-                'title_id' => 'Temukan Pesona<br><span class="text-primary">Bumi Kartini</span>',
-                'title_en' => 'Discover the Magic of<br><span class="text-primary">Kartini\'s Land</span>',
-                'subtitle_id' => 'Dari keindahan bahari yang memukau hingga kekayaan seni ukir kelas dunia, Jepara menyimpan sejuta cerita yang menanti untuk Anda jelajahi.',
-                'subtitle_en' => 'From stunning maritime beauty to world-class carving art, Jepara holds a million stories waiting for you to explore.',
-                'button_text_id' => 'Mulai Penjelajahan',
-                'button_text_en' => 'Start Exploring',
-                'button_link' => '#explore'
+               'type' => 'map',
+               'badge_id' => 'Portal Resmi Pariwisata',
+               'badge_en' => 'Official Tourism Portal',
+               'title_id' => 'Jelajah Jepara. <br> Ukir Ceritamu Di Sini',
+               'title_en' => 'Explore Jepara. <br> Carve Your Story Here',
+               'subtitle_id' => 'Temukan pesona pantai tropis, kekayaan sejarah, dan mahakarya ukiran kayu kelas dunia.',
+               'subtitle_en' => 'Discover tropical beaches, rich history, and world-class wood carving masterpieces.',
+               'button_text_id' => 'Mulai Jelajah',
+               'button_text_en' => 'Start Exploring',
+               'button_link' => '#explore'
             ]);
         }
         return view('admin.hero-settings.index', compact('setting'));
