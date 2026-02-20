@@ -33,10 +33,10 @@
             <!-- Hero Title Section -->
             <section class="mb-12">
                 <div class="max-w-3xl">
-                    <h1 class="text-5xl lg:text-7xl font-black mb-6 leading-[1.1] tracking-tight text-slate-900 dark:text-slate-100 font-display">
+                    <h1 class="text-2xl lg:text-4xl font-black mb-6 leading-[1.1] tracking-tight text-slate-900 dark:text-slate-100 font-display">
                         {{ __('Culture.Title') }} <span class="text-primary">{{ __('Nav.Culture') }}</span>
                     </h1>
-                    <p class="text-lg lg:text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
+                    <p class="text-sm lg:text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
                         {{ __('Culture.Subtitle') }}
                     </p>
                 </div>
@@ -77,10 +77,10 @@
                 ]
             }">
                 
-                <!-- Interactive Category Grid (The 3 Big Cards) -->
-                <section class="grid grid-cols-2 gap-3 md:gap-6 lg:gap-8 min-h-[400px] mb-16" x-show="!activeCategory" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+                <!-- Interactive Category Grid -->
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 mb-16" x-show="!activeCategory" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
                     <template x-for="category in categories" :key="category.id">
-                        <div class="culture-card relative group overflow-hidden rounded-xl bg-slate-200 cursor-pointer aspect-[3/4] md:h-[200px]" @click="activeCategory = category.id; window.scrollTo({top: 0, behavior: 'smooth'})">
+                        <div class="culture-card w-full relative group overflow-hidden rounded-xl bg-slate-200 cursor-pointer aspect-video md:aspect-[4/3]" @click="activeCategory = category.id; window.scrollTo({top: 0, behavior: 'smooth'})">
                             <div class="card-bg absolute inset-0 bg-cover bg-center" :style="`background-image: url('${category.image}');`"></div>
                             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                             <div class="absolute inset-0 p-4 md:p-8 flex flex-col justify-end">
@@ -125,9 +125,10 @@
                                     <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6">
                                     
                                     @foreach($groupedCultures[$categoryName] as $culture)
-                                        <div class="culture-card relative group overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800 cursor-pointer aspect-[3/4] md:aspect-auto h-[500px]" 
-                                             x-show="{{ $loop->index }} >= (currentPage - 1) * itemsPerPage && {{ $loop->index }} < currentPage * itemsPerPage"
-                                             onclick="window.location.href='{{ isset($culture->price) ? route('culinary.show', $culture->slug) : route('culture.show', $culture->slug) }}'">
+                                        <a href="{{ isset($culture->price) ? route('culinary.show', $culture->slug) : route('culture.show', $culture->slug) }}" 
+                                             wire:navigate
+                                             class="culture-card w-full block relative group overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800 cursor-pointer aspect-[3/4] md:aspect-[4/5]" 
+                                             x-show="{{ $loop->index }} >= (currentPage - 1) * itemsPerPage && {{ $loop->index }} < currentPage * itemsPerPage">
                                             <!-- Background Image -->
                                             @if($culture->image)
                                                 <div class="card-bg absolute inset-0 bg-cover bg-center" style="background-image: url('{{ $culture->image_url }}');"></div>
@@ -155,7 +156,7 @@
                                                     <span class="material-symbols-outlined transition-transform group-hover/link:translate-x-2 text-lg">arrow_forward</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     @endforeach
                                 </div>
 
@@ -192,7 +193,9 @@
                                 <h3 class="text-2xl font-bold mb-6 text-slate-800 dark:text-white border-t border-slate-200 dark:border-slate-700 pt-8 mt-8">Crafts & Skills</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                                     @foreach($groupedCultures['Kemahiran & Kerajinan Tradisional'] as $culture)
-                                         <div class="culture-card relative group overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800 cursor-pointer aspect-[3/4] md:aspect-auto h-[500px]" onclick="window.location.href='{{ route('culture.show', $culture->slug) }}'">
+                                         <a href="{{ route('culture.show', $culture->slug) }}" 
+                                            wire:navigate
+                                            class="culture-card block w-full relative group overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800 cursor-pointer aspect-[3/4] md:aspect-[4/5]">
                                             @if($culture->image)
                                                 <div class="card-bg absolute inset-0 bg-cover bg-center" style="background-image: url('{{ $culture->image_url }}');"></div>
                                             @else
@@ -205,7 +208,7 @@
                                                 <h3 class="text-white text-2xl font-bold mb-2 font-display">{{ $culture->name }}</h3>
                                                 <p class="text-slate-200 text-sm line-clamp-2">{{ $culture->description }}</p>
                                             </div>
-                                        </div>
+                                        </a>
                                     @endforeach
                                 </div>
                              @endif

@@ -24,7 +24,7 @@
                         <li>
                             <div class="flex items-center">
                                 <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
-                                <a href="{{ route('welcome') }}#culture" wire:navigate class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                <a href="{{ route('culture.index') }}" wire:navigate class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
                                     Budaya
                                 </a>
                             </div>
