@@ -91,6 +91,10 @@ Route::get('/dashboard', function () {
 Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
+    // Hero Settings routes
+    Route::get('hero-settings', [\App\Http\Controllers\Admin\HeroSettingController::class, 'edit'])->name('hero-settings.edit');
+    Route::put('hero-settings', [\App\Http\Controllers\Admin\HeroSettingController::class, 'update'])->name('hero-settings.update');
+
     // Users routes
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
 

@@ -96,6 +96,22 @@ class WelcomeController extends Controller
         $upcomingEvent = $upcomingEvents->first();
         $nextEvents = $upcomingEvents->skip(1);
 
+        $heroSetting = \App\Models\HeroSetting::first();
+        if (!$heroSetting) {
+            $heroSetting = new \App\Models\HeroSetting([
+                'type' => 'map',
+                'badge_id' => 'Portal Resmi Pariwisata',
+                'badge_en' => 'Official Tourism Portal',
+                'title_id' => 'Jelajah Jepara. <br> Temukan pesona pantai tropis, kekayaan sejarah, dan mahakarya ukiran kayu kelas dunia.',
+                'title_en' => 'Explore Jepara. <br> Carve Your Story Here',
+                'subtitle_id' => 'Temukan pesona pantai tropis, kekayaan sejarah, dan mahakarya ukiran kayu kelas dunia.',
+                'subtitle_en' => 'Discover tropical beaches, rich history, and world-class wood carving masterpieces.',
+                'button_text_id' => 'Mulai Jelajah',
+                'button_text_en' => 'Start Exploring',
+                'button_link' => '#explore'
+            ]);
+        }
+
         return view('public.home.welcome', compact(
             'categories',
             'totalPlaces',
@@ -112,7 +128,8 @@ class WelcomeController extends Controller
             'cultures',
             'culinaries',
             'upcomingEvent',
-            'nextEvents'
+            'nextEvents',
+            'heroSetting'
         ));
     }
 
@@ -331,6 +348,8 @@ class WelcomeController extends Controller
 
         return view('public.posts.show', compact('post', 'relatedPosts', 'recommendedPlaces', 'stats', 'viewsGraph', 'tourismStats'));
     }
+
+
 
     public function places(): View
     {
