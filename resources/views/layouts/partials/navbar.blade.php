@@ -52,6 +52,7 @@
                         ['label' => __('Nav.Map'), 'route' => 'explore.map', 'active' => 'explore.map'],
                         ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => 'places.*'],
                         config('features.e_ticket_enabled') ? ['label' => __('Nav.Tickets'), 'route' => 'tickets.index', 'active' => 'tickets.*'] : null,
+                        ['label' => __('Nav.Culture'), 'route' => 'culture.index', 'active' => 'culture.*'],
                         ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => 'events.public.*'],
                         ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => 'posts.*']
                     ])->filter() as $link)
@@ -260,6 +261,7 @@
                         ['label' => __('Nav.Map'), 'route' => 'explore.map', 'active' => 'explore.map'],
                         ['label' => __('Nav.Destinations'), 'route' => 'places.index', 'active' => ['places.index', 'places.show']],
                         config('features.e_ticket_enabled') ? ['label' => __('Nav.Tickets'), 'route' => 'tickets.index', 'active' => ['tickets.index', 'tickets.show', 'tickets.buy', 'tickets.my']] : null,
+                        ['label' => __('Nav.Culture'), 'route' => 'culture.index', 'active' => ['culture.index', 'culture.show']],
                         ['label' => __('Nav.Events'), 'route' => 'events.public.index', 'active' => ['events.public.index', 'events.public.show']],
                         ['label' => __('Nav.News'), 'route' => 'posts.index', 'active' => ['posts.index', 'posts.show']]
                     ])->filter()->values() as $index => $link)

@@ -75,6 +75,14 @@
                 </div>
                 @endforeach
             </div>
+            
+            <!-- View All Button -->
+            <div class="mt-12 text-center">
+                <a href="{{ route('culture.index') }}" class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-primary hover:bg-primary/90 text-white font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+                    <span>{{ __('Culture.Button.ViewAll') ?? 'Lihat Semua Budaya' }}</span>
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
         </div>
     </div>
     <script>

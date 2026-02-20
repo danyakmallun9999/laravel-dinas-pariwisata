@@ -82,7 +82,8 @@ class WelcomeController extends Controller
         $posts = Post::where('is_published', true)->latest('published_at')->take(3)->get();
 
         // Fetch Static Data
-        $cultures = $this->staticDataService->getCultures();
+        // Fetch Static Data
+        $cultures = $this->staticDataService->getCultures()->shuffle()->take(5);
         $culinaries = $this->staticDataService->getCulinaries();
 
         // Upcoming Events
@@ -432,5 +433,32 @@ class WelcomeController extends Controller
         $results = $places->merge($posts)->merge($events)->merge($cultures)->merge($culinaries);
 
         return response()->json($results);
+    }
+    public function culture()
+    {
+        $cultures = $this->staticDataService->getCultures();
+        $culinaries = $this->staticDataService->getCulinaries();
+        
+        // Group cultures by category
+        $groupedCultures = $cultures->groupBy('category');
+        
+        // Add Culinaries as a separate group
+        $groupedCultures['Kuliner Khas'] = $culinaries;
+
+        // Define category order matching the new design (Heritage, Arts, Culinary)
+        // Mapping: 
+        // 1. Traditional Architecture (Heritage) -> 'Adat Istiadat & Ritus' + 'Kemahiran & Kerajinan Tradisional' (merged for now or kept distinct)
+        // 2. Performing Arts -> 'Seni Pertunjukan'
+        // 3. Culinary Heritage -> 'Kuliner Khas'
+        
+        // Define category order matching the new design
+        $categoryOrder = [
+            'Kemahiran & Kerajinan Tradisional (Kriya)',
+            'Adat Istiadat, Ritus, & Perayaan Tradisional',
+            'Seni Pertunjukan & Tarian',
+            'Kuliner Khas'
+        ];
+
+        return view('public.culture.index', compact('cultures', 'culinaries', 'groupedCultures', 'categoryOrder'));
     }
 }

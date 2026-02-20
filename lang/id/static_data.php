@@ -2,29 +2,75 @@
 
 return [
     'cultures' => [
+        // 1. Kemahiran & Kerajinan Tradisional (Kriya)
+        [
+            'name' => 'Seni Ukir Jepara',
+            'slug' => 'seni-ukir-jepara',
+            'category' => 'Kemahiran & Kerajinan Tradisional (Kriya)',
+            'location' => 'Jepara',
+            'description' => 'Seni ukir kelas dunia yang menjadi identitas utama Jepara "The World Carving Center".',
+            'image' => 'images/culture/ukir.jpg', // Placeholder, need valid image
+            'highlight' => 'Sepanjang Tahun',
+            'full_description' => 'Jepara sangat terkenal dengan julukan "Kota Ukir", sehingga seni kerajinan menjadi identitas budaya yang paling melekat. Seni Ukir Jepara mencakup berbagai teknik dan gaya, mulai dari ukir relief, ukir kayu jati, hingga ukir kaligrafi. Salah satu mahakarya unik adalah "Macan Kurung", di mana pengrajin mengukir bentuk macan di dalam kurungan yang dibuat dari satu gelondong kayu utuh tanpa sambungan (one piece wood). Keahlian ini diwariskan turun-temurun dan telah diakui dunia internasional.',
+        ],
+        [
+            'name' => 'Kain Tradisional (Tenun & Batik)',
+            'slug' => 'kain-tradisional',
+            'category' => 'Kemahiran & Kerajinan Tradisional (Kriya)',
+            'location' => 'Troso & Jepara',
+            'description' => 'Pesona kain Tenun Ikat Troso dan Batik Jepara yang sarat makna dan sejarah.',
+            'image' => 'images/culture/tenun-troso.png',
+            'highlight' => 'Sepanjang Tahun',
+            'full_description' => 'Kain tradisional Jepara meliputi Tenun Ikat Troso dan Batik Jepara. Tenun Ikat Troso berasal dari Desa Troso, dibuat dengan teknik ikat ganda yang rumit menghasilkan motif etnik yang indah. Sementara Batik Jepara memiliki motif khas yang konon motif-motif awalnya diajarkan langsung oleh R.A. Kartini kepada pengrajin lokal untuk mengangkat derajat kaum wanita pada masanya. Batik Jepara sering mengangkat motif flora, fauna laut, dan ukiran.',
+        ],
+
+        // 2. Adat Istiadat, Ritus, & Perayaan Tradisional
         [
             'name' => 'Perang Obor',
             'slug' => 'perang-obor',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
             'location' => 'Tegal Sambi',
-            'description' => 'Tradisi unik perang api menggunakan obor dari pelepah kelapa kering. Dilakukan sebagai bentuk syukur dan tolak bala, mempertemukan keberanian dan keyakinan masyarakat Tegal Sambi.',
+            'description' => 'Tradisi unik perang api menggunakan obor dari pelepah kelapa kering. Dilakukan sebagai bentuk syukur dan tolak bala.',
             'image' => 'images/culture/obor.png',
             'highlight' => 'Senin Pahing, Dzulhijjah',
             'full_description' => 'Perang Obor adalah tradisi sakral masyarakat Desa Tegal Sambi yang dilaksanakan setahun sekali pada malam Senin Pahing bulan Dzulhijjah (Besar). Tradisi ini bermula dari kisah Ki Gemblong dan Ki Babadan. Dalam upacara ini, para pemuda desa saling serang menggunakan obor yang terbuat dari gulungan pelepah kelapa kering dan daun pisang. Meskipun terlihat berbahaya dan seringkali menimbulkan luka bakar, warga percaya bahwa luka tersebut akan sembuh dengan sendirinya atau dengan minyak khusus ramuan leluhur. Tradisi ini dimaknai sebagai ungkapan rasa syukur kepada Tuhan YME atas melimpahnya hasil bumi dan ternak, serta sebagai tolak bala atau penolak kesialan dan penyakit bagi warga desa.',
         ],
         [
+            'name' => 'Pesta Lomban',
+            'slug' => 'pesta-lomban',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
+            'location' => 'Laut Jepara',
+            'description' => 'Sedekah laut para nelayan yang telah melegenda. Dimeriahkan dengan larungan kepala kerbau dan perang laut.',
+            'image' => 'images/culture/lomban.JPG',
+            'highlight' => '8 Syawal (Bodo Kupat)',
+            'full_description' => 'Pesta Lomban adalah "Lebaran"-nya masyarakat nelayan Jepara. Diadakan pada 8 Syawal (sepekan setelah Idul Fitri/Bodo Kupat), tradisi ini dimulai dengan pelarungan sesaji berupa kepala kerbau ke tengah lautan dari TPI Ujung Batu. Setelah prosesi pelarungan, ratusan kapal nelayan akan melakukan "perang laut" simbolis dengan saling melempar ketupat dan air. Lomban bermakna "lomba-lomba" atau bersenang-senang merayakan kemenangan pasca puasa, sekaligus ungkapan syukur nelayan atas rezeki dari laut. Acara dilanjutkan dengan makan bersama dan hiburan rakyat di Pantai Kartini.',
+        ],
+        [
             'name' => 'Festival Kupat Lepet',
             'slug' => 'festival-kupat-lepet',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
             'location' => 'Pantai Kartini',
-            'description' => 'Tradisi gunungan kupat dan lepet yang menyemarakkan perayaan Syawalan. Simbol kebersamaan, saling memaafkan, dan rasa syukur masyarakat pesisir setelah berpuasa.',
+            'description' => 'Tradisi gunungan kupat dan lepet yang menyemarakkan perayaan Syawalan. Simbol kebersamaan masyarakat pesisir.',
             'image' => 'images/culture/festival-kupat-lepet.JPG',
             'highlight' => '8 Syawal (H+7 Lebaran)',
             'full_description' => 'Festival Kupat Lepet merupakan puncak perayaan tradisi Syawalan atau Lomban di Jepara, yang digelar seminggu setelah Hari Raya Idul Fitri (8 Syawal). Acara ini dipusatkan di kawasan Pantai Kartini. Gunungan raksasa yang terbuat dari ribuan ketupat dan lepet diarak dan kemudian diperebutkan oleh masyarakat. Kupat (Ketupat) menyimbolkan "Ngaku Lepat" (mengakui kesalahan), sedangkan Lepet menyimbolkan "Disilep ingkang Rapet" (kesalahan dikubur/ditutup rapat). Tradisi ini mengajarkan filosofi luhur tentang pentingnya saling memaafkan dan menjalin silaturahmi yang erat antar sesama.',
         ],
         [
+            'name' => 'Jembul Tulakan',
+            'slug' => 'jembul-tulakan',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
+            'location' => 'Desa Tulakan',
+            'description' => 'Upacara adat sedekah bumi yang dilakukan masyarakat Desa Tulakan sebagai wujud syukur.',
+            'image' => null, // Placeholder
+            'highlight' => 'Senin Pahing, Apit',
+            'full_description' => 'Jembul Tulakan adalah upacara adat sedekah bumi yang dilakukan secara turun-temurun oleh masyarakat Desa Tulakan, Kecamatan Donorojo. Inti dari ritual ini adalaha arak-arakan "Jembul", yaitu gunungan kecil berisi nasi dan lauk pauk serta anyaman janur. Tradisi ini merupakan ungkapan rasa syukur kepada Tuhan atas rezeki dan keselamatan, serta penghormatan kepada Ratu Kalinyamat yang konon pernah bertapa di wilayah tersebut (Pertapaan Sonder).',
+        ],
+        [
             'name' => 'Kirab Buka Luwur',
             'slug' => 'kirab-buka-luwur',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
             'location' => 'Makam Mantingan',
-            'description' => 'Prosesi sakral penggantian kain penutup makam Ratu Kalinyamat dan Sultan Hadlirin. Diwarnai iring-iringan budaya dan doa bersama mengenang jasa leluhur Jepara.',
+            'description' => 'Prosesi sakral penggantian kain penutup makam Ratu Kalinyamat dan Sultan Hadlirin.',
             'image' => 'images/culture/kirab-buka-luwur.JPG',
             'highlight' => '19 Jumadil Akhir',
             'full_description' => 'Kirab Buka Luwur adalah upacara adat penggantian kelambu (luwur) penutup makam Ratu Kalinyamat dan suaminya, Sultan Hadlirin, di kompleks Masjid dan Makam Mantingan. Dilaksanakan setiap tanggal 9 Apit/Dzulqa\'dah (namun seringkali disesuaikan dengan haul pada 19 Jumadil Akhir dalam konteks modern atau variasi lokal). Prosesi dimulai dengan kirab budaya yang menampilkan iring-iringan prajurit patang puluhan dan abdi dalem membawa luwur baru. Acara ini merupakan bentuk penghormatan tertinggi masyarakat Jepara kepada Ratu Kalinyamat, pahlawan nasional dan tokoh wanita legendaris yang membawa kejayaan maritim Jepara.',
@@ -32,8 +78,9 @@ return [
         [
             'name' => 'Festival Jondang Kawak',
             'slug' => 'festival-jondang-kawak',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
             'location' => 'Desa Kawak',
-            'description' => 'Arak-arakan kotak kayu (jondang) berisi hasil bumi sebagai wujud syukur. Jondang dihias unik dan diarak keliling desa, melambangkan kemakmuran dan kerukunan warga.',
+            'description' => 'Arak-arakan kotak kayu (jondang) berisi hasil bumi sebagai wujud syukur.',
             'image' => 'images/culture/jondang-kawak.JPG',
             'highlight' => 'Kamis Kliwon, Dzulhijjah',
             'full_description' => 'Festival Jondang di Desa Kawak adalah tradisi sedekah bumi yang unik. Jondang sendiri adalah kotak kayu kuno yang biasanya digunakan untuk menyimpan harta benda atau hantaran lamaran. Dalam festival ini, Jondang diisi dengan aneka hasil bumi, makanan tradisional, dan tumpeng, kemudian diarak keliling desa menuju punden leluhur. Tradisi ini merupakan wujud syukur masyarakat Desa Kawak atas hasil panen yang melimpah dan doa untuk keselamatan desa. Festival ini juga menjadi ajang pelestarian gotong royong dan kerukunan antar warga.',
@@ -41,20 +88,64 @@ return [
         [
             'name' => 'Barikan Kubro',
             'slug' => 'barikan-kubro',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
             'location' => 'Karimunjawa',
-            'description' => 'Ritual tolak bala dan syukur masyarakat Karimunjawa menjelang musim baratan. Ditandai dengan 9 tumpeng raksasa yang diarak ke laut dan alun-alun.',
+            'description' => 'Ritual tolak bala dan syukur masyarakat Karimunjawa menjelang musim baratan.',
             'image' => 'images/culture/barikan-kubro.JPG',
             'highlight' => 'Kamis Pon, Suro/Muharram',
             'full_description' => 'Barikan Kubro adalah tradisi besar masyarakat kepulauan Karimunjawa yang dilaksanakan di bulan Suro (Muharram), khususnya pada hari Kamis Wage atau Jumat Kliwon. "Barikan" bermakna barokah atau keselamatan. Ritual ini bertujuan memohon keselamatan kepada Tuhan YME dan menolak bala (bencana), terutama menghadapi musim angin baratan yang ombaknya besar. Masyarakat membuat tumpeng-tumpeng besar yang diarak menuju pelabuhan atau alun-alun untuk didoakan bersama, kemudian dimakan bersama-sama (kembul bujana). Sebagian sesaji juga dilarung ke laut sebagai simbol harmoni manusia dengan alam.',
         ],
         [
-            'name' => 'Pesta Lomban',
-            'slug' => 'pesta-lomban',
-            'location' => 'Laut Jepara',
-            'description' => 'Sedekah laut para nelayan yang telah melegenda. Dimeriahkan dengan larungan kepala kerbau dan perang laut sebagai ungkapan syukur atas rezeki bahari.',
-            'image' => 'images/culture/lomban.JPG',
-            'highlight' => '8 Syawal (Puncak Syawalan)',
-            'full_description' => 'Pesta Lomban adalah "Lebaran"-nya masyarakat nelayan Jepara. Diadakan pada 8 Syawal, tradisi ini dimulai dengan pelarungan sesaji berupa kepala kerbau ke tengah lautan dari TPI Ujung Batu. Setelah prosesi pelarungan, ratusan kapal nelayan akan melakukan "perang laut" simbolis dengan saling melempar ketupat dan air. Lomban bermakna "lomba-lomba" atau bersenang-senang merayakan kemenangan pasca puasa, sekaligus ungkapan syukur nelayan atas rezeki dari laut. Acara dilanjutkan dengan makan bersama dan hiburan rakyat di Pantai Kartini.',
+            'name' => 'Baratan Kalinyamatan',
+            'slug' => 'baratan-kalinyamatan',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
+            'location' => 'Kalinyamatan',
+            'description' => 'Arak-arakan lampion (impese) untuk menyambut malam Nisfu Syaban, mengenang Ratu Kalinyamat.',
+            'image' => null, // Placeholder
+            'highlight' => '15 Syaban (Nisfu Syaban)',
+            'full_description' => 'Pesta Baratan adalah tradisi menyambut malam Nisfu Syaban yang digelar di Kecamatan Kalinyamatan. Kata "Baratan" berasal dari "Barah" (keselamatan/pengampunan). Tradisi ini identik dengan pawai lampion warna-warni (Impese) dan arak-arakan tokoh Ratu Kalinyamat. Konon, tradisi ini juga mengenang peristiwa Ratu Kalinyamat yang membawa obor saat mencari jenazah suaminya, Sultan Hadlirin. Suasana malam menjadi sangat indah dengan ribuan cahaya lampion yang dibawa oleh masyarakat.',
+        ],
+        [
+            'name' => 'Memeden Gadhu',
+            'slug' => 'memeden-gadhu',
+            'category' => 'Adat Istiadat, Ritus, & Perayaan Tradisional',
+            'location' => 'Desa Kepuk',
+            'description' => 'Ritual unik petani menjaga harmoni alam dengan membuat orang-orangan sawah (memeden).',
+            'image' => null, // Placeholder
+            'highlight' => 'Musim Tanam/Panen',
+            'full_description' => 'Memeden Gadhu adalah tradisi unik petani di Desa Kepuk, Kecamatan Bangsri. "Memeden" berarti orang-orangan sawah, dan "Gadhu" merujuk pada masa tanam musim kemarau (gadhu). Tradisi ini awalnya merupakan cara petani untuk mengusir hama burung dan tikus, namun berkembang menjadi festival budaya. Petani membuat memeden dengan berbagai kostum unik dan lucu, kemudian diarak keliling desa. Selain sebagai hiburan, ritual ini mengandung doa agar hasil panen melimpah dan alam tetap bersahabat.',
+        ],
+
+        // 3. Seni Pertunjukan & Tarian
+        [
+            'name' => 'Tari Kridhajati',
+            'slug' => 'tari-kridhajati',
+            'category' => 'Seni Pertunjukan & Tarian',
+            'location' => 'Jepara',
+            'description' => 'Tarian khas Jepara yang gerakannya menggambarkan proses pembuatan ukiran kayu.',
+            'image' => null, // Placeholder
+            'highlight' => 'Seni Tari',
+            'full_description' => 'Tari Kridhajati adalah tarian identitas Kabupaten Jepara. "Kridha" berarti karya/gerak, dan "Jati" merujuk pada kayu jati (bahan utama ukiran). Gerakan tarian ini sangat unik karena memvisualisasikan proses pembuatan ukiran Jepara, mulai dari memilih kayu, memahat (natah), hingga menghaluskan. Tarian ini diciptakan untuk mengangkat dan melestarikan semangat para pengrajin ukir Jepara yang tekun, teliti, dan berseni tinggi.',
+        ],
+        [
+            'name' => 'Kentrung & Emprak',
+            'slug' => 'kentrung-emprak',
+            'category' => 'Seni Pertunjukan & Tarian',
+            'location' => 'Jepara',
+            'description' => 'Kesenian bertutur (bercerita) yang kental dengan nilai-nilai dakwah Islam dan nasihat kehidupan.',
+            'image' => null, // Placeholder
+            'highlight' => 'Seni Tutur',
+            'full_description' => 'Kentrung dan Emprak adalah seni pertunjukan rakyat yang bersifat teater tutur. Kentrung dimainkan oleh seorang dalang yang bercerita sambil menabuh rebana (terbang), biasanya membawakan kisah-kisah nabi sesepuh, atau legenda lokal dengan muatan dakwah Islam yang kuat. Sedangkan Emprak adalah kesenian yang menggabungkan unsur tari, musik, dan lawakan (banyol), seringkali berisi kritik sosial atau nasihat moral yang disampaikan dengan jenaka. Kedua kesenian ini merupakan media pendidikan moral bagi masyarakat Jepara pada masanya.',
+        ],
+        [
+            'name' => 'Wayang Golek Langkung & Barongan',
+            'slug' => 'wayang-barongan',
+            'category' => 'Seni Pertunjukan',
+            'location' => 'Jepara',
+            'description' => 'Seni pertunjukan rakyat khas Jepara yang menggabungkan unsur wayang dan topeng barongan.',
+            'image' => null, // Placeholder
+            'highlight' => 'Seni Rakyat',
+            'full_description' => 'Jepara memiliki varian seni pertunjukan Wayang Golek Langkung (khususnya daerah Bangsri) dan Barongan Dencong. Wayang Golek Langkung ini unik karena bentuknya yang lebih sederhana dan sering dikaitkan dengan ritual pemanggilan hujan atau tolak bala. Barongan Dencong adalah seni barongan khas Jepara yang iringannya dinamis dan "dencong" (rancak). Kesenian ini sering tampil dalam arak-arakan desa atau hajatan warga sebagai sarana hiburan yang memupuk semangat kebersamaan.',
         ],
     ],
     'culinaries' => [
