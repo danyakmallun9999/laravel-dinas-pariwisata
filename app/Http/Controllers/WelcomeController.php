@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Boundary;
 use App\Models\Category;
+use App\Models\Culture;
 use App\Models\Event;
 use App\Models\Infrastructure;
 use App\Models\LandUse;
@@ -81,10 +82,9 @@ class WelcomeController extends Controller
             });
         $posts = Post::where('is_published', true)->latest('published_at')->take(3)->get();
 
-        // Fetch Static Data
-        // Fetch Static Data
-        $cultures = $this->staticDataService->getCultures()->shuffle()->take(5);
-        $culinaries = $this->staticDataService->getCulinaries();
+        // Fetch Data from Database (Migrated from Static)
+        $cultures = Culture::where('category', '!=', 'Kuliner Khas')->inRandomOrder()->take(5)->get();
+        $culinaries = Culture::where('category', 'Kuliner Khas')->get();
 
         // Upcoming Events
         $upcomingEvents = Event::where('is_published', true)
@@ -118,24 +118,35 @@ class WelcomeController extends Controller
 
     public function showCulture(string $slug): View
     {
-        $culture = $this->staticDataService->getCultures()->firstWhere('slug', $slug);
-
-        if (! $culture) {
-            abort(404);
-        }
-
+        $culture = Culture::where('slug', $slug)->firstOrFail();
         return view('public.culture.show', compact('culture'));
     }
 
     public function showCulinary(string $slug): View
     {
-        $culinary = $this->staticDataService->getCulinaries()->firstWhere('slug', $slug);
-
-        if (! $culinary) {
-            abort(404);
-        }
-
+        // Culinary is also in Culture table now
+        $culinary = Culture::where('slug', $slug)->firstOrFail();
         return view('public.culinary.show', compact('culinary'));
+    }
+
+    public function culture(): View
+    {
+        $cultures = Culture::all();
+        
+        $categoryOrder = [
+            'Kemahiran & Kerajinan Tradisional (Kriya)',
+            'Adat Istiadat, Ritus, & Perayaan Tradisional',
+            'Seni Pertunjukan',
+            'Kawasan Cagar Budaya & Sejarah',
+            'Kuliner Khas'
+        ];
+
+        // Custom order for certain items if needed, or just let them be ordered by DB id/created_at
+        // If we want specific items first within category, we might need a 'sort_order' column, but for now just default.
+        
+        $groupedCultures = $cultures->groupBy('category');
+
+        return view('public.culture.index', compact('cultures', 'groupedCultures', 'categoryOrder'));
     }
 
     public function geoJson(): JsonResponse
@@ -433,32 +444,5 @@ class WelcomeController extends Controller
         $results = $places->merge($posts)->merge($events)->merge($cultures)->merge($culinaries);
 
         return response()->json($results);
-    }
-    public function culture()
-    {
-        $cultures = $this->staticDataService->getCultures();
-        $culinaries = $this->staticDataService->getCulinaries();
-        
-        // Group cultures by category
-        $groupedCultures = $cultures->groupBy('category');
-        
-        // Add Culinaries as a separate group
-        $groupedCultures['Kuliner Khas'] = $culinaries;
-
-        // Define category order matching the new design (Heritage, Arts, Culinary)
-        // Mapping: 
-        // 1. Traditional Architecture (Heritage) -> 'Adat Istiadat & Ritus' + 'Kemahiran & Kerajinan Tradisional' (merged for now or kept distinct)
-        // 2. Performing Arts -> 'Seni Pertunjukan'
-        // 3. Culinary Heritage -> 'Kuliner Khas'
-        
-        // Define category order matching the new design
-        $categoryOrder = [
-            'Kemahiran & Kerajinan Tradisional (Kriya)',
-            'Adat Istiadat, Ritus, & Perayaan Tradisional',
-            'Seni Pertunjukan & Tarian',
-            'Kuliner Khas'
-        ];
-
-        return view('public.culture.index', compact('cultures', 'culinaries', 'groupedCultures', 'categoryOrder'));
     }
 }

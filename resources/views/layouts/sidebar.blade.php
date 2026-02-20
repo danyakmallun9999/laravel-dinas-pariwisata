@@ -205,6 +205,25 @@
             </div>
             @endif
 
+            @can('manage culture')
+            <a href="{{ route('admin.cultures.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition group relative {{ request()->routeIs('admin.cultures.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} sidebar-nav-item"
+               :class="isSidebarMini ? 'justify-center' : ''"
+               wire:navigate>
+                <div class="w-7 h-7 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-masks-theater text-lg"></i>
+                </div>
+                <span x-show="!isSidebarMini" class="whitespace-nowrap transition-opacity duration-300 sidebar-nav-text">Budaya</span>
+                 <!-- Tooltip -->
+                <div x-init="$el.parentElement.addEventListener('mouseenter', () => { $el.style.top = ($el.parentElement.getBoundingClientRect().top + 10) + 'px' })"
+                     x-show="isSidebarMini" 
+                     class="fixed left-[4.7rem] px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-[9999] whitespace-nowrap"
+                     style="display: none;">
+                    Budaya
+                </div>
+            </a>
+            @endcan
+
 
 
             @if(auth('admin')->user()->hasAnyPermission(['view all posts', 'view own posts']))

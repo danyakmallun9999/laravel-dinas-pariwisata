@@ -69,6 +69,7 @@ class RolePermissionSeeder extends Seeder
             // System Settings
             'manage settings',
             'manage categories',
+            'manage culture',
             'view audit logs',
         ];
 

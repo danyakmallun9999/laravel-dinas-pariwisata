@@ -3,7 +3,7 @@
         <x-seo 
             :title="$culture->name . ' - Budaya Jepara'"
             :description="Str::limit(strip_tags($culture->full_description ?? $culture->description), 150)"
-            :image="$culture->image ? asset($culture->image) : asset('images/logo-kura.png')"
+            :image="$culture->image_url ? $culture->image_url : asset('images/logo-kura.png')"
             type="article"
         />
     @endpush
@@ -59,7 +59,7 @@
 
             <!-- Main Image -->
             <div class="w-full aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl mb-12 relative group">
-                <img src="{{ asset($culture->image) }}" alt="{{ $culture->name }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+                <img src="{{ $culture->image_url }}" alt="{{ $culture->name }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
             </div>
 

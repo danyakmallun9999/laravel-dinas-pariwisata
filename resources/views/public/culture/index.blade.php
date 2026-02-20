@@ -60,12 +60,13 @@
                         image: '{{ asset("images/culture/obor.png") }}'
                     },
                     {
-                        id: 'Seni Pertunjukan & Tarian',
-                        title: 'Seni Pertunjukan & Tarian',
+                        id: 'Seni Pertunjukan',
+                        title: 'Seni Pertunjukan',
                         subtitle: 'Seni',
                         description: 'Experience the rhythm of Wayang Kulit, Kridhajati Dance, and the graceful movements of local arts.',
                         image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuByC0plW4kR_o3v4HYNa2r2JTW_CZ4SqENWKfWjQKnwCW8gPPQOpS2euCZuK2OeaH8SFfMje5m8x607ts6J8tZ42M2egKoBZTvB5clgNfHI5xXHqUtxtzoD10NZ3hyL9-pRo4f0VHA-HuDIJ4NhiN5nuu6Kw9KPyJTxnKYc4xGSBqWrEQtl9SMLfOGt81e8wCupxUP5mG3AHEQiOj0tgP8DQKYU30VyXmT50XUYr7I_IV3EzciVPLhNkG6oCYU44ENsU_B8-yM9MA'
                     },
+
                     {
                         id: 'Kuliner Khas',
                         title: 'Kuliner Khas Jepara',
@@ -129,7 +130,7 @@
                                              onclick="window.location.href='{{ isset($culture->price) ? route('culinary.show', $culture->slug) : route('culture.show', $culture->slug) }}'">
                                             <!-- Background Image -->
                                             @if($culture->image)
-                                                <div class="card-bg absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset($culture->image) }}');"></div>
+                                                <div class="card-bg absolute inset-0 bg-cover bg-center" style="background-image: url('{{ $culture->image_url }}');"></div>
                                             @else
                                                 <div class="card-bg absolute inset-0 bg-slate-300 dark:bg-slate-700 flex items-center justify-center">
                                                     <span class="material-symbols-outlined text-6xl text-slate-400">theater_comedy</span>
@@ -193,7 +194,7 @@
                                     @foreach($groupedCultures['Kemahiran & Kerajinan Tradisional'] as $culture)
                                          <div class="culture-card relative group overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800 cursor-pointer aspect-[3/4] md:aspect-auto h-[500px]" onclick="window.location.href='{{ route('culture.show', $culture->slug) }}'">
                                             @if($culture->image)
-                                                <div class="card-bg absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset($culture->image) }}');"></div>
+                                                <div class="card-bg absolute inset-0 bg-cover bg-center" style="background-image: url('{{ $culture->image_url }}');"></div>
                                             @else
                                                  <div class="card-bg absolute inset-0 bg-slate-300 dark:bg-slate-700 flex items-center justify-center">
                                                     <span class="material-symbols-outlined text-6xl text-slate-400">handyman</span>

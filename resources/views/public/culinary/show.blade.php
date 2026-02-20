@@ -3,7 +3,7 @@
         <x-seo 
             :title="$culinary->name . ' - Kuliner Jepara'"
             :description="Str::limit(strip_tags($culinary->full_description ?? $culinary->description), 150)"
-            :image="$culinary->image ? asset($culinary->image) : asset('images/logo-kura.png')"
+            :image="$culinary->image_url ? $culinary->image_url : asset('images/logo-kura.png')"
             type="article"
         />
     @endpush
@@ -48,7 +48,7 @@
                  <!-- Image Card Wrapper -->
                  <div class="relative w-full max-w-2xl mx-auto aspect-[4/3] rounded-[2.5rem] overflow-hidden group">
                     <!-- Main Image with "Ken Burns" Effect -->
-                    <img src="{{ asset($culinary->image) }}" alt="{{ $culinary->name }}" class="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-[20s] ease-in-out will-change-transform">
+                    <img src="{{ $culinary->image_url }}" alt="{{ $culinary->name }}" class="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-[20s] ease-in-out will-change-transform">
                     
                     <!-- Cinematic Overlays -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 opacity-60 transition-opacity duration-700"></div>
