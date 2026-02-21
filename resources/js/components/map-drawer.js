@@ -68,11 +68,9 @@ export default (config) => ({
             wheelPxPerZoomLevel: 120
         }).setView(config.center, config.zoom);
 
-        // Switch to Google Maps Streets as requested
-        const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&s=Galileo&apistyle=s.t%3Apoi%7Cp.v%3Aoff%2Cs.t%3Atransit%7Cp.v%3Aoff', {
-            maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            attribution: '&copy; Google Maps'
+        // Switch to Stadia Maps Streets as requested
+        const googleStreets = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+            maxZoom: 20
         }).addTo(this.map);
 
         // Define icons using CDN to avoid build issues

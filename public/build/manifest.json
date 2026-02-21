@@ -952,7 +952,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-chDZIZ73.css",
+    "file": "assets/app-BYgMUa22.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -970,7 +970,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-BcGdxnU9.js",
+    "file": "assets/app-CNvvl_NY.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -989,7 +989,7 @@
     ]
   },
   "resources/js/pages/welcome.js": {
-    "file": "assets/welcome-D7n6qvxw.js",
+    "file": "assets/welcome-BQksZcNj.js",
     "name": "welcome",
     "src": "resources/js/pages/welcome.js",
     "isEntry": true,
