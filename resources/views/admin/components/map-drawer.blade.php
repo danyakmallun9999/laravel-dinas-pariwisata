@@ -32,7 +32,14 @@
                 <p class="text-xs text-gray-500">
                     Klik tombol "Titik" lalu klik di peta untuk menambahkan lokasi
                 </p>
+                <p class="text-[10px] text-amber-600 mt-1 flex items-center gap-1">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Jika peta termuat sebagian atau macet, klik tombol Refresh di samping.
+                </p>
             </div>
+            <button type="button" @click="refreshMap()" class="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-sm transition-colors">
+                <i class="fa-solid fa-sync-alt"></i> Refresh Peta
+            </button>
         </div>
     </div>
 

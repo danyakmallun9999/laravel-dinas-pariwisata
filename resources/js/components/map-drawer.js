@@ -39,9 +39,21 @@ export default (config) => ({
             this.isLoading = true;
             setTimeout(() => {
                 this.initMap();
+                if (this.map) {
+                    this.map.invalidateSize();
+                }
                 this.isLoading = false;
             }, 500); // Slight delay to simulate "fresh" reload
         });
+
+        // Handle Livewire navigation specifically
+        document.addEventListener('livewire:navigated', () => {
+            if (this.map) {
+                setTimeout(() => {
+                    this.map.invalidateSize();
+                }, 300);
+            }
+        }, { once: true }); // Use once so it doesn't pile up per component instance
 
         // Robust cleanup for SPA
         this.$cleanup(() => {
@@ -186,5 +198,23 @@ export default (config) => ({
     // Kept for compatibility if view calls it, but disabled logic
     editDrawing() {
         // no-op
+    },
+
+    refreshMap() {
+        this.isLoading = true;
+
+        // Beri jeda sedikit agar indikator loading muncul
+        setTimeout(() => {
+            // initMap sudah memiliki logika map.remove() untuk menghancurkan peta yang macet
+            this.initMap();
+
+            // Beri waktu ekstra bagi kanvas baru untuk merender sebelum memastikan ukurannya
+            setTimeout(() => {
+                if (this.map) {
+                    this.map.invalidateSize();
+                }
+                this.isLoading = false;
+            }, 400);
+        }, 100);
     }
 });

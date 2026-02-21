@@ -397,7 +397,7 @@
 
         <!-- Footer Actions (Desktop Only) -->
         <div class="hidden lg:flex p-4 border-t border-gray-200 bg-gray-50 items-center justify-between gap-3">
-            <a href="{{ route('admin.places.index') }}" wire:navigate
+            <a href="{{ route('admin.places.index') }}"
                class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-white text-sm font-medium flex items-center gap-2">
                 <i class="fa-solid fa-arrow-left text-xs"></i>Batal
             </a>
@@ -423,7 +423,7 @@
 
     <!-- Footer Actions (Mobile Only) -->
     <div class="lg:hidden p-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between gap-3 fixed bottom-0 left-0 right-0 z-[15] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <a href="{{ route('admin.places.index') }}" wire:navigate
+        <a href="{{ route('admin.places.index') }}"
            class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium flex items-center gap-2">
             <i class="fa-solid fa-arrow-left text-xs"></i>Batal
         </a>

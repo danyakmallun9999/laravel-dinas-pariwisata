@@ -8,7 +8,7 @@
                 </h2>
             </div>
             <a href="{{ route('admin.places.create') }}" 
-               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-xs md:text-sm text-white hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5" wire:navigate>
+               class="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold text-xs md:text-sm text-white hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5">
                 <i class="fa-solid fa-plus text-xs"></i>
                 <span class="hidden md:inline">Tambah Lokasi</span>
                 <span class="md:hidden">Tambah</span>
@@ -134,7 +134,7 @@
                                                     @endif
                                                 </div>
                                                 <div class="min-w-0 flex-1">
-                                                    <a href="{{ route('admin.places.edit', $place) }}" class="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors line-clamp-1" wire:navigate>
+                                                    <a href="{{ route('admin.places.edit', $place) }}" class="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors line-clamp-1">
                                                         {{ $place->name }}
                                                     </a>
                                                     <div class="flex items-center gap-2 mt-1">
@@ -186,7 +186,7 @@
                                             </a>
                                             <a href="{{ route('admin.places.edit', $place) }}" 
                                                class="p-2.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all" 
-                                               title="Edit" wire:navigate>
+                                               title="Edit">
                                                 <i class="fa-solid fa-pen-to-square text-sm"></i>
                                             </a>
                                             <form action="{{ route('admin.places.destroy', $place) }}" method="POST" class="inline-block delete-form">
@@ -211,7 +211,7 @@
                                             <p class="text-gray-600 font-medium mb-1">Tidak ada lokasi ditemukan</p>
                                             <p class="text-sm text-gray-400 mb-4">Coba ubah pencarian atau tambahkan lokasi baru</p>
                                             <a href="{{ route('admin.places.create') }}" 
-                                               class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors" wire:navigate>
+                                               class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors">
                                                 <i class="fa-solid fa-plus text-xs"></i>
                                                 Tambah Lokasi
                                             </a>
@@ -268,7 +268,7 @@
                                     <a href="{{ route('places.show', $place) }}" target="_blank" class="px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg">
                                         Lihat
                                     </a>
-                                    <a href="{{ route('admin.places.edit', $place) }}" class="px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg" wire:navigate>
+                                    <a href="{{ route('admin.places.edit', $place) }}" class="px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg">
                                         Edit
                                     </a>
                                     <form action="{{ route('admin.places.destroy', $place) }}" method="POST" class="delete-form">
