@@ -26,7 +26,7 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title'        => 'nullable|string|max:255',
             'content'      => 'nullable|string',
-            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'image_format' => 'nullable|in:landscape,portrait',
             'button_text'  => 'nullable|string|max:100',
             'button_link'  => 'nullable|url|max:500',
@@ -61,7 +61,7 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title'        => 'nullable|string|max:255',
             'content'      => 'nullable|string',
-            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'image_format' => 'nullable|in:landscape,portrait,square,banner',
             'button_text'  => 'nullable|string|max:100',
             'button_link'  => 'nullable|url|max:500',

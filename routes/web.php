@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\LegendController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\BoundaryController;
@@ -114,10 +115,13 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
 
     Route::delete('/places/images/{placeImage}', [AdminController::class, 'destroyImage'])->name('places.images.destroy');
 
-    // Announcements routes — Super Admin only
+    // Announcements & Legends routes — Super Admin only
     Route::middleware('role:super_admin')->group(function () {
         Route::patch('announcements/{announcement}/toggle-active', [AnnouncementController::class, 'toggleActive'])->name('announcements.toggle-active');
         Route::resource('announcements', AnnouncementController::class);
+
+        Route::patch('legends/{legend}/toggle-active', [LegendController::class, 'toggleActive'])->name('legends.toggle-active');
+        Route::resource('legends', LegendController::class);
     });
 
     // Culture routes

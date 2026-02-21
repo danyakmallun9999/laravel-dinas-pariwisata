@@ -131,6 +131,14 @@
                 });
             };
 
+            // Run on initial load
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(initStats, 100);
+            } else {
+                document.addEventListener('DOMContentLoaded', initStats);
+            }
+
+            // Run on Livewire navigation
             document.addEventListener('livewire:navigated', initStats);
         })();
     </script>

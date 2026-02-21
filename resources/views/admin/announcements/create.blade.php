@@ -150,7 +150,7 @@
                                     </div>
                                     <input type="file" name="image" class="sr-only" accept="image/*" @change="handleImage($event)">
                                 </label>
-                                <p class="text-xs text-gray-400 text-center mt-1">JPG, PNG, WEBP. Maks 2MB</p>
+                                <p class="text-xs text-gray-400 text-center mt-1">JPG, PNG, WEBP. Maks 4MB</p>
                                 <x-input-error :messages="$errors->get('image')" class="mt-2" />
                             </div>
                         </div>

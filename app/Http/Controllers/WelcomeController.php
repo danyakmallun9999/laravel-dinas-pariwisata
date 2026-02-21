@@ -9,6 +9,7 @@ use App\Models\Culture;
 use App\Models\Event;
 use App\Models\Infrastructure;
 use App\Models\LandUse;
+use App\Models\Legend;
 use App\Models\Place;
 use App\Models\Post;
 use App\Repositories\Contracts\PlaceRepositoryInterface;
@@ -116,6 +117,9 @@ class WelcomeController extends Controller
         // Active Announcements untuk popup welcome (maks 4)
         $announcements = Announcement::active()->latest()->take(4)->get();
 
+        // Historical Legends
+        $legends = Legend::where('is_active', true)->orderBy('order')->get();
+
         return view('public.home.welcome', compact(
             'categories',
             'totalPlaces',
@@ -134,7 +138,8 @@ class WelcomeController extends Controller
             'upcomingEvent',
             'nextEvents',
             'heroSetting',
-            'announcements'
+            'announcements',
+            'legends'
         ));
     }
 

@@ -227,23 +227,36 @@
     </div>
 
     <script>
-        document.addEventListener('livewire:navigated', () => {
-            gsap.registerPlugin(ScrollTrigger);
-            
-            gsap.set(".culinary-header", { opacity: 0, y: 20 });
+        (function() {
+            const initCulinary = () => {
+                if (typeof gsap === 'undefined') return;
+                gsap.registerPlugin(ScrollTrigger);
+                
+                gsap.set(".culinary-header", { opacity: 0, y: 20 });
 
-            ScrollTrigger.create({
-                trigger: ".culinary-header",
-                start: "top bottom-=50",
-                onEnter: () => {
-                    gsap.to(".culinary-header", {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.4,
-                        ease: "power1.out"
-                    });
-                }
-            });
-        });
+                ScrollTrigger.create({
+                    trigger: ".culinary-header",
+                    start: "top bottom-=50",
+                    onEnter: () => {
+                        gsap.to(".culinary-header", {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.4,
+                            ease: "power1.out"
+                        });
+                    }
+                });
+            };
+
+            // Run on initial load
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(initCulinary, 100);
+            } else {
+                document.addEventListener('DOMContentLoaded', initCulinary);
+            }
+
+            // Run on Livewire navigation
+            document.addEventListener('livewire:navigated', initCulinary);
+        })();
     </script>
     <!-- END SECTION: Culinary -->

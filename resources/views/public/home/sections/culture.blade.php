@@ -86,20 +86,33 @@
         </div>
     </div>
     <script>
-        document.addEventListener('livewire:navigated', () => {
-            gsap.registerPlugin(ScrollTrigger);
+        (function() {
+            const initCulture = () => {
+                if (typeof gsap === 'undefined') return;
+                gsap.registerPlugin(ScrollTrigger);
 
-            gsap.to(".culture-header", {
-                scrollTrigger: {
-                    trigger: ".culture-header",
-                    start: "top 85%",
-                    toggleActions: "play none none reverse"
-                },
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power2.out"
-            });
-        });
+                gsap.to(".culture-header", {
+                    scrollTrigger: {
+                        trigger: ".culture-header",
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    },
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: "power2.out"
+                });
+            };
+
+            // Run on initial load
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(initCulture, 100);
+            } else {
+                document.addEventListener('DOMContentLoaded', initCulture);
+            }
+
+            // Run on Livewire navigation
+            document.addEventListener('livewire:navigated', initCulture);
+        })();
     </script>
     <!-- END SECTION: Culture -->
