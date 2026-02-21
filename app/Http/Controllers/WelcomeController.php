@@ -371,8 +371,11 @@ class WelcomeController extends Controller
 
 
 
-    public function showPlace(Place $place): View
+    public function showPlace(Place $place)
     {
+        if ($place->is_flagship) {
+            return app(\App\Http\Controllers\Public\FlagshipController::class)->show($place);
+        }
         return view('public.places.show', compact('place'));
     }
 

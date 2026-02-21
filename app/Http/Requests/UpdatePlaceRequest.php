@@ -46,6 +46,7 @@ class UpdatePlaceRequest extends FormRequest
             'social_media' => ['nullable', 'array'],
             'social_media.*.platform' => ['required', 'string'],
             'social_media.*.url' => ['required', 'url'],
+            'is_flagship' => ['nullable', 'boolean'],
         ];
 
         if (! $this->has('geometry') || ! $this->geometry) {

@@ -83,6 +83,11 @@
                 this.$watch('selectedCategories', () => this.updateMapMarkers());
                 this.$watch('showBoundaries', () => this.loadBoundaries());
                 
+                // Add map invalidateSize to fix rendering
+                setTimeout(() => {
+                    if (this.map) this.map.invalidateSize();
+                }, 300);
+                
                 // Device Orientation for Compass
                 if (window.DeviceOrientationEvent) {
                     window.addEventListener('deviceorientation', (e) => this.handleOrientation(e));
@@ -256,10 +261,14 @@
             initMap() {
                 this.map = L.map('leaflet-map', { zoomControl: false, attributionControl: false }).setView(this.defaultCenter, this.defaultZoom);
                 
-                const googleStreets = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-                    maxZoom: 20
+                const googleStreets = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 20,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 });
-                const googleSatellite = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg', { maxZoom: 20 });
+                const googleSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 20,
+                    attribution: 'Tiles &copy; Esri'
+                });
 
                 this.baseLayers = { 'streets': googleStreets, 'satellite': googleSatellite };
                 this.baseLayers['satellite'].addTo(this.map);

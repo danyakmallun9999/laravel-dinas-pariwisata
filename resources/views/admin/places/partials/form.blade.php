@@ -99,6 +99,19 @@
                                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                placeholder="0.0">
                     </div>
+
+                    <!-- Flagship Destination Toggle -->
+                    <div class="flex items-start bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                        <div class="flex items-center h-5">
+                            <input id="is_flagship" name="is_flagship" type="checkbox" value="1"
+                                   @checked(old('is_flagship', $place->is_flagship))
+                                   class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="is_flagship" class="font-bold text-gray-800">Tandai sebagai Flagship Destination <i class="fa-solid fa-star text-amber-400 hidden lg:inline-block ml-1"></i></label>
+                            <p class="text-gray-500 text-xs mt-0.5">Destinasi flagship akan ditampilkan secara khusus di beranda dan memiliki halaman profil eksklusif (contoh: Karimunjawa). Anda harus menambahkan Biro Wisata dan Paket Liburan untuk destinasi flagship.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- English Translation Section -->

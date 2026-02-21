@@ -22,6 +22,7 @@ Route::get('/berita', [WelcomeController::class, 'posts'])->name('posts.index');
 Route::get('/berita/{post:slug}', [WelcomeController::class, 'showPost'])->name('posts.show');
 Route::get('/destinasi', [WelcomeController::class, 'places'])->name('places.index');
 Route::get('/destinasi/{place:slug}', [WelcomeController::class, 'showPlace'])->name('places.show');
+Route::get('/biro-wisata/{agency}', [App\Http\Controllers\Public\TravelAgencyController::class, 'show'])->name('travel-agencies.show');
 Route::get('/calendar-of-events', [App\Http\Controllers\Public\EventController::class, 'index'])->name('events.public.index');
 Route::get('/calendar-of-events/{event:slug}', [App\Http\Controllers\Public\EventController::class, 'show'])->name('events.public.show');
 Route::get('/budaya/{slug}', [WelcomeController::class, 'showCulture'])->name('culture.show');
@@ -131,6 +132,10 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
 
     // Categories routes
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+
+    // Flagship Destinations Features
+    Route::resource('travel-agencies', \App\Http\Controllers\Admin\TravelAgencyController::class);
+    Route::resource('tour-packages', \App\Http\Controllers\Admin\TourPackageController::class);
 
     // Product routes
 

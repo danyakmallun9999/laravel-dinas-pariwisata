@@ -53,6 +53,7 @@ class Place extends Model
         'social_media',
         'kecamatan',
         'created_by',
+        'is_flagship',
     ];
 
     // Accessor for Translated Name
@@ -79,6 +80,11 @@ class Place extends Model
             return $this->description_en;
         }
         return $this->description;
+    }
+
+    public function tourPackages()
+    {
+        return $this->hasMany(TourPackage::class);
     }
 
     public function tickets()

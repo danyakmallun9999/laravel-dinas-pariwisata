@@ -80,9 +80,10 @@ export default (config) => ({
             wheelPxPerZoomLevel: 120
         }).setView(config.center, config.zoom);
 
-        // Switch to Stadia Maps Streets as requested
-        const googleStreets = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-            maxZoom: 20
+        // Switch to CartoDB Voyager
+        const googleStreets = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            maxZoom: 20,
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         }).addTo(this.map);
 
         // Define icons using CDN to avoid build issues
