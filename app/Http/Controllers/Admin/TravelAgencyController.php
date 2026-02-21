@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Place;
 use App\Models\TravelAgency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,7 @@ class TravelAgencyController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TravelAgency::query();
+        $query = TravelAgency::with('places');
 
         if ($search = $request->input('search')) {
             $query->where('name', 'like', "%{$search}%");
@@ -31,7 +32,8 @@ class TravelAgencyController extends Controller
      */
     public function create()
     {
-        return view('admin.travel-agencies.create');
+        $flagshipPlaces = Place::where('is_flagship', true)->orderBy('name')->get();
+        return view('admin.travel-agencies.create', compact('flagshipPlaces'));
     }
 
     /**
@@ -41,11 +43,17 @@ class TravelAgencyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'owner_name' => 'nullable|string|max:255',
+            'business_type' => 'nullable|string|max:50',
+            'nib' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:500',
             'description' => 'required|string',
             'contact_wa' => 'nullable|string|max:20',
             'website' => 'nullable|url|max:255',
             'instagram' => 'nullable|string|max:255',
-            'logo' => 'nullable|image|max:2048', // max 2MB
+            'logo' => 'nullable|image|max:2048',
+            'places' => 'nullable|array',
+            'places.*' => 'exists:places,id',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -53,7 +61,8 @@ class TravelAgencyController extends Controller
             $validated['logo_path'] = 'storage/' . $path;
         }
 
-        TravelAgency::create($validated);
+        $agency = TravelAgency::create($validated);
+        $agency->places()->sync($request->input('places', []));
 
         return redirect()->route('admin.travel-agencies.index')
             ->with('success', 'Biro Wisata berhasil ditambahkan.');
@@ -64,7 +73,9 @@ class TravelAgencyController extends Controller
      */
     public function edit(TravelAgency $travelAgency)
     {
-        return view('admin.travel-agencies.edit', compact('travelAgency'));
+        $flagshipPlaces = Place::where('is_flagship', true)->orderBy('name')->get();
+        $travelAgency->load('places');
+        return view('admin.travel-agencies.edit', compact('travelAgency', 'flagshipPlaces'));
     }
 
     /**
@@ -74,11 +85,17 @@ class TravelAgencyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'owner_name' => 'nullable|string|max:255',
+            'business_type' => 'nullable|string|max:50',
+            'nib' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:500',
             'description' => 'required|string',
             'contact_wa' => 'nullable|string|max:20',
             'website' => 'nullable|url|max:255',
             'instagram' => 'nullable|string|max:255',
             'logo' => 'nullable|image|max:2048',
+            'places' => 'nullable|array',
+            'places.*' => 'exists:places,id',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -93,6 +110,7 @@ class TravelAgencyController extends Controller
         }
 
         $travelAgency->update($validated);
+        $travelAgency->places()->sync($request->input('places', []));
 
         return redirect()->route('admin.travel-agencies.index')
             ->with('success', 'Biro Wisata berhasil diperbarui.');
@@ -114,3 +132,4 @@ class TravelAgencyController extends Controller
             ->with('success', 'Biro Wisata berhasil dihapus.');
     }
 }
+

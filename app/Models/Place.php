@@ -82,6 +82,11 @@ class Place extends Model
         return $this->description;
     }
 
+    public function travelAgencies()
+    {
+        return $this->belongsToMany(TravelAgency::class);
+    }
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class);

@@ -18,8 +18,10 @@ class FlagshipController extends Controller
 
         $search = request('search');
 
-        // Ambil data Biro Wisata
-        $query = TravelAgency::query();
+        // Ambil data Biro Wisata yang melayani destinasi ini
+        $query = TravelAgency::whereHas('places', function($q) use ($place) {
+            $q->where('places.id', $place->id);
+        });
 
         if ($search) {
             $query->where(function($q) use ($search) {

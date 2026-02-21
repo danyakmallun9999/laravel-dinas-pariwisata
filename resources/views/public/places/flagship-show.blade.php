@@ -261,11 +261,21 @@
                                         <button type="button" @click="openModal({{ $agency->id }})" class="text-left w-full">
                                             <h3 class="font-bold text-lg text-slate-900 dark:text-white hover:text-primary transition-colors line-clamp-1">{{ $agency->name }}</h3>
                                         </button>
-                                        <div class="flex items-center gap-2 mt-1">
+                                        <div class="flex items-center gap-2 mt-1 flex-wrap">
                                             <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                                                 <span class="material-symbols-outlined text-[10px]">verified</span> Terverifikasi
                                             </span>
+                                            @if($agency->business_type)
+                                                <span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                                                    {{ $agency->business_type }}
+                                                </span>
+                                            @endif
                                         </div>
+                                        @if($agency->address)
+                                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-1.5 flex items-center gap-1 line-clamp-1">
+                                                <span class="material-symbols-outlined text-[12px]">location_on</span> {{ $agency->address }}
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                                 
@@ -391,6 +401,59 @@
                                                     <span class="material-symbols-outlined text-[18px]">info</span> Tentang Biro
                                                 </h4>
                                                 <p class="text-slate-600 dark:text-slate-400 text-sm whitespace-pre-line leading-relaxed" x-text="activeAgency?.description || 'Tidak ada deskripsi.'"></p>
+                                            </div>
+
+                                            {{-- Informasi Usaha --}}
+                                            <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-100 dark:border-slate-700">
+                                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+                                                    <span class="material-symbols-outlined text-[18px]">badge</span> Informasi Usaha
+                                                </h4>
+                                                <div class="space-y-3">
+                                                    <template x-if="activeAgency?.owner_name">
+                                                        <div class="flex items-start gap-3">
+                                                            <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm shrink-0">
+                                                                <span class="material-symbols-outlined text-[16px] text-slate-500">person</span>
+                                                            </div>
+                                                            <div>
+                                                                <p class="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-medium">Pemilik</p>
+                                                                <p class="text-sm text-slate-700 dark:text-slate-300 font-medium" x-text="activeAgency.owner_name"></p>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="activeAgency?.business_type">
+                                                        <div class="flex items-start gap-3">
+                                                            <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm shrink-0">
+                                                                <span class="material-symbols-outlined text-[16px] text-slate-500">business</span>
+                                                            </div>
+                                                            <div>
+                                                                <p class="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-medium">Badan Usaha</p>
+                                                                <p class="text-sm text-slate-700 dark:text-slate-300 font-medium" x-text="activeAgency.business_type"></p>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="activeAgency?.nib">
+                                                        <div class="flex items-start gap-3">
+                                                            <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm shrink-0">
+                                                                <span class="material-symbols-outlined text-[16px] text-slate-500">verified</span>
+                                                            </div>
+                                                            <div>
+                                                                <p class="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-medium">NIB</p>
+                                                                <p class="text-sm text-slate-700 dark:text-slate-300 font-medium" x-text="activeAgency.nib"></p>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="activeAgency?.address">
+                                                        <div class="flex items-start gap-3">
+                                                            <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm shrink-0">
+                                                                <span class="material-symbols-outlined text-[16px] text-slate-500">location_on</span>
+                                                            </div>
+                                                            <div>
+                                                                <p class="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-medium">Alamat</p>
+                                                                <p class="text-sm text-slate-700 dark:text-slate-300 font-medium" x-text="activeAgency.address"></p>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
                                             </div>
                                             
                                             <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-100 dark:border-slate-700">
