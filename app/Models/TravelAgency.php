@@ -14,9 +14,4 @@ class TravelAgency extends Model
         'website',
         'instagram',
     ];
-
-    public function tourPackages()
-    {
-        return $this->hasMany(TourPackage::class);
-    }
 }

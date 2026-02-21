@@ -82,11 +82,6 @@ class Place extends Model
         return $this->description;
     }
 
-    public function tourPackages()
-    {
-        return $this->hasMany(TourPackage::class);
-    }
-
     public function tickets()
     {
         return $this->hasMany(Ticket::class);

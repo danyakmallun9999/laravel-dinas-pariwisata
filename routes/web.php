@@ -135,7 +135,6 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
 
     // Flagship Destinations Features
     Route::resource('travel-agencies', \App\Http\Controllers\Admin\TravelAgencyController::class);
-    Route::resource('tour-packages', \App\Http\Controllers\Admin\TourPackageController::class);
 
     // Product routes
 

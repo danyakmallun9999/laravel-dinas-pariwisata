@@ -45,95 +45,33 @@
             </div>
         </div>
 
-        <!-- Tour Packages Section -->
-        <h2 class="font-bold text-2xl text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary">inventory_2</span> Paket Wisata yang Tersedia
-        </h2>
+        <!-- Hubungi Biro Section -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm text-center">
+            <span class="material-symbols-outlined text-5xl text-primary mb-4 block">travel_explore</span>
+            <h2 class="font-bold text-2xl text-slate-900 dark:text-white mb-3">Tertarik Berlibur?</h2>
+            <p class="text-slate-600 dark:text-slate-400 max-w-xl mx-auto mb-6">Untuk informasi paket wisata, harga, dan jadwal keberangkatan, silakan hubungi biro ini langsung melalui WhatsApp, website, atau media sosial mereka.</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse($agency->tourPackages as $pkg)
-                <div x-data="{ showDetail: false }" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col h-full">
-                    <!-- Package Card Header -->
-                    <div class="p-6 border-b border-slate-100 dark:border-slate-800 cursor-pointer group" @click="showDetail = !showDetail">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="font-bold text-lg text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">{{ $pkg->name }}</h3>
-                        </div>
-                        <div class="text-2xl font-black text-primary mb-4">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1">Harga Mulai</span>
-                            Rp {{ number_format($pkg->price_start, 0, ',', '.') }}
-                        </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 px-3 py-1.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                                <span class="material-symbols-outlined text-[16px]">schedule</span> 
-                                <span class="font-medium">{{ $pkg->duration_days }} Hari {{ $pkg->duration_nights }} Malam</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-xs font-bold text-slate-400 group-hover:text-primary transition-colors">
-                                <span x-text="showDetail ? 'Tutup' : 'Detail'"></span>
-                                <span class="material-symbols-outlined text-[16px] transition-transform duration-300" :class="showDetail ? 'rotate-90' : ''">chevron_right</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Package Details Expansion -->
-                    <div x-show="showDetail" x-collapse class="bg-slate-50/50 dark:bg-slate-950/50">
-                        <div class="p-6 space-y-6">
-                            
-                            <!-- Description -->
-                            <div>
-                                <h4 class="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2 text-sm">
-                                    <span class="material-symbols-outlined text-primary text-lg">info</span> Deskripsi Paket
-                                </h4>
-                                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">{{ $pkg->description }}</p>
-                            </div>
-
-                            <!-- Inclusions -->
-                            @if($pkg->inclusions && is_array($pkg->inclusions) && count($pkg->inclusions) > 0)
-                                <div>
-                                    <h4 class="font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2 text-sm">
-                                        <span class="material-symbols-outlined text-emerald-500 text-lg">loyalty</span> Fasilitas Termasuk
-                                    </h4>
-                                    <div class="space-y-2">
-                                        @foreach($pkg->inclusions as $inc)
-                                            <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
-                                                <span class="material-symbols-outlined text-emerald-500 text-[14px] mt-0.5">check_circle</span>
-                                                <span class="leading-snug">{{ $inc }}</span>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            <!-- Itinerary -->
-                            @if($pkg->itinerary && is_array($pkg->itinerary) && count($pkg->itinerary) > 0)
-                                <div>
-                                    <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2 text-sm">
-                                        <span class="material-symbols-outlined text-purple-500 text-lg">timeline</span> Itinerary Singkat
-                                    </h4>
-                                    <div class="relative border-l-2 border-slate-200 dark:border-slate-800 ml-2 space-y-4 pb-2">
-                                        @foreach($pkg->itinerary as $item)
-                                            <div class="relative pl-5">
-                                                <div class="absolute w-3 h-3 bg-white dark:bg-slate-900 border-2 border-primary rounded-full left-[-7px] top-1"></div>
-                                                <div class="mb-1 text-xs font-bold text-primary">HARI {{ $item['day'] ?? '' }} • {{ $item['time'] ?? '' }}</div>
-                                                <p class="text-sm text-slate-700 dark:text-slate-300 font-medium">{{ $item['activity'] ?? '' }}</p>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="col-span-full py-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
-                    <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600 mb-3 block">search_off</span>
-                    <h3 class="font-bold text-slate-700 dark:text-slate-300">Belum ada paket wisata</h3>
-                    <p class="text-slate-500 text-sm">Biro ini belum mengunggah paket wisata apa pun.</p>
-                </div>
-            @endforelse
+            <div class="flex flex-wrap justify-center gap-3">
+                @if($agency->contact_wa)
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $agency->contact_wa) }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-bold text-sm hover:bg-emerald-600 transition-colors shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Hubungi via WhatsApp
+                    </a>
+                @endif
+                @if($agency->website)
+                    <a href="{{ $agency->website }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700">
+                        <span class="material-symbols-outlined text-lg">language</span> Kunjungi Website
+                    </a>
+                @endif
+                @if($agency->instagram)
+                    <a href="{{ str_contains($agency->instagram, 'http') ? $agency->instagram : 'https://instagram.com/'.str_replace('@', '', $agency->instagram) }}" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-pink-50 text-pink-600 font-bold text-sm hover:bg-pink-100 transition-colors border border-pink-200 dark:bg-pink-900/20 dark:text-pink-400 dark:border-pink-800/50 dark:hover:bg-pink-900/30">
+                        <i class="fa-brands fa-instagram text-lg"></i> Instagram
+                    </a>
+                @endif
+            </div>
         </div>
 
     </div>
 </div>
 </div>
 </x-public-layout>
+

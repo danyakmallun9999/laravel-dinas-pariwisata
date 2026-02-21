@@ -85,7 +85,7 @@
             @php
                 $stats = [
                     ['icon' => 'verified',  'color' => 'blue',    'value' => $agencies->total(), 'label' => 'Biro Terdaftar'],
-                    ['icon' => 'tour',      'color' => 'emerald', 'value' => $packages->count(), 'label' => 'Paket Liburan'],
+                    ['icon' => 'tour',      'color' => 'emerald', 'value' => count($place->rides ?? []), 'label' => 'Spot Wisata'],
                     ['icon' => 'favorite',  'color' => 'rose',    'value' => '4.8',              'label' => 'Rating Rata-rata'],
                     ['icon' => 'sailing',   'color' => 'purple',  'value' => 'Setiap Hari',      'label' => 'Penyeberangan'],
                 ];
@@ -255,10 +255,7 @@
                                         @else
                                             <span class="material-symbols-outlined text-slate-400 text-3xl">store</span>
                                         @endif
-                                        {{-- Package count badge --}}
-                                        @if($agency->tourPackages->count() > 0)
-                                        <span class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-sm">{{ $agency->tourPackages->count() }}</span>
-                                        @endif
+
                                     </div>
                                     <div class="min-w-0">
                                         <button type="button" @click="openModal({{ $agency->id }})" class="text-left w-full">
@@ -300,7 +297,7 @@
                                 <button type="button" @click="openModal({{ $agency->id }})" class="w-full flex items-center justify-between p-4 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors group/btn">
                                     <div class="flex items-center gap-2">
                                         <span class="material-symbols-outlined text-lg">visibility</span>
-                                        Lihat {{ $agency->tourPackages->count() }} Paket & Detail
+                                        Lihat Detail Biro
                                     </div>
                                     <span class="material-symbols-outlined transition-transform duration-300 group-hover/btn:translate-x-1">arrow_forward</span>
                                 </button>
@@ -429,61 +426,32 @@
                                             </div>
                                         </div>
                                         
-                                        {{-- Packages --}}
+                                        {{-- CTA: Hubungi Biro --}}
                                         <div class="md:col-span-2">
-                                            <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center gap-2">
-                                                <span class="material-symbols-outlined text-primary">inventory_2</span> Paket Wisata Tersedia
-                                            </h4>
-                                            
-                                            <template x-if="activeAgency?.tour_packages && activeAgency.tour_packages.length > 0">
-                                                <div class="space-y-4">
-                                                    <template x-for="(pkg, idx) in activeAgency.tour_packages" :key="pkg.id">
-                                                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl p-4 flex flex-col sm:flex-row gap-4 hover:border-primary/50 hover:shadow-md transition-all group animate-slide-up" :style="'animation-delay: ' + (idx * 80) + 'ms'">
-                                                            <div class="w-full sm:w-32 h-32 rounded-lg bg-slate-200 dark:bg-slate-800 overflow-hidden shrink-0">
-                                                                <template x-if="pkg.image_path">
-                                                                    <img :src="pkg.image_path.startsWith('http') ? pkg.image_path : ('/' + pkg.image_path)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                                </template>
-                                                                <template x-if="!pkg.image_path">
-                                                                    <div class="w-full h-full flex items-center justify-center">
-                                                                        <span class="material-symbols-outlined text-slate-400 text-3xl">landscape</span>
-                                                                    </div>
-                                                                </template>
-                                                            </div>
-                                                            <div class="flex-1 min-w-0">
-                                                                <h5 class="font-bold text-lg text-slate-900 dark:text-white truncate" x-text="pkg.name"></h5>
-                                                                <div class="flex flex-wrap items-center gap-2 mt-1 mb-2 text-xs">
-                                                                    <span class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md font-medium">
-                                                                        <span class="material-symbols-outlined text-[14px]">schedule</span>
-                                                                        <span x-text="pkg.duration_days + ' Hari ' + pkg.duration_nights + ' Malam'"></span>
-                                                                    </span>
-                                                                </div>
-                                                                <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mt-2" x-text="pkg.description"></p>
-                                                            </div>
-                                                            <div class="flex flex-col items-start sm:items-end justify-between sm:w-1/3 min-w-[140px] border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-3 sm:pt-0 sm:pl-4 mt-2 sm:mt-0">
-                                                                <div class="text-left sm:text-right w-full">
-                                                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Mulai dari</div>
-                                                                    <div class="font-bold text-lg text-primary whitespace-nowrap" x-text="'Rp ' + new Intl.NumberFormat('id-ID').format(pkg.price)"></div>
-                                                                </div>
-                                                                <template x-if="activeAgency?.contact_wa">
-                                                                    <a :href="'https://wa.me/' + activeAgency.contact_wa.replace(/\D/g,'') + '?text=' + encodeURIComponent('Halo, saya tertarik dengan paket wisata ' + pkg.name + ' ke Karimunjawa. Boleh minta info detailnya?')" target="_blank" class="w-full mt-3 inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-lg transition-colors shadow-sm shadow-emerald-500/30 hover:-translate-y-0.5">
-                                                                        <i class="fa-brands fa-whatsapp text-lg"></i> Pesan
-                                                                    </a>
-                                                                </template>
-                                                            </div>
-                                                        </div>
+                                            <div class="text-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+                                                <div class="w-16 h-16 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                                    <span class="material-symbols-outlined text-3xl text-primary">travel_explore</span>
+                                                </div>
+                                                <h5 class="text-slate-900 dark:text-white font-bold text-lg mb-2">Tertarik Berlibur?</h5>
+                                                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">Untuk info paket wisata, harga, dan jadwal, hubungi biro ini langsung.</p>
+                                                <div class="flex flex-wrap justify-center gap-3">
+                                                    <template x-if="activeAgency?.contact_wa">
+                                                        <a :href="'https://wa.me/' + activeAgency.contact_wa.replace(/\D/g,'')" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl transition-colors shadow-sm">
+                                                            <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp
+                                                        </a>
+                                                    </template>
+                                                    <template x-if="activeAgency?.website">
+                                                        <a :href="activeAgency.website" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl transition-colors border border-slate-200 dark:border-slate-600">
+                                                            <span class="material-symbols-outlined text-sm">language</span> Website
+                                                        </a>
+                                                    </template>
+                                                    <template x-if="activeAgency?.instagram">
+                                                        <a :href="activeAgency.instagram.includes('http') ? activeAgency.instagram : 'https://instagram.com/' + activeAgency.instagram.replace('@','')" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-pink-50 hover:bg-pink-100 dark:bg-pink-900/20 dark:hover:bg-pink-900/30 text-pink-600 dark:text-pink-400 text-sm font-bold rounded-xl transition-colors border border-pink-200 dark:border-pink-800/50">
+                                                            <i class="fa-brands fa-instagram text-lg"></i> Instagram
+                                                        </a>
                                                     </template>
                                                 </div>
-                                            </template>
-                                            
-                                            <template x-if="!activeAgency?.tour_packages || activeAgency.tour_packages.length === 0">
-                                                <div class="text-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
-                                                    <div class="w-16 h-16 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
-                                                        <span class="material-symbols-outlined text-3xl text-slate-300 dark:text-slate-600">inventory_2</span>
-                                                    </div>
-                                                    <h5 class="text-slate-700 dark:text-slate-300 font-bold mb-1">Paket Kosong</h5>
-                                                    <p class="text-sm text-slate-500">Biro ini belum memiliki paket wisata yang tersedia.</p>
-                                                </div>
-                                            </template>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

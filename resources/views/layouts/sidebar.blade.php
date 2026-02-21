@@ -224,9 +224,9 @@
             <div x-show="isSidebarMini" class="border-t border-gray-100 my-2 sidebar-divider-mini"></div>
 
             @if(auth('admin')->user()->hasAnyPermission(['view all destinations', 'view own destinations', 'manage categories']))
-            <div x-data="{ placesOpen: {{ request()->routeIs('admin.places.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.travel-agencies.*') || request()->routeIs('admin.tour-packages.*') ? 'true' : 'false' }} }" class="relative group">
+            <div x-data="{ placesOpen: {{ request()->routeIs('admin.places.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.travel-agencies.*') ? 'true' : 'false' }} }" class="relative group">
                 <button @click="if(!isSidebarMini) placesOpen = !placesOpen" 
-                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition relative {{ request()->routeIs('admin.places.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.travel-agencies.*') || request()->routeIs('admin.tour-packages.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} sidebar-nav-item"
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition relative {{ request()->routeIs('admin.places.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.travel-agencies.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} sidebar-nav-item"
                         :class="isSidebarMini ? 'justify-center' : ''">
                     <div class="flex items-center gap-3">
                         <div class="w-7 h-7 flex items-center justify-center flex-shrink-0">
@@ -259,9 +259,6 @@
                     <a href="{{ route('admin.travel-agencies.index') }}" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors" wire:navigate>
                         Biro Wisata
                     </a>
-                    <a href="{{ route('admin.tour-packages.index') }}" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors" wire:navigate>
-                        Paket Liburan
-                    </a>
                     @endif
                 </div>
 
@@ -288,11 +285,6 @@
                        class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.travel-agencies.*') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}"
                        wire:navigate>
                        <span class="{{ request()->routeIs('admin.travel-agencies.*') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Biro Wisata</span>
-                    </a>
-                    <a href="{{ route('admin.tour-packages.index') }}" 
-                       class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs('admin.tour-packages.*') ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}"
-                       wire:navigate>
-                       <span class="{{ request()->routeIs('admin.tour-packages.*') ? 'translate-x-1' : '' }} inline-block transition-transform duration-200">Paket Liburan</span>
                     </a>
                     @endif
                 </div>
