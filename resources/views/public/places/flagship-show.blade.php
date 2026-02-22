@@ -84,7 +84,7 @@
             {{-- ======================================================== --}}
             @php
                 $stats = [
-                    ['icon' => 'verified',  'color' => 'blue',    'value' => $agencies->total(), 'label' => 'Biro Terdaftar'],
+                    ['icon' => 'verified',  'color' => 'blue',    'value' => $agencies->count(), 'label' => 'Biro Terdaftar'],
                     ['icon' => 'tour',      'color' => 'emerald', 'value' => count($place->rides ?? []), 'label' => 'Spot Wisata'],
                     ['icon' => 'favorite',  'color' => 'rose',    'value' => '4.8',              'label' => 'Rating Rata-rata'],
                     ['icon' => 'sailing',   'color' => 'purple',  'value' => 'Setiap Hari',      'label' => 'Penyeberangan'],
@@ -187,12 +187,85 @@
             </section>
 
             {{-- ======================================================== --}}
+            {{-- 4.5 MARKETING HOOK / TRUST BADGES SECTION --}}
+            {{-- ======================================================== --}}
+            <section class="mb-24 relative overflow-hidden rounded-[2.5rem] bg-slate-900 border border-slate-800 shadow-2xl">
+                {{-- Decorative Background Gradients --}}
+                <div class="absolute top-0 right-0 -m-32 w-[30rem] h-[30rem] bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 -m-32 w-[30rem] h-[30rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 px-6 sm:px-12 py-16 lg:py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                    
+                    {{-- Text Content --}}
+                    <div class="w-full lg:w-5/12 text-center lg:text-left">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/10 text-teal-400 text-xs font-bold tracking-wide uppercase mb-6 border border-teal-500/20">
+                            <span class="material-symbols-outlined text-[14px]">shield_check</span>
+                            Jaminan Jelajah Jepara
+                        </span>
+                        
+                        <h2 class="font-playfair text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                            Liburan Tenang,<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">Pasti Berangkat.</span>
+                        </h2>
+                        
+                        <p class="text-slate-400 text-base md:text-lg mb-8 leading-relaxed">
+                            Mulai dari paket hemat <strong class="text-white">Ratusan Ribu</strong> untuk <i>backpacker</i>, hingga eksklusif <strong class="text-white">Jutaan Rupiah</strong>. Temukan puluhan Biro Wisata Resmi yang siap mewujudkan liburan impianmu.
+                        </p>
+                        
+                        <button type="button" onclick="document.getElementById('biro').scrollIntoView({behavior: 'smooth'})" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 group">
+                            Cari Agen Perjalananmu
+                            <span class="material-symbols-outlined transition-transform duration-300 group-hover:translate-y-1">arrow_downward</span>
+                        </button>
+                    </div>
+
+                    {{-- Features Grid --}}
+                    <div class="w-full lg:w-7/12">
+                        <div class="grid flex-col sm:grid-cols-2 gap-4 md:gap-6">
+                            
+                            {{-- Feature 1 --}}
+                            <div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl hover:bg-white/10 transition-colors">
+                                <div class="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-4">
+                                    <span class="material-symbols-outlined text-2xl">verified_user</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2">100% Terverifikasi</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">Setiap agensi yang terdaftar di sini adalah mitra resmi ber-NIB dan tercatat di Dinas, bebas khawatir penipuan abal-abal.</p>
+                            </div>
+                            
+                            {{-- Feature 2 --}}
+                            <div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl hover:bg-white/10 transition-colors">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
+                                    <span class="material-symbols-outlined text-2xl">payments</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2">Harga Transparan</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">Bandingkan harga dan fasilitas dari berbagai biro secara langsung. Sesuaikan dengan gaya dan <i>budget</i> liburan Anda.</p>
+                            </div>
+                            
+                            {{-- Feature 3 (Full width on mobile/tablet) --}}
+                            <div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl sm:col-span-2 hover:bg-white/10 transition-colors flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                                <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-2xl">handshake</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white mb-1">Transaksi Langsung</h3>
+                                    <p class="text-sm text-slate-400 leading-relaxed">Hubungi langsung narahubung biro lewat WhatsApp atau Instagram tanpa perantara dan tanpa biaya tambahan dari sistem kami.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {{-- ======================================================== --}}
             {{-- 5. TRAVEL AGENCIES DIRECTORY --}}
             {{-- ======================================================== --}}
             <section id="biro" class="mb-24 scroll-mt-24" x-data="{
                 showModal: false,
                 activeAgency: null,
-                agenciesData: {{ Js::from($agencies->items()) }},
+                query: '{{ $search ?? '' }}',
+                agenciesData: {{ Js::from($agencies) }},
+                currentPage: 1,
+                perPage: 6,
                 openModal(id) {
                     this.activeAgency = this.agenciesData.find(a => a.id === id);
                     if (this.activeAgency) {
@@ -204,6 +277,24 @@
                     this.showModal = false;
                     setTimeout(() => this.activeAgency = null, 300);
                     document.body.style.overflow = '';
+                },
+                get filteredAgencies() {
+                    let result = this.agenciesData;
+                    if (this.query !== '') {
+                        const q = this.query.toLowerCase();
+                        result = this.agenciesData.filter(agency => 
+                            agency.name.toLowerCase().includes(q) || 
+                            (agency.description && agency.description.toLowerCase().includes(q))
+                        );
+                    }
+                    return result;
+                },
+                get totalPages() {
+                    return Math.ceil(this.filteredAgencies.length / this.perPage);
+                },
+                get paginatedAgencies() {
+                    const start = (this.currentPage - 1) * this.perPage;
+                    return this.filteredAgencies.slice(start, start + this.perPage);
                 }
             }" @keydown.escape.window="if(showModal) closeModal()">
 
@@ -214,97 +305,89 @@
                     <p class="text-slate-500 dark:text-slate-400">Pilih dari puluhan operator wisata bersertifikat yang siap mengantarkan Anda menjelajah surga tersembunyi dengan aman dan nyaman.</p>
                 </div>
 
-                {{-- Search Form --}}
-                <form action="{{ route('places.show', $place->slug) }}#biro" method="GET" class="mb-10 max-w-xl mx-auto">
-                    <div class="relative" x-data="{ query: '{{ $search ?? '' }}' }">
+                {{-- Search Input (Real-time) --}}
+                <div class="mb-10 max-w-xl mx-auto">
+                    <div class="relative">
                         <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">search</span>
-                        <input type="text" name="search" x-model="query" value="{{ $search ?? '' }}" placeholder="Cari nama atau deskripsi biro wisata..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full py-4 pl-14 pr-24 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary shadow-sm transition-shadow focus:shadow-md" autocomplete="off" @keydown.escape="query = ''; $el.value = ''">
+                        <input type="text" x-model.debounce.300ms="query" @input="currentPage = 1" placeholder="Cari nama atau deskripsi biro wisata..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full py-4 pl-14 pr-14 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary shadow-sm transition-shadow focus:shadow-md" autocomplete="off" @keydown.escape="query = ''; $el.value = ''">
                         {{-- Clear button --}}
-                        <button type="button" x-show="query.length > 0" x-cloak @click="query = ''; $refs.searchInput?.focus(); window.location.href='{{ route('places.show', $place->slug) }}#biro'" class="absolute right-14 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <button type="button" x-show="query.length > 0" x-cloak @click="query = ''; $refs.searchInput?.focus()" class="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
                             <span class="material-symbols-outlined text-sm">close</span>
-                        </button>
-                        <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors text-sm font-semibold flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">search</span>
-                            <span class="hidden sm:inline">Cari</span>
                         </button>
                     </div>
-                </form>
+                </div>
 
                 {{-- Active Search Indicator --}}
-                @if($search)
-                <div class="mb-6 text-center">
+                <div x-show="query.length > 0" x-cloak class="mb-6 text-center">
                     <span class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium">
                         <span class="material-symbols-outlined text-sm">filter_alt</span>
-                        Hasil pencarian: "{{ $search }}"
-                        <a href="{{ route('places.show', $place->slug) }}#biro" class="ml-1 hover:text-primary/70 transition-colors">
+                        Hasil pencarian: "<span x-text="query"></span>"
+                        <button type="button" @click="query = ''; currentPage = 1" class="ml-1 hover:text-primary/70 transition-colors">
                             <span class="material-symbols-outlined text-sm">close</span>
-                        </a>
+                        </button>
                     </span>
                 </div>
-                @endif
 
                 {{-- Agency Grid --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @forelse($agencies as $agency)
-                        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/30 transition-[box-shadow,border-color] duration-200 group flex flex-col h-full agency-card">
+                    <template x-for="agency in paginatedAgencies" :key="agency.id">
+                        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/30 transition-[box-shadow,border-color] duration-200 group flex flex-col h-full agency-card animate-slide-up">
                             <div class="p-6 flex-1 flex flex-col">
                                 <div class="flex items-center gap-4 mb-4">
                                     <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700 overflow-hidden shrink-0 relative">
-                                        @if($agency->logo_path)
-                                            <img src="{{ asset($agency->logo_path) }}" class="w-full h-full object-cover" loading="lazy" alt="{{ $agency->name }}">
-                                        @else
+                                        <template x-if="agency.logo_path">
+                                            <img :src="agency.logo_path.startsWith('http') ? agency.logo_path : ('/' + agency.logo_path)" class="w-full h-full object-cover" loading="lazy" :alt="agency.name">
+                                        </template>
+                                        <template x-if="!agency.logo_path">
                                             <span class="material-symbols-outlined text-slate-400 text-3xl">store</span>
-                                        @endif
-
+                                        </template>
                                     </div>
                                     <div class="min-w-0">
-                                        <button type="button" @click="openModal({{ $agency->id }})" class="text-left w-full">
-                                            <h3 class="font-bold text-lg text-slate-900 dark:text-white hover:text-primary transition-colors line-clamp-1">{{ $agency->name }}</h3>
+                                        <button type="button" @click="openModal(agency.id)" class="text-left w-full">
+                                            <h3 class="font-bold text-lg text-slate-900 dark:text-white hover:text-primary transition-colors line-clamp-1" x-text="agency.name"></h3>
                                         </button>
                                         <div class="flex items-center gap-2 mt-1 flex-wrap">
                                             <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                                                 <span class="material-symbols-outlined text-[10px]">verified</span> Terverifikasi
                                             </span>
-                                            @if($agency->business_type)
-                                                <span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                                                    {{ $agency->business_type }}
+                                            <template x-if="agency.business_type">
+                                                <span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" x-text="agency.business_type">
                                                 </span>
-                                            @endif
+                                            </template>
                                         </div>
-                                        @if($agency->address)
+                                        <template x-if="agency.address">
                                             <p class="text-xs text-slate-500 dark:text-slate-500 mt-1.5 flex items-center gap-1 line-clamp-1">
-                                                <span class="material-symbols-outlined text-[12px]">location_on</span> {{ $agency->address }}
+                                                <span class="material-symbols-outlined text-[12px]">location_on</span> <span x-text="agency.address"></span>
                                             </p>
-                                        @endif
+                                        </template>
                                     </div>
                                 </div>
                                 
-                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 line-clamp-3 flex-1">
-                                    {{ $agency->description ?? 'Biro wisata yang siap melayani perjalanan Anda.' }}
+                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 line-clamp-3 flex-1" x-text="agency.description || 'Biro wisata yang siap melayani perjalanan Anda.'">
                                 </p>
                                 
                                 <div class="flex flex-wrap gap-2 mt-auto">
-                                    @if($agency->contact_wa)
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $agency->contact_wa) }}" target="_blank" class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors" title="WhatsApp">
+                                    <template x-if="agency.contact_wa">
+                                        <a :href="'https://wa.me/' + agency.contact_wa.replace(/\D/g,'')" target="_blank" class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors" title="WhatsApp">
                                             <i class="fa-brands fa-whatsapp"></i>
                                         </a>
-                                    @endif
-                                    @if($agency->instagram)
-                                        <a href="{{ str_contains($agency->instagram, 'http') ? $agency->instagram : 'https://instagram.com/'.str_replace('@', '', $agency->instagram) }}" target="_blank" class="w-8 h-8 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-colors" title="Instagram">
+                                    </template>
+                                    <template x-if="agency.instagram">
+                                        <a :href="agency.instagram.includes('http') ? agency.instagram : 'https://instagram.com/' + agency.instagram.replace('@','')" target="_blank" class="w-8 h-8 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-colors" title="Instagram">
                                             <i class="fa-brands fa-instagram"></i>
                                         </a>
-                                    @endif
-                                    @if($agency->website)
-                                        <a href="{{ $agency->website }}" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-500 hover:text-white transition-colors" title="Website">
+                                    </template>
+                                    <template x-if="agency.website">
+                                        <a :href="agency.website" target="_blank" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-500 hover:text-white transition-colors" title="Website">
                                             <span class="material-symbols-outlined text-sm">language</span>
                                         </a>
-                                    @endif
+                                    </template>
                                 </div>
                             </div>
                             
                             {{-- View Details Button --}}
                             <div class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 mt-auto">
-                                <button type="button" @click="openModal({{ $agency->id }})" class="w-full flex items-center justify-between p-4 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors group/btn">
+                                <button type="button" @click="openModal(agency.id)" class="w-full flex items-center justify-between p-4 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors group/btn">
                                     <div class="flex items-center gap-2">
                                         <span class="material-symbols-outlined text-lg">visibility</span>
                                         Lihat Detail Biro
@@ -313,26 +396,45 @@
                                 </button>
                             </div>
                         </div>
-                    @empty
+                    </template>
+                    
+                    <template x-if="filteredAgencies.length === 0">
                         <div class="col-span-full py-12 text-center bg-slate-50 dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
                             <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600 mb-3 block">store_off</span>
-                            <h3 class="font-bold text-slate-700 dark:text-slate-300">{{ $search ? 'Tidak ada hasil untuk "'.$search.'"' : 'Belum ada biro wisata' }}</h3>
-                            <p class="text-slate-500 text-sm mt-1">{{ $search ? 'Coba kata kunci yang berbeda.' : 'Data biro wisata belum tersedia untuk destinasi ini.' }}</p>
-                            @if($search)
-                                <a href="{{ route('places.show', $place->slug) }}#biro" class="inline-flex items-center gap-1 mt-4 text-sm text-primary font-semibold hover:underline">
+                            <h3 class="font-bold text-slate-700 dark:text-slate-300">
+                                <span x-text="query ? 'Tidak ada hasil untuk &quot;' + query + '&quot;' : 'Belum ada biro wisata'"></span>
+                            </h3>
+                            <p class="text-slate-500 text-sm mt-1">
+                                <span x-text="query ? 'Coba kata kunci yang berbeda.' : 'Data biro wisata belum tersedia untuk destinasi ini.'"></span>
+                            </p>
+                            <template x-if="query">
+                                <button type="button" @click="query = ''" class="inline-flex items-center gap-1 mt-4 text-sm text-primary font-semibold hover:underline">
                                     <span class="material-symbols-outlined text-sm">arrow_back</span> Tampilkan Semua Biro
-                                </a>
-                            @endif
+                                </button>
+                            </template>
                         </div>
-                    @endforelse
+                    </template>
                 </div>
 
-                {{-- Pagination --}}
-                @if($agencies->hasPages())
-                    <div class="mt-12">
-                        {{ $agencies->links() }}
-                    </div>
-                @endif
+                {{-- Pagination (Client-side) --}}
+                <div x-show="totalPages > 1" x-cloak class="mt-12 flex justify-center">
+                    <nav class="flex items-center gap-1">
+                        {{-- Prev --}}
+                        <button type="button" @click="if(currentPage > 1) { currentPage--; document.getElementById('biro').scrollIntoView({behavior: 'smooth'}) }" :disabled="currentPage === 1" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <span class="material-symbols-outlined text-sm">chevron_left</span>
+                        </button>
+                        
+                        {{-- Page numbers --}}
+                        <template x-for="page in totalPages" :key="page">
+                            <button type="button" @click="currentPage = page; document.getElementById('biro').scrollIntoView({behavior: 'smooth'})" :class="currentPage === page ? 'bg-primary text-white border-primary shadow-sm shadow-primary/30' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 hover:text-primary'" class="w-10 h-10 flex items-center justify-center rounded-xl border font-semibold text-sm transition-all" x-text="page"></button>
+                        </template>
+
+                        {{-- Next --}}
+                        <button type="button" @click="if(currentPage < totalPages) { currentPage++; document.getElementById('biro').scrollIntoView({behavior: 'smooth'}) }" :disabled="currentPage === totalPages" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <span class="material-symbols-outlined text-sm">chevron_right</span>
+                        </button>
+                    </nav>
+                </div>
 
                 {{-- ================================================== --}}
                 {{-- AGENCY DETAIL MODAL (teleported to body) --}}
