@@ -179,69 +179,7 @@
 
                     <!-- Right Column: Sidebar -->
                     <div class="space-y-6 lg:sticky lg:top-24 lg:self-start">
-                        <!-- Publish Settings -->
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="px-5 py-4 bg-gray-50 border-b border-gray-100">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-paper-plane text-blue-500"></i>
-                                    <h3 class="font-bold text-gray-900">Pengaturan Publikasi</h3>
-                                </div>
-                            </div>
-                            <div class="p-5 space-y-5">
-                                <!-- Type -->
-                                <div>
-                                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Jenis Posting</label>
-                                    <select id="type" 
-                                            name="type" 
-                                            class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-0 focus:border-gray-400 transition-all">
-                                        <option value="news" {{ old('type', $post->type) == 'news' ? 'selected' : '' }}>🗞️ Berita</option>
-                                        <option value="event" {{ old('type', $post->type) == 'event' ? 'selected' : '' }}>📅 Agenda / Event</option>
-                                    </select>
-                                </div>
-
-                                <!-- Published At -->
-                                <div>
-                                    <label for="published_at" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Tayang</label>
-                                    <input type="date" 
-                                           id="published_at" 
-                                           name="published_at" 
-                                           value="{{ old('published_at', $post->published_at ? $post->published_at->format('Y-m-d') : '') }}"
-                                           class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-0 focus:border-gray-400 transition-all">
-                                    <p class="text-xs text-gray-400 mt-1.5">Kosongkan untuk publish sekarang</p>
-                                </div>
-
-                                <!-- Is Published Toggle -->
-                                <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                                            <i class="fa-solid fa-rocket text-emerald-600 text-sm"></i>
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-700">Status Publikasi</span>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="is_published" value="1" class="sr-only peer" {{ old('is_published', $post->is_published) ? 'checked' : '' }}>
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-emerald-300/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                                    </label>
-                                </div>
-
-                                <hr class="border-gray-100">
-
-                                <!-- Action Buttons -->
-                                <div class="space-y-2">
-                                    <button type="submit" 
-                                            class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-700 focus:ring-4 focus:ring-amber-500/25 transition-all shadow-lg shadow-amber-500/25">
-                                        <i class="fa-solid fa-floppy-disk"></i>
-                                        Simpan Perubahan
-                                    </button>
-                                    <a href="{{ route('admin.posts.index') }}" 
-                                       class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all" wire:navigate>
-                                        <i class="fa-solid fa-xmark"></i>
-                                        Batal
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
+                        
                         <!-- Featured Image -->
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="px-5 py-4 bg-gray-50 border-b border-gray-100">
@@ -251,8 +189,32 @@
                                 </div>
                             </div>
                             <div class="p-5">
-                                <x-admin.gallery-picker name="image" :value="$post->image_path ?? null" label="Gambar Utama" />
+                                <x-admin.gallery-picker name="image" :value="$post->image_path ?? null" label="Pilih dari Galeri" />
                                 <x-input-error :messages="$errors->get('image')" class="mt-2" />
+                            </div>
+                        </div>
+
+                        <!-- Publish Settings (Dates) -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="px-5 py-4 bg-gray-50 border-b border-gray-100">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-calendar-alt text-blue-500"></i>
+                                    <h3 class="font-bold text-gray-900">Penjadwalan</h3>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <!-- Hidden Post Type -->
+                                <input type="hidden" name="type" value="{{ old('type', $post->type) }}">
+                                
+                                <!-- Published At -->
+                                <div>
+                                    <label for="published_at" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Tayang</label>
+                                    <input type="date" 
+                                           id="published_at" 
+                                           name="published_at" 
+                                           value="{{ old('published_at', $post->published_at ? $post->published_at->format('Y-m-d') : '') }}"
+                                           class="block w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-0 focus:border-gray-400 transition-all text-sm">
+                                </div>
                             </div>
                         </div>
 
@@ -271,7 +233,7 @@
                                            id="author" 
                                            name="author" 
                                            value="{{ old('author', $post->author) }}"
-                                           class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                                           class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
                                            placeholder="Default: Disparbudpora Jepara">
                                 </div>
                                 <div>
@@ -280,7 +242,7 @@
                                            id="image_credit" 
                                            name="image_credit" 
                                            value="{{ old('image_credit', $post->image_credit) }}"
-                                           class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                                           class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
                                            placeholder="Contoh: Dok. Pribadi">
                                 </div>
                             </div>
@@ -301,7 +263,32 @@
                         </div>
 
                         {{-- Stat Widget Picker --}}
-                        <x-admin.stat-widget-picker :value="$post->stat_widgets ?? []" />
+                        <div class="mb-4">
+                            <x-admin.stat-widget-picker :value="$post->stat_widgets ?? []" />
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden p-5 space-y-3">
+                            <button type="submit" name="is_published" value="1"
+                                    class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-700 focus:ring-4 focus:ring-amber-500/25 transition-all shadow-lg shadow-amber-500/25">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                {{ $post->is_published ? 'Simpan Perubahan' : 'Terbitkan Sekarang' }}
+                            </button>
+                            
+                            <button type="submit" name="is_published" value="0"
+                                    class="w-full inline-flex justify-center items-center gap-2 px-5 py-3 bg-white text-gray-700 font-semibold rounded-xl border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition-all">
+                                <i class="fa-solid fa-box-archive"></i>
+                                Simpan sebagai Draft
+                            </button>
+                            
+                            <hr class="border-gray-100 my-2">
+                            
+                            <a href="{{ route('admin.posts.index') }}" 
+                               class="w-full inline-flex justify-center items-center gap-2 px-5 py-2.5 text-red-600 font-medium rounded-xl hover:bg-red-50 transition-all" wire:navigate>
+                                <i class="fa-solid fa-arrow-left"></i>
+                                Batal & Kembali
+                            </a>
+                        </div>
                     </div>
                 </div>
             </form>
