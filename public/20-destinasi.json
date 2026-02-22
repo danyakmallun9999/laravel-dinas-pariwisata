@@ -48,7 +48,8 @@
       "status_kepemilikan": "PEMDA / DINAS",
       "pengelola": "Edi Kandono",
       "media_sosial": "",
-      "link_koordinat": "https://maps.app.goo.gl/6yPihLYov784sLwu5"
+      "link_koordinat": "https://maps.app.goo.gl/6yPihLYov784sLwu5",
+      "is_featured": true
     },
     {
       "no": 2,
@@ -78,7 +79,8 @@
       "status_kepemilikan": "PEMDA / DINAS",
       "pengelola": "Lia Supardianik (Plt. Manajer)",
       "media_sosial": "",
-      "link_koordinat": "https://maps.app.goo.gl/Pq63tVYfkZbK7FdS6"
+      "link_koordinat": "https://maps.app.goo.gl/Pq63tVYfkZbK7FdS6",
+      "is_featured": true
     },
     {
       "no": 3,
@@ -126,7 +128,8 @@
       "status_kepemilikan": "PEMDA / DINAS",
       "pengelola": "Arif Junaidi",
       "media_sosial": "",
-      "link_koordinat": "https://maps.app.goo.gl/3j2Kq2kQ3kQ3Q3Q3"
+      "link_koordinat": "https://maps.app.goo.gl/3j2Kq2kQ3kQ3Q3Q3",
+      "is_featured": true
     },
     {
       "no": 4,
@@ -272,7 +275,8 @@
       "status_kepemilikan": "PEMDA / DINAS",
       "pengelola": "Edi Kandono",
       "media_sosial": "",
-      "link_koordinat": "https://maps.app.goo.gl/WAebA5K5ZGeRYe4S6"
+      "link_koordinat": "https://maps.app.goo.gl/WAebA5K5ZGeRYe4S6",
+      "is_featured": true
     },
     {
       "no": 8,

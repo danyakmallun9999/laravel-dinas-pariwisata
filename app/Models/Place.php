@@ -54,6 +54,7 @@ class Place extends Model
         'kecamatan',
         'created_by',
         'is_flagship',
+        'is_recommended',
     ];
 
     // Accessor for Translated Name

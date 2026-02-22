@@ -24,6 +24,7 @@
                     $place->name = $place->translated_name;
                     $place->description = $place->translated_description;
                     $place->is_flagship = (bool) $place->is_flagship;
+                    $place->is_recommended = (bool) $place->is_recommended;
                     // Ensure localized category name
                     if ($place->category) {
                         $place->category_name = $place->category->name;
@@ -40,10 +41,15 @@
 
                         return matchesSearch && matchesCategory && matchesLocation;
                     }).sort((a, b) => {
-                        // Flagship always first
+                        // 1. Flagship always first
                         if (a.is_flagship && !b.is_flagship) return -1;
                         if (!a.is_flagship && b.is_flagship) return 1;
-                        // Then reverse chronological by default
+                        
+                        // 2. Recommended second
+                        if (a.is_recommended && !b.is_recommended) return -1;
+                        if (!a.is_recommended && b.is_recommended) return 1;
+
+                        // 3. Then reverse chronological by default
                         return b.id - a.id;
                     });
                 },

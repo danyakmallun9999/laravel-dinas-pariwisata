@@ -44,6 +44,7 @@ class StorePlaceRequest extends FormRequest
             'social_media.*.platform' => ['required', 'string'],
             'social_media.*.url' => ['required', 'url'],
             'is_flagship' => ['nullable', 'boolean'],
+            'is_recommended' => ['nullable', 'boolean'],
         ];
 
         // Latitude/longitude required only if geometry not provided

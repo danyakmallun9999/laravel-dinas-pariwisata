@@ -172,8 +172,17 @@ export default (config) => ({
     },
 
     updateCoordinates(latlng) {
-        const lat = parseFloat(latlng.lat).toFixed(6);
-        const lng = parseFloat(latlng.lng).toFixed(6);
+        let latVal, lngVal;
+        if (Array.isArray(latlng)) {
+            latVal = latlng[0];
+            lngVal = latlng[1];
+        } else {
+            latVal = latlng.lat;
+            lngVal = latlng.lng;
+        }
+
+        const lat = parseFloat(latVal).toFixed(6);
+        const lng = parseFloat(lngVal).toFixed(6);
 
         this.coordinates = { lat, lng };
         this.hasGeometry = true;

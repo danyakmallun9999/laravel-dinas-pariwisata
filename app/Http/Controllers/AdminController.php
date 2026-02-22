@@ -124,6 +124,7 @@ class AdminController extends Controller
         $data = $request->validated();
         $data['rating'] = $data['rating'] ?? 0;
         $data['is_flagship'] = $request->has('is_flagship');
+        $data['is_recommended'] = $request->has('is_recommended');
         $data['created_by'] = auth('admin')->id(); // Auto-assign ownership
 
         // Parse Rides and Facilities
@@ -203,6 +204,7 @@ class AdminController extends Controller
         $data = $request->validated();
         $data['rating'] = $data['rating'] ?? 0;
         $data['is_flagship'] = $request->has('is_flagship');
+        $data['is_recommended'] = $request->has('is_recommended');
 
         // Parse Rides and Facilities
         if (isset($data['rides'])) {
