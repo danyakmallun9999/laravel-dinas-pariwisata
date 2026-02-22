@@ -1,25 +1,4 @@
 <x-app-layout>
-    <style>
-        .tox-tinymce {
-            border: 1px solid #d1d5db !important; /* gray-300 */
-            border-radius: 0.75rem !important;
-        }
-        /* Override all focus states */
-        .tox-tinymce:focus,
-        .tox-tinymce.tox-edit-focus,
-        .tox-tinymce-focused,
-        .tox-tinymce:focus-within {
-            border-color: #9ca3af !important; /* gray-400 */
-            box-shadow: none !important;
-            outline: none !important;
-        }
-        
-        /* Remove blue outline on sticky toolbar mode */
-        .tox-tinymce--toolbar-sticky-on {
-             border-color: #9ca3af !important;
-             box-shadow: none !important;
-        }
-    </style>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -91,17 +70,8 @@
                                     <x-input-error :messages="$errors->get('title')" class="mt-2" />
                                 </div>
 
-                                <!-- Content -->
-                                <div>
-                                    <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">
-                                        <i class="fa-solid fa-align-left text-gray-400 mr-1.5"></i>
-                                        Isi Konten
-                                    </label>
-                                    <textarea id="content" 
-                                              name="content" 
-                                              class="settings-tiny">{{ old('content', $post->content) }}</textarea>
-                                    <x-input-error :messages="$errors->get('content')" class="mt-2" />
-                                </div>
+                                <!-- Content (Editor.js) -->
+                                <x-admin.editorjs name="content" label="Isi Konten" :value="$post->content" />
                             </div>
                         </div>
 
@@ -143,97 +113,30 @@
                                     <x-input-error :messages="$errors->get('title_en')" class="mt-2" />
                                 </div>
 
-                                <!-- English Content -->
-                                <div>
-                                    <label for="content_en" class="block text-sm font-semibold text-blue-800 mb-2">
-                                        <i class="fa-solid fa-align-left text-blue-400 mr-1.5"></i>
-                                        Content (English)
-                                    </label>
-                                    <textarea id="content_en" 
-                                              name="content_en" 
-                                              class="settings-tiny">{{ old('content_en', $post->content_en) }}</textarea>
-                                    <x-input-error :messages="$errors->get('content_en')" class="mt-2" />
-                                </div>
+                                <!-- English Content (Editor.js) -->
+                                <x-admin.editorjs name="content_en" label="Content (English)" :value="$post->content_en" formatName="content_format" />
                             </div>
                         </div>
 
-                        <!-- TinyMCE Initialization -->
+                        <!-- Post Form Logic -->
                         <script>
-                            // Re-define or ensure window.postForm is available
-                            // Since we use the same function, we can just define it if it doesn't exist, 
-                            // or redefine it to be safe (it's a pure function returning an object).
                             window.postForm = function(config) {
                                 return {
                                     isTranslating: false,
-                                    init() {
-                                        this.initEditors();
-                                    },
-                                    initEditors() {
-                                        if (typeof tinymce === 'undefined') return;
-                                        
-                                        const editors = ['content', 'content_en'];
-                                        
-                                        editors.forEach(id => {
-                                            const el = document.getElementById(id);
-                                            if(!el) return;
-
-                                            if (tinymce.get(id)) {
-                                                tinymce.get(id).remove();
-                                            }
-
-                                            tinymce.init({
-                                                target: el,
-                                                height: 500,
-                                                menubar: false,
-                                                plugins: 'lists link image table code wordcount',
-                                                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
-                                                content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
-                                                relative_urls: false,
-                                                remove_script_host: false,
-                                                document_base_url: '{{ url('/') }}',
-                                                images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
-                                                    const xhr = new XMLHttpRequest();
-                                                    xhr.withCredentials = false;
-                                                    xhr.open('POST', config.uploadUrl);
-                                                    xhr.setRequestHeader('X-CSRF-TOKEN', config.csrf);
-                                                    xhr.upload.onprogress = (e) => { progress(e.loaded / e.total * 100); };
-                                                    xhr.onload = () => {
-                                                        if (xhr.status < 200 || xhr.status >= 300) {
-                                                            reject('HTTP Error: ' + xhr.status);
-                                                            return;
-                                                        }
-                                                        const json = JSON.parse(xhr.responseText);
-                                                        if (!json || typeof json.location != 'string') {
-                                                            reject('Invalid JSON');
-                                                            return;
-                                                        }
-                                                        resolve(json.location);
-                                                    };
-                                                    xhr.onerror = () => { reject('Upload failed'); };
-                                                    const formData = new FormData();
-                                                    formData.append('file', blobInfo.blob(), blobInfo.filename());
-                                                    xhr.send(formData);
-                                                }),
-                                                setup: (editor) => {
-                                                    editor.on('remove', () => {
-                                                        // Cleanup
-                                                    });
-                                                }
-                                            });
-                                        });
-
-                                        this.$cleanup(() => {
-                                            editors.forEach(id => {
-                                                const editor = tinymce.get(id);
-                                                if (editor) editor.remove();
-                                            });
-                                        });
-                                    },
                                     async autoTranslate() {
                                         const title = document.getElementById('title').value;
-                                        const content = tinymce.get('content')?.getContent();
+                                        const contentInput = document.querySelector('input[name="content"]');
+                                        const contentJson = contentInput?.value;
+                                        
+                                        let plainText = '';
+                                        try {
+                                            const data = JSON.parse(contentJson);
+                                            if (data?.blocks) {
+                                                plainText = data.blocks.map(b => b.data?.text || b.data?.code || '').filter(Boolean).join('\n\n');
+                                            }
+                                        } catch(e) {}
 
-                                        if (!title && !content) {
+                                        if (!title && !plainText) {
                                             alert('Isi judul atau konten bahasa Indonesia terlebih dahulu.');
                                             return;
                                         }
@@ -251,14 +154,16 @@
                                                 if (data.success) document.getElementById('title_en').value = data.translation;
                                             }
 
-                                            if (content) {
+                                            if (plainText) {
                                                 const res = await fetch(config.translateUrl, {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrf },
-                                                    body: JSON.stringify({ text: content, source: 'id', target: 'en' })
+                                                    body: JSON.stringify({ text: plainText, source: 'id', target: 'en' })
                                                 });
                                                 const data = await res.json();
-                                                if (data.success) tinymce.get('content_en')?.setContent(data.translation);
+                                                if (data.success) {
+                                                    alert('Title diterjemahkan. Untuk konten, harap terjemahkan manual di editor English.');
+                                                }
                                             }
                                         } catch (e) {
                                             console.error(e);

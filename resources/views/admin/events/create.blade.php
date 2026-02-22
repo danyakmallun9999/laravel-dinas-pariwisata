@@ -52,17 +52,8 @@
                                     <x-input-error :messages="$errors->get('title')" class="mt-2" />
                                 </div>
 
-                                <!-- Description -->
-                                <div>
-                                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
-                                        <i class="fa-solid fa-align-left text-gray-400 mr-1.5"></i>
-                                        Deskripsi Event
-                                    </label>
-                                    <textarea id="description" 
-                                              name="description" 
-                                              class="settings-tiny">{{ old('description') }}</textarea>
-                                    <x-input-error :messages="$errors->get('description')" class="mt-2" />
-                                </div>
+                                <!-- Description (Editor.js) -->
+                                <x-admin.editorjs name="description" label="Deskripsi Event" />
                             </div>
                         </div>
 
@@ -99,69 +90,30 @@
                                     <x-input-error :messages="$errors->get('title_en')" class="mt-2" />
                                 </div>
 
-                                <!-- Description EN -->
-                                <div>
-                                    <label for="description_en" class="block text-sm font-semibold text-blue-800 mb-2">
-                                        <i class="fa-solid fa-align-left text-blue-400 mr-1.5"></i>
-                                        Description (English)
-                                    </label>
-                                    <textarea id="description_en" 
-                                              name="description_en" 
-                                              class="settings-tiny-en">{{ old('description_en') }}</textarea>
-                                    <x-input-error :messages="$errors->get('description_en')" class="mt-2" />
-                                </div>
+                                <!-- Description EN (Editor.js) -->
+                                <x-admin.editorjs name="description_en" label="Description (English)" formatName="content_format" />
                             </div>
                         </div>
 
-                        <!-- TinyMCE Initialization -->
+                        <!-- Event Form Logic -->
                         <script>
                             window.eventForm = function(config) {
                                 return {
                                     isTranslating: false,
-                                    init() {
-                                        this.initEditors();
-                                    },
-                                    initEditors() {
-                                        if (typeof tinymce === 'undefined') return;
-
-                                        const editors = [
-                                            { id: 'description', height: 400 },
-                                            { id: 'description_en', height: 300 }
-                                        ];
-
-                                        editors.forEach(editorConfig => {
-                                            const el = document.getElementById(editorConfig.id);
-                                            if (!el) return;
-
-                                            if (tinymce.get(editorConfig.id)) {
-                                                tinymce.get(editorConfig.id).remove();
-                                            }
-
-                                            tinymce.init({
-                                                target: el,
-                                                height: editorConfig.height,
-                                                menubar: false,
-                                                plugins: 'lists link image table code wordcount',
-                                                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
-                                                content_style: 'body { font-family:Figtree,sans-serif; font-size:16px; overflow-x: hidden; word-wrap: break-word; } img { max-width: 100%; height: auto; }',
-                                                relative_urls: false,
-                                                remove_script_host: false,
-                                                document_base_url: '{{ url('/') }}'
-                                            });
-                                        });
-
-                                        this.$cleanup(() => {
-                                            editors.forEach(editorConfig => {
-                                                const editor = tinymce.get(editorConfig.id);
-                                                if (editor) editor.remove();
-                                            });
-                                        });
-                                    },
                                     async autoTranslate() {
                                         const title = document.getElementById('title').value;
-                                        const description = tinymce.get('description')?.getContent() || '';
+                                        const contentInput = document.querySelector('input[name="description"]');
+                                        const contentJson = contentInput?.value;
+                                        
+                                        let plainText = '';
+                                        try {
+                                            const data = JSON.parse(contentJson);
+                                            if (data?.blocks) {
+                                                plainText = data.blocks.map(b => b.data?.text || b.data?.code || '').filter(Boolean).join('\n\n');
+                                            }
+                                        } catch(e) {}
 
-                                        if(!title && !description) {
+                                        if (!title && !plainText) {
                                             alert('Isi judul dan deskripsi terlebih dahulu');
                                             return;
                                         }
@@ -169,23 +121,25 @@
                                         this.isTranslating = true;
 
                                         try {
-                                            if(title) {
+                                            if (title) {
                                                 const res = await fetch(config.translateUrl, {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrf },
                                                     body: JSON.stringify({ text: title, source: 'id', target: 'en' })
                                                 });
                                                 const data = await res.json();
-                                                if(data.success) document.getElementById('title_en').value = data.translation;
+                                                if (data.success) document.getElementById('title_en').value = data.translation;
                                             }
-                                            if(description) {
+                                            if (plainText) {
                                                 const res = await fetch(config.translateUrl, {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': config.csrf },
-                                                    body: JSON.stringify({ text: description, source: 'id', target: 'en' })
+                                                    body: JSON.stringify({ text: plainText, source: 'id', target: 'en' })
                                                 });
                                                 const data = await res.json();
-                                                if(data.success) tinymce.get('description_en')?.setContent(data.translation);
+                                                if (data.success) {
+                                                    alert('Title diterjemahkan. Untuk deskripsi, harap terjemahkan manual di editor English.');
+                                                }
                                             }
                                         } catch(e) {
                                             console.error(e);

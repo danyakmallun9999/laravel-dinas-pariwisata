@@ -146,6 +146,7 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
 
     // Post routes
     Route::post('/posts/upload-image', [\App\Http\Controllers\PostController::class, 'uploadImage'])->name('posts.uploadImage');
+    Route::post('/editor/upload', [\App\Http\Controllers\Admin\EditorUploadController::class, 'upload'])->name('editor.upload');
     Route::post('/posts/translate', [\App\Http\Controllers\Admin\TranslationController::class, 'translate'])->name('posts.translate');
     Route::resource('posts', \App\Http\Controllers\PostController::class);
     Route::post('/events/translate', [\App\Http\Controllers\Admin\TranslationController::class, 'translate'])->name('events.translate');

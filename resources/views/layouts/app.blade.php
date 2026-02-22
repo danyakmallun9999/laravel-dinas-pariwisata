@@ -9,9 +9,6 @@
         <link rel="icon" href="{{ asset('images/logo-kura.png') }}" type="image/png">
 
         <!-- Fonts (bundled via Vite) -->
-        
-        <!-- TinyMCE (Official Cloud) -->
-        <script src="https://cdn.tiny.cloud/1/{{ config('services.tinymce.api_key') }}/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])

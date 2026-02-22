@@ -82,8 +82,8 @@
 
 
                     <!-- Article Body -->
-                    <article class="tinymce-content text-gray-700 dark:text-gray-300">
-                        {!! \App\Services\ContentSanitizer::sanitizeAllowHtml($post->translated_content) !!}
+                    <article class="article-content text-gray-700 dark:text-gray-300">
+                        {!! \App\Services\ContentRenderer::render($post->translated_content, $post->content_format ?? 'html') !!}
                     </article>
 
                     <!-- Tags -->

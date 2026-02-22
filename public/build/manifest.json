@@ -1312,7 +1312,7 @@
     "src": "node_modules/material-symbols/material-symbols-sharp.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DrW9a2AH.css",
+    "file": "assets/app-BmmTVtwF.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -1330,12 +1330,15 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-m_67JDoo.js",
+    "file": "assets/app-DJq6SoKe.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
       "_leaflet-src-eHmD5uJa.js"
+    ],
+    "dynamicImports": [
+      "resources/js/plugins/editorjs.js"
     ],
     "css": [
       "assets/app-EGhNnKeS.css"
@@ -1353,6 +1356,15 @@
     "name": "welcome",
     "src": "resources/js/pages/welcome.js",
     "isEntry": true,
+    "imports": [
+      "_leaflet-src-eHmD5uJa.js"
+    ]
+  },
+  "resources/js/plugins/editorjs.js": {
+    "file": "assets/editorjs-CmR3fKEd.js",
+    "name": "editorjs",
+    "src": "resources/js/plugins/editorjs.js",
+    "isDynamicEntry": true,
     "imports": [
       "_leaflet-src-eHmD5uJa.js"
     ]

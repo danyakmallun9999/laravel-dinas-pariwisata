@@ -29,8 +29,8 @@ import './charts/dashboard';
 // Admin Main Dashboard - ApexCharts
 import './charts/admin-dashboard';
 
-// TinyMCE Global Handler
-import './plugins/tinymce';
+// Editor.js Lazy Loader (replaces TinyMCE)
+window.loadEditorJs = () => import('./plugins/editorjs');
 
 import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
 import intersect from '@alpinejs/intersect';

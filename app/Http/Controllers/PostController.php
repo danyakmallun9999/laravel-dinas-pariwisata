@@ -76,6 +76,9 @@ class PostController extends Controller
             $validated['stat_widgets'] = json_decode($request->input('stat_widgets'), true) ?: [];
         }
 
+        // Set content format (new posts always use Editor.js)
+        $validated['content_format'] = $request->input('content_format', 'editorjs');
+
         Post::create($validated);
 
         return redirect()->route('admin.posts.index')
@@ -118,6 +121,9 @@ class PostController extends Controller
         if ($request->has('stat_widgets')) {
             $validated['stat_widgets'] = json_decode($request->input('stat_widgets'), true) ?: [];
         }
+
+        // Update content format
+        $validated['content_format'] = $request->input('content_format', 'editorjs');
 
         $post->update($validated);
 

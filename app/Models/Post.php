@@ -23,6 +23,7 @@ class Post extends Model
         'title_en',
         'view_count',
         'content_en',
+        'content_format',
         'stat_widgets',
         'created_by',
     ];

@@ -15,6 +15,7 @@ class Event extends Model
         'slug',
         'description',
         'description_en',
+        'content_format',
         'location',
         'start_date',
         'end_date',

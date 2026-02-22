@@ -101,6 +101,9 @@ class EventController extends Controller
             $validated['is_published'] = false;
         }
 
+        // Set content format (new events always use Editor.js)
+        $validated['content_format'] = $request->input('content_format', 'editorjs');
+
         Event::create($validated);
 
         return redirect()->route('admin.events.index')
@@ -129,6 +132,9 @@ class EventController extends Controller
         }
 
         $validated['is_published'] = $request->has('is_published');
+
+        // Update content format
+        $validated['content_format'] = $request->input('content_format', 'editorjs');
 
         $event->update($validated);
 

@@ -113,8 +113,8 @@
                                     <span class="w-1.5 h-6 bg-primary rounded-full"></span>
                                     {{ __('Events.Detail.About') }}
                                 </h3>
-                                <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
-                                    {!! \App\Services\ContentSanitizer::sanitizeAllowHtml($event->translated_description) !!}
+                                <div class="article-content prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
+                                    {!! \App\Services\ContentRenderer::render($event->translated_description, $event->content_format ?? 'html') !!}
                                 </div>
                             </section>
     

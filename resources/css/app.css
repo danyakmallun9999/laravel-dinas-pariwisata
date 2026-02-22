@@ -43,58 +43,122 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 3. TinyMCE / Rich Text Styles */
+/* 3. Article Content Styles (supports legacy HTML + Editor.js output) */
 @layer components {
+    .article-content h1,
     .tinymce-content h1 {
         @apply text-3xl font-bold my-4;
     }
 
+    .article-content h2,
     .tinymce-content h2 {
-        @apply text-2xl font-bold my-3;
+        @apply text-2xl font-bold mt-8 mb-4 text-gray-900 dark:text-white;
     }
 
+    .article-content h3,
     .tinymce-content h3 {
-        @apply text-xl font-bold my-2;
+        @apply text-xl font-bold mt-6 mb-3 text-gray-900 dark:text-white;
     }
 
+    .article-content h4,
     .tinymce-content h4 {
-        @apply text-lg font-bold my-2;
+        @apply text-lg font-semibold mt-4 mb-2 text-gray-800 dark:text-gray-200;
     }
 
+    .article-content p,
     .tinymce-content p {
         @apply mb-4 leading-relaxed;
     }
 
+    .article-content ul,
     .tinymce-content ul {
-        @apply list-disc ml-5 mb-4;
+        @apply list-disc ml-6 mb-4 space-y-1;
     }
 
+    .article-content ol,
     .tinymce-content ol {
-        @apply list-decimal ml-5 mb-4;
+        @apply list-decimal ml-6 mb-4 space-y-1;
     }
 
+    .article-content blockquote,
     .tinymce-content blockquote {
-        @apply border-l-4 border-gray-300 pl-4 italic my-4 bg-gray-50 py-2 pr-2;
+        @apply border-l-4 border-blue-300 pl-5 italic my-6 text-gray-600 dark:text-gray-400;
     }
 
-    /* Image Alignment */
+    .article-content blockquote cite {
+        @apply block mt-2 not-italic text-sm text-gray-500;
+    }
+
+    /* Images */
+    .article-content img,
     .tinymce-content img {
-        @apply max-w-full h-auto rounded-lg my-2;
+        @apply max-w-full h-auto rounded-xl my-2 shadow-sm;
     }
 
-    .tinymce-content .alignleft {
+    .article-content figure {
+        @apply my-6;
+    }
+
+    .article-content figcaption {
+        @apply text-center text-sm text-gray-500 mt-2;
+    }
+
+    /* Tables */
+    .article-content table {
+        @apply w-full border-collapse my-6;
+    }
+
+    .article-content td,
+    .article-content th {
+        @apply border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm;
+    }
+
+    .article-content th {
+        @apply bg-gray-50 dark:bg-gray-800 font-semibold;
+    }
+
+    /* Code blocks */
+    .article-content pre {
+        @apply bg-gray-900 text-gray-100 p-4 rounded-xl my-4 overflow-x-auto text-sm;
+    }
+
+    .article-content code {
+        @apply font-mono;
+    }
+
+    /* Horizontal rules */
+    .article-content hr {
+        @apply my-8 border-gray-200 dark:border-gray-700;
+    }
+
+    /* Warning blocks */
+    .article-content .warning-block {
+        @apply bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-4 my-4 rounded-r-xl;
+    }
+
+    /* Embeds (responsive iframes) */
+    .article-content .aspect-video {
+        @apply relative rounded-xl overflow-hidden shadow-sm;
+        padding-bottom: 56.25%;
+    }
+
+    /* Legacy TinyMCE alignment classes */
+    .tinymce-content .alignleft,
+    .article-content .alignleft {
         float: left;
         margin-right: 1.5rem;
         margin-bottom: 1rem;
     }
 
-    .tinymce-content .alignright {
+    .tinymce-content .alignright,
+    .article-content .alignright {
         float: right;
         margin-left: 1.5rem;
         margin-bottom: 1rem;
     }
 
-    .tinymce-content .aligncenter {
+    .tinymce-content .aligncenter,
+    .article-content .aligncenter {
         display: block;
         margin-left: auto;
         margin-right: auto;
