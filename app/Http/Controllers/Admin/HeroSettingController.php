@@ -42,6 +42,8 @@ class HeroSettingController extends Controller
             'button_link' => 'nullable|string|max:255',
             'video_file' => 'nullable|mimes:mp4,webm,ogg|max:50000', // max 50MB
             'image_files.*' => 'nullable|image|max:10240', // max 10MB per image
+            'image_files_gallery_url' => 'nullable|array',
+            'image_files_gallery_url.*' => 'nullable|string',
             'remove_media' => 'nullable|boolean',
             'existing_media' => 'nullable|array',
         ]);
@@ -85,10 +87,24 @@ class HeroSettingController extends Controller
         if ($validated['type'] === 'video' && $request->hasFile('video_file')) {
              $path = $request->file('video_file')->store('hero', 'public');
              $mediaPaths = [$path];
-        } elseif ($validated['type'] === 'image' && $request->hasFile('image_files')) {
-             foreach($request->file('image_files') as $file) {
-                 $path = $file->store('hero', 'public');
-                 $mediaPaths[] = $path;
+        } elseif ($validated['type'] === 'image') {
+             // Handle newly selected gallery images
+             if ($request->has('image_files_gallery_url')) {
+                 foreach($request->input('image_files_gallery_url') as $url) {
+                     // Extract relative path from URL
+                     $path = str_replace(Storage::url(''), '', $url);
+                     if (!in_array($path, $mediaPaths)) {
+                         $mediaPaths[] = $path;
+                     }
+                 }
+             }
+             
+             // Handle newly uploaded files
+             if ($request->hasFile('image_files')) {
+                 foreach($request->file('image_files') as $file) {
+                     $path = $file->store('hero', 'public');
+                     $mediaPaths[] = $path;
+                 }
              }
         }
 

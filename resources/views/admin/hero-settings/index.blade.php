@@ -68,16 +68,16 @@
                           }
                       },
                       
-                      handleImageUpload(event) {
-                          const files = event.target.files;
-                          if(files && files.length > 0) {
-                              this.type = 'image';
-                              this.previewImages = [];
-                              for(let i = 0; i < files.length; i++) {
-                                  this.previewImages.push(URL.createObjectURL(files[i]));
+                      updatePreviewImages(event) {
+                          // This will be called when the hidden inputs change
+                          // Let's grab all the hidden inputs named image_files_gallery_url[]
+                          setTimeout(() => {
+                              const inputs = document.querySelectorAll(`input[name='image_files_gallery_url[]']`);
+                              if (inputs.length > 0) {
+                                  this.previewImages = Array.from(inputs).map(input => input.value);
+                                  this.currentSlide = 0;
                               }
-                              this.currentSlide = 0;
-                          }
+                          }, 100);
                       }
                   }" 
                   class="space-y-6">
@@ -150,30 +150,12 @@
                                 </div>
 
                                 <!-- Image Target -->
-                                <div x-show="type === 'image'">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Tambah Gambar Baru</label>
-                                    <input type="file" name="image_files[]" @change="handleImageUpload" multiple accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                    <p class="text-xs text-gray-400 mt-2">Anda dapat memilih lebih dari satu file sekaligus. Maks 10MB/foto.</p>
-
-                                    @if($setting->type === 'image' && !empty($setting->media_paths))
-                                        <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                                            <span class="text-xs font-bold text-gray-700 block mb-2">Gambar Slider Masing-Masing:</span>
-                                            <div class="grid grid-cols-2 gap-3">
-                                                @foreach($setting->media_paths as $path)
-                                                    <div class="relative group aspect-video">
-                                                        <img src="{{ Storage::url($path) }}" class="w-full h-full object-cover rounded-xl border border-gray-200">
-                                                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-xl">
-                                                             <label class="text-white text-xs font-medium cursor-pointer flex flex-col items-center">
-                                                                 <input type="checkbox" name="existing_media[]" value="{{ $path }}" checked class="mb-1 text-blue-500 focus:ring-blue-500 border-gray-300 rounded">
-                                                                 Pertahankan
-                                                             </label>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            <p class="text-[10px] text-gray-400 mt-2 italic">*Hapus centang pada gambar yang ingin dibuang dari putaran.</p>
-                                        </div>
-                                    @endif
+                                <div x-show="type === 'image'" @change="updatePreviewImages">
+                                    <x-admin.gallery-picker-multiple 
+                                        name="image_files" 
+                                        :values="isset($setting->media_paths) && $setting->type === 'image' ? array_map(fn($p) => Storage::url($p), $setting->media_paths) : []" 
+                                        label="Gambar Slider" />
+                                    <p class="text-xs text-gray-400 mt-2">Anda dapat memilih lebih dari satu gambar dari galeri. Urutan gambar akan mengikuti urutan pemilihan.</p>
                                 </div>
                             </div>
                         </div>
