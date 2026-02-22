@@ -189,69 +189,48 @@
             {{-- ======================================================== --}}
             {{-- 4.5 MARKETING HOOK / TRUST BADGES SECTION --}}
             {{-- ======================================================== --}}
-            <section class="mb-24 relative overflow-hidden rounded-[2.5rem] bg-slate-900 border border-slate-800 shadow-2xl">
-                {{-- Decorative Background Gradients --}}
-                <div class="absolute top-0 right-0 -m-32 w-[30rem] h-[30rem] bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 -m-32 w-[30rem] h-[30rem] bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <section class="mb-24 px-6 md:px-10 py-12 rounded-[2rem] bg-gradient-to-br from-[#ebf6f6] to-white dark:from-slate-900 dark:to-slate-900 border border-teal-50 dark:border-slate-800 text-center relative overflow-hidden">
+                {{-- Decorative Accent --}}
+                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-100 dark:bg-teal-900/20 rounded-bl-full opacity-50"></div>
                 
-                <div class="relative z-10 px-6 sm:px-12 py-16 lg:py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-                    
-                    {{-- Text Content --}}
-                    <div class="w-full lg:w-5/12 text-center lg:text-left">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/10 text-teal-400 text-xs font-bold tracking-wide uppercase mb-6 border border-teal-500/20">
-                            <span class="material-symbols-outlined text-[14px]">shield_check</span>
-                            Jaminan Jelajah Jepara
-                        </span>
-                        
-                        <h2 class="font-playfair text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                            Liburan Tenang,<br>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">Pasti Berangkat.</span>
-                        </h2>
-                        
-                        <p class="text-slate-400 text-base md:text-lg mb-8 leading-relaxed">
-                            Mulai dari paket hemat <strong class="text-white">Ratusan Ribu</strong> untuk <i>backpacker</i>, hingga eksklusif <strong class="text-white">Jutaan Rupiah</strong>. Temukan puluhan Biro Wisata Resmi yang siap mewujudkan liburan impianmu.
-                        </p>
-                        
-                        <button type="button" onclick="document.getElementById('biro').scrollIntoView({behavior: 'smooth'})" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 group">
-                            Cari Agen Perjalananmu
-                            <span class="material-symbols-outlined transition-transform duration-300 group-hover:translate-y-1">arrow_downward</span>
-                        </button>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 text-xs font-bold tracking-wide uppercase rounded-full mb-4">
+                    <span class="material-symbols-outlined text-[14px]">beenhere</span> 100% Resmi & Tersertifikasi
+                </span>
+                
+                <h2 class="font-playfair text-3xl md:text-4xl text-slate-800 dark:text-white font-bold mb-4">
+                    Pesona Karimunjawa, <span class="text-teal-600 dark:text-teal-400">Harga Sesuai Rencana.</span>
+                </h2>
+                
+                <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 text-sm md:text-base leading-relaxed">
+                    Mulai dari ratusan ribu untuk pejalan independen, hingga paket jutaan untuk liburan tanpa pusing. Semua tersedia melalui Biro Wisata terverifikasi Jelajah Jepara.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto">
+                    {{-- Feature 1 --}}
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-teal-600 dark:text-teal-400 shadow-sm border border-slate-100 dark:border-slate-700 mb-3">
+                            <span class="material-symbols-outlined text-xl">verified_user</span>
+                        </div>
+                        <h3 class="font-semibold text-slate-800 dark:text-slate-200 text-[15px] mb-1">Bebas Penipuan</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-tight">Hanya agen legal yang terdaftar di sistem kami.</p>
                     </div>
 
-                    {{-- Features Grid --}}
-                    <div class="w-full lg:w-7/12">
-                        <div class="grid flex-col sm:grid-cols-2 gap-4 md:gap-6">
-                            
-                            {{-- Feature 1 --}}
-                            <div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl hover:bg-white/10 transition-colors">
-                                <div class="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-4">
-                                    <span class="material-symbols-outlined text-2xl">verified_user</span>
-                                </div>
-                                <h3 class="text-lg font-bold text-white mb-2">100% Terverifikasi</h3>
-                                <p class="text-sm text-slate-400 leading-relaxed">Setiap agensi yang terdaftar di sini adalah mitra resmi ber-NIB dan tercatat di Dinas, bebas khawatir penipuan abal-abal.</p>
-                            </div>
-                            
-                            {{-- Feature 2 --}}
-                            <div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl hover:bg-white/10 transition-colors">
-                                <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
-                                    <span class="material-symbols-outlined text-2xl">payments</span>
-                                </div>
-                                <h3 class="text-lg font-bold text-white mb-2">Harga Transparan</h3>
-                                <p class="text-sm text-slate-400 leading-relaxed">Bandingkan harga dan fasilitas dari berbagai biro secara langsung. Sesuaikan dengan gaya dan <i>budget</i> liburan Anda.</p>
-                            </div>
-                            
-                            {{-- Feature 3 (Full width on mobile/tablet) --}}
-                            <div class="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl sm:col-span-2 hover:bg-white/10 transition-colors flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                                <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-2xl">handshake</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-white mb-1">Transaksi Langsung</h3>
-                                    <p class="text-sm text-slate-400 leading-relaxed">Hubungi langsung narahubung biro lewat WhatsApp atau Instagram tanpa perantara dan tanpa biaya tambahan dari sistem kami.</p>
-                                </div>
-                            </div>
-
+                    {{-- Feature 2 --}}
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm border border-slate-100 dark:border-slate-700 mb-3">
+                            <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
                         </div>
+                        <h3 class="font-semibold text-slate-800 dark:text-slate-200 text-[15px] mb-1">Transparan</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-tight">Harga jujur langsung dari operator, tanpa biaya tersembunyi.</p>
+                    </div>
+
+                    {{-- Feature 3 --}}
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-sm border border-slate-100 dark:border-slate-700 mb-3">
+                            <span class="material-symbols-outlined text-xl">forum</span>
+                        </div>
+                        <h3 class="font-semibold text-slate-800 dark:text-slate-200 text-[15px] mb-1">Pesan Langsung</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-tight">Konsultasi via WA / IG langsung dengan biro pilihanmu.</p>
                     </div>
                 </div>
             </section>
