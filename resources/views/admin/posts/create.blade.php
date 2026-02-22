@@ -369,6 +369,9 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- Stat Widget Picker --}}
+                        <x-admin.stat-widget-picker />
                     </div>
                 </div>
             </form>

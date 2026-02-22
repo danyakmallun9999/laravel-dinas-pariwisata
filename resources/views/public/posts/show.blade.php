@@ -141,115 +141,87 @@
                             </div>
                         </div>
 
-                        <!-- Article Views Chart -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-800 shadow-sm mb-10 sm:mb-16">
-                            <h4 class="text-xs sm:text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 sm:mb-6">Grafik Kunjungan (30 Hari Terakhir)</h4>
-                            <div class="relative h-48 sm:h-64 w-full">
-                                <canvas id="viewsChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Tourism Stats Section - Redesigned Minimalist -->
-                        <!-- Tourism Stats Section - Redesigned Minimalist -->
-                        <div class="bg-slate-50 border border-slate-200 rounded-2xl sm:rounded-3xl overflow-hidden">
-                            <div class="p-5 sm:p-8 md:p-10">
-                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 sm:mb-8 gap-3 sm:gap-4">
-                                    <div>
-                                        <h3 class="text-xl sm:text-2xl font-serif font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
-                                            <span class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
-                                                <i class="fa-solid fa-map-location-dot text-blue-600 text-sm"></i>
-                                            </span>
-                                            Wisata Jepara {{ $tourismStats['year'] }}
-                                        </h3>
-                                        <p class="text-gray-500 text-sm mt-2 ml-11">Data statistik resmi pariwisata terkini.</p>
+                        @if(!empty($statWidgets))
+                        {{-- Dynamic Stat Widgets --}}
+                        <div class="space-y-6 sm:space-y-8 mt-6 sm:mt-8">
+                            @foreach($statWidgets as $index => $widget)
+                            <div class="bg-white dark:bg-surface-dark rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-gray-800 shadow-sm">
+                                {{-- Widget Header --}}
+                                <div class="flex items-center justify-between mb-4 sm:mb-5">
+                                    <div class="flex items-center gap-2 sm:gap-3">
+                                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center
+                                            @switch($widget['color'])
+                                                @case('emerald') bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400 @break
+                                                @case('blue') bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400 @break
+                                                @case('amber') bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400 @break
+                                                @case('violet') bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400 @break
+                                                @case('cyan') bg-cyan-100 text-cyan-600 dark:bg-cyan-900/40 dark:text-cyan-400 @break
+                                                @case('rose') bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-400 @break
+                                                @case('indigo') bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 @break
+                                                @default bg-gray-100 text-gray-600 @break
+                                            @endswitch
+                                        ">
+                                            <i class="{{ $widget['icon'] }} text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{{ $widget['title'] }}</h4>
+                                            <p class="text-[10px] sm:text-xs text-gray-500">{{ $widget['period_label'] }}</p>
+                                        </div>
                                     </div>
-                                    <div class="px-4 py-1.5 rounded-full bg-green-50 border border-green-100 text-green-700 text-xs font-bold flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                                    <span class="text-[10px] sm:text-xs text-gray-400 bg-gray-50 dark:bg-gray-800 px-2 py-0.5 rounded-full">
                                         Live Data
-                                    </div>
+                                    </span>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-3 sm:gap-8 mb-5 sm:mb-8">
-                                    <!-- Total Tiket Terjual -->
-                                    <div class="bg-gray-50/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100">
-                                        <p class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 sm:mb-2">Tiket Terjual</p>
-                                        <div class="flex items-end gap-1 sm:gap-2">
-                                            <p class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight">{{ number_format($tourismStats['total_sold']) }}</p>
-                                            <span class="text-xs sm:text-sm text-gray-500 mb-0.5 sm:mb-1.5">tiket</span>
-                                        </div>
+                                {{-- Summary Cards --}}
+                                @if(!empty($widget['data']['summary']))
+                                <div class="grid grid-cols-{{ count($widget['data']['summary']) }} gap-2 sm:gap-3 mb-4">
+                                    @foreach($widget['data']['summary'] as $summary)
+                                    <div class="p-3 sm:p-4 rounded-xl border
+                                        @switch($summary['color'] ?? 'gray')
+                                            @case('emerald') bg-emerald-50 border-emerald-100 dark:bg-emerald-900/10 dark:border-emerald-900/30 @break
+                                            @case('blue') bg-blue-50 border-blue-100 dark:bg-blue-900/10 dark:border-blue-900/30 @break
+                                            @case('amber') bg-amber-50 border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/30 @break
+                                            @case('cyan') bg-cyan-50 border-cyan-100 dark:bg-cyan-900/10 dark:border-cyan-900/30 @break
+                                            @case('rose') bg-rose-50 border-rose-100 dark:bg-rose-900/10 dark:border-rose-900/30 @break
+                                            @default bg-gray-50 border-gray-100 dark:bg-gray-800 dark:border-gray-700 @break
+                                        @endswitch
+                                    ">
+                                        <p class="text-[10px] sm:text-xs text-gray-500 font-medium mb-1">{{ $summary['label'] }}</p>
+                                        <p class="text-base sm:text-xl font-black text-gray-900 dark:text-white tracking-tight">{{ $summary['value'] }}</p>
                                     </div>
-
-                                    <!-- Total Pengunjung (Check-in) -->
-                                    <div class="bg-blue-50/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-blue-100">
-                                        <p class="text-[10px] sm:text-xs font-bold text-blue-400 uppercase tracking-wider mb-1 sm:mb-2">Total Pengunjung</p>
-                                        <div class="flex items-end gap-1 sm:gap-2">
-                                            <p class="text-2xl sm:text-4xl font-black text-blue-600 tracking-tight">{{ number_format($tourismStats['total_visitors']) }}</p>
-                                            <span class="text-xs sm:text-sm text-blue-500 mb-0.5 sm:mb-1.5">orang</span>
-                                        </div>
-                                    </div>
+                                    @endforeach
                                 </div>
+                                @endif
 
-                                <!-- Chart Area -->
-                                <div>
-                                    <div class="flex items-center justify-between mb-6">
-                                        <h4 class="text-sm font-bold text-gray-900">Tren Kunjungan Bulanan</h4>
-                                    </div>
-                                    <div class="relative h-48 sm:h-64 w-full">
-                                        <canvas id="tourismChart"></canvas>
-                                    </div>
+                                {{-- Chart Canvas --}}
+                                <div class="relative h-48 sm:h-64 w-full">
+                                    <canvas id="statWidget{{ $index }}"></canvas>
                                 </div>
                             </div>
+                            @endforeach
                         </div>
+                        @endif
                     </div>
                 </div>
 
+    @if(!empty($statWidgets))
     @push('scripts')
-    {{-- Chart.js loaded globally via app.js --}}
     <script>
         document.addEventListener('livewire:navigated', () => {
-            const viewsChartEl = document.getElementById('viewsChart');
-            const tourismChartEl = document.getElementById('tourismChart');
-            
-            if (!viewsChartEl || !tourismChartEl) return;
-
-            // Configuration for charts
             Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-            Chart.defaults.color = '#64748b'; // Slate-500
-            Chart.defaults.scale.grid.color = 'rgba(226, 232, 240, 0.6)'; // Slate-200
+            Chart.defaults.color = '#64748b';
+            Chart.defaults.scale.grid.color = 'rgba(226, 232, 240, 0.6)';
 
-            // 1. Article Views Chart (Line)
-            const viewsCtx = viewsChartEl.getContext('2d');
-            const viewsData = @json($viewsGraph);
-            
-            new Chart(viewsCtx, {
-                type: 'line',
-                data: {
-                    labels: viewsData.map(d => {
-                        const date = new Date(d.date);
-                        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-                    }),
-                    datasets: [{
-                        label: 'Pembaca',
-                        data: viewsData.map(d => d.count),
-                        borderColor: '#3b82f6', // Blue-500
-                        backgroundColor: (context) => {
-                            const ctx = context.chart.ctx;
-                            const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-                            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.1)'); // Blue-500 low opacity
-                            gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
-                            return gradient;
-                        },
-                        borderWidth: 2,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#3b82f6',
-                        pointBorderWidth: 2,
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
+            const widgets = @json($statWidgets);
+
+            widgets.forEach((widget, index) => {
+                const el = document.getElementById('statWidget' + index);
+                if (!el) return;
+                const ctx = el.getContext('2d');
+
+                let chartType = 'line';
+                let chartOptions = {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
@@ -264,78 +236,55 @@
                         }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            border: { display: false },
-                            ticks: { precision: 0 }
-                        },
-                        x: {
-                            grid: { display: false },
-                            border: { display: false }
-                        }
+                        y: { beginAtZero: true, border: { display: false }, ticks: { precision: 0 } },
+                        x: { grid: { display: false }, border: { display: false } }
                     }
+                };
+
+                switch (widget.chart_type) {
+                    case 'bar':
+                        chartType = 'bar';
+                        break;
+                    case 'horizontal_bar':
+                        chartType = 'bar';
+                        chartOptions.indexAxis = 'y';
+                        break;
+                    case 'doughnut':
+                        chartType = 'doughnut';
+                        chartOptions.scales = {};
+                        chartOptions.plugins.legend = {
+                            position: 'bottom',
+                            labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } }
+                        };
+                        break;
+                    case 'area':
+                        chartType = 'line';
+                        break;
+                    default:
+                        chartType = 'line';
                 }
-            });
 
-            // 2. Tourism Stats Chart (Bar)
-            const tourismCtx = tourismChartEl.getContext('2d');
-            const tourismData = @json($tourismStats['monthly_data']);
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-            
-            // Fill missing months with 0
-            const monthlyVisitors = new Array(12).fill(0);
-            tourismData.forEach(d => {
-                monthlyVisitors[d.month - 1] = d.visitors;
-            });
-
-            new Chart(tourismCtx, {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Pengunjung',
-                        data: monthlyVisitors,
-                        backgroundColor: '#3b82f6', // Blue-500
-                        borderRadius: 4,
-                        barThickness: 12, // Thinner bars for elegance
-                        hoverBackgroundColor: '#2563eb', // Blue-600
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            titleColor: '#ffffff',
-                            bodyColor: '#cbd5e1',
-                            padding: 10,
-                            cornerRadius: 6,
-                            callbacks: {
-                                label: function(context) {
-                                    return new Intl.NumberFormat('id-ID').format(context.raw) + ' Tiket';
-                                }
-                            }
-                        }
+                new Chart(ctx, {
+                    type: chartType,
+                    data: {
+                        labels: widget.data.labels || [],
+                        datasets: (widget.data.datasets || []).map(ds => ({
+                            ...ds,
+                            borderWidth: ds.borderWidth || 2,
+                            pointRadius: ds.pointRadius || (chartType === 'line' ? 3 : 0),
+                            pointHoverRadius: ds.pointHoverRadius || (chartType === 'line' ? 5 : 0),
+                            pointBackgroundColor: ds.pointBackgroundColor || '#ffffff',
+                            pointBorderColor: ds.borderColor || ds.backgroundColor?.[0] || '#3b82f6',
+                            pointBorderWidth: ds.pointBorderWidth || 2,
+                        })),
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            border: { display: false },
-                            ticks: { color: '#94a3b8', font: { size: 11 } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            border: { display: false },
-                            ticks: { color: '#94a3b8', font: { size: 11 } }
-                        }
-                    }
-                }
+                    options: chartOptions
+                });
             });
         });
     </script>
     @endpush
+    @endif
 
                 <!-- Sidebar (Right) -->
                 <div class="lg:col-span-4 space-y-6 sm:space-y-12">

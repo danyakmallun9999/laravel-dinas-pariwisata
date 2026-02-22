@@ -71,6 +71,11 @@ class PostController extends Controller
             $validated['image_path'] = $this->fileService->upload($request->file('image'), 'posts');
         }
 
+        // Handle stat widgets
+        if ($request->filled('stat_widgets')) {
+            $validated['stat_widgets'] = json_decode($request->input('stat_widgets'), true) ?: [];
+        }
+
         Post::create($validated);
 
         return redirect()->route('admin.posts.index')
@@ -107,6 +112,11 @@ class PostController extends Controller
         } elseif ($request->hasFile('image')) {
             $this->fileService->delete($post->image_path);
             $validated['image_path'] = $this->fileService->upload($request->file('image'), 'posts');
+        }
+
+        // Handle stat widgets
+        if ($request->has('stat_widgets')) {
+            $validated['stat_widgets'] = json_decode($request->input('stat_widgets'), true) ?: [];
         }
 
         $post->update($validated);

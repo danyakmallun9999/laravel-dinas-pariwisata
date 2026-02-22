@@ -23,12 +23,14 @@ class Post extends Model
         'title_en',
         'view_count',
         'content_en',
+        'stat_widgets',
         'created_by',
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
         'is_published' => 'boolean',
+        'stat_widgets' => 'array',
     ];
 
     public function getTranslatedTitleAttribute()

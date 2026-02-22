@@ -394,6 +394,9 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- Stat Widget Picker --}}
+                        <x-admin.stat-widget-picker :value="$post->stat_widgets ?? []" />
                     </div>
                 </div>
             </form>
