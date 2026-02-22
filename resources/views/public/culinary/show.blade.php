@@ -7,6 +7,7 @@
             type="article"
         />
     @endpush
+
     <div class="bg-white dark:bg-slate-950 min-h-screen font-sans -mt-20 pt-24 lg:pt-20">
         
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12">
@@ -17,32 +18,32 @@
                  
                  <!-- Breadcrumbs -->
                  <div class="mb-6">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                            <li class="inline-flex items-center">
-                                <a href="{{ route('welcome') }}" wire:navigate class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
-                                    <span class="material-symbols-outlined text-lg mr-1">home</span>
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
-                                    <a href="{{ route('welcome') }}#culinary" wire:navigate class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
-                                        Kuliner
-                                    </a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
-                                    <span class="text-sm font-medium text-slate-900 dark:text-white line-clamp-1 max-w-[150px] md:max-w-xs">
-                                        {{ $culinary->name }}
-                                    </span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+                     <nav class="flex" aria-label="Breadcrumb">
+                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                             <li class="inline-flex items-center">
+                                 <a href="{{ route('welcome') }}" wire:navigate class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                     <span class="material-symbols-outlined text-lg mr-1">home</span>
+                                     {{ __('Nav.Home') }}
+                                 </a>
+                             </li>
+                             <li>
+                                 <div class="flex items-center">
+                                     <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
+                                     <a href="{{ route('culture.index') }}" wire:navigate class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                         {{ __('Nav.Culture') }}
+                                     </a>
+                                 </div>
+                             </li>
+                             <li aria-current="page">
+                                 <div class="flex items-center">
+                                     <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
+                                     <span class="text-sm font-medium text-slate-900 dark:text-white line-clamp-1 max-w-[150px] md:max-w-xs">
+                                         {{ $culinary->name }}
+                                     </span>
+                                 </div>
+                             </li>
+                         </ol>
+                     </nav>
                  </div>
 
                  <!-- Image Card Wrapper -->
@@ -84,27 +85,27 @@
                     <!-- Content Body -->
                     <div class="space-y-12">
                         
-                        <!-- Description -->
-                        <section>
-                            <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <span class="w-1 h-6 bg-primary rounded-full"></span>
-                                {{ __('Culinary.Detail.About') }}
-                            </h3>
-                            <div x-data="{ expanded: false }">
-                                <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify transition-all duration-300"
-                                     :class="expanded ? '' : 'line-clamp-4 mask-image-b'">
-                                    <p class="whitespace-pre-line">{{ $culinary->full_description ?? $culinary->description }}</p>
-                                </div>
-                                @if(strlen($culinary->full_description ?? $culinary->description) > 300)
-                                    <button @click="expanded = !expanded" 
-                                            class="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary dark:text-blue-400 hover:text-primary-dark dark:hover:text-blue-300 transition-colors">
-                                        <span x-text="expanded ? '{{ __('Culinary.Detail.Hide') }}' : '{{ __('News.Button.ReadMore') }}'"></span>
-                                        <span class="material-symbols-outlined text-lg transition-transform duration-300" 
-                                              :class="expanded ? 'rotate-180' : ''">expand_more</span>
-                                    </button>
-                                @endif
-                            </div>
-                        </section>
+                         <!-- Description -->
+                         <section>
+                             <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                 <span class="w-1 h-6 bg-primary rounded-full"></span>
+                                 {{ __('Culinary.Detail.About') }}
+                             </h3>
+                             <div x-data="{ expanded: false }">
+                                 <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify transition-all duration-300 overflow-hidden"
+                                      :class="expanded ? '' : 'line-clamp-3 mask-image-b'">
+                                     <div class="whitespace-pre-line">{{ trim($culinary->content ?? $culinary->description) }}</div>
+                                 </div>
+                                 @if(strlen($culinary->content ?? $culinary->description) > 150)
+                                     <button @click="expanded = !expanded" 
+                                             class="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary dark:text-blue-400 hover:text-primary-dark dark:hover:text-blue-300 transition-colors">
+                                         <span x-text="expanded ? '{{ __('Culinary.Detail.Hide') }}' : '{{ __('News.Button.ReadMore') }}'"></span>
+                                         <span class="material-symbols-outlined text-lg transition-transform duration-300" 
+                                               :class="expanded ? 'rotate-180' : ''">expand_more</span>
+                                     </button>
+                                 @endif
+                             </div>
+                         </section>
 
                         <!-- Highlights / Quick Info Grid -->
                         <div class="grid grid-cols-1 gap-4">
@@ -128,30 +129,34 @@
                                          <p class="text-slate-500 text-xs mt-0.5">{{ __('Culinary.Detail.FindNearby', ['name' => $culinary->name]) }}</p>
                                      </div>
                                  </div>
-                                 
-                                 <!-- Embedded Map -->
-                                 <div class="relative w-full h-[400px] md:h-auto md:aspect-video rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm group">
-                                     <iframe 
-                                        width="100%" 
-                                        height="100%" 
-                                        frameborder="0" 
-                                        scrolling="no" 
-                                        marginheight="0" 
-                                        marginwidth="0" 
-                                        src="https://maps.google.com/maps?q=Kuliner+{{ urlencode($culinary->name) }}+Jepara&t=&z=13&ie=UTF8&iwloc=&output=embed">
-                                     </iframe>
-                                     
-                                     <!-- Click Overlay to Open External Map -->
-                                     <a href="https://www.google.com/maps/search/Kuliner+{{ urlencode($culinary->name) }}+Jepara" 
-                                        target="_blank"
-                                        class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center z-10"
-                                        title="{{ __('Events.Detail.MapsLink') }}">
-                                         <div class="bg-white/90 backdrop-blur text-slate-900 px-4 py-2 rounded-full font-bold text-sm shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all flex items-center gap-2">
-                                             <span class="material-symbols-outlined text-red-500">map</span>
-                                             {{ __('Events.Detail.MapsLink') }}
-                                         </div>
-                                     </a>
-                                 </div>
+
+                                 @if($culinary->locations->isNotEmpty())
+                                     <!-- Recommended Locations List -->
+                                     <div class="space-y-3 mb-6">
+                                         @foreach($culinary->locations as $location)
+                                             <div class="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:border-primary/30 transition-colors group">
+                                                 <div class="flex items-start gap-3">
+                                                     <div class="mt-1 w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-500">
+                                                         <span class="material-symbols-outlined text-sm">location_on</span>
+                                                     </div>
+                                                     <div>
+                                                         <h4 class="font-bold text-slate-900 dark:text-white text-sm">{{ $location->name }}</h4>
+                                                         @if($location->address)
+                                                             <p class="text-slate-500 text-[11px] leading-tight">{{ $location->address }}</p>
+                                                         @endif
+                                                     </div>
+                                                 </div>
+                                                 @if($location->google_maps_url)
+                                                     <a href="{{ $location->google_maps_url }}" target="_blank" 
+                                                        class="flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg text-xs font-bold transition-all">
+                                                         {{ __('Events.Detail.MapsLink') }}
+                                                         <span class="material-symbols-outlined text-xs">open_in_new</span>
+                                                     </a>
+                                                 @endif
+                                             </div>
+                                         @endforeach
+                                     </div>
+                                 @endif
                              </div>
                         </section>
                     </div>

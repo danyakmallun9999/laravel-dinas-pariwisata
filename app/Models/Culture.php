@@ -32,6 +32,11 @@ class Culture extends Model
         return $this->hasMany(CultureImage::class);
     }
 
+    public function locations()
+    {
+        return $this->hasMany(CultureLocation::class);
+    }
+
     public function getImageUrlAttribute()
     {
         if (!$this->image) {

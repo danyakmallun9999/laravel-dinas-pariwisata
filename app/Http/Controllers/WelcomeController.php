@@ -140,7 +140,13 @@ class WelcomeController extends Controller
 
     public function showCulture(string $slug): View
     {
-        $culture = Culture::with('images')->where('slug', $slug)->firstOrFail();
+        $culture = Culture::with(['images', 'locations'])->where('slug', $slug)->firstOrFail();
+        
+        if ($culture->category === 'Kuliner Khas') {
+            $culinary = $culture;
+            return view('public.culinary.show', compact('culinary'));
+        }
+
         return view('public.culture.show', compact('culture'));
     }
 
@@ -148,7 +154,7 @@ class WelcomeController extends Controller
     public function showCulinary(string $slug): View
     {
         // Culinary is also in Culture table now
-        $culinary = Culture::where('slug', $slug)->firstOrFail();
+        $culinary = Culture::with(['images', 'locations'])->where('slug', $slug)->firstOrFail();
         return view('public.culinary.show', compact('culinary'));
     }
 
@@ -156,7 +162,11 @@ class WelcomeController extends Controller
     {
         $cultures = Culture::all();
         
-        $databaseCategories = Culture::select('category')->distinct()->pluck('category')->toArray();
+        $databaseCategories = Culture::select('category')
+            ->distinct()
+            ->pluck('category')
+            ->filter(fn($cat) => !str_contains($cat, 'Tarian'))
+            ->toArray();
 
         $curatedCategories = [
             'Kemahiran & Kerajinan Tradisional (Kriya)' => [
@@ -179,13 +189,6 @@ class WelcomeController extends Controller
                 'subtitle' => 'Seni',
                 'description' => 'Experience the rhythm of Wayang Kulit, Kridhajati Dance, and the graceful movements of local arts.',
                 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuByC0plW4kR_o3v4HYNa2r2JTW_CZ4SqENWKfWjQKnwCW8gPPQOpS2euCZuK2OeaH8SFfMje5m8x607ts6J8tZ42M2egKoBZTvB5clgNfHI5xXHqUtxtzoD10NZ3hyL9-pRo4f0VHA-HuDIJ4NhiN5nuu6Kw9KPyJTxnKYc4xGSBqWrEQtl9SMLfOGt81e8wCupxUP5mG3AHEQiOj0tgP8DQKYU30VyXmT50XUYr7I_IV3EzciVPLhNkG6oCYU44ENsU_B8-yM9MA'
-            ],
-            'Kawasan Cagar Budaya & Sejarah' => [
-                'id' => 'Kawasan Cagar Budaya & Sejarah',
-                'title' => 'Kawasan Cagar Budaya & Sejarah',
-                'subtitle' => 'Sejarah',
-                'description' => 'Explore the historical sites and cultural heritage areas that define the rich past of Jepara.',
-                'image' => asset('images/culture/mantingan.jpg')
             ],
             'Kuliner Khas' => [
                 'id' => 'Kuliner Khas',

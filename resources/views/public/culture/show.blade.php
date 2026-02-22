@@ -86,34 +86,34 @@
 
                     {{-- Breadcrumb --}}
                     <div class="mb-6">
-                        <nav class="flex" aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                                <li class="inline-flex items-center">
-                                    <a href="{{ route('welcome') }}" wire:navigate
-                                       class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
-                                        <span class="material-symbols-outlined text-lg mr-1">home</span>
-                                        Home
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="flex items-center">
-                                        <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
-                                        <a href="{{ route('culture.index') }}" wire:navigate
-                                           class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
-                                            Budaya
-                                        </a>
-                                    </div>
-                                </li>
-                                <li aria-current="page">
-                                    <div class="flex items-center">
-                                        <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
-                                        <span class="text-sm font-medium text-slate-900 dark:text-white line-clamp-1 max-w-[150px] md:max-w-xs">
-                                            {{ $culture->name }}
-                                        </span>
-                                    </div>
-                                </li>
-                            </ol>
-                        </nav>
+                     <nav class="flex" aria-label="Breadcrumb">
+                         <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                             <li class="inline-flex items-center">
+                                 <a href="{{ route('welcome') }}" wire:navigate
+                                    class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                     <span class="material-symbols-outlined text-lg mr-1">home</span>
+                                     {{ __('Nav.Home') }}
+                                 </a>
+                             </li>
+                             <li>
+                                 <div class="flex items-center">
+                                     <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
+                                     <a href="{{ route('culture.index') }}" wire:navigate
+                                        class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+                                         {{ __('Nav.Culture') }}
+                                     </a>
+                                 </div>
+                             </li>
+                             <li aria-current="page">
+                                 <div class="flex items-center">
+                                     <span class="material-symbols-outlined text-slate-400 mx-1">chevron_right</span>
+                                     <span class="text-sm font-medium text-slate-900 dark:text-white line-clamp-1 max-w-[150px] md:max-w-xs">
+                                         {{ $culture->name }}
+                                     </span>
+                                 </div>
+                             </li>
+                         </ol>
+                     </nav>
                     </div>
 
                     {{-- Main Image --}}
@@ -252,18 +252,29 @@
                         {{-- Content Body --}}
                         <div class="space-y-12">
 
-                            {{-- Konten Lengkap --}}
-                            @if($culture->content)
-                            <section>
-                                <h3 class="font-bold text-xl text-slate-900 dark:text-white mb-4 flex items-center gap-3">
-                                    <span class="w-1.5 h-6 bg-primary rounded-full"></span>
-                                    Tentang Budaya Ini
-                                </h3>
-                                <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
-                                    {!! nl2br(e($culture->content)) !!}
-                                </div>
-                            </section>
-                            @endif
+                             {{-- Konten Lengkap --}}
+                             @if($culture->content || $culture->description)
+                             <section>
+                                 <h3 class="font-bold text-xl text-slate-900 dark:text-white mb-4 flex items-center gap-3">
+                                     <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                                     Tentang Budaya Ini
+                                 </h3>
+                                 <div x-data="{ expanded: false }">
+                                     <div class="prose prose-lg prose-slate dark:prose-invert font-light text-slate-600 dark:text-slate-300 leading-relaxed text-justify transition-all duration-300 overflow-hidden"
+                                          :class="expanded ? '' : 'line-clamp-3 mask-image-b'">
+                                         <div class="whitespace-pre-line">{{ trim($culture->content ?? $culture->description) }}</div>
+                                     </div>
+                                     @if(strlen($culture->content ?? $culture->description) > 150)
+                                         <button @click="expanded = !expanded" 
+                                                 class="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary dark:text-blue-400 hover:text-primary-dark dark:hover:text-blue-300 transition-colors">
+                                             <span x-text="expanded ? '{{ __('Culinary.Detail.Hide') }}' : '{{ __('News.Button.ReadMore') }}'"></span>
+                                             <span class="material-symbols-outlined text-lg transition-transform duration-300" 
+                                                   :class="expanded ? 'rotate-180' : ''">expand_more</span>
+                                         </button>
+                                     @endif
+                                 </div>
+                             </section>
+                             @endif
 
                             {{-- Info Grid: Kategori, Waktu, Lokasi --}}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

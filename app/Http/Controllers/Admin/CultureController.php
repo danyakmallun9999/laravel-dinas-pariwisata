@@ -57,6 +57,9 @@ class CultureController extends Controller
             'location'    => 'nullable|string|max:255',
             'time'        => 'nullable|string|max:255',
             'youtube_url' => 'nullable|url|max:500',
+            'locations.*.name' => 'required|string|max:255',
+            'locations.*.address' => 'nullable|string|max:255',
+            'locations.*.google_maps_url' => 'nullable|url|max:1000',
         ]);
 
         $data = $request->only(['name','category','description','content','location','time','youtube_url']);
@@ -73,6 +76,15 @@ class CultureController extends Controller
             foreach ($request->file('images') as $file) {
                 $path = $file->store('images/culture', 'public');
                 $culture->images()->create(['image_path' => $path]);
+            }
+        }
+
+        // Simpan lokasi rekomendasi
+        if ($request->has('locations')) {
+            foreach ($request->locations as $loc) {
+                if (!empty($loc['name'])) {
+                    $culture->locations()->create($loc);
+                }
             }
         }
 
@@ -100,6 +112,9 @@ class CultureController extends Controller
             'location'    => 'nullable|string|max:255',
             'time'        => 'nullable|string|max:255',
             'youtube_url' => 'nullable|url|max:500',
+            'locations.*.name' => 'required|string|max:255',
+            'locations.*.address' => 'nullable|string|max:255',
+            'locations.*.google_maps_url' => 'nullable|url|max:1000',
         ]);
 
         $data = $request->only(['name','category','description','content','location','time','youtube_url']);
@@ -119,6 +134,16 @@ class CultureController extends Controller
             foreach ($request->file('images') as $file) {
                 $path = $file->store('images/culture', 'public');
                 $culture->images()->create(['image_path' => $path]);
+            }
+        }
+
+        // Simpan/Update lokasi rekomendasi
+        $culture->locations()->delete();
+        if ($request->has('locations')) {
+            foreach ($request->locations as $loc) {
+                if (!empty($loc['name'])) {
+                    $culture->locations()->create($loc);
+                }
             }
         }
 

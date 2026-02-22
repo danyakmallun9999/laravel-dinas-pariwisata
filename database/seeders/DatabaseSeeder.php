@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BoundarySeeder::class);
         $this->call(DestinasiImageSeeder::class);
         $this->call(JeparaEventSeeder::class);
+        $this->call(CultureSeeder::class);
         // $this->call(DummyTicketSeeder::class);
 
         // Fourth: Assign ownership to existing content
