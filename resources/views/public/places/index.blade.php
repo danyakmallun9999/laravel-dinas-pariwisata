@@ -23,6 +23,7 @@
                 places: {{ Js::from($places->map(function($place) {
                     $place->name = $place->translated_name;
                     $place->description = $place->translated_description;
+                    $place->is_flagship = (bool) $place->is_flagship;
                     // Ensure localized category name
                     if ($place->category) {
                         $place->category_name = $place->category->name;
@@ -38,6 +39,12 @@
                         const matchesLocation = this.selectedLocation === '' || place.kecamatan === this.selectedLocation;
 
                         return matchesSearch && matchesCategory && matchesLocation;
+                    }).sort((a, b) => {
+                        // Flagship always first
+                        if (a.is_flagship && !b.is_flagship) return -1;
+                        if (!a.is_flagship && b.is_flagship) return 1;
+                        // Then reverse chronological by default
+                        return b.id - a.id;
                     });
                 },
                 get totalPages() {
@@ -195,14 +202,16 @@
                 <!-- Modern Grid Layout -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[50vh]">
                     <template x-for="place in paginatedPlaces" :key="place.id">
-                        <a :href="`/destinasi/${place.slug}`" class="group relative bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 dark:border-slate-700 hover:-translate-y-2 flex flex-col h-full"
+                        <a :href="`/destinasi/${place.slug}`" 
+                           :class="place.is_flagship ? 'sm:col-span-2 lg:col-span-3 ring-2 ring-amber-400 dark:ring-amber-500 shadow-amber-500/20 shadow-2xl border-transparent flex-col md:flex-row' : 'border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl border flex-col'"
+                           class="group relative bg-white dark:bg-slate-800 rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 flex h-full"
                            wire:navigate
                            x-transition:enter="transition ease-out duration-300"
                            x-transition:enter-start="opacity-0 scale-95"
                            x-transition:enter-end="opacity-100 scale-100">
                             
                             <!-- Image Section -->
-                            <div class="relative h-64 overflow-hidden">
+                            <div class="relative overflow-hidden shrink-0" :class="place.is_flagship ? 'h-72 md:h-auto md:w-[45%] lg:w-[50%]' : 'h-64 w-full'">
                                 <template x-if="place.image_path">
                                     <img :src="place.image_path" :alt="place.name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                                 </template>
@@ -222,18 +231,32 @@
                                     </span>
                                 </div>
 
+                                <!-- Featured Badge -->
+                                <template x-if="place.is_flagship">
+                                    <div class="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-white text-xs font-bold shadow-lg border border-amber-300/50 backdrop-blur z-10">
+                                        <span class="material-symbols-outlined text-[14px]">workspace_premium</span>
+                                        Unggulan
+                                    </div>
+                                </template>
+
                                 <!-- Rating Badge -->
-                                <div class="absolute bottom-4 right-4 flex items-center gap-1 bg-slate-900/80 backdrop-blur px-2.5 py-1 rounded-lg border border-white/10 text-white font-bold text-xs shadow-lg">
+                                <div class="absolute bottom-4 right-4 flex items-center gap-1 bg-slate-900/80 backdrop-blur px-2.5 py-1 rounded-lg border border-white/10 text-white font-bold text-xs shadow-lg" x-show="!place.is_flagship">
                                     <span class="material-symbols-outlined text-sm text-yellow-400">star</span>
+                                    <span x-text="place.rating"></span>
+                                </div>
+                                <div class="absolute bottom-4 right-4 flex items-center gap-1 bg-gradient-to-r from-amber-500/90 to-amber-700/90 backdrop-blur px-3 py-1.5 rounded-xl border border-amber-400/30 text-white font-bold text-sm shadow-lg" x-show="place.is_flagship">
+                                    <span class="material-symbols-outlined text-base text-yellow-300">star</span>
                                     <span x-text="place.rating"></span>
                                 </div>
                             </div>
 
                             <!-- Content Section -->
-                            <div class="p-6 flex-1 flex flex-col">
+                            <div class="flex-1 flex flex-col justify-center" :class="place.is_flagship ? 'p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-white to-amber-50/50 dark:from-slate-800 dark:to-slate-800/90' : 'p-6'">
                                 <div class="flex-1">
-                                    <h3 class="text-xl font-display font-bold text-slate-800 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-primary transition-colors" x-text="place.name"></h3>
-                                    <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-4 leading-relaxed font-light" x-text="place.description">
+                                    <h3 class="font-display font-bold text-slate-800 dark:text-white leading-snug group-hover:text-primary transition-colors" 
+                                        :class="place.is_flagship ? 'text-2xl md:text-3xl lg:text-4xl line-clamp-2 mb-4' : 'text-xl line-clamp-2 mb-2'" x-text="place.name"></h3>
+                                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed font-light" 
+                                       :class="place.is_flagship ? 'text-base md:text-lg line-clamp-3 md:line-clamp-4 mb-8' : 'text-sm line-clamp-2 mb-4'" x-text="place.description">
                                     </p>
                                 </div>
                                 
