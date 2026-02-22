@@ -29,15 +29,71 @@
         </style>
     @endpush
 
-    <div class="bg-slate-50 dark:bg-slate-950 font-sans -mt-20">
+    <div class="bg-slate-50 dark:bg-slate-950 font-sans -mt-20"
+         @php
+             $uniqueGalleryImages = collect([]);
+             if ($place->image_path) {
+                 $uniqueGalleryImages->push($place->image_path);
+             }
+             if (isset($place->images)) {
+                 foreach($place->images as $img) {
+                     $uniqueGalleryImages->push($img->image_path);
+                 }
+             }
+             $uniqueGalleryImages = $uniqueGalleryImages->unique()->values();
+             if ($uniqueGalleryImages->isEmpty()) {
+                 $uniqueGalleryImages->push('https://images.unsplash.com/photo-1544644181-1484b3fdfc62?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+             }
+         @endphp
+         x-data="{
+             images: [
+                 @foreach($uniqueGalleryImages as $imgPath)
+                     '{{ str_starts_with($imgPath, 'http') ? $imgPath : asset($imgPath) }}',
+                 @endforeach
+             ],
+             heroActive: 0,
+             lightboxOpen: false,
+             lightboxIndex: 0,
+             init() {
+                 if (this.images.length > 1) {
+                     setInterval(() => {
+                         this.heroActive = (this.heroActive + 1) % this.images.length;
+                     }, 5000);
+                 }
+             },
+             openLightbox(index) {
+                 this.lightboxIndex = index;
+                 this.lightboxOpen = true;
+                 document.body.style.overflow = 'hidden';
+             },
+             closeLightbox() {
+                 this.lightboxOpen = false;
+                 document.body.style.overflow = '';
+             },
+             lightboxPrev() {
+                 this.lightboxIndex = (this.lightboxIndex - 1 + this.images.length) % this.images.length;
+             },
+             lightboxNext() {
+                 this.lightboxIndex = (this.lightboxIndex + 1) % this.images.length;
+             }
+         }"
+         @keydown.escape.window="if (lightboxOpen) closeLightbox()"
+         @keydown.left.window="if (lightboxOpen) lightboxPrev()"
+         @keydown.right.window="if (lightboxOpen) lightboxNext()"
+    >
         
         {{-- ============================================================ --}}
         {{-- 1. HERO SECTION --}}
         {{-- ============================================================ --}}
-        <section class="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-            {{-- Background Image (GPU-composited) --}}
-            <div class="absolute inset-0 z-0 hero-bg"
-                 style="background-image: url('{{ $place->image_path ? asset($place->image_path) : 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80' }}'); background-position: center; background-size: cover;">
+        <section class="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-slate-900">
+            {{-- Background Image Slider (GPU-composited) --}}
+            <div class="absolute inset-0 z-0 hero-bg">
+                <template x-for="(image, index) in images" :key="index">
+                    <div class="absolute inset-0 transition-opacity ease-in-out duration-1000 bg-center bg-cover"
+                         :class="heroActive === index ? 'opacity-100 scale-105' : 'opacity-0 scale-100'"
+                         :style="`background-image: url('${image}'); transition: opacity 1.5s ease-in-out, transform 8s linear;`">
+                    </div>
+                </template>
                 <div class="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/40 to-slate-900/90"></div>
             </div>
 
@@ -106,13 +162,36 @@
             {{-- 3. ABOUT DESTINATION --}}
             {{-- ======================================================== --}}
             <section id="tentang" class="mb-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center scroll-mt-24">
-                <div class="relative rounded-3xl overflow-hidden aspect-square lg:aspect-auto lg:h-[600px] shadow-xl">
-                    <img src="{{ $place->image_path ? asset($place->image_path) : 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?ixlib=rb-4.0.3' }}" class="w-full h-full object-cover" loading="lazy" alt="{{ $place->translated_name }}">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end p-8">
-                        <div>
-                            <span class="text-white/80 text-sm font-semibold tracking-wider uppercase mb-2 block">Tentang Destinasi</span>
-                            <h3 class="text-2xl font-bold text-white leading-tight">Keindahan Tersembunyi di Utara Jawa</h3>
+                <div class="flex flex-col gap-4 h-full lg:h-[600px]">
+                    {{-- Main Photo --}}
+                    <div @click="openLightbox(0)" class="relative rounded-3xl overflow-hidden shadow-xl flex-1 cursor-pointer group">
+                        <img :src="images[0]" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" alt="{{ $place->translated_name }}">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end p-6 md:p-8 pointer-events-none">
+                            <div>
+                                <span class="text-white/80 text-sm font-semibold tracking-wider uppercase mb-2 block">Tentang Destinasi</span>
+                                <h3 class="text-2xl md:text-3xl font-bold text-white leading-tight line-clamp-2 md:line-clamp-none">{{ $place->translated_name }}</h3>
+                            </div>
                         </div>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <div class="bg-white/90 backdrop-blur px-4 py-2 text-slate-900 rounded-full font-bold text-sm shadow-lg flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all">
+                                <span class="material-symbols-outlined text-base">zoom_in</span> Lihat Foto
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Thumbnails Grid (up to 3) --}}
+                    <div class="grid grid-cols-3 gap-4" x-show="images.length > 1" x-cloak>
+                        <template x-for="(img, idx) in images.slice(1, 4)" :key="idx + 1">
+                            <div @click="openLightbox(idx + 1)" class="relative rounded-xl md:rounded-2xl overflow-hidden aspect-square sm:aspect-video lg:aspect-square cursor-pointer group shadow-md transition-shadow hover:shadow-lg">
+                                <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                                {{-- "+X Photos" overlay for the last thumbnail --}}
+                                <template x-if="idx === 2 && images.length > 4">
+                                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-lg md:text-xl backdrop-blur-[2px]">
+                                        +<span x-text="images.length - 4"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
                     </div>
                 </div>
                 <div>
@@ -414,6 +493,64 @@
                         </button>
                     </nav>
                 </div>
+
+                {{-- ================================================== --}}
+                {{-- LIGHTBOX MODAL (teleported to body) --}}
+                {{-- ================================================== --}}
+                <template x-teleport="body">
+                    <div x-show="lightboxOpen" x-cloak
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="fixed inset-0 z-[9999] flex items-center justify-center">
+                        
+                        <!-- Backdrop -->
+                        <div class="absolute inset-0 bg-black/95 backdrop-blur-sm" @click="closeLightbox()"></div>
+                        
+                        <!-- Close Button -->
+                        <button @click="closeLightbox()" 
+                                class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110">
+                            <span class="material-symbols-outlined text-2xl">close</span>
+                        </button>
+
+                        <!-- Image Counter -->
+                        <div class="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 bg-white/10 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full">
+                            <span x-text="(lightboxIndex + 1) + ' / ' + images.length"></span>
+                        </div>
+
+                        <!-- Prev Button -->
+                        <button x-show="images.length > 1" @click="lightboxPrev()" 
+                                class="absolute left-2 sm:left-6 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110">
+                            <span class="material-symbols-outlined text-2xl">chevron_left</span>
+                        </button>
+
+                        <!-- Next Button -->
+                        <button x-show="images.length > 1" @click="lightboxNext()" 
+                                class="absolute right-2 sm:right-6 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110">
+                            <span class="material-symbols-outlined text-2xl">chevron_right</span>
+                        </button>
+
+                        <!-- Lightbox Image -->
+                        <div class="relative z-10 w-full h-full max-w-[90vw] max-h-[80vh] flex items-center justify-center pointer-events-none">
+                            <img :src="images[lightboxIndex]" 
+                                 class="w-auto h-auto max-w-full max-h-full object-contain rounded-lg shadow-2xl select-auto pointer-events-auto transition-transform duration-300">
+                        </div>
+
+                        <!-- Thumbnail Strip -->
+                        <div x-show="images.length > 1" class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-2xl p-2 max-w-[90vw] overflow-x-auto scrollbar-hide">
+                            <template x-for="(img, idx) in images" :key="idx">
+                                <button @click="lightboxIndex = idx" 
+                                        :class="lightboxIndex === idx ? 'ring-2 ring-primary scale-110 opacity-100' : 'opacity-50 hover:opacity-80'"
+                                        class="w-14 h-10 sm:w-16 sm:h-11 flex-shrink-0 rounded-lg overflow-hidden transition-all duration-200">
+                                    <img :src="img" class="w-full h-full object-cover">
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
 
                 {{-- ================================================== --}}
                 {{-- AGENCY DETAIL MODAL (teleported to body) --}}
